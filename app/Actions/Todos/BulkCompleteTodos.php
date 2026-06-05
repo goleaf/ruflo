@@ -1,0 +1,30 @@
+<?php
+
+namespace App\Actions\Todos;
+
+use App\Models\User;
+
+/**
+ * Completes the user's active tasks among the selected ids.
+ *
+ * The selection is re-scoped to the user's own active tasks, so foreign or
+ * non-actionable ids in the payload are silently excluded — a bulk action can
+ * never touch another user's data or complete an archived task. Returns the
+ * number of tasks actually changed.
+ *
+ * @param  list<int>  $ids
+ */
+final class BulkCompleteTodos
+{
+    /**
+     * @param  list<int>  $ids
+     */
+    public function handle(User $user, array $ids): int
+    {
+        if ($ids === []) {
+            return 0;
+        }
+
+        return $user->todos()->active()->whereKey($ids)->update(['is_completed' => true]);
+    }
+}

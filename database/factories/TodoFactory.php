@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\Priority;
 use App\Models\Todo;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -22,7 +23,50 @@ class TodoFactory extends Factory
             'user_id' => User::factory(),
             'title' => fake()->sentence(3),
             'is_completed' => false,
+            'priority' => Priority::Normal,
+            'due_date' => null,
         ];
+    }
+
+    /**
+     * Indicate the task's priority.
+     */
+    public function priority(Priority $priority): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'priority' => $priority,
+        ]);
+    }
+
+    /**
+     * Indicate the task is due on a given date (defaults to today).
+     */
+    public function dueOn(?string $date = null): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'due_date' => $date ?? today()->toDateString(),
+        ]);
+    }
+
+    /**
+     * Indicate the task is overdue (due yesterday and still active).
+     */
+    public function overdue(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'due_date' => today()->subDay()->toDateString(),
+            'is_completed' => false,
+        ]);
+    }
+
+    /**
+     * Indicate the task is due in the near future.
+     */
+    public function upcoming(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'due_date' => today()->addDays(3)->toDateString(),
+        ]);
     }
 
     /**

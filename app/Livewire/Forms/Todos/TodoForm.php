@@ -3,21 +3,41 @@
 namespace App\Livewire\Forms\Todos;
 
 use App\Data\Todos\TodoData;
-use Livewire\Attributes\Validate;
+use App\Enums\Priority;
+use App\Models\Todo;
 use Livewire\Form;
 
+/**
+ * Livewire form state for creating and editing a task.
+ *
+ * Validation here protects the request shape; ownership of the chosen project
+ * and tags is re-verified in the action, never trusted from this input.
+ */
 class TodoForm extends Form
 {
-    #[Validate]
     public string $title = '';
 
+    public string $priority = 'normal';
+
+    public ?string $due_date = null;
+
+    public ?string $project_id = null;
+
+    /** @var array<int, int|string> */
+    public array $tag_ids = [];
+
     /**
-     * @return array<string, list<string>>
+     * @return array<string, mixed>
      */
     protected function rules(): array
     {
         return [
             'title' => ['required', 'string', 'max:120'],
+            'priority' => ['required', 'string', 'in:'.implode(',', Priority::values())],
+            'due_date' => ['nullable', 'date'],
+            'project_id' => ['nullable', 'integer'],
+            'tag_ids' => ['array'],
+            'tag_ids.*' => ['integer'],
         ];
     }
 
@@ -28,6 +48,9 @@ class TodoForm extends Form
     {
         return [
             'title' => __('todos.fields.title'),
+            'priority' => __('todos.fields.priority'),
+            'due_date' => __('todos.fields.due_date'),
+            'project_id' => __('todos.fields.project'),
         ];
     }
 
@@ -37,10 +60,14 @@ class TodoForm extends Form
     }
 
     /**
-     * Preload the form for editing an existing task.
+     * Preload the form from an existing task for editing.
      */
-    public function setTitle(string $title): void
+    public function setFromTodo(Todo $todo): void
     {
-        $this->title = $title;
+        $this->title = $todo->title;
+        $this->priority = $todo->priority->value;
+        $this->due_date = $todo->due_date?->toDateString();
+        $this->project_id = $todo->project_id !== null ? (string) $todo->project_id : null;
+        $this->tag_ids = $todo->tags->pluck('id')->all();
     }
 }

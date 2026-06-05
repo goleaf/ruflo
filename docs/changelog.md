@@ -1,5 +1,34 @@
 # Changelog
 
+## 2026-06-05 - Step 4 Task organization, filters, search, sorting, bulk actions
+
+### Implemented
+
+- Added **projects** (owner-scoped task grouping): `projects` table, `todos.project_id` (nullable, `nullOnDelete` so deleting a project keeps its tasks as "No project"), `ProjectPolicy`, and create/rename/archive/restore/delete actions. Projects archive (reversible) distinctly from delete.
+- Added **tags**: `tags` table + `tag_todo` pivot, per-user unique normalized (squished, lower-cased) names via `firstOrCreate`, `TagPolicy`, create/delete actions. Deleting a tag keeps the tasks.
+- Added **priority** (`App\Enums\Priority`: low/normal/high/urgent with labels, colors, sort weights) and **due dates** on tasks, with active-only date buckets (today/overdue/upcoming) as model scopes + `isOverdue()`/`isDueToday()` helpers. Completed/archived tasks are never overdue.
+- Centralized **search/filter/sort** in `TodoListQuery::filtered()` with a sanitized `TodoFilters` value object: title search with escaped LIKE wildcards (`ESCAPE` clause), filters by lifecycle/project/"none"/tag/priority/due, allow-listed sorting (created/due/priority/title, asc/desc) safe against `?sort=` injection, and 15/page pagination.
+- Added **bulk actions** (complete/archive/delete) that re-scope the selected ids to the user's own tasks inside the query, so foreign ids are silently excluded and bulk complete/archive respect lifecycle state.
+- Kept `project_id` out of `#[Fillable]`; `CreateTodo`/`UpdateTodo` set it directly only after re-scoping project and tag ids to the owner (`ResolvesTodoOrganization`).
+
+### UI
+
+- Rebuilt the task workspace: summary stats (active/overdue/completed/archived), filter toolbar, bulk toolbar, per-row priority/due/project/tag badges, pagination, an edit modal with all fields, and a "Manage" modal for projects and tags. Added reusable `x-ui.stat`. All copy in `lang/en/todos.php`; pickers only list the user's own resources.
+
+### Testing
+
+- Added `ProjectTest` (7), `TagTest` (6), `TodoOrganizationTest` (18): creation with organization data, ownership-safe project/tag assignment (foreign refs dropped), per-field validation, project/tag/priority/search filtering with cross-user isolation, LIKE-wildcard literal handling, due-date buckets + overdue summary, priority sorting, sort-injection fallback, and bulk actions that can't touch another user's tasks.
+- Enriched the seeder: two users each with projects (incl. archived), tags, and tasks across all states (today/overdue/upcoming/high-priority/completed/archived).
+- Full suite: 113 passed (was 82).
+
+### Documentation
+
+- Added `docs/task-organization.md` covering projects, tags, priority, due-date buckets, the timezone assumption, search/filter/sort safety, bulk-action scoping, performance/indexes, and what Step 5 builds next.
+
+### Intentionally not implemented
+
+- Manual ordering, saved filter views, sub-projects, project detail pages, reminders, recurring tasks, dashboard, collaboration.
+
 ## 2026-06-05 - Step 3 Core task lifecycle
 
 ### Implemented

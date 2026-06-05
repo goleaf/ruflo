@@ -138,3 +138,13 @@ Record test/build/check results here.
 | 2026-06-06 | `mcp__laravel_boost.database_query` | Passed | Confirmed `test@example.com` has `is_admin=1` and `second@example.com` has `is_admin=0` in the local database. |
 | 2026-06-06 | `php artisan test --compact tests/Feature/Settings/MaintenanceCenterTest.php tests/Feature/FactoryCoverageTest.php tests/Feature/SeederCoverageTest.php` | Passed | Reconfirmed 17 tests, 114 assertions after local migrate/seed verification. |
 | 2026-06-06 | `php artisan test --compact` | Passed | Full suite passed with 173 tests and 631 assertions after Step 008 admin-gate hardening. |
+| 2026-06-06 | `mcp__laravel_boost.search_docs` | Passed | Reviewed Laravel 13 URL generation, signed route, filesystem URL, and Vite APP_URL/CORS guidance before the Step 009 recheck. |
+| 2026-06-06 | `mcp__laravel_boost.get_absolute_url` | Passed | Boost resolved `/`, `login`, and `maintenance.center` under `https://ruflo.test`. |
+| 2026-06-06 | `php artisan config:show app.url --no-interaction` | Passed | Runtime `app.url` resolves to `https://ruflo.test`. |
+| 2026-06-06 | `php artisan config:show filesystems.disks.public.url --no-interaction` | Passed | Public disk URL resolves to `https://ruflo.test/storage`. |
+| 2026-06-06 | `rg hardcoded-host scan` | Passed | No alternate internal localhost or HTTP `ruflo.test` URLs found; remaining hits are external source/docs/demo links, schema references, AWS example config, and HTTPS guard code. |
+| 2026-06-06 | `php artisan test --compact tests/Feature/DomainReadinessTest.php tests/Feature/Auth tests/Feature/Settings/MaintenanceCenterTest.php tests/Feature/Settings/SetupStatusTest.php` | Passed | 39 tests, 122 assertions for domain URL generation, Fortify auth, setup status, and admin-gated maintenance behavior. |
+| 2026-06-06 | `php artisan config:show app.env --no-interaction` | Passed | Runtime environment resolves to `local`. |
+| 2026-06-06 | `php artisan config:show queue.default --no-interaction` | Passed | Runtime queue default remains `sync`. |
+| 2026-06-06 | `php artisan route:list --no-interaction --path=settings` | Passed | Confirmed settings route inventory includes setup and maintenance routes. |
+| 2026-06-06 | `mcp__laravel_boost.browser_logs entries=20` | Passed | Only an old Vite reconnect message was present; no current domain/runtime browser error was found. |

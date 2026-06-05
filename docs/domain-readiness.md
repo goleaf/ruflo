@@ -41,3 +41,18 @@ Later invite, export, notification, and protected-download steps must reuse this
 ## Restricted Hosting
 
 Domain readiness does not add any worker, cron, supervisor, shell, or paid service dependency. Runtime health remains visible through the protected setup and maintenance pages.
+
+## 2026-06-06 Recheck
+
+Step 009 was rechecked from the root prompt pack and `steps/step-009-domain-and-ruflo-test-readiness.md`.
+
+Confirmed:
+
+- Boost resolves the root URL, login route, and maintenance route to `https://ruflo.test`.
+- Runtime `app.url` resolves to `https://ruflo.test`.
+- Public storage URLs resolve under `https://ruflo.test/storage`.
+- Runtime environment remains `local` and queue default remains `sync`.
+- Settings routes include setup and admin-gated maintenance surfaces.
+- Focused domain, auth, setup, and maintenance tests pass.
+- Hardcoded-host scanning found no alternate internal localhost or HTTP `ruflo.test` URLs; remaining hits are external source/docs/demo links, schema references, AWS example config, and HTTPS guard code.
+- Browser logs only showed an old Vite reconnect message, not a current domain/runtime error.

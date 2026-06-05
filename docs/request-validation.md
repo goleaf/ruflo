@@ -26,3 +26,15 @@ Reusable business validation rules are documented in `docs/validation-rules.md`.
 ## Localization
 
 Auth validation attributes and custom auth validation messages are translated in `lang/en/auth.php`.
+
+## 2026-06-06 Recheck
+
+Step 014 was rechecked from `steps/step-014-dedicated-request-classes.md`.
+
+Confirmed and updated:
+
+- The only request-driven application input boundary is Fortify authentication; there are no conventional application controllers accepting create/update/delete payloads yet.
+- `RegisterUserRequest` and `ResetUserPasswordRequest` remain the canonical rule, attribute, and message sources for Fortify registration and password reset actions.
+- Livewire-only task and settings forms stay in Livewire form objects/components because their state is not handled by controller methods.
+- Added feature coverage for the Form Request classes themselves, including authorization, rule keys, translated attributes, and the duplicate-email message.
+- Request validation tests that assert translations run in the feature suite because the unit suite does not boot Laravel's translator container.

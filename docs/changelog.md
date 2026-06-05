@@ -28,10 +28,12 @@
 ### Testing
 
 - Added Fortify route regression tests for failed registration and failed password reset validation.
+- Added direct Form Request coverage for canonical rule keys, authorization, translated attributes, and translated duplicate-email messages.
 
 ### Documentation
 
 - Added `docs/request-validation.md` describing the HTTP/Fortify request-class boundary and why Livewire-only forms stay in Livewire form objects.
+- Added the Step 014 recheck notes for the current request-driven input inventory and feature-suite placement for translated request tests.
 
 ## 2026-06-05 - Step 013 Demo users and login panel
 

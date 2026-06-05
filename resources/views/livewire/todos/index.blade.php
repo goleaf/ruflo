@@ -1,32 +1,27 @@
 <section class="mx-auto flex w-full max-w-4xl flex-col gap-6">
-    <div class="flex flex-col gap-4 border-b border-zinc-200 pb-6 dark:border-white/10 md:flex-row md:items-end md:justify-between">
-        <div class="space-y-2">
-            <flux:heading size="xl">{{ __('Mini todos') }}</flux:heading>
-            <flux:text>{{ __('Keep the current flow visible and lightweight.') }}</flux:text>
-        </div>
-
+    <x-ui.page-header :title="__('todos.pages.index.title')" :description="__('todos.pages.index.description')">
         <div class="grid grid-cols-2 gap-3 text-sm sm:min-w-72">
             <div class="rounded-lg border border-zinc-200 bg-white p-3 dark:border-white/10 dark:bg-white/5">
-                <div class="text-xs font-medium uppercase text-zinc-500 dark:text-zinc-400">{{ __('Remaining') }}</div>
-                <div class="mt-1 text-2xl font-semibold text-zinc-950 dark:text-white">{{ $this->remainingCount }}</div>
+                <div class="text-xs font-medium uppercase text-zinc-500 dark:text-zinc-400">{{ __('todos.summary.remaining') }}</div>
+                <div class="mt-1 text-2xl font-semibold text-zinc-950 dark:text-white">{{ $this->summary['remaining'] }}</div>
             </div>
 
             <div class="rounded-lg border border-zinc-200 bg-white p-3 dark:border-white/10 dark:bg-white/5">
-                <div class="text-xs font-medium uppercase text-zinc-500 dark:text-zinc-400">{{ __('Completed') }}</div>
-                <div class="mt-1 text-2xl font-semibold text-emerald-700 dark:text-emerald-300">{{ $this->completedCount }}</div>
+                <div class="text-xs font-medium uppercase text-zinc-500 dark:text-zinc-400">{{ __('todos.summary.completed') }}</div>
+                <div class="mt-1 text-2xl font-semibold text-emerald-700 dark:text-emerald-300">{{ $this->summary['completed'] }}</div>
             </div>
         </div>
-    </div>
+    </x-ui.page-header>
 
     <flux:card class="space-y-5">
         <form wire:submit="createTodo" class="flex flex-col gap-3 sm:flex-row sm:items-start">
             <div class="min-w-0 flex-1">
-                <flux:input wire:model="title" :label="__('Task')" type="text" maxlength="120" autocomplete="off" />
-                <flux:error name="title" />
+                <flux:input wire:model="form.title" :label="__('todos.fields.title')" type="text" maxlength="120" autocomplete="off" />
+                <flux:error name="form.title" />
             </div>
 
             <flux:button type="submit" variant="primary" icon="plus" class="sm:mt-6">
-                {{ __('Add') }}
+                {{ __('todos.actions.add') }}
             </flux:button>
         </form>
 
@@ -38,7 +33,7 @@
                     <flux:checkbox
                         :checked="$todo->is_completed"
                         wire:click="toggleTodo({{ $todo->id }})"
-                        :aria-label="__('Toggle todo')"
+                        :aria-label="__('todos.actions.toggle')"
                     />
 
                     <div class="min-w-0 flex-1">
@@ -57,22 +52,20 @@
                         size="sm"
                         square
                         icon="trash"
-                        tooltip="{{ __('Delete') }}"
+                        tooltip="{{ __('todos.actions.delete') }}"
                         wire:click="deleteTodo({{ $todo->id }})"
-                        :aria-label="__('Delete todo')"
+                        :aria-label="__('todos.actions.delete')"
                     />
                 </div>
             @empty
-                <div class="rounded-lg border border-dashed border-zinc-300 p-6 text-center dark:border-white/15">
-                    <flux:text>{{ __('No todos yet.') }}</flux:text>
-                </div>
+                <x-ui.empty-state :title="__('todos.empty.title')" :description="__('todos.empty.description')" />
             @endforelse
         </div>
 
-        @if ($this->completedCount > 0)
+        @if ($this->summary['completed'] > 0)
             <div class="flex justify-end">
                 <flux:button type="button" variant="subtle" size="sm" wire:click="clearCompleted">
-                    {{ __('Clear completed') }}
+                    {{ __('todos.actions.clear_completed') }}
                 </flux:button>
             </div>
         @endif

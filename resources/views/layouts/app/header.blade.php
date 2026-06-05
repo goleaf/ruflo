@@ -15,7 +15,7 @@
                 </flux:navbar.item>
 
                 <flux:navbar.item icon="check-circle" :href="route('todos.index')" :current="request()->routeIs('todos.*')" wire:navigate>
-                    {{ __('Todos') }}
+                    {{ __('todos.navigation.label') }}
                 </flux:navbar.item>
             </flux:navbar>
 
@@ -62,7 +62,7 @@
                     </flux:sidebar.item>
 
                     <flux:sidebar.item icon="check-circle" :href="route('todos.index')" :current="request()->routeIs('todos.*')" wire:navigate>
-                        {{ __('Todos') }}
+                        {{ __('todos.navigation.label') }}
                     </flux:sidebar.item>
                 </flux:sidebar.group>
             </flux:sidebar.nav>

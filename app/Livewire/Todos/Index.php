@@ -2,12 +2,18 @@
 
 namespace App\Livewire\Todos;
 
+use App\Actions\Todos\ClearCompletedTodos;
+use App\Actions\Todos\CreateTodo;
+use App\Actions\Todos\DeleteTodo;
+use App\Actions\Todos\ToggleTodoCompletion;
+use App\Livewire\Forms\Todos\TodoForm;
 use App\Models\Todo;
 use App\Models\User;
+use App\Queries\Todos\TodoListQuery;
 use Flux\Flux;
 use Illuminate\Contracts\View\View;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Title;
@@ -16,54 +22,62 @@ use Livewire\Component;
 #[Title('Todos')]
 class Index extends Component
 {
-    public string $title = '';
+    use AuthorizesRequests;
+
+    public TodoForm $form;
+
+    public function mount(): void
+    {
+        $this->authorize('viewAny', Todo::class);
+    }
 
     public function render(): View
     {
         return view('livewire.todos.index');
     }
 
-    public function createTodo(): void
+    public function createTodo(CreateTodo $createTodo): void
     {
-        $this->title = trim($this->title);
+        $this->authorize('create', Todo::class);
 
-        $validated = $this->validate([
-            'title' => ['required', 'string', 'max:120'],
-        ]);
+        $createTodo->handle(
+            $this->currentUser(),
+            $this->form->data(),
+        );
 
-        $this->currentUser()->todos()->create([
-            'title' => $validated['title'],
-        ]);
+        $this->form->reset();
 
-        $this->reset('title');
-
-        Flux::toast(variant: 'success', text: __('Todo added.'));
+        Flux::toast(variant: 'success', text: __('todos.messages.created'));
     }
 
-    public function toggleTodo(int $todoId): void
+    public function toggleTodo(int $todoId, TodoListQuery $todoListQuery, ToggleTodoCompletion $toggleTodoCompletion): void
     {
-        $todo = $this->todosForCurrentUser()->findOrFail($todoId);
+        $todo = $todoListQuery->findVisibleFor($this->currentUser(), $todoId);
 
-        $todo->update([
-            'is_completed' => ! $todo->is_completed,
-        ]);
+        $this->authorize('complete', $todo);
+
+        $toggleTodoCompletion->handle($todo);
     }
 
-    public function deleteTodo(int $todoId): void
+    public function deleteTodo(int $todoId, TodoListQuery $todoListQuery, DeleteTodo $deleteTodo): void
     {
-        $this->todosForCurrentUser()->findOrFail($todoId)->delete();
+        $todo = $todoListQuery->findVisibleFor($this->currentUser(), $todoId);
 
-        Flux::toast(variant: 'success', text: __('Todo deleted.'));
+        $this->authorize('delete', $todo);
+
+        $deleteTodo->handle($todo);
+
+        Flux::toast(variant: 'success', text: __('todos.messages.deleted'));
     }
 
-    public function clearCompleted(): void
+    public function clearCompleted(ClearCompletedTodos $clearCompletedTodos): void
     {
-        $deleted = $this->todosForCurrentUser()
-            ->where('is_completed', true)
-            ->delete();
+        $this->authorize('clearCompleted', Todo::class);
+
+        $deleted = $clearCompletedTodos->handle($this->currentUser());
 
         if ($deleted > 0) {
-            Flux::toast(variant: 'success', text: __('Completed todos cleared.'));
+            Flux::toast(variant: 'success', text: __('todos.messages.completed_cleared'));
         }
     }
 
@@ -73,34 +87,19 @@ class Index extends Component
     #[Computed]
     public function todos(): Collection
     {
-        return $this->todosForCurrentUser()
-            ->latest()
+        return app(TodoListQuery::class)
+            ->visibleFor($this->currentUser())
             ->get();
     }
 
-    #[Computed]
-    public function remainingCount(): int
-    {
-        return $this->todosForCurrentUser()
-            ->where('is_completed', false)
-            ->count();
-    }
-
-    #[Computed]
-    public function completedCount(): int
-    {
-        return $this->todosForCurrentUser()
-            ->where('is_completed', true)
-            ->count();
-    }
-
     /**
-     * @return Builder<Todo>
+     * @return array{remaining: int, completed: int}
      */
-    private function todosForCurrentUser(): Builder
+    #[Computed]
+    public function summary(): array
     {
-        return Todo::query()
-            ->whereBelongsTo($this->currentUser());
+        return app(TodoListQuery::class)
+            ->summaryFor($this->currentUser());
     }
 
     private function currentUser(): User

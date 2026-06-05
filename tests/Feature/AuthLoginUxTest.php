@@ -43,11 +43,11 @@ test('demo login panel is rendered for seeded users in safe environments', funct
         ->assertSee('data-test="demo-login-button"', false);
 });
 
-test('quick demo credentials authenticate through Fortify login', function () {
+test('seeded demo credentials authenticate through Fortify login', function (string $email) {
     seedAuthLoginUxDemoUsers();
 
     $response = $this->post(route('login.store'), [
-        'email' => 'test@example.com',
+        'email' => $email,
         'password' => (string) config('demo.login_panel.password'),
         'remember' => '1',
     ]);
@@ -57,8 +57,20 @@ test('quick demo credentials authenticate through Fortify login', function () {
         ->assertRedirect(route('dashboard', absolute: false));
 
     $this->assertAuthenticated();
-    expect(auth()->user()->email)->toBe('test@example.com');
-});
+    expect(auth()->user()->email)->toBe($email);
+})->with([
+    'primary demo user' => 'test@example.com',
+    'secondary demo user' => 'second@example.com',
+]);
+
+test('guests are redirected from private pages to login', function (string $routeName) {
+    $this->get(route($routeName))
+        ->assertRedirect(route('login'));
+})->with([
+    'dashboard' => 'dashboard',
+    'todos' => 'todos.index',
+    'profile settings' => 'profile.edit',
+]);
 
 test('demo login panel is hidden when users have not been seeded', function () {
     $this->get(route('login'))

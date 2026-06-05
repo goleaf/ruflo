@@ -2,19 +2,19 @@
 
 ## Current status
 
-Steps 001-016 are complete. The requested recheck from Step 001 has been completed through Step 012. The tracker is expanded to one ledger line per step from 001 through 100 so later work cannot be hidden behind a range.
+Steps 001-016 are complete. The requested recheck from Step 001 has been completed through Step 013. The tracker is expanded to one ledger line per step from 001 through 100 so later work cannot be hidden behind a range.
 
 ## Current step
 
-Step 013 — Demo users and login panel recheck
+Step 014 — Dedicated request classes recheck
 
 ## Last completed action
 
-Rechecked Step 012 by confirming safe demo-user seeding, idempotent per-user workspace seeding, local seeded demo data, and the intentional no-op for the placeholder `Reminder` table.
+Rechecked Step 013 by confirming Fortify login routes and config, safe demo-panel gates, both seeded demo accounts, private-route guest redirects, local password hashes, browser logs, and full-suite test coverage.
 
 ## Next action
 
-Continue the requested recheck with `steps/step-013-demo-users-and-login-panel.md`, then verify the demo login panel against the current seeded users before advancing.
+Continue the requested recheck with `steps/step-014-dedicated-request-classes.md`, then verify the dedicated request-class boundary before advancing.
 
 ## Step ledger
 
@@ -32,7 +32,7 @@ Continue the requested recheck with `steps/step-013-demo-users-and-login-panel.m
 | 010 — Authentication and login UX | Complete | Existing baseline adds a safe demo login panel and Fortify quick-login flow; rechecked on 2026-06-06 against Fortify docs, login view/action/config, safe environment gates, seeded admin/normal demo roles, production hiding, disabled-panel hiding, URL resolution, and real local password hashes. | Boost docs search, login URL check, demo database query, real hash check, AuthLogin UX/Fortify auth/seeder/maintenance/localization tests, and Pint recorded. | `docs/auth-login-ux.md`, app changelog, root progress, changelog, and test report updated. | Existing demo panel environment-gating risk remains mitigated; no new Step 010 risk found. | fded06b, 1bf1eba |
 | 011 — Complete factories for all models | Complete | Existing baseline expands model factories and factory-state coverage; rechecked on 2026-06-06 against the concrete model/factory inventory and updated to include the tracked `Reminder` placeholder factory while documenting that meaningful reminder states require future reminder columns. | Boost docs search, database schema summary, model/factory inventory, factory coverage test, todo organization tests, Pint, and full suite recorded. | `docs/factory-coverage.md`, `docs/seeding-strategy.md`, app changelog, root progress, risks, changelog, and test report updated. | Reminder placeholder schema has no meaningful state columns yet; future reminder steps must add owner/schedule/lifecycle/processing states. | 0e4acb0, f6faefd |
 | 012 — Complete seeders for all models | Complete | Existing baseline splits safe demo user seeding and idempotent workspace demo data; rechecked on 2026-06-06 against Laravel 13 seeding docs, the current seeder inventory, local demo data, and the tracked placeholder `Reminder` model. Added explicit coverage that placeholder reminder rows remain unseeded until ownership and scheduling columns exist. | Boost docs search, reminders schema inspection, focused seeder/auth/factory tests, Pint, local `db:seed`, Boost DB queries, login URL resolution, and full suite recorded. | `docs/seeding-strategy.md`, `docs/changelog.md`, root progress, changelog, decisions, risks, and test report updated. | Reminder placeholder and future-domain seeder risks remain open and documented; no new Step 012 risk found. | c82fb1d, 264b8b3 |
-| 013 — Demo users and login panel | Complete | Re-verified demo login rendering, identifiers, and quick-login contract. | Auth login UX, Fortify auth, Boost schema/URL checks, Pint, and full suite recorded. | Auth login docs and root trackers updated. | Email-only identifier decision recorded. | 709cf2d |
+| 013 — Demo users and login panel | Complete | Existing baseline re-verifies demo login rendering, identifiers, and quick-login contract; rechecked on 2026-06-06 against Fortify login docs, route/config inventory, safe environment gates, Flux panel markup, both seeded demo accounts, and real local password hashes. | Boost docs search, Fortify route/config checks, focused auth/login/dashboard/todo tests, Pint, local hash check, Boost DB query, login URL resolution, browser logs, and full suite recorded. | `docs/auth-login-ux.md`, `docs/changelog.md`, root progress, changelog, and test report updated. | Existing demo credential environment-gating risk remains mitigated; no new Step 013 risk found. | 709cf2d plus Step 013 recheck commit |
 | 014 — Dedicated request classes | Complete | Added auth Form Request classes and wired Fortify rule sources. | Registration/password reset tests, Fortify auth suite, Pint, and full suite recorded. | Request validation docs and root trackers updated. | Request helper naming risk mitigated. | 2dc906d |
 | 015 — Reusable custom validation rules | Complete | Added reusable owned project/tag/todo rules and applied Livewire validation boundaries. | Todo organization, lifecycle/ownership tests, Pint, and full suite recorded. | Validation rules docs and root trackers updated. | Future-domain custom rules deferred until those domains exist. | f0174e4 |
 | 016 — English localization and message cleanup | Complete | Finished navigation, dashboard, welcome, settings, Livewire action messages, page titles, and localization regression tests through English language files. | Localization/settings/dashboard checks, literal scan, Pint, and full suite passed. | `docs/localization.md`, changelog, checklist, decisions, risks, test report, and explicit 001-100 progress ledger updated. | Localization scanner limitation documented and mitigated. | f346426, 445fc11, be3329c |

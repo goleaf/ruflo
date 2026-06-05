@@ -44,10 +44,12 @@
 ### Testing
 
 - Expanded the login UX test to assert rendered demo roles and per-user descriptions.
+- Rechecked both seeded demo accounts authenticate through Fortify and private pages redirect guests to login.
 
 ### Documentation
 
 - Updated `docs/auth-login-ux.md` with the email-only login identifier contract.
+- Added the Step 013 recheck notes for Fortify routes, Flux demo panel behavior, seeded local hashes, and guest redirects.
 
 ## 2026-06-05 - Step 012 Complete seeders for all models
 

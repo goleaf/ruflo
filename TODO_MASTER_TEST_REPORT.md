@@ -170,3 +170,13 @@ Record test/build/check results here.
 | 2026-06-06 | `mcp__laravel_boost.database_query` | Passed | Local DB has `reminders_count=0`; configured demo users each have 3 projects, 2 tags, and 7 todos, with `test@example.com` admin and `second@example.com` non-admin. |
 | 2026-06-06 | `mcp__laravel_boost.get_absolute_url route=login` | Passed | Boost resolved the login route as `https://ruflo.test/login`. |
 | 2026-06-06 | `php artisan test --compact` | Passed | Full suite passed with 173 tests and 637 assertions after Step 012 seeder coverage updates. |
+| 2026-06-06 | `mcp__laravel_boost.search_docs` | Passed | Reviewed Fortify login view, username field, authentication pipeline, throttling, redirects, and guest-route behavior before the Step 013 recheck. |
+| 2026-06-06 | `php artisan route:list --no-interaction --path=login` | Passed | Confirmed Fortify owns GET/POST login routes plus passkey login routes. |
+| 2026-06-06 | `php artisan config:show app.env demo.login_panel.enabled fortify.username fortify.home` | Passed | Runtime resolves to local, demo panel enabled, Fortify username `email`, and home `/dashboard`. |
+| 2026-06-06 | `php artisan test --compact tests/Feature/AuthLoginUxTest.php tests/Feature/Auth/AuthenticationTest.php tests/Feature/DashboardTest.php tests/Feature/TodoTest.php` | Passed | 25 tests, 91 assertions for local/demo panel gates, both seeded demo logins through Fortify, production hiding, disabled hiding, and private-route guest redirects. |
+| 2026-06-06 | `vendor/bin/pint --dirty --format agent` | Passed | PHP style passed after Step 013 login UX test updates. |
+| 2026-06-06 | `php artisan tinker --execute Hash::check demo users` | Passed | Confirmed `test@example.com` and `second@example.com` both authenticate with `password`; primary is admin and secondary is normal. |
+| 2026-06-06 | `mcp__laravel_boost.database_query` | Passed | Confirmed local seeded demo users remain `test@example.com` with `is_admin=1` and `second@example.com` with `is_admin=0`. |
+| 2026-06-06 | `mcp__laravel_boost.get_absolute_url route=login` | Passed | Boost resolved the login route as `https://ruflo.test/login` during the Step 013 recheck. |
+| 2026-06-06 | `mcp__laravel_boost.browser_logs entries=20` | Passed | Only an old Vite reconnect message was present; no current login/runtime browser error was found. |
+| 2026-06-06 | `php artisan test --compact` | Passed | Full suite passed with 177 tests and 648 assertions after Step 013 login UX coverage updates. |

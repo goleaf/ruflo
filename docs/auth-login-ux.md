@@ -36,7 +36,7 @@ The environment gate is the primary safety boundary. A production deployment mis
 
 Login-page copy added in Step 010 lives in `lang/en/auth.php`. New visible login text should continue to use translation keys instead of inline fallback strings.
 
-## 2026-06-06 Recheck
+## 2026-06-06 Rechecks
 
 Step 010 was rechecked from the root prompt pack and `steps/step-010-authentication-and-login-ux.md`.
 
@@ -47,3 +47,13 @@ Confirmed and updated:
 - Demo quick-login buttons submit the configured email and fixed demo password through Fortify; there is no production bypass.
 - Demo-user tests now use the same factory states as the seeder.
 - The primary demo user is shown as the admin workspace and the secondary demo user remains a normal isolation workspace.
+
+Step 013 was rechecked from `steps/step-013-demo-users-and-login-panel.md`.
+
+Confirmed and updated:
+
+- Fortify still owns the login GET and POST routes, with `email` as the configured username field and `/dashboard` as the authenticated home path.
+- The demo panel uses Flux UI elements and normal POST forms; it does not use Livewire state or a custom login bypass.
+- Both configured seeded demo users authenticate through Fortify with the fixed local/demo password.
+- Private dashboard, todo, and profile settings routes redirect guests to the login route.
+- The real local database still has `test@example.com` as the admin demo user and `second@example.com` as a normal demo user.

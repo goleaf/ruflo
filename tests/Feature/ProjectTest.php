@@ -34,6 +34,34 @@ it('rejects an empty project name', function () {
         ->assertHasErrors(['newProjectName' => 'required']);
 });
 
+it('lets a user rename their own project', function () {
+    $user = User::factory()->create();
+    $project = Project::factory()->for($user)->create(['name' => 'Old name']);
+
+    Livewire::actingAs($user)->test(Index::class)
+        ->call('startRenameProject', $project->id)
+        ->assertSet('editingProjectName', 'Old name')
+        ->set('editingProjectName', 'New name')
+        ->call('saveProjectName')
+        ->assertHasNoErrors()
+        ->assertSet('editingProjectId', null);
+
+    expect($project->fresh()->name)->toBe('New name');
+});
+
+it('rejects an empty project rename', function () {
+    $user = User::factory()->create();
+    $project = Project::factory()->for($user)->create(['name' => 'Keep name']);
+
+    Livewire::actingAs($user)->test(Index::class)
+        ->call('startRenameProject', $project->id)
+        ->set('editingProjectName', '')
+        ->call('saveProjectName')
+        ->assertHasErrors(['editingProjectName' => 'required']);
+
+    expect($project->fresh()->name)->toBe('Keep name');
+});
+
 it('denies project access to non-owners', function () {
     $owner = User::factory()->create();
     $intruder = User::factory()->create();
@@ -60,6 +88,9 @@ it('forbids archiving or deleting another users project', function () {
     $owner = User::factory()->create();
     $intruder = User::factory()->create();
     $project = Project::factory()->for($owner)->create();
+
+    expect(fn () => Livewire::actingAs($intruder)->test(Index::class)->call('startRenameProject', $project->id))
+        ->toThrow(ModelNotFoundException::class);
 
     expect(fn () => Livewire::actingAs($intruder)->test(Index::class)->call('archiveProject', $project->id))
         ->toThrow(ModelNotFoundException::class);

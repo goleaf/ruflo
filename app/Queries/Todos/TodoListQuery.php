@@ -3,6 +3,7 @@
 namespace App\Queries\Todos;
 
 use App\Enums\TodoStatus;
+use App\Models\Project;
 use App\Models\Todo;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
@@ -75,9 +76,11 @@ final class TodoListQuery
         }
 
         match ($filters->due) {
-            'today' => $query->whereDate('due_date', today()),
-            'overdue' => $query->whereNotNull('due_date')->whereDate('due_date', '<', today()),
-            'upcoming' => $query->whereDate('due_date', '>', today()),
+            'today' => $query->dueToday(),
+            'overdue' => $query->overdue(),
+            'upcoming' => $query->upcoming(),
+            'with' => $query->whereNotNull('due_date'),
+            'without' => $query->whereNull('due_date'),
             default => null,
         };
 
@@ -146,7 +149,19 @@ final class TodoListQuery
             'priority' => $query
                 ->orderByRaw("case priority when 'urgent' then 3 when 'high' then 2 when 'normal' then 1 else 0 end ".$direction)
                 ->orderByDesc('created_at'),
+            'project' => $query
+                ->orderByRaw('project_id is null')
+                ->orderBy(
+                    Project::query()
+                        ->select('name')
+                        ->whereColumn('projects.id', 'todos.project_id')
+                        ->whereColumn('projects.user_id', 'todos.user_id')
+                        ->limit(1),
+                    $direction,
+                )
+                ->orderByDesc('created_at'),
             'title' => $query->orderBy('title', $direction),
+            'updated' => $query->orderBy('updated_at', $direction),
             default => $query->orderBy('created_at', $direction),
         };
     }

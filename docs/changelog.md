@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-06-05 - Step 4 stabilization
+
+### Implemented
+
+- Added project rename support in the management modal with owner-scoped lookup,
+  authorization, validation attributes, and tests.
+- Added bulk restore and bulk move actions. Both re-scope selected IDs to the
+  current user; bulk move validates the target project belongs to the user and
+  is active.
+- Added due-date "with/without" filters, project-name sorting, safer validation
+  for selected IDs, and empty-state copy driven by the active filter context.
+
+### Testing
+
+- Full suite: 122 passed.
+
 ## 2026-06-05 - Step 4 Task organization, filters, search, sorting, bulk actions
 
 ### Implemented

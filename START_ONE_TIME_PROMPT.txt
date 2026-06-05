@@ -1,0 +1,26 @@
+Read `docs/todo-master-plan/MASTER_PROMPT.md` and execute it step by step.
+
+You must work through all 15 step files in numeric order.
+
+Before starting, copy the progress templates into the repository root if they do not exist:
+- TODO_MASTER_PROGRESS.md
+- TODO_MASTER_CHECKLIST.md
+- TODO_MASTER_DECISIONS.md
+- TODO_MASTER_RISKS.md
+- TODO_MASTER_TEST_REPORT.md
+- TODO_MASTER_CHANGELOG.md
+
+Continue until all steps are complete or until a real blocker is documented.
+
+Do not ask me for confirmation between steps.
+Do not require terminal/cron/jobs/artisan in final app behavior.
+Use Laravel 13 + Livewire + Flux + Tailwind 4.
+Do not use Volt.
+Use restricted-hosting web-only workflows.
+Create seeds for all models.
+Make app work at https://ruflo.test/.
+Use link-only invites.
+Show demo users on login page only in local/testing/demo.
+Use dedicated request classes and custom validation rules.
+Translate all validation/messages in English language files.
+Run tests/checks, update docs/changelog/progress, and commit after every stable step.

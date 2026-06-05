@@ -1,0 +1,30 @@
+# Final Release Checklist
+
+- [ ] App opens at https://ruflo.test/
+- [ ] Laravel 13 compatibility reviewed
+- [ ] Livewire components work
+- [ ] Flux UI is consistent
+- [ ] No Volt remains
+- [ ] No cron dependency
+- [ ] No queue worker dependency
+- [ ] No artisan dependency for normal app usage
+- [ ] Web maintenance panel exists/protected
+- [ ] Demo seeds work
+- [ ] Login demo users panel local/testing only
+- [ ] Link-only invites work
+- [ ] Email invite dependency removed
+- [ ] All request classes/rules organized
+- [ ] English translations complete
+- [ ] Private workspace works
+- [ ] Authorization policies reviewed
+- [ ] Multi-user privacy tests pass
+- [ ] Attachments private
+- [ ] Import/export private
+- [ ] Dashboard accurate
+- [ ] Recurring tasks duplicate-safe
+- [ ] Reminders web-triggered
+- [ ] UI responsive
+- [ ] Accessibility basics reviewed
+- [ ] Docs updated
+- [ ] Changelog updated
+- [ ] Final QA report written

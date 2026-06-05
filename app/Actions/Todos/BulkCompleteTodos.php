@@ -2,7 +2,9 @@
 
 namespace App\Actions\Todos;
 
+use App\Models\Todo;
 use App\Models\User;
+use Illuminate\Support\Facades\Gate;
 
 /**
  * Completes the user's active tasks among the selected ids.
@@ -25,6 +27,16 @@ final class BulkCompleteTodos
             return 0;
         }
 
-        return $user->todos()->active()->whereKey($ids)->update(['is_completed' => true]);
+        $todos = $user->todos()
+            ->active()
+            ->whereKey($ids)
+            ->get(['id', 'user_id']);
+
+        $todos->each(fn (Todo $todo) => Gate::forUser($user)->authorize('complete', $todo));
+
+        return $user->todos()
+            ->active()
+            ->whereKey($todos->modelKeys())
+            ->update(['is_completed' => true]);
     }
 }

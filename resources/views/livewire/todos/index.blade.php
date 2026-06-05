@@ -130,13 +130,17 @@
                     <flux:select.option value="today">{{ __('todos.filters.due_today') }}</flux:select.option>
                     <flux:select.option value="overdue">{{ __('todos.filters.overdue') }}</flux:select.option>
                     <flux:select.option value="upcoming">{{ __('todos.filters.upcoming') }}</flux:select.option>
+                    <flux:select.option value="with">{{ __('todos.filters.with_due_date') }}</flux:select.option>
+                    <flux:select.option value="without">{{ __('todos.filters.without_due_date') }}</flux:select.option>
                 </flux:select>
             @endif
 
             <flux:select wire:model.live="sort" :label="__('todos.filters.sort')">
                 <flux:select.option value="created">{{ __('todos.sort.created') }}</flux:select.option>
+                <flux:select.option value="updated">{{ __('todos.sort.updated') }}</flux:select.option>
                 <flux:select.option value="due">{{ __('todos.sort.due') }}</flux:select.option>
                 <flux:select.option value="priority">{{ __('todos.sort.priority') }}</flux:select.option>
+                <flux:select.option value="project">{{ __('todos.sort.project') }}</flux:select.option>
                 <flux:select.option value="title">{{ __('todos.sort.title') }}</flux:select.option>
             </flux:select>
 
@@ -159,11 +163,23 @@
                     {{ __('todos.bulk.selected', ['count' => count($selected)]) }}
                 </span>
                 <flux:spacer />
+                <div class="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
+                    <flux:select wire:model="bulkProject" :label="__('todos.bulk.move_to')" size="sm" class="min-w-48">
+                        <flux:select.option value="">{{ __('todos.fields.no_project') }}</flux:select.option>
+                        @foreach ($this->projects as $project)
+                            <flux:select.option value="{{ $project->id }}">{{ $project->name }}</flux:select.option>
+                        @endforeach
+                    </flux:select>
+                    <flux:button size="sm" variant="ghost" icon="folder-arrow-down" wire:click="bulkMove">{{ __('todos.bulk.move') }}</flux:button>
+                    <flux:error name="bulkProject" />
+                </div>
                 @if ($tab === TodoStatus::Active->value)
                     <flux:button size="sm" variant="ghost" icon="check" wire:click="bulkComplete">{{ __('todos.bulk.complete') }}</flux:button>
                 @endif
                 @if ($tab !== TodoStatus::Archived->value)
                     <flux:button size="sm" variant="ghost" icon="archive-box" wire:click="bulkArchive">{{ __('todos.bulk.archive') }}</flux:button>
+                @else
+                    <flux:button size="sm" variant="ghost" icon="archive-box-x-mark" wire:click="bulkRestore">{{ __('todos.bulk.restore') }}</flux:button>
                 @endif
                 <flux:button size="sm" variant="danger" icon="trash" wire:click="bulkDelete" wire:confirm="{{ __('todos.confirmations.bulk_delete') }}">
                     {{ __('todos.bulk.delete') }}
@@ -249,8 +265,8 @@
                 </div>
             @empty
                 <x-ui.empty-state
-                    :title="__('todos.empty.'.$tab.'.title')"
-                    :description="__('todos.empty.'.$tab.'.description')"
+                    :title="$this->emptyStateTitle()"
+                    :description="$this->emptyStateDescription()"
                 />
             @endforelse
         </div>
@@ -339,17 +355,26 @@
                 <div class="space-y-1.5">
                     @forelse ($this->allProjects as $project)
                         <div wire:key="manage-project-{{ $project->id }}" class="flex items-center gap-2 rounded-md border border-zinc-200 px-2.5 py-1.5 text-sm dark:border-white/10">
-                            <flux:badge size="sm" :color="$project->color">{{ $project->name }}</flux:badge>
-                            @if ($project->isArchived())
-                                <flux:badge size="sm" color="zinc">{{ __('todos.status.archived') }}</flux:badge>
-                            @endif
-                            <flux:spacer />
-                            @if ($project->isArchived())
-                                <flux:button size="xs" variant="ghost" wire:click="restoreProject({{ $project->id }})">{{ __('todos.actions.restore') }}</flux:button>
+                            @if ($editingProjectId === $project->id)
+                                <form wire:submit="saveProjectName" class="flex min-w-0 flex-1 items-center gap-2">
+                                    <flux:input wire:model="editingProjectName" :label="__('todos.fields.project_name')" size="sm" class="min-w-0 flex-1" />
+                                    <flux:button type="submit" size="xs" variant="primary">{{ __('todos.actions.save') }}</flux:button>
+                                    <flux:button type="button" size="xs" variant="ghost" wire:click="cancelRenameProject">{{ __('todos.actions.cancel') }}</flux:button>
+                                </form>
                             @else
-                                <flux:button size="xs" variant="ghost" wire:click="archiveProject({{ $project->id }})">{{ __('todos.actions.archive') }}</flux:button>
+                                <flux:badge size="sm" :color="$project->color">{{ $project->name }}</flux:badge>
+                                @if ($project->isArchived())
+                                    <flux:badge size="sm" color="zinc">{{ __('todos.status.archived') }}</flux:badge>
+                                @endif
+                                <flux:spacer />
+                                <flux:button size="xs" variant="ghost" icon="pencil-square" square wire:click="startRenameProject({{ $project->id }})" :aria-label="__('todos.actions.rename')" />
+                                @if ($project->isArchived())
+                                    <flux:button size="xs" variant="ghost" wire:click="restoreProject({{ $project->id }})">{{ __('todos.actions.restore') }}</flux:button>
+                                @else
+                                    <flux:button size="xs" variant="ghost" wire:click="archiveProject({{ $project->id }})">{{ __('todos.actions.archive') }}</flux:button>
+                                @endif
+                                <flux:button size="xs" variant="ghost" icon="trash" square wire:click="deleteProject({{ $project->id }})" wire:confirm="{{ __('todos.confirmations.delete_project') }}" :aria-label="__('todos.actions.delete')" />
                             @endif
-                            <flux:button size="xs" variant="ghost" icon="trash" square wire:click="deleteProject({{ $project->id }})" wire:confirm="{{ __('todos.confirmations.delete_project') }}" :aria-label="__('todos.actions.delete')" />
                         </div>
                     @empty
                         <flux:text class="text-sm">{{ __('todos.empty.projects.title') }}</flux:text>

@@ -64,6 +64,31 @@ final class TodoPolicy
         return true;
     }
 
+    public function bulkComplete(User $user): bool
+    {
+        return true;
+    }
+
+    public function bulkArchive(User $user): bool
+    {
+        return true;
+    }
+
+    public function bulkRestore(User $user): bool
+    {
+        return true;
+    }
+
+    public function bulkDelete(User $user): bool
+    {
+        return true;
+    }
+
+    public function bulkMove(User $user): bool
+    {
+        return true;
+    }
+
     /**
      * Determine whether the user can delete the model.
      */

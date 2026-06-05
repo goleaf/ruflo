@@ -36,7 +36,7 @@ final readonly class TodoFilters
      */
     public static function sortOptions(): array
     {
-        return ['created', 'due', 'priority', 'title'];
+        return ['created', 'updated', 'due', 'priority', 'project', 'title'];
     }
 
     /**
@@ -46,6 +46,6 @@ final readonly class TodoFilters
      */
     public static function dueOptions(): array
     {
-        return ['today', 'overdue', 'upcoming'];
+        return ['today', 'overdue', 'upcoming', 'with', 'without'];
     }
 }

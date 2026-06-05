@@ -7,12 +7,12 @@ use App\Models\User;
 use Illuminate\Support\Facades\Gate;
 
 /**
- * Soft-deletes the user's tasks among the selected ids.
+ * Restores the user's archived tasks among the selected ids.
  *
- * Re-scoped to the user's own tasks so foreign ids are silently excluded.
- * Deletion is soft (recoverable by design); returns the number deleted.
+ * Foreign ids and non-archived ids are excluded before authorization and
+ * mutation. Completion state is preserved, matching single-task restore.
  */
-final class BulkDeleteTodos
+final class BulkRestoreTodos
 {
     /**
      * @param  list<int>  $ids
@@ -24,13 +24,15 @@ final class BulkDeleteTodos
         }
 
         $todos = $user->todos()
+            ->archived()
             ->whereKey($ids)
             ->get(['id', 'user_id']);
 
-        $todos->each(fn (Todo $todo) => Gate::forUser($user)->authorize('delete', $todo));
+        $todos->each(fn (Todo $todo) => Gate::forUser($user)->authorize('restore', $todo));
 
         return $user->todos()
+            ->archived()
             ->whereKey($todos->modelKeys())
-            ->delete();
+            ->update(['archived_at' => null]);
     }
 }

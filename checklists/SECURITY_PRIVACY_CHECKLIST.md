@@ -1,0 +1,23 @@
+# Security and Privacy Checklist
+
+- [ ] Guest cannot access private pages
+- [ ] User cannot access another user's private tasks
+- [ ] User cannot access another user's projects/tags
+- [ ] User cannot see another user's dashboard data
+- [ ] User cannot see another user's activity
+- [ ] User cannot download another user's attachments
+- [ ] User cannot export another user's data
+- [ ] User cannot import into another user's workspace
+- [ ] Search does not leak private data
+- [ ] Filters do not leak private data
+- [ ] Bulk actions cannot affect unauthorized data
+- [ ] Removed collaborators lose access
+- [ ] Expired/cancelled invites do not work
+- [ ] Link-only invites are safe
+- [ ] File uploads validate type/size/content
+- [ ] Private files not public
+- [ ] CSV export prevents formula injection
+- [ ] Imported content is escaped/sanitized
+- [ ] No hardcoded secrets
+- [ ] No debug output
+- [ ] No stack traces exposed

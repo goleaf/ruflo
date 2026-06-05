@@ -19,8 +19,8 @@ actions. Everything here is owner-scoped on top of the model in
 
 - A task belongs to at most one project. A task with no project is valid and
   filterable ("No project").
-- Projects can be **archived** (hidden from active pickers/filters, reversible)
-  or **deleted**. Deleting a project **never deletes its tasks** — the
+- Projects can be **renamed**, **archived** (hidden from active pickers/filters,
+  reversible), **restored**, or **deleted**. Deleting a project **never deletes its tasks** — the
   `project_id` FK is `nullOnDelete`, so the tasks fall back to "No project".
 - `project_id` is **not** mass-assignable. `CreateTodo`/`UpdateTodo` set it
   directly only after re-scoping it to the user (`ResolvesTodoOrganization`),
@@ -74,8 +74,9 @@ the (sanitized) filter object.
   tag, priority, and due bucket. Every filter value is sanitized in the
   component's `buildFilters()` before it reaches the query: unknown enum/sort/
   due values fall back to safe defaults and can never widen scope.
-- **Sorting** — `created`, `due` (nulls last), `priority` (by weight via a
-  bounded `CASE`), or `title`, each asc/desc. The sort key is validated against
+- **Sorting** — `created`, `updated`, `due` (nulls last), `priority` (by weight
+  via a bounded `CASE`), `project` (by owned project name, ungrouped tasks last),
+  or `title`, each asc/desc. The sort key is validated against
   an allow-list, so a tampered `?sort=` string can never inject SQL — it falls
   back to `created`. (Tested with an injection-style value.)
 - **Pagination** — the list is paginated (15/page) via `WithPagination`; it
@@ -86,15 +87,19 @@ page and clears the bulk selection.
 
 ## Bulk actions
 
-`BulkCompleteTodos`, `BulkArchiveTodos`, `BulkDeleteTodos` each take the user
-plus a list of selected ids and **re-scope the selection to the user's own
-tasks inside the query** (`$user->todos()->…->whereKey($ids)`). Consequences:
+`BulkCompleteTodos`, `BulkArchiveTodos`, `BulkRestoreTodos`, `BulkMoveTodos`,
+and `BulkDeleteTodos` each take the user plus a list of selected ids and
+**re-scope the selection to the user's own tasks inside the query**
+(`$user->todos()->…->whereKey($ids)`). Consequences:
 
 - A foreign id in the payload is silently excluded — a bulk action can never
   touch another user's task. (Tested by mixing an intruder's id into the
   selection.)
 - Bulk complete only affects **active** tasks; bulk archive only **non-archived**
   tasks — meaningless transitions are no-ops, not errors.
+- Bulk restore only affects archived tasks and preserves completion state.
+- Bulk move updates only owned tasks and only accepts an owned, active target
+  project; an empty target moves tasks back to "No project".
 - Bulk delete is soft (recoverable) and confirmed in the UI.
 
 ## UI
@@ -105,7 +110,8 @@ tasks inside the query** (`$user->todos()->…->whereKey($ids)`). Consequences:
   (red overdue / amber today / zinc upcoming), project, and tags.
 - A filter toolbar (search, project, tag, priority, due, sort, direction,
   reset), a bulk toolbar that appears on selection, and a "Manage" modal for
-  creating/archiving/deleting projects and creating/deleting tags.
+  creating/renaming/archiving/restoring/deleting projects and creating/deleting
+  tags.
 - All text is translatable via `lang/en/todos.php`. Project/tag pickers only
   ever list the current user's own resources.
 

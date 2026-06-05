@@ -64,14 +64,18 @@ return [
         'due_today' => 'Due today',
         'overdue' => 'Overdue',
         'upcoming' => 'Upcoming',
+        'with_due_date' => 'With due date',
+        'without_due_date' => 'Without due date',
         'sort' => 'Sort by',
         'direction' => 'Order',
     ],
 
     'sort' => [
         'created' => 'Created',
+        'updated' => 'Updated',
         'due' => 'Due date',
         'priority' => 'Priority',
+        'project' => 'Project',
         'title' => 'Title',
         'asc' => 'Ascending',
         'desc' => 'Descending',
@@ -88,15 +92,21 @@ return [
         'delete' => 'Delete',
         'more' => 'More actions',
         'manage' => 'Manage',
+        'rename' => 'Rename',
         'clear_completed' => 'Clear completed',
         'clear_filters' => 'Reset',
     ],
 
     'bulk' => [
         'selected' => ':count selected',
+        'selected_items' => 'selected tasks',
+        'selected_item' => 'selected task',
         'select_one' => 'Select task',
         'complete' => 'Complete',
         'archive' => 'Archive',
+        'restore' => 'Restore',
+        'move_to' => 'Move to',
+        'move' => 'Move',
         'delete' => 'Delete',
     ],
 
@@ -121,6 +131,41 @@ return [
             'title' => 'Your archive is empty.',
             'description' => 'Archive a task to set it aside without deleting it.',
         ],
+        'search' => [
+            'title' => 'No matching tasks.',
+        ],
+        'filtered' => [
+            'description' => 'Clear search or reset filters to widen the list.',
+        ],
+        'due' => [
+            'today' => [
+                'title' => 'No tasks due today.',
+            ],
+            'overdue' => [
+                'title' => 'No overdue tasks.',
+            ],
+            'upcoming' => [
+                'title' => 'No upcoming tasks.',
+            ],
+            'with' => [
+                'title' => 'No tasks with a due date.',
+            ],
+            'without' => [
+                'title' => 'No tasks without a due date.',
+            ],
+        ],
+        'priority' => [
+            'title' => 'No :priority priority tasks.',
+        ],
+        'project' => [
+            'title' => 'No tasks in this project.',
+        ],
+        'project_none' => [
+            'title' => 'No tasks without a project.',
+        ],
+        'tag' => [
+            'title' => 'No tasks with this tag.',
+        ],
         'projects' => [
             'title' => 'No projects yet.',
         ],
@@ -140,6 +185,7 @@ return [
         'cannot_toggle_archived' => 'Restore this task before completing or reopening it.',
         'cannot_edit_archived' => 'Restore this task before editing it.',
         'project_created' => 'Project created.',
+        'project_updated' => 'Project updated.',
         'project_deleted' => 'Project deleted.',
         'tag_created' => 'Tag created.',
         'tag_deleted' => 'Tag deleted.',

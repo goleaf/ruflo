@@ -129,5 +129,10 @@ it('lets any authenticated user act inside their own workspace', function () {
 
     expect($gate->allows('viewAny', Todo::class))->toBeTrue()
         ->and($gate->allows('create', Todo::class))->toBeTrue()
-        ->and($gate->allows('clearCompleted', Todo::class))->toBeTrue();
+        ->and($gate->allows('clearCompleted', Todo::class))->toBeTrue()
+        ->and($gate->allows('bulkComplete', Todo::class))->toBeTrue()
+        ->and($gate->allows('bulkArchive', Todo::class))->toBeTrue()
+        ->and($gate->allows('bulkRestore', Todo::class))->toBeTrue()
+        ->and($gate->allows('bulkMove', Todo::class))->toBeTrue()
+        ->and($gate->allows('bulkDelete', Todo::class))->toBeTrue();
 });

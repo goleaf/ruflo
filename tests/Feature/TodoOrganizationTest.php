@@ -178,6 +178,32 @@ it('buckets tasks into today, overdue, and upcoming (active only)', function () 
         ->and($upcoming->isOverdue())->toBeFalse();
 });
 
+it('supports with and without due date filters for active tasks', function () {
+    $user = User::factory()->create();
+    Todo::factory()->for($user)->dueOn()->create(['title' => 'Planned']);
+    Todo::factory()->for($user)->create(['title' => 'Unplanned']);
+
+    Livewire::actingAs($user)->test(Index::class)
+        ->set('due', 'with')
+        ->assertSee('Planned')
+        ->assertDontSee('Unplanned')
+        ->set('due', 'without')
+        ->assertSee('Unplanned')
+        ->assertDontSee('Planned');
+});
+
+it('ignores due bucket query parameters outside the active tab', function () {
+    $user = User::factory()->create();
+    Todo::factory()->for($user)->overdue()->create(['title' => 'Active late']);
+    Todo::factory()->for($user)->overdue()->completed()->create(['title' => 'Completed late']);
+
+    Livewire::withQueryParams(['tab' => 'completed', 'due' => 'overdue'])
+        ->actingAs($user)
+        ->test(Index::class)
+        ->assertSee('Completed late')
+        ->assertDontSee('Active late');
+});
+
 it('does not count completed or archived tasks as overdue in the summary', function () {
     $user = User::factory()->create();
     Todo::factory()->for($user)->overdue()->create();
@@ -204,6 +230,22 @@ it('sorts by priority weight, most important first', function () {
         ->pluck('title')->all();
 
     expect($titles)->toBe(['Urgent', 'Normal', 'Low']);
+});
+
+it('sorts by project name with tasks without a project last', function () {
+    $user = User::factory()->create();
+    $beta = Project::factory()->for($user)->create(['name' => 'Beta']);
+    $alpha = Project::factory()->for($user)->create(['name' => 'Alpha']);
+
+    Todo::factory()->for($user)->create(['title' => 'Loose']);
+    Todo::factory()->for($user)->for($beta)->create(['title' => 'Beta task']);
+    Todo::factory()->for($user)->for($alpha)->create(['title' => 'Alpha task']);
+
+    $titles = app(TodoListQuery::class)
+        ->filtered($user, new TodoFilters(sort: 'project', direction: 'asc'))
+        ->pluck('title')->all();
+
+    expect($titles)->toBe(['Alpha task', 'Beta task', 'Loose']);
 });
 
 it('falls back to a safe sort for an unknown sort key', function () {
@@ -252,6 +294,64 @@ it('bulk archive ignores foreign ids', function () {
 
     expect($own->fresh()->isArchived())->toBeTrue()
         ->and($foreign->fresh()->isArchived())->toBeFalse();
+});
+
+it('bulk restore only restores the users own archived selected tasks', function () {
+    $owner = User::factory()->create();
+    $intruder = User::factory()->create();
+    $own = Todo::factory()->for($owner)->archived()->create();
+    $foreign = Todo::factory()->for($intruder)->archived()->create();
+
+    Livewire::actingAs($owner)->test(Index::class)
+        ->set('selected', [$own->id, $foreign->id])
+        ->call('bulkRestore');
+
+    expect($own->fresh()->isArchived())->toBeFalse()
+        ->and($foreign->fresh()->isArchived())->toBeTrue();
+});
+
+it('bulk move sends only the users own selected tasks to an owned active project', function () {
+    $owner = User::factory()->create();
+    $intruder = User::factory()->create();
+    $project = Project::factory()->for($owner)->create();
+    $own = Todo::factory()->for($owner)->create();
+    $foreign = Todo::factory()->for($intruder)->create();
+
+    Livewire::actingAs($owner)->test(Index::class)
+        ->set('selected', [$own->id, $foreign->id])
+        ->set('bulkProject', (string) $project->id)
+        ->call('bulkMove')
+        ->assertHasNoErrors();
+
+    expect($own->fresh()->project_id)->toBe($project->id)
+        ->and($foreign->fresh()->project_id)->toBeNull();
+});
+
+it('bulk move rejects a target project owned by another user', function () {
+    $owner = User::factory()->create();
+    $intruder = User::factory()->create();
+    $todo = Todo::factory()->for($owner)->create();
+    $foreignProject = Project::factory()->for($intruder)->create();
+
+    Livewire::actingAs($owner)->test(Index::class)
+        ->set('selected', [$todo->id])
+        ->set('bulkProject', (string) $foreignProject->id)
+        ->call('bulkMove')
+        ->assertHasErrors(['bulkProject']);
+
+    expect($todo->fresh()->project_id)->toBeNull();
+});
+
+it('bulk actions reject invalid selected ids before mutating tasks', function () {
+    $user = User::factory()->create();
+    $todo = Todo::factory()->for($user)->create();
+
+    Livewire::actingAs($user)->test(Index::class)
+        ->set('selected', ['not-an-id'])
+        ->call('bulkComplete')
+        ->assertHasErrors(['selected.0' => 'integer']);
+
+    expect($todo->fresh()->is_completed)->toBeFalse();
 });
 
 it('bulk delete only soft-deletes the users own selected tasks', function () {

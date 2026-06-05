@@ -72,6 +72,7 @@
 
 - Expanded user factory states for custom passwords, configured demo users, and existing auth states.
 - Expanded project and tag factory states for names, colors, archived/active projects, and common demo labels.
+- Added coverage for the current placeholder reminder factory.
 - Expanded todo factory states for lifecycle, due-date, priority, max-title, soft-delete, project, and tag relationship scenarios.
 - Added relationship helpers that preserve user ownership boundaries for project and tag-backed todos.
 

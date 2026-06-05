@@ -154,3 +154,9 @@ Record test/build/check results here.
 | 2026-06-06 | `mcp__laravel_boost.database_query` | Passed | Confirmed the local seeded demo users remain `test@example.com` with `is_admin=1` and `second@example.com` with `is_admin=0`. |
 | 2026-06-06 | `mcp__laravel_boost.get_absolute_url route=login` | Passed | Boost resolved the login route as `https://ruflo.test/login`. |
 | 2026-06-06 | `php artisan tinker --execute 'Hash::check(...)'` | Passed | Confirmed both local seeded demo users authenticate with the fixed demo password `password`. |
+| 2026-06-06 | `mcp__laravel_boost.search_docs` | Passed | Reviewed Laravel 13 factory relationships and factory state guidance before the Step 011 recheck. |
+| 2026-06-06 | `mcp__laravel_boost.database_schema summary=true` | Passed | Confirmed the current schema includes the placeholder `reminders` table with only `id` and timestamps. |
+| 2026-06-06 | `find app/Models` and `find database/factories` | Passed | Confirmed concrete model/factory inventory: User, Project, Tag, Todo, and Reminder all have matching factories. |
+| 2026-06-06 | `php artisan test --compact tests/Feature/FactoryCoverageTest.php tests/Feature/TodoOrganizationTest.php` | Passed | 37 tests, 160 assertions for factory creation, states, relationships, and ownership-safe organization behavior. |
+| 2026-06-06 | `vendor/bin/pint --dirty --format agent` | Passed | PHP style passed after Step 011 coverage updates. |
+| 2026-06-06 | `php artisan test --compact` | Passed | Full suite passed with 173 tests and 634 assertions after Step 011 factory coverage updates. |

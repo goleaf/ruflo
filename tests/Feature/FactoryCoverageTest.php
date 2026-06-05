@@ -3,6 +3,7 @@
 use App\Enums\Priority;
 use App\Enums\TodoStatus;
 use App\Models\Project;
+use App\Models\Reminder;
 use App\Models\Tag;
 use App\Models\Todo;
 use App\Models\User;
@@ -13,13 +14,15 @@ test('tracked models can be created from their default factories', function () {
     $project = Project::factory()->for($user)->create();
     $tag = Tag::factory()->for($user)->create();
     $todo = Todo::factory()->for($user)->forProject($project)->withTags($tag)->create();
+    $reminder = Reminder::factory()->create();
 
     expect($user->exists)->toBeTrue()
         ->and($project->isOwnedBy($user))->toBeTrue()
         ->and($tag->isOwnedBy($user))->toBeTrue()
         ->and($todo->isOwnedBy($user))->toBeTrue()
         ->and($todo->project_id)->toBe($project->id)
-        ->and($todo->tags()->pluck('tags.id')->all())->toBe([$tag->id]);
+        ->and($todo->tags()->pluck('tags.id')->all())->toBe([$tag->id])
+        ->and($reminder->exists)->toBeTrue();
 });
 
 test('user factory covers authentication and demo states', function () {

@@ -4,10 +4,11 @@ Step 011 covers the tracked application models:
 
 - `App\Models\User`
 - `App\Models\Project`
+- `App\Models\Reminder`
 - `App\Models\Tag`
 - `App\Models\Todo`
 
-The interrupted reminder scaffold is still untracked and is not part of the committed model inventory yet.
+`App\Models\Reminder` is currently a placeholder model with only an `id` and timestamps. Its default factory creates a valid record, but named reminder states are intentionally deferred until the reminder feature steps add owned reminder fields, lifecycle columns, and processing status.
 
 ## User Factory
 
@@ -38,6 +39,10 @@ Demo user factory states read from `config/demo.php` so the login panel, seeders
 - named and color states,
 - `urgent()` and `waiting()` demo states.
 
+## Reminder Factory
+
+`ReminderFactory` covers valid placeholder record creation for the current reminder schema. It does not define active, due, sent, failed, retry, or processed states yet because the table has no columns for those concepts.
+
 ## Todo Factory
 
 `TodoFactory` covers:
@@ -52,4 +57,4 @@ The tag helpers avoid cross-user attachment by attaching only tags that share th
 
 ## Verification
 
-`tests/Feature/FactoryCoverageTest.php` creates each tracked model through its factory and verifies the important states and ownership boundaries.
+`tests/Feature/FactoryCoverageTest.php` creates each tracked model through its factory and verifies the important current states and ownership boundaries.

@@ -7,7 +7,7 @@ Step 012 covers the committed model set:
 - `Tag`
 - `Todo`
 
-Future models for reminders, recurrence, comments, attachments, activity, invites, settings, and collaboration are not seeded yet because those committed models do not exist yet.
+The tracked `Reminder` model is currently a placeholder with no domain columns, so it is not seeded yet. Future models for recurrence, comments, attachments, activity, invites, settings, and collaboration are not seeded yet because those committed models do not exist yet.
 
 ## Seeders
 

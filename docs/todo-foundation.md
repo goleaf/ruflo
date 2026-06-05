@@ -119,6 +119,17 @@ The core invariant is: one user must never view, change, delete, restore, or inf
 
 Step 1 adds tests for owner-scoped viewing, creation, validation, toggling, soft deletion, clearing completed todos, and cross-user mutation attempts. It also adds architecture tests to keep Livewire thin and translation-based.
 
+## 2026-06-06 Recheck
+
+The Step 001 recheck confirmed the foundation still matches the current master-plan rules after Steps 002-016:
+
+- Laravel 13.14, Livewire 4.3, Flux 2.14, Fortify 1.37, Pest 4.7, Pint 1.29, and Tailwind CSS 4.3 are installed.
+- The app URL resolves to `https://ruflo.test`, the local environment is `local`, and the normal queue connection is `sync`.
+- No Volt usage was found in application, resource, route, config, package, or test files.
+- The full route inventory includes public, dashboard, todos, settings, Fortify, Livewire, Flux, passkey, and health routes.
+- Project/list creation, rename, archive, restore, deletion, no-project fallback, owner-only pickers, task movement, and cross-user isolation remain covered by feature tests.
+- The current full suite passes after Step 016 with 170 tests and 620 assertions.
+
 ## How To Run
 
 The project is served by Laravel Herd. Do not start a separate Laravel server for local browser use.
@@ -136,7 +147,7 @@ vendor/bin/pint --dirty --format agent
 
 Use `npm run dev` or `composer run dev` only when actively developing frontend assets. Neither command starts a queue worker for normal usage.
 
-## Step 2 Direction
+## Step 2 Historical Direction
 
 Step 2 should focus on ownership, private workspace, authorization, and user access rules. Recommended next work:
 

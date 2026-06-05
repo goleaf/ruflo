@@ -20,7 +20,7 @@ Start the requested recheck from Step 001 by reading `GLOBAL_RULES.md`, `steps/s
 
 | Step | Status | Notes | Tests/checks | Docs update | Risk entry | Commit |
 |---|---|---|---|---|---|---|
-| 001 — Project audit and foundation | Complete | Existing baseline establishes the Laravel todo foundation and project audit. | Full suite and route/app inspections recorded in test report. | Root progress, changelog, decisions, and todo foundation docs updated. | Prompt path risk recorded. | b69ac76 |
+| 001 — Project audit and foundation | Complete | Existing baseline establishes the Laravel todo foundation and project audit; rechecked from Step 001 on 2026-06-06. | Package, route, config, no-Volt, project/list ownership, focused tests, and full-suite evidence recorded in test report. | Root progress, changelog, decisions, and todo foundation docs updated. | Prompt path risk recorded; no new Step 001 risk found. | b69ac76 plus 2026-06-06 recheck commit |
 | 002 — Upgrade and normalize Laravel 13 stack | Complete | Existing baseline confirms Laravel 13 stack normalization. | Full suite baseline recorded. | Root docs/progress updated. | PHP 8.4 versus requested PHP 8.5 risk recorded. | e53b67c |
 | 003 — Livewire and Flux foundation | Complete | Existing baseline establishes Livewire/Flux conventions. | Full suite baseline recorded. | Root docs/progress updated. | No active Step 003 risk. | 2149412 |
 | 004 — Remove Volt and migrate to normal Livewire | Complete | Existing baseline uses normal class-based Livewire and no Volt. | Todo organization and full suite checks recorded. | Root docs/progress updated. | No active Volt risk. | b461fae |

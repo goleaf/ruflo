@@ -79,3 +79,9 @@ Record test/build/check results here.
 | 2026-06-06 | `vendor/bin/pint --dirty --format agent` | Passed | PHP style passed after Step 016 follow-up changes. |
 | 2026-06-06 | `rg compressed-progress scan` | Passed | Root progress files no longer contain the prior compressed Step 017-100 line. |
 | 2026-06-06 | `php artisan test --compact` | Passed | Full suite passed with 170 tests and 620 assertions after Step 016. |
+| 2026-06-06 | `composer show laravel/framework livewire/livewire livewire/flux laravel/fortify pestphp/pest --no-interaction` | Corrected | Composer accepts one package argument; the corrected installed-package inventory command is recorded below. |
+| 2026-06-06 | `composer show --installed --no-interaction \| rg "^(laravel/framework\|livewire/livewire\|livewire/flux\|laravel/fortify\|pestphp/pest\|phpunit/phpunit\|laravel/pint)\\s"` | Passed | Confirmed Laravel 13.14, Livewire 4.3, Flux 2.14, Fortify 1.37, Pest 4.7, PHPUnit 12.5, and Pint 1.29 for Step 001 recheck. |
+| 2026-06-06 | `php artisan route:list --no-interaction` | Passed | Confirmed 58 routes including home, dashboard, todos, settings, Fortify auth, Livewire, Flux, passkeys, storage, and health routes. |
+| 2026-06-06 | `rg Volt scan` | Passed | No Volt usage found in app, resources, routes, config, package files, or tests. |
+| 2026-06-06 | `php artisan config:show app.url/app.env/queue.default --no-interaction` | Passed | Confirmed `https://ruflo.test`, `local`, and `sync` during Step 001 recheck. |
+| 2026-06-06 | `php artisan test --compact tests/Feature/ProjectTest.php tests/Feature/TodoOrganizationTest.php tests/Feature/TodoOwnershipTest.php` | Passed | 52 tests, 168 assertions for project/list creation, archive/restore/delete behavior, task movement, no-project fallback, and cross-user ownership boundaries. |

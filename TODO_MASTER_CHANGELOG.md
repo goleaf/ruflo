@@ -21,3 +21,4 @@ Record changes after every step.
 - Completed Step 014 by adding auth Form Request classes, wiring Fortify actions to those canonical rules, translating auth validation labels/messages, and documenting the request-validation boundary.
 - Completed Step 015 by adding reusable todo ownership validation rules, applying them to task organization and bulk actions, translating failures, and documenting current versus future rule domains.
 - Completed Step 016 by moving remaining auth/settings/navigation/dashboard/welcome visible copy and Livewire action messages into English language files, adding translation-key page titles, documenting localization guardrails, expanding 001-100 progress tracking, and adding localization regression tests.
+- Rechecked Step 001 from the start of the plan, confirming package versions, routes, `https://ruflo.test`, sync queue defaults, no Volt usage, project/list ownership behavior, docs, and focused foundation tests.

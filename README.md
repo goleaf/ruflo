@@ -1,28 +1,26 @@
-# Todo Master Prompt Pack — 100 Steps
+# Todo Master Prompt Pack — 100 Ultra-Detailed Steps
 
-This package contains a 100-step master prompt plan for building a modern free Laravel Todo/Productivity application.
+This package fixes the previous problem where steps were too shallow or progress could be compressed as `grouped future step range`.
 
-## Contents
+Now every step has its own detailed `.md` file with:
 
-- `MASTER_PROMPT.md` — one master prompt.
-- `START_ONE_TIME_PROMPT.txt` — short prompt to paste into Codex.
-- `GLOBAL_RULES.md` — Laravel 13, Livewire, Flux, no Volt, free-only, restricted hosting, seeding, invites, request/translation rules.
-- `FEATURE_CATALOG.md` — full feature list.
-- `STEPS_INDEX.md` — index of all 100 step files.
-- `steps/` — 100 separate markdown step prompts.
-- `checklists/` — QA, security, release, accessibility, web-only, free-only checklists.
-- `progress-templates/` — progress files for resumable long runs.
+- purpose
+- inspection checklist
+- implementation tasks
+- Livewire/Flux UI requirements
+- request/validation/rule requirements
+- security/privacy/ownership requirements
+- restricted-hosting requirements
+- factory/seeder requirements
+- tests/checks
+- documentation updates
+- acceptance criteria
+- final response format
 
-## Usage
+The progress templates also list every step individually. No grouped `grouped future step range` line exists.
 
-Copy this folder into your Laravel project, for example:
+Copy this folder into your Laravel project as:
 
 `docs/todo-master-plan/`
 
-Then paste into Codex:
-
-`Read docs/todo-master-plan/MASTER_PROMPT.md and execute it step by step. Continue from progress files if interrupted. Do not ask confirmation between steps.`
-
-## Reality note
-
-No agent can guarantee one uninterrupted 20-200 hour run. This plan forces progress files and commits after stable steps so work can resume after interruption.
+Then paste `START_ONE_TIME_PROMPT.txt` into Codex.

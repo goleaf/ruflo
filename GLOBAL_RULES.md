@@ -1,68 +1,62 @@
-# GLOBAL RULES — Laravel Todo 100-Step Master Plan
+# GLOBAL RULES — Laravel Todo 100-Step Ultra Detailed Master Plan
 
-## Modern stack
+## Non-negotiable stack
 
-Use the newest Laravel 13 conventions, latest Livewire, Flux v2, Tailwind CSS 4, and clean SCSS only where it gives real value.
+Use Laravel 13 conventions, latest Livewire, Flux v2, Tailwind CSS 4, and clean SCSS only where useful.
 
-Use Laravel 13 as backend foundation, latest Livewire for dynamic web UI, Flux v2 as the main UI component system, Tailwind CSS 4 as the main styling layer, Vite for frontend assets, Laravel policies for authorization, dedicated request validation classes, custom validation rules, factories, seeders, tests, localization, and private storage.
+Do not use Volt. If Volt exists, remove it safely and migrate every Volt component to normal class-based Livewire components.
 
-Do not use Volt. If Volt exists, remove it safely and migrate all Volt logic to normal class-based Livewire components.
+Use Flux as the main UI system. Do not create custom messy UI when Flux already provides a clean component.
 
-Do not build old controller-heavy CRUD. Do not create custom messy UI when Flux provides a clean component. Do not hardcode visible text.
+Use Livewire for dynamic browser behavior. Do not build old controller-heavy CRUD for interactive screens.
 
-## Free-only requirement
+Use Laravel policies, dedicated request classes, custom validation rules, factories, seeders, tests, localization, private storage, and modern architecture.
 
-Use only free, open-source, first-party, self-hosted, or locally available solutions.
+## Free-only rule
 
-Do not require paid APIs, paid SaaS services, paid cloud workers, paid queue infrastructure, paid analytics, paid AI services, paid maps, paid OCR, paid external search, paid file conversion, paid email delivery, or paid automation platforms.
+Use only free, open-source, first-party, self-hosted, browser-native, or local features.
 
-If a feature normally uses paid infrastructure, implement a free local/web-only version or document it as optional and disabled.
+Do not require paid APIs, paid SaaS, paid background workers, paid analytics, paid AI, paid email, paid OCR, paid maps, paid search, paid file conversion, or paid automation platforms.
 
-## Restricted hosting
+If a feature normally needs paid infrastructure, create a free local/web-only version or document it as optional and disabled.
 
-Build for shared hosting with no SSH, terminal, cron, artisan access, queue worker, supervisor, shell scripts, long-running daemon, root access, or server configuration access.
+## Restricted hosting rule
+
+Assume no SSH, no terminal, no cron, no queue worker, no supervisor, no artisan access, no shell scripts, no root access.
 
 Everything must work through authenticated web UI.
 
-All long operations must be chunked, web-triggered, timeout-safe, resumable, and visible through Livewire progress screens.
+Long operations must be Livewire-driven, chunked, timeout-safe, resumable, retryable, visible, and documented.
 
-Do not require php artisan, cron, queue workers, or shell commands for normal production usage.
+No critical production behavior may depend on terminal commands.
 
-## Web-only processing
+## Domain, demo, seeds
 
-Replace background processing with Livewire action buttons, protected maintenance center, chunked processing, progress reports, retry buttons, resume buttons, cancel buttons where useful, on-demand reminder processing, on-demand recurring generation, web import/export wizards, web cleanup tools, and web health checks.
+The app must work at https://ruflo.test/
 
-Do not promise exact-time automation without cron/workers. Document limitations honestly.
+Create factories and seeders for every model and every important state.
 
-## Domain and demo readiness
+Login page must show local/testing/demo-only demo users with username/email and fixed demo password. Never show demo credentials in production.
 
-The app must work immediately at https://ruflo.test/
-
-All generated links must use configured app URL correctly.
-
-Create complete factories and seeders for every model and every important state.
-
-On login page, show a local/testing/demo-only demo users panel with display name, username/email, fixed demo password, role/description, and quick login usability if safe. Never show demo credentials in production.
-
-## Link-only invites
+## Invites
 
 Invites must be link-only. No email invite dependency.
 
-The UI must generate copyable invite links. Invite links must support cancellation, expiration if supported, single-use behavior if chosen, role/scope validation, and safe access.
+The UI must generate copyable invite links. Links must support cancellation, expiration if supported, and safe role/scope behavior.
 
-## Validation and localization
+## Validation and translations
 
-Every request-based action must have a dedicated request validation class where appropriate.
+Every request-based action must have a dedicated request class where appropriate.
 
-Repeated business validation must use custom validation rules.
+Repeated business validation must use reusable custom validation rules.
 
-Every visible text, validation message, error message, success message, confirmation message, field label, empty state, activity text, notification text, and setting label must be translated at least in English using current language files.
+All visible text and all validation/action messages must be translated at least in English through current language files.
 
 No hardcoded visible text.
 
-## Long-run execution
+## Progress file rule
 
-The agent must maintain progress files in repository root:
+The agent must maintain these files in repository root:
 
 - TODO_MASTER_PROGRESS.md
 - TODO_MASTER_CHECKLIST.md
@@ -71,16 +65,12 @@ The agent must maintain progress files in repository root:
 - TODO_MASTER_TEST_REPORT.md
 - TODO_MASTER_CHANGELOG.md
 
-Before each step, read progress files and current git status.
+Every step must be listed separately.
 
-After each stable step, update docs, changelog, progress files, tests/checks, and commit.
+Never write a compressed progress line such as:
 
-If interrupted, continue from progress files.
+- grouped future step range
 
-Never make one giant risky commit.
+That is forbidden.
 
-## Quality standard
-
-Every step must include project inspection, implementation, security review, privacy review, performance review, tests where possible, docs update, changelog update, progress update, git diff review, and meaningful commit.
-
-Never claim something is done if tests/checks fail without documenting it.
+Each step must have its own checkbox, status, notes, risks, tests, and commit reference when possible.

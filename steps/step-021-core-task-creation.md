@@ -1,78 +1,161 @@
 # STEP 021 — Core task creation
 
-## Goal
+## Purpose
 
-Implement task creation with authorization, validation, translations, Livewire UI, Flux forms, ownership assignment, tests, and seed states.
+Implement safe task creation with ownership, validation, Livewire, Flux, and translations.
 
-## Instructions
+This step is a separate real implementation task. Do not merge it into another step. Do not mark a range of later steps as completed. Do not write progress like `grouped future step range`. This exact step must have its own progress entry, notes, tests/checks, risks, and commit when stable.
 
-Implement this step as part of the full Laravel Todo/Productivity application.
+## Global requirements for this step
 
-Build this feature as a serious product feature, not a toy demo.
+Follow all rules from `../GLOBAL_RULES.md`.
 
-Every feature must be:
+The most important rules are:
 
-- private by default
-- authorization protected
-- validation protected
-- translated
-- responsive
-- accessible
-- tested where practical
-- documented
-- compatible with restricted hosting
-- safe for multi-user data
-- safe for shared/collaboration scope if collaboration exists
-- free and self-hosted
+- Use Laravel 13 conventions.
+- Use latest Livewire for interactive behavior.
+- Use Flux v2 as the UI component standard.
+- Use Tailwind CSS 4.
+- Use SCSS only as a clean supporting layer where useful.
+- Do not use Volt.
+- If touched code uses Volt, migrate it to normal class-based Livewire.
+- Use only free/open-source/self-hosted/browser-native solutions.
+- Support restricted hosting: no terminal, no cron, no workers, no supervisor, no artisan dependency for normal app usage.
+- Use web-triggered Livewire workflows for long or scheduled operations.
+- Use dedicated request classes and custom validation rules where appropriate.
+- Translate all visible text and all validation/action messages in English language files.
+- Keep private data private.
+- Update tests, docs, changelog, and progress files.
 
-## Web-only hosting rule
+## Before changing code, inspect
 
-If this step normally needs background workers, cron, scheduler, artisan, or shell commands, replace that behavior with:
+- task model/lifecycle, current task UI, routes, policies, validation, activity hooks, reminders, recurrence, dashboard impact.
+- current Laravel version, PHP requirement, installed packages, routes, middleware, auth stack, frontend build, tests, docs, translations, layouts, and components.
+- existing architecture conventions so new code does not create a second style.
+- places where old CRUD, hardcoded text, duplicated UI, or unsafe route logic already exists.
 
-- protected Livewire UI
-- manual process button
-- on-demand processing
-- chunked batches
-- progress screen
-- retry/resume
-- safe cancellation if useful
-- web maintenance center integration
+## Implementation tasks
 
-Do not implement a critical feature that only works through console access.
+- implement the specific task behavior for this step.
+- keep lifecycle explicit.
+- do not mix complete/archive/delete meanings.
+- update activity where useful.
+- ensure all task actions are ownership-scoped.
+- prepare a clear implementation plan before changes.
+- place code according to Laravel conventions and existing project structure.
+- make changes small enough to review and commit safely.
 
-## Mandatory checklist
+## Livewire and Flux UI requirements
 
-- [ ] Read `../GLOBAL_RULES.md`.
-- [ ] Read repository progress files.
-- [ ] Inspect current project state before changing.
-- [ ] Use Laravel 13 conventions.
-- [ ] Use latest Livewire where interactive behavior is needed.
-- [ ] Use Flux v2 components for UI consistency.
-- [ ] Use Tailwind CSS 4 and SCSS only where useful.
-- [ ] Do not use Volt.
-- [ ] Respect restricted hosting mode.
-- [ ] Use web-only Livewire processing for heavy tasks.
-- [ ] Keep everything free/open-source/self-hosted.
-- [ ] Add/update factories and seeders where relevant.
-- [ ] Add/update dedicated request classes and custom validation rules where relevant.
-- [ ] Translate all visible text and validation messages.
-- [ ] Add/update tests.
-- [ ] Review security, privacy, performance, accessibility, and UI consistency.
-- [ ] Update documentation.
-- [ ] Update changelog.
-- [ ] Update progress files.
-- [ ] Review git diff.
-- [ ] Commit with a meaningful message.
+- Flux task cards/rows/forms/modals.
+- Livewire quick actions.
+- clear status/priority/due badges.
+- empty/loading/error states.
+- use Flux components for page shells, cards, forms, buttons, alerts, modals, tabs, badges, and empty states.
+- use Livewire only where interactivity improves UX.
+- keep mobile and desktop layouts consistent.
 
-## Final report required
+## Validation and request/rule requirements
 
-At the end of this step, report:
+- Create or update a dedicated request class for request-driven actions where this step introduces or changes input handling.
+- Create or update custom validation rules for repeated business logic.
+- Keep validation messages translated.
+- Do not duplicate the same validation arrays in several controllers or Livewire components.
+- Do not allow frontend-only validation to be the only protection.
+- Preserve user input after validation failure where appropriate.
+- Show errors close to the related Flux field.
+- Translate field attributes and custom rule messages.
+- Test invalid input, edge cases, and unauthorized input.
+- Reject unsafe or unexpected request parameters.
 
+## Security, privacy, and ownership requirements
+
+- user cannot manipulate another user's task.
+- state transitions validated.
+- bulk actions item-authorized.
+- keep all private data behind authentication and policies.
+- do not trust frontend IDs or hidden fields.
+- avoid leaking details in errors, logs, notifications, or progress screens.
+
+## Restricted hosting requirements
+
+- Do not require cron.
+- Do not require queue workers.
+- Do not require artisan commands for normal usage.
+- Do not require terminal access.
+- If this feature would normally run in the background, implement a web-triggered Livewire flow.
+- Use small chunks for heavy operations.
+- Add progress, retry, resume, and failure reporting where long processing exists.
+- Add protected maintenance-center integration when this step creates maintenance-type work.
+- Document exact-time automation limitations honestly.
+- Never say that a scheduler, worker, or command will handle something unless there is a web-only fallback.
+
+## Factory and seeder requirements
+
+- Add or update factories when this feature creates or depends on a model.
+- Add named factory states for normal, edge, empty, heavy, private, shared, archived, deleted, failed, or demo states where relevant.
+- Add or update seeders so the feature can be tested immediately on `https://ruflo.test/`.
+- Make demo data realistic enough to show the UI state.
+- Ensure at least two users exist for privacy tests when private data is involved.
+- Ensure seeded data does not accidentally create global access.
+- Ensure demo credentials remain local/testing/demo only.
+- Document any seed data added.
+- Add tests or smoke checks proving factories/seeders work where practical.
+- Do not seed production-only unsafe data.
+
+## Tests/checks to add or run
+
+- create/edit/lifecycle tests.
+- invalid transition tests.
+- multi-user access denial tests.
+- add or update feature tests for the touched flow.
+- add at least one multi-user privacy test when private data is involved.
+- record test command/check results in TODO_MASTER_TEST_REPORT.md.
+
+## Documentation updates
+
+- Update the main documentation for this exact step.
+- Update changelog with this exact step name.
+- Update `TODO_MASTER_PROGRESS.md` with this exact step status.
+- Update `TODO_MASTER_CHECKLIST.md` with this exact step task list if needed.
+- Update `TODO_MASTER_DECISIONS.md` for architectural choices.
+- Update `TODO_MASTER_RISKS.md` for blockers, limitations, or unsafe tradeoffs.
+- Update `TODO_MASTER_TEST_REPORT.md` with tests/checks run.
+- Do not collapse documentation into a generic “steps remaining” sentence.
+- Document restricted-hosting behavior if this step touches processing, reminders, recurrence, imports, exports, cleanup, files, or maintenance.
+- Document free-only limitations if this step could normally use paid services.
+
+## Acceptance criteria
+
+- Step 021 is individually completed and not grouped with other steps.
+- the repository progress file marks this exact step only when this exact step is done.
+- no progress line says 'grouped future step range' or any other compressed range.
+- the feature follows Laravel 13 + Livewire + Flux + Tailwind CSS 4 rules.
+- no Volt code is introduced; touched Volt code is migrated.
+- the feature works in restricted hosting mode without cron, workers, terminal, or artisan dependency for normal usage.
+- all visible text is translated through current English language files.
+- backend authorization and ownership checks protect all private data.
+- factories/seeders are updated when this feature needs demo/test data.
+- tests/checks are run or blockers are documented honestly.
+- documentation, changelog, risk file, test report, and progress files are updated.
+- a meaningful commit is prepared after the step is stable.
+
+## Final response for this step
+
+When this step is complete, the coding agent must report:
+
+- exact step number and name
 - what was implemented
+- what was inspected
 - what files/areas changed
+- what validation/request/rule work was done
+- what Livewire/Flux UI was done
+- what security/privacy protections were added
+- what restricted-hosting fallback exists
+- what factories/seeders were added or updated
+- what translations were added or updated
 - what tests/checks/builds were run
-- what documentation was updated
+- what documentation and progress files were updated
 - what risks remain
-- what is intentionally postponed
-- next step
-
+- commit message used or prepared
+- next exact step number

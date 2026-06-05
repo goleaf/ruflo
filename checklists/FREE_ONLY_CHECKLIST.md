@@ -1,10 +1,9 @@
 # Free Only Checklist.Md
 
-- [ ] no paid APIs required
-- [ ] no paid SaaS required
-- [ ] no paid email dependency
-- [ ] no paid queue/worker/cloud dependency
-- [ ] no paid analytics
-- [ ] no paid AI service
-- [ ] no paid maps/calendar/search/OCR
-- [ ] free/self-hosted fallback documented
+- [ ] No paid APIs
+- [ ] No paid SaaS
+- [ ] No paid email dependency
+- [ ] No paid workers
+- [ ] No paid analytics
+- [ ] No paid AI
+- [ ] Free local fallback exists or feature disabled

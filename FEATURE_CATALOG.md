@@ -1,402 +1,402 @@
-# Feature Catalog — 100 Free Todo/Productivity Steps
+# Feature Catalog — 100 Ultra-Detailed Steps
 
-## 001. Project audit and foundation
+## Step 001 — Project audit and foundation
 
-Analyze the project, Laravel version, package stack, auth, frontend, routes, views, tests, docs, and current architecture. Prepare the professional Laravel 13 + Livewire + Flux foundation without building all features yet.
+Analyze the existing Laravel project deeply and prepare a clean professional foundation before feature work.
 
-## 002. Upgrade and normalize Laravel 13 stack
+## Step 002 — Upgrade and normalize Laravel 13 stack
 
-Verify or upgrade safely to Laravel 13 conventions. Remove outdated patterns, document blockers, keep behavior stable, and ensure the app follows modern Laravel structure.
+Verify or safely migrate the project toward Laravel 13 conventions and remove outdated architectural assumptions.
 
-## 003. Livewire and Flux foundation
+## Step 003 — Livewire and Flux foundation
 
-Install/verify latest Livewire and Flux v2, standardize UI components, create base layout patterns, and prepare interactive screens with class-based Livewire only.
+Prepare latest Livewire and Flux v2 as the core interactive UI stack.
 
-## 004. Remove Volt and migrate to normal Livewire
+## Step 004 — Remove Volt and migrate to normal Livewire
 
-Find every Volt usage, migrate to normal class-based Livewire components, preserve behavior, remove unused Volt dependency/config safely, update tests and docs.
+Remove Volt safely and migrate all Volt behavior to normal class-based Livewire components.
 
-## 005. Tailwind CSS 4 and SCSS design layer
+## Step 005 — Tailwind CSS 4 and SCSS design layer
 
-Standardize Tailwind CSS 4 usage and add SCSS only as a clean supporting layer for tokens, reusable helpers, print styles, and accessibility utilities.
+Standardize Tailwind CSS 4 and clean SCSS support without creating messy duplicate styling systems.
 
-## 006. Restricted hosting web-only mode
+## Step 006 — Restricted hosting web-only mode
 
-Remove assumptions about terminal, cron, workers, artisan, supervisor, and shell scripts. Prepare web-only processing patterns and maintenance UI principles.
+Convert the project mindset to restricted shared hosting with no terminal, cron, workers, supervisor, or artisan dependency.
 
-## 007. Web installer and updater
+## Step 007 — Web installer and updater
 
-Create protected web installer/updater principles for restricted hosting: environment checks, safe setup status, database readiness, migrations strategy, and no public setup risk.
+Prepare protected browser-based setup/update flows for hosting without terminal access.
 
-## 008. Protected maintenance center
+## Step 008 — Protected maintenance center
 
-Build protected web maintenance center for owner/admin: health checks, cleanup, processing status, retry/resume tools, demo seed generation, and safe cache/storage controls.
+Create a protected web maintenance center for health checks, cleanup, processing, retries, and admin-only tools.
 
-## 009. Domain and ruflo.test readiness
+## Step 009 — Domain and ruflo.test readiness
 
-Ensure the app works at https://ruflo.test/ with correct generated URLs, redirects, invite links, export links, notifications, and protected downloads.
+Make all links, redirects, invite URLs, and app flows work correctly at https://ruflo.test/.
 
-## 010. Authentication and login UX
+## Step 010 — Authentication and login UX
 
-Review auth flow, login page, local/demo credential panel, safe environment protection, quick demo login usability, and no production password exposure.
+Review and polish auth/login UX, including safe local/testing demo user access.
 
-## 011. Complete factories for all models
+## Step 011 — Complete factories for all models
 
-Create or update factories for every model, all states, edge cases, private/shared data, lifecycle states, and realistic demo content.
+Create detailed factories for every model and every meaningful state.
 
-## 012. Complete seeders for all models
+## Step 012 — Complete seeders for all models
 
-Create full seeders for every model and scenario so app is usable immediately after setup: demo users, tasks, projects, tags, reminders, recurrence, comments, attachments, settings, activity, invites.
+Create complete realistic seeders for every model and important scenario.
 
-## 013. Demo users and login panel
+## Step 013 — Demo users and login panel
 
-Show local/testing/demo-only seeded users on login page with username/email and fixed demo passwords. Never show in production.
+Show local/testing/demo-only demo users and credentials on the login page safely.
 
-## 014. Dedicated request classes
+## Step 014 — Dedicated request classes
 
-Create dedicated request validation classes for request-based actions. Keep validation out of controllers and duplicated Livewire code where appropriate.
+Move request validation into dedicated request classes where appropriate.
 
-## 015. Reusable custom validation rules
+## Step 015 — Reusable custom validation rules
 
-Create dedicated reusable rules for ownership, lifecycle, invite token, recurrence, reminder time, file upload, import/export, settings, roles, and other business validation.
+Create reusable custom validation rules for repeated business validation.
 
-## 016. English localization and message cleanup
+## Step 016 — English localization and message cleanup
 
-Translate all visible texts and errors into English using current language files. Remove hardcoded UI, validation, success, error, activity, and notification messages.
+Translate all visible text and validation/action messages into English language files.
 
-## 017. Private workspace model
+## Step 017 — Private workspace model
 
-Implement private-by-default workspace behavior. Scope all personal data to the authenticated user or allowed workspace.
+Make private workspace behavior the foundation of the Todo system.
 
-## 018. Ownership and query scoping
+## Step 018 — Ownership and query scoping
 
-Add strict ownership scopes for tasks, projects, tags, reminders, notifications, activity, comments, attachments, exports, settings, and dashboard widgets.
+Scope every private query to the current user or authorized workspace.
 
-## 019. Authorization policies
+## Step 019 — Authorization policies
 
-Create/normalize policies for every resource and action. Backend authorization is mandatory everywhere.
+Create and enforce policies for every resource and important action.
 
-## 020. Guest and route protection
+## Step 020 — Guest and route protection
 
-Protect private routes from guests. Separate public pages from private app pages. Ensure no temporary public private routes remain.
+Protect private routes/actions from guests and unsafe public access.
 
-## 021. Core task creation
+## Step 021 — Core task creation
 
-Implement task creation with authorization, validation, translations, Livewire UI, Flux forms, ownership assignment, tests, and seed states.
+Implement safe task creation with ownership, validation, Livewire, Flux, and translations.
 
-## 022. Task list and private task views
+## Step 022 — Task list and private task views
 
-Implement private task list and task detail behavior with scoped queries, pagination, empty states, loading states, and no data leakage.
+Implement private task lists and task detail views with no leakage.
 
-## 023. Task editing
+## Step 023 — Task editing
 
-Implement safe task editing with request classes/rules, Livewire forms, validation, authorization, and activity hooks.
+Implement safe task editing with validation, ownership, authorization, and activity readiness.
 
-## 024. Task completion and reopening
+## Step 024 — Task completion and reopening
 
-Implement complete/reopen lifecycle actions. Completion is not deletion. Reopen is intentional. Add tests and UI feedback.
+Implement task complete and reopen lifecycle actions clearly.
 
-## 025. Task archive and restore
+## Step 025 — Task archive and restore
 
-Implement archive/restore lifecycle actions with clear UI, confirmation where needed, scoped queries, tests, and documentation.
+Implement archive and restore behavior without confusing it with deletion.
 
-## 026. Task deletion and trash behavior
+## Step 026 — Task deletion and trash behavior
 
-Implement safe delete/trash behavior, restore/permanent delete rules if supported, confirmations, policies, and tests.
+Implement safe delete/trash behavior with restore/permanent delete rules if supported.
 
-## 027. Task lifecycle state machine
+## Step 027 — Task lifecycle state machine
 
-Define allowed state transitions, reject invalid transitions, document behavior, and test edge cases.
+Define and enforce valid task lifecycle transitions.
 
-## 028. Projects and lists
+## Step 028 — Projects and lists
 
-Add project/list organization, ownership, lifecycle, UI, filters, seed data, policies, tests, and docs.
+Add project/list organization with ownership, lifecycle, UI, and tests.
 
-## 029. Tags and labels
+## Step 029 — Tags and labels
 
-Add scoped tags/labels, assignment rules, filters, UI, validation, duplicate handling, tests, and docs.
+Add scoped tags/labels with assignment, filtering, validation, and tests.
 
-## 030. Priorities
+## Step 030 — Priorities
 
-Add priority logic with fixed translated levels, badges, filtering, sorting, validation, seeds, and tests.
+Add clear priority logic, badges, sorting, filtering, and translations.
 
-## 031. Due dates and date logic
+## Step 031 — Due dates and date logic
 
-Add due date logic, no due date state, due today, due soon, overdue, timezone principles, UI badges, tests, and docs.
+Add due dates, overdue/today/upcoming logic, localization, and validation.
 
-## 032. Today view
+## Step 032 — Today view
 
-Add today view using documented logic, private scope, recurring/reminder integration readiness, empty states, tests.
+Create a focused Today view for relevant current tasks.
 
-## 033. Overdue view
+## Step 033 — Overdue view
 
-Add overdue view, excluding completed/archived/deleted/skipped items according to rules, with tests and docs.
+Create a safe overdue view with correct lifecycle exclusions.
 
-## 034. Upcoming view
+## Step 034 — Upcoming view
 
-Add upcoming view with configurable safe range, sorted output, recurring readiness, private scope, and tests.
+Create an upcoming tasks view with a clear future window.
 
-## 035. Search
+## Step 035 — Search
 
-Add private task/project/tag search with validation, debouncing, Livewire UX, pagination, no leakage, and tests.
+Add private scoped search with validation and Livewire UX.
 
-## 036. Filters
+## Step 036 — Filters
 
-Add status/project/tag/priority/due date/completed/archived/recurring/reminder filters with safe validation and private scope.
+Add safe filter system for task attributes and states.
 
-## 037. Sorting
+## Step 037 — Sorting
 
-Add safe sorting options with validation, default ordering, no injection risk, and tests.
+Add validated safe sorting for task lists and views.
 
-## 038. Saved views
+## Step 038 — Saved views
 
-Add user-saved filters/views such as Today, Next 7 Days, High Priority, Waiting, No Due Date, and custom saved views.
+Add user-saved filters and smart task views.
 
-## 039. Bulk selection and actions
+## Step 039 — Bulk selection and actions
 
-Add bulk selection, complete/reopen/archive/restore/delete/move/tag/priority/due date actions with item-level authorization and tests.
+Add safe bulk selection and item-level authorized bulk actions.
 
-## 040. Kanban board
+## Step 040 — Kanban board
 
-Add free Livewire kanban board using statuses/projects/priorities, Flux cards, drag/drop if safe, permissions, and fallback buttons.
+Add a free Livewire Kanban board with safe status/project movement.
 
-## 041. Calendar view
+## Step 041 — Calendar view
 
-Add free calendar-style views for due dates, reminders, and recurring occurrences using self-hosted/browser-friendly logic, no paid calendar API.
+Add a self-hosted calendar-style view for tasks, reminders, and recurrence.
 
-## 042. Subtasks and checklists
+## Step 042 — Subtasks and checklists
 
-Add subtasks/checklists inside tasks with ordering, completion, nested limits, progress, permissions, and tests.
+Add subtasks/checklists inside tasks with progress and ordering.
 
-## 043. Task templates
+## Step 043 — Task templates
 
-Add reusable task/project templates, checklist templates, recurring templates, and quick-create from templates.
+Add reusable templates for tasks, projects, checklists, and routines.
 
-## 044. Quick capture inbox
+## Step 044 — Quick capture inbox
 
-Add inbox for fast task capture, later sorting into projects/tags/due dates, with Livewire quick entry UX.
+Add a fast Inbox for unsorted captured tasks and later triage.
 
-## 045. Focus mode
+## Step 045 — Focus mode
 
-Add focus mode showing 1-3 important tasks, distraction-light UI, quick complete/snooze/defer, and dashboard integration.
+Add a focused working mode for a few important tasks.
 
-## 046. Goals and milestones
+## Step 046 — Goals and milestones
 
-Add goals/milestones linked to tasks/projects with progress, due dates, priorities, and dashboard widgets.
+Add goals and milestones connected to tasks and projects.
 
-## 047. Habits tracker
+## Step 047 — Habits tracker
 
-Add free habit tracking with daily/weekly habits, streaks, check-ins, recurrence integration, and no paid services.
+Add habit tracking with daily/weekly check-ins and streaks.
 
-## 048. Pomodoro/focus timer
+## Step 048 — Pomodoro focus timer
 
-Add browser-based Pomodoro/focus timer tied to tasks, with local/session state and optional stored time logs.
+Add browser-based Pomodoro/focus timer linked to tasks.
 
-## 049. Time tracking
+## Step 049 — Time tracking
 
-Add manual and timer-based time tracking per task/project, reports, edits, permissions, and no external services.
+Add manual/timer-based time tracking for tasks and projects.
 
-## 050. Waiting/blocker/dependency system
+## Step 050 — Waiting blocker dependency system
 
-Add blocked/waiting states, task dependencies, blockers, dependency validation, and smart views.
+Add task blockers, waiting states, and dependencies.
 
-## 051. Smart views and cleanup views
+## Step 051 — Smart views and cleanup views
 
-Add smart views for stale tasks, no due date, overdue high priority, recently changed, abandoned projects, and cleanup suggestions.
+Add smart cleanup views for stale, unplanned, blocked, and risky tasks.
 
-## 052. Automation rules web-only
+## Step 052 — Automation rules web-only
 
-Add simple local automation rules triggered by user actions/web visits, no cron/workers: when completed, when due today, when priority high, etc.
+Add simple web-triggered automations without cron or workers.
 
-## 053. Manual web processing engine
+## Step 053 — Manual web processing engine
 
-Create generic Livewire chunk processing engine for imports, exports, reminders, recurrence, cleanup, and maintenance tasks.
+Create reusable chunked Livewire processing engine for long operations.
 
-## 054. Reminder system web-mode
+## Step 054 — Reminder system web-mode
 
-Implement reminders processed on app visit/manual trigger, with in-app notifications, skipped states, preferences, and tests.
+Implement reminders using on-demand/web-triggered processing.
 
-## 055. Notification center
+## Step 055 — Notification center
 
-Add in-app notification center with unread/read, safe links, preferences, privacy scope, and no email dependency.
+Add private in-app notification center and read/unread flow.
 
-## 056. Daily summary dashboard
+## Step 056 — Daily summary dashboard
 
-Add dashboard daily summary instead of cron email: today, overdue, upcoming, high priority, reminders, recurring, habits.
+Add daily summary dashboard widget instead of cron-based emails.
 
-## 057. Recurring task rules
+## Step 057 — Recurring task rules
 
-Add recurrence rules: daily, weekly, monthly, custom intervals, safe generation window, and validation.
+Add recurring task repeat rules with validation and clear summaries.
 
-## 058. Recurring occurrence generation
+## Step 058 — Recurring occurrence generation
 
-Add idempotent on-demand occurrence generation, duplicate prevention, limited future window, web processing, and tests.
+Add duplicate-safe on-demand recurring occurrence generation.
 
-## 059. Recurring exceptions
+## Step 059 — Recurring exceptions
 
-Add skipped, edited, moved, archived, completed recurring occurrence exceptions with safe UI and docs.
+Add skipped/edited/moved recurrence exceptions.
 
-## 060. Recurring edit occurrence vs series
+## Step 060 — Recurring edit occurrence versus series
 
-Implement clear UI and backend rules for editing one occurrence, future occurrences if supported, or entire series.
+Add clear edit-one/edit-series recurrence behavior.
 
-## 061. Dashboard foundation
+## Step 061 — Dashboard foundation
 
-Build dashboard cards/widgets with today, overdue, upcoming, priority, reminders, recurring, goals, habits, projects, time tracking.
+Build dashboard widgets for today, overdue, upcoming, priorities, reminders, recurrence, goals, habits, projects, and time.
 
-## 062. Dashboard customization
+## Step 062 — Dashboard customization
 
-Allow user to show/hide/reorder widgets, choose compact/detailed mode, include/exclude shared tasks, and persist preferences.
+Allow users to show/hide/reorder dashboard widgets safely.
 
-## 063. Project progress dashboard
+## Step 063 — Project progress dashboard
 
-Add project/list progress, overdue per project, completion ratio, and cleanup hints with optimized scoped queries.
+Add project/list progress widgets and cleanup signals.
 
-## 064. Reports overview
+## Step 064 — Reports overview
 
-Add free local reports: completed tasks, time tracked, habits streaks, project progress, overdue trends, no paid analytics.
+Add local free reports for productivity, habits, projects, time, and overdue trends.
 
-## 065. Charts without paid services
+## Step 065 — Charts without paid services
 
-Add simple self-hosted/browser charts if needed using free libraries or CSS/SVG, accessible text summaries, and no external paid analytics.
+Add simple accessible charts using free/local browser options.
 
-## 066. Activity history
+## Step 066 — Activity history
 
-Track meaningful changes: task lifecycle, project/tag/reminder/recurrence/comment/attachment/import/export/settings/collaboration events.
+Track meaningful activity across the system.
 
-## 067. Task timeline UI
+## Step 067 — Task timeline UI
 
-Add task timeline with Flux components, pagination/load more, safe deleted-object handling, translations, and tests.
+Add task timeline UI with pagination and safe deleted-object handling.
 
-## 068. Collaboration foundation
+## Step 068 — Collaboration foundation
 
-Add shared projects/lists, roles, permissions, members, private-by-default rules, and role-based UI.
+Add shared projects/lists with roles and private-by-default rules.
 
-## 069. Link-only invite system
+## Step 069 — Link-only invite system
 
-Implement copyable link-only invites, no emails, expiration/cancellation/single-use if chosen, role/scope validation, tests.
+Implement copyable link-only invites with no email dependency.
 
-## 070. Member management
+## Step 070 — Member management
 
-Add member list, role badges, role changes, remove member, access revocation, activity, and tests.
+Add member list, roles, role changes, removal, and access revocation.
 
-## 071. Shared dashboard/search/filter scope
+## Step 071 — Shared dashboard search filter scope
 
-Ensure shared tasks/projects appear only where allowed in dashboard/search/filters/activity/notifications.
+Make dashboard/search/filters safe for private plus shared scope.
 
-## 072. Comments
+## Step 072 — Comments
 
-Add task comments with permissions, editing/deletion, activity, notifications, pagination, XSS safety, and tests.
+Add task comments with permissions, activity, notifications, and XSS safety.
 
-## 073. Mentions
+## Step 073 — Mentions
 
-Add mention suggestions only for allowed users, mention notifications, no leakage, and no access grant by mention unless explicitly designed.
+Add safe mentions for allowed users only.
 
-## 074. Comment moderation
+## Step 074 — Comment moderation
 
-Add owner/manager moderation rules, deleted/hidden states, activity, and safe UI.
+Add comment moderation, hidden/deleted states, and role rules.
 
-## 075. Attachments
+## Step 075 — Attachments
 
-Add private task/comment attachments with upload validation, private storage, protected downloads/previews, and role permissions.
+Add private task/comment attachments with protected downloads.
 
-## 076. Image handling
+## Step 076 — Image handling
 
-Add safe image validation/optimization/thumbnails only if safe on shared hosting, with web processing fallback and no public leakage.
+Add safe image validation, optional optimization, and protected thumbnails.
 
-## 077. Storage and cleanup center
+## Step 077 — Storage and cleanup center
 
-Add storage usage page, orphan cleanup, expired export cleanup, temp file cleanup, and no terminal requirement.
+Add storage usage, orphan cleanup, temp cleanup, and expired file cleanup tools.
 
-## 078. Import wizard
+## Step 078 — Import wizard
 
-Add Livewire import wizard: upload, validate, preview, duplicate detection, confirm, chunked processing, progress, retry/resume.
+Add Livewire import wizard with validation, preview, duplicates, chunks, retry, and report.
 
-## 079. Export wizard
+## Step 079 — Export wizard
 
-Add Livewire export wizard: scope, format, include/exclude options, private file generation, progress, protected download, expiration.
+Add Livewire export wizard with private generated files and protected download.
 
-## 080. CSV and JSON portability
+## Step 080 — CSV and JSON portability
 
-Support CSV/JSON export/import, versioned JSON format, CSV formula injection protection, and ownership-safe import.
+Support safe CSV/JSON import/export with injection protection.
 
-## 081. Backup and restore principles
+## Step 081 — Backup and restore principles
 
-Add backup/export behavior and restore preview if safe. Do not pretend full restore exists unless actually implemented and tested.
+Add backup/export and restore preview principles without pretending unsafe restore exists.
 
-## 082. Settings foundation
+## Step 082 — Settings foundation
 
-Add user preferences and workspace settings with clear personal/shared separation and authorization.
+Add personal and workspace settings with authorization.
 
-## 083. Language and timezone settings
+## Step 083 — Language and timezone settings
 
-Add language/timezone/date/time preferences affecting reminders, recurrence, dashboard, activity, imports/exports where supported.
+Add language, timezone, and date/time display settings.
 
-## 084. Notification preferences
+## Step 084 — Notification preferences
 
-Add granular preferences for reminders, summaries, comments, mentions, collaboration, attachments, imports/exports.
+Add granular notification preferences across reminders, comments, mentions, collaboration, attachments, imports, and exports.
 
-## 085. Privacy settings
+## Step 085 — Privacy settings
 
-Add privacy controls for shared dashboard data, activity visibility, email/detail visibility if any, export behavior, and collaboration boundaries.
+Add privacy controls for shared data, activity visibility, export behavior, and collaboration boundaries.
 
-## 086. Admin/security center
+## Step 086 — Admin security center
 
-Add protected web admin/security center: users, workspaces, roles, invites, failed processes, storage, health, logs summaries, no sensitive leaks.
+Add protected admin/security center for users, workspaces, roles, invites, storage, health, and failures.
 
-## 087. Demo reset and sample data tools
+## Step 087 — Demo reset and sample data tools
 
-Add protected local/testing/demo-only reset/regenerate demo data tools through web UI, never production-exposed.
+Add safe local/testing/demo-only web tools to reset and regenerate sample data.
 
-## 088. PWA basics free
+## Step 088 — PWA basics free
 
-Add optional free PWA basics: manifest, icons, offline fallback page, installability, cache strategy carefully avoiding private data leakage.
+Add free PWA basics with manifest, installability, and private-data-safe caching.
 
-## 089. Offline-friendly UX
+## Step 089 — Offline friendly UX
 
-Add safe browser-side UX for temporary draft capture if offline, without promising full sync unless implemented and tested.
+Add safe offline-friendly draft capture and clear limitations.
 
-## 090. Keyboard shortcuts
+## Step 090 — Keyboard shortcuts
 
-Add optional keyboard shortcuts for quick create, search, focus mode, complete task, with accessible help and no interference.
+Add keyboard shortcuts for common actions with accessible help.
 
-## 091. Command palette
+## Step 091 — Command palette
 
-Add free Livewire/Flux command palette for navigation, quick actions, search, and shortcuts.
+Add a free Livewire/Flux command palette for navigation and quick actions.
 
-## 092. Help center and onboarding
+## Step 092 — Help center and onboarding
 
-Add local help pages, guided onboarding, empty-state guidance, demo walkthrough, and no external paid tools.
+Add local help center, onboarding, demo walkthrough, and feature explanations.
 
-## 093. Tooltips and microcopy polish
+## Step 093 — Tooltips and microcopy polish
 
-Add consistent helper text, tooltips, confirmations, error copy, empty states, and friendly UX without overdoing humor in critical places.
+Add consistent helper text, tooltips, confirmations, and empty-state copy.
 
-## 094. Accessibility full pass
+## Step 094 — Accessibility full pass
 
-Review headings, labels, focus, keyboard, contrast, modals, dropdowns, screen reader text, and add tests/checklists where possible.
+Review and improve accessibility across all screens.
 
-## 095. Responsive/mobile full pass
+## Step 095 — Responsive mobile full pass
 
-Review all screens on mobile/tablet/desktop, fix layout issues, touch targets, overflow, filter panels, and task cards.
+Review and improve mobile/tablet/desktop layout across all screens.
 
-## 096. Performance pass
+## Step 096 — Performance pass
 
-Audit N+1 queries, pagination, dashboard query counts, Livewire re-rendering, search/filter performance, imports/exports, attachments.
+Audit and optimize queries, Livewire rendering, dashboard, lists, imports, exports, and storage.
 
-## 097. Security pass
+## Step 097 — Security pass
 
-Audit CSRF, policies, roles, file uploads, private storage, imports, CSV injection, XSS, invite links, cache leaks, and debug leaks.
+Audit security across auth, policies, XSS, files, imports, exports, invites, cache, and logs.
 
-## 098. Testing expansion
+## Step 098 — Testing expansion
 
-Expand feature, Livewire, policy, privacy, upload, import/export, recurrence, collaboration, settings, and regression tests.
+Expand test coverage across features, privacy, roles, Livewire, uploads, imports, recurrence, and settings.
 
-## 099. Documentation expansion
+## Step 099 — Documentation expansion
 
-Complete docs for architecture, hosting mode, web maintenance, features, tests, deployment, limitations, and future work.
+Complete technical, user, hosting, architecture, testing, and deployment documentation.
 
-## 100. Release checklist and production readiness
+## Step 100 — Release checklist, production readiness, final 100-step QA, and final commit
 
-Finalize release checklist, environment notes, web-only hosting notes, rollback notes, known risks, and production readiness report. Also review extra discovered feature ideas: Final 100-step QA and commit.
+Finalize release checklist, risks, environment notes, rollback notes, production readiness report, full final review, progress files, changelog, docs, test report, risks, and final clean commit. Also cover merged final tasks: Release checklist and production readiness; Final 100-step QA and commit.
 

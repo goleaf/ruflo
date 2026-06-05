@@ -1,8 +1,8 @@
-# STEP 043 — Task templates
+# STEP 100 — Release checklist, production readiness, final 100-step QA, and final commit
 
 ## Purpose
 
-Add reusable templates for tasks, projects, checklists, and routines.
+Finalize release checklist, risks, environment notes, rollback notes, production readiness report, full final review, progress files, changelog, docs, test report, risks, and final clean commit. Also cover merged final tasks: Release checklist and production readiness; Final 100-step QA and commit.
 
 This step is a separate real implementation task. Do not merge it into another step. Do not mark a range of later steps as completed. Do not write progress like `grouped future step range`. This exact step must have its own progress entry, notes, tests/checks, risks, and commit when stable.
 
@@ -30,7 +30,8 @@ The most important rules are:
 ## Before changing code, inspect
 
 - task model/lifecycle, current task UI, routes, policies, validation, activity hooks, reminders, recurrence, dashboard impact.
-- task/project/checklist creation flows, recurring defaults, user/workspace scope.
+- project/list relationships, ownership, task assignment, deletion/archive behavior, filters, dropdowns.
+- README, docs folder, changelog, progress files, deployment notes, old/outdated docs.
 - current Laravel version, PHP requirement, installed packages, routes, middleware, auth stack, frontend build, tests, docs, translations, layouts, and components.
 - existing architecture conventions so new code does not create a second style.
 - places where old CRUD, hardcoded text, duplicated UI, or unsafe route logic already exists.
@@ -42,13 +43,13 @@ The most important rules are:
 - do not mix complete/archive/delete meanings.
 - update activity where useful.
 - ensure all task actions are ownership-scoped.
-- create reusable templates.
-- instantiate template into real tasks/projects.
-- allow private and shared templates if scoped.
-- prevent template ownership spoofing.
-- prepare a clear implementation plan before changes.
-- place code according to Laravel conventions and existing project structure.
-- make changes small enough to review and commit safely.
+- create/manage projects/lists.
+- define behavior for archive/delete with contained tasks.
+- move tasks safely.
+- support no-project state if useful.
+- update technical docs, user docs, hosting docs, architecture docs, release checklist.
+- remove outdated claims.
+- document limitations.
 
 ## Livewire and Flux UI requirements
 
@@ -56,7 +57,8 @@ The most important rules are:
 - Livewire quick actions.
 - clear status/priority/due badges.
 - empty/loading/error states.
-- template list, create from template, preview template contents, empty state.
+- project list, project detail, project task filter, empty project state, management modals.
+- help/onboarding docs must match UI labels.
 - use Flux components for page shells, cards, forms, buttons, alerts, modals, tabs, badges, and empty states.
 - use Livewire only where interactivity improves UX.
 - keep mobile and desktop layouts consistent.
@@ -79,8 +81,9 @@ The most important rules are:
 - user cannot manipulate another user's task.
 - state transitions validated.
 - bulk actions item-authorized.
-- cannot use another user's private template.
-- shared templates follow role rules.
+- do not assign task to another user's project.
+- shared project access follows role rules.
+- document security/privacy model without exposing secrets.
 - keep all private data behind authentication and policies.
 - do not trust frontend IDs or hidden fields.
 - avoid leaking details in errors, logs, notifications, or progress screens.
@@ -116,9 +119,11 @@ The most important rules are:
 - create/edit/lifecycle tests.
 - invalid transition tests.
 - multi-user access denial tests.
-- template creation/use tests.
-- multi-user isolation.
-- invalid template references.
+- create/update/archive/delete project tests.
+- task move tests.
+- multi-user dropdown leak tests.
+- documentation links/files exist.
+- progress files list every step separately.
 - add or update feature tests for the touched flow.
 - add at least one multi-user privacy test when private data is involved.
 - record test command/check results in TODO_MASTER_TEST_REPORT.md.
@@ -138,7 +143,7 @@ The most important rules are:
 
 ## Acceptance criteria
 
-- Step 043 is individually completed and not grouped with other steps.
+- Step 100 is individually completed and not grouped with other steps.
 - the repository progress file marks this exact step only when this exact step is done.
 - no progress line says 'grouped future step range' or any other compressed range.
 - the feature follows Laravel 13 + Livewire + Flux + Tailwind CSS 4 rules.

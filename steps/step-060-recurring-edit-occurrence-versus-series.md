@@ -1,8 +1,8 @@
-# STEP 043 — Task templates
+# STEP 060 — Recurring edit occurrence versus series
 
 ## Purpose
 
-Add reusable templates for tasks, projects, checklists, and routines.
+Add clear edit-one/edit-series recurrence behavior.
 
 This step is a separate real implementation task. Do not merge it into another step. Do not mark a range of later steps as completed. Do not write progress like `grouped future step range`. This exact step must have its own progress entry, notes, tests/checks, risks, and commit when stable.
 
@@ -29,34 +29,25 @@ The most important rules are:
 
 ## Before changing code, inspect
 
-- task model/lifecycle, current task UI, routes, policies, validation, activity hooks, reminders, recurrence, dashboard impact.
-- task/project/checklist creation flows, recurring defaults, user/workspace scope.
+- task lifecycle, due dates, reminders, duplicate risk, cron assumptions.
 - current Laravel version, PHP requirement, installed packages, routes, middleware, auth stack, frontend build, tests, docs, translations, layouts, and components.
 - existing architecture conventions so new code does not create a second style.
 - places where old CRUD, hardcoded text, duplicated UI, or unsafe route logic already exists.
 
 ## Implementation tasks
 
-- implement the specific task behavior for this step.
-- keep lifecycle explicit.
-- do not mix complete/archive/delete meanings.
-- update activity where useful.
-- ensure all task actions are ownership-scoped.
-- create reusable templates.
-- instantiate template into real tasks/projects.
-- allow private and shared templates if scoped.
-- prevent template ownership spoofing.
+- recurrence rules/generation/exceptions for this step.
+- on-demand generation.
+- idempotent duplicate prevention.
+- limited window.
+- skip/edit occurrence/series rules.
 - prepare a clear implementation plan before changes.
 - place code according to Laravel conventions and existing project structure.
 - make changes small enough to review and commit safely.
 
 ## Livewire and Flux UI requirements
 
-- Flux task cards/rows/forms/modals.
-- Livewire quick actions.
-- clear status/priority/due badges.
-- empty/loading/error states.
-- template list, create from template, preview template contents, empty state.
+- recurrence summary, edit occurrence vs series modal, skip controls, badges.
 - use Flux components for page shells, cards, forms, buttons, alerts, modals, tabs, badges, and empty states.
 - use Livewire only where interactivity improves UX.
 - keep mobile and desktop layouts consistent.
@@ -76,11 +67,9 @@ The most important rules are:
 
 ## Security, privacy, and ownership requirements
 
-- user cannot manipulate another user's task.
-- state transitions validated.
-- bulk actions item-authorized.
-- cannot use another user's private template.
-- shared templates follow role rules.
+- generated occurrences inherit scope.
+- cannot edit another user's series.
+- shared roles apply.
 - keep all private data behind authentication and policies.
 - do not trust frontend IDs or hidden fields.
 - avoid leaking details in errors, logs, notifications, or progress screens.
@@ -113,12 +102,10 @@ The most important rules are:
 
 ## Tests/checks to add or run
 
-- create/edit/lifecycle tests.
-- invalid transition tests.
-- multi-user access denial tests.
-- template creation/use tests.
-- multi-user isolation.
-- invalid template references.
+- no duplicate generation.
+- skip/edit/complete occurrence.
+- series archive/delete behavior.
+- reminder integration.
 - add or update feature tests for the touched flow.
 - add at least one multi-user privacy test when private data is involved.
 - record test command/check results in TODO_MASTER_TEST_REPORT.md.
@@ -138,7 +125,7 @@ The most important rules are:
 
 ## Acceptance criteria
 
-- Step 043 is individually completed and not grouped with other steps.
+- Step 060 is individually completed and not grouped with other steps.
 - the repository progress file marks this exact step only when this exact step is done.
 - no progress line says 'grouped future step range' or any other compressed range.
 - the feature follows Laravel 13 + Livewire + Flux + Tailwind CSS 4 rules.

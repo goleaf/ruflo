@@ -1,4 +1,4 @@
-# TODO Master Test Report
+# TODO_MASTER_TEST_REPORT.md
 
-| Date | Step | Check/Test | Result | Notes |
+| Date | Step | Test/check/build | Result | Notes |
 |---|---:|---|---|---|

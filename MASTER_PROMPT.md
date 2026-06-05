@@ -1,139 +1,108 @@
-# MASTER PROMPT — Laravel Todo Application 100-Step Build
+# MASTER PROMPT — Laravel Todo Application 100 Ultra-Detailed Steps
 
 You are working inside an existing Laravel project.
 
-Your task is to build a complete modern free Todo/Productivity application by following all global rules and all 100 step files.
+Read this file, `GLOBAL_RULES.md`, `STEPS_INDEX.md`, and every file in `steps/` in numeric order.
 
-Work from the repository root.
+You must execute the plan step by step.
 
 Do not ask the user for confirmation between steps.
 
-Do not require terminal, cron, jobs, workers, supervisor, or artisan for normal final app usage.
+Do not compress progress. Never write `grouped future step range`. Every step must be tracked individually.
 
-The finished app must work through browser UI on restricted shared hosting.
+If progress files do not exist, create them from `progress-templates/`.
 
-## Read first
+The final app must use Laravel 13, latest Livewire, Flux v2, Tailwind CSS 4, clean SCSS where useful, no Volt, free-only features, restricted hosting web-only processing, complete seeds, link-only invites, local/testing demo users on login page, dedicated request classes, custom validation rules, and English translations.
 
-1. `GLOBAL_RULES.md`
-2. `FEATURE_CATALOG.md`
-3. `STEPS_INDEX.md`
-4. `steps/` in numeric order
-5. Existing progress files in repository root if present
+## Required execution loop for every single step
 
-## If progress files do not exist
+1. Read `GLOBAL_RULES.md`.
+2. Read the exact `steps/step-XXX-*.md` file.
+3. Read all progress files.
+4. Inspect current project state.
+5. Implement only that exact step.
+6. Add/update tests.
+7. Add/update factories/seeders if relevant.
+8. Add/update translations.
+9. Add/update docs/changelog/progress/risk/test report.
+10. Run available tests/checks/builds where possible.
+11. Review git diff.
+12. Commit stable changes with a meaningful message.
+13. Mark only that exact step as completed.
+14. Continue to the next exact step.
 
-Create them from `progress-templates/`.
+## Forbidden progress style
 
-## Execute
+Do not write:
 
-Execute all 100 steps in numeric order.
+- `[ ] grouped future step range`
+- `remaining steps`
+- `all future steps`
+- `steps not started yet`
 
-After every step:
-
-1. Update progress files.
-2. Update documentation.
-3. Update changelog.
-4. Run available tests/checks/builds where possible.
-5. Review git diff.
-6. Commit stable changes with a meaningful message.
-7. Continue to next step.
-
-If interrupted, continue from progress files.
-
-## Non-negotiable target
-
-The final app must be:
-
-- Laravel 13 style
-- latest Livewire
-- Flux v2 UI
-- Tailwind CSS 4
-- clean SCSS support where useful
-- no Volt
-- free-only
-- web-only for restricted hosting
-- no cron dependency
-- no queue worker dependency
-- no artisan dependency for normal usage
-- demo-ready at https://ruflo.test/
-- fully seeded
-- link-only invites
-- login demo user list local/testing/demo only
-- request classes and custom rules organized
-- English translations complete
-- private-by-default
-- secure
-- tested
-- documented
-- production-readiness reviewed
+Instead, every step from 001 to 100 must have its own line.
 
 ## Global rules
 
-# GLOBAL RULES — Laravel Todo 100-Step Master Plan
+# GLOBAL RULES — Laravel Todo 100-Step Ultra Detailed Master Plan
 
-## Modern stack
+## Non-negotiable stack
 
-Use the newest Laravel 13 conventions, latest Livewire, Flux v2, Tailwind CSS 4, and clean SCSS only where it gives real value.
+Use Laravel 13 conventions, latest Livewire, Flux v2, Tailwind CSS 4, and clean SCSS only where useful.
 
-Use Laravel 13 as backend foundation, latest Livewire for dynamic web UI, Flux v2 as the main UI component system, Tailwind CSS 4 as the main styling layer, Vite for frontend assets, Laravel policies for authorization, dedicated request validation classes, custom validation rules, factories, seeders, tests, localization, and private storage.
+Do not use Volt. If Volt exists, remove it safely and migrate every Volt component to normal class-based Livewire components.
 
-Do not use Volt. If Volt exists, remove it safely and migrate all Volt logic to normal class-based Livewire components.
+Use Flux as the main UI system. Do not create custom messy UI when Flux already provides a clean component.
 
-Do not build old controller-heavy CRUD. Do not create custom messy UI when Flux provides a clean component. Do not hardcode visible text.
+Use Livewire for dynamic browser behavior. Do not build old controller-heavy CRUD for interactive screens.
 
-## Free-only requirement
+Use Laravel policies, dedicated request classes, custom validation rules, factories, seeders, tests, localization, private storage, and modern architecture.
 
-Use only free, open-source, first-party, self-hosted, or locally available solutions.
+## Free-only rule
 
-Do not require paid APIs, paid SaaS services, paid cloud workers, paid queue infrastructure, paid analytics, paid AI services, paid maps, paid OCR, paid external search, paid file conversion, paid email delivery, or paid automation platforms.
+Use only free, open-source, first-party, self-hosted, browser-native, or local features.
 
-If a feature normally uses paid infrastructure, implement a free local/web-only version or document it as optional and disabled.
+Do not require paid APIs, paid SaaS, paid background workers, paid analytics, paid AI, paid email, paid OCR, paid maps, paid search, paid file conversion, or paid automation platforms.
 
-## Restricted hosting
+If a feature normally needs paid infrastructure, create a free local/web-only version or document it as optional and disabled.
 
-Build for shared hosting with no SSH, terminal, cron, artisan access, queue worker, supervisor, shell scripts, long-running daemon, root access, or server configuration access.
+## Restricted hosting rule
+
+Assume no SSH, no terminal, no cron, no queue worker, no supervisor, no artisan access, no shell scripts, no root access.
 
 Everything must work through authenticated web UI.
 
-All long operations must be chunked, web-triggered, timeout-safe, resumable, and visible through Livewire progress screens.
+Long operations must be Livewire-driven, chunked, timeout-safe, resumable, retryable, visible, and documented.
 
-Do not require php artisan, cron, queue workers, or shell commands for normal production usage.
+No critical production behavior may depend on terminal commands.
 
-## Web-only processing
+## Domain, demo, seeds
 
-Replace background processing with Livewire action buttons, protected maintenance center, chunked processing, progress reports, retry buttons, resume buttons, cancel buttons where useful, on-demand reminder processing, on-demand recurring generation, web import/export wizards, web cleanup tools, and web health checks.
+The app must work at https://ruflo.test/
 
-Do not promise exact-time automation without cron/workers. Document limitations honestly.
+Create factories and seeders for every model and every important state.
 
-## Domain and demo readiness
+Login page must show local/testing/demo-only demo users with username/email and fixed demo password. Never show demo credentials in production.
 
-The app must work immediately at https://ruflo.test/
-
-All generated links must use configured app URL correctly.
-
-Create complete factories and seeders for every model and every important state.
-
-On login page, show a local/testing/demo-only demo users panel with display name, username/email, fixed demo password, role/description, and quick login usability if safe. Never show demo credentials in production.
-
-## Link-only invites
+## Invites
 
 Invites must be link-only. No email invite dependency.
 
-The UI must generate copyable invite links. Invite links must support cancellation, expiration if supported, single-use behavior if chosen, role/scope validation, and safe access.
+The UI must generate copyable invite links. Links must support cancellation, expiration if supported, and safe role/scope behavior.
 
-## Validation and localization
+## Validation and translations
 
-Every request-based action must have a dedicated request validation class where appropriate.
+Every request-based action must have a dedicated request class where appropriate.
 
-Repeated business validation must use custom validation rules.
+Repeated business validation must use reusable custom validation rules.
 
-Every visible text, validation message, error message, success message, confirmation message, field label, empty state, activity text, notification text, and setting label must be translated at least in English using current language files.
+All visible text and all validation/action messages must be translated at least in English through current language files.
 
 No hardcoded visible text.
 
-## Long-run execution
+## Progress file rule
 
-The agent must maintain progress files in repository root:
+The agent must maintain these files in repository root:
 
 - TODO_MASTER_PROGRESS.md
 - TODO_MASTER_CHECKLIST.md
@@ -142,17 +111,13 @@ The agent must maintain progress files in repository root:
 - TODO_MASTER_TEST_REPORT.md
 - TODO_MASTER_CHANGELOG.md
 
-Before each step, read progress files and current git status.
+Every step must be listed separately.
 
-After each stable step, update docs, changelog, progress files, tests/checks, and commit.
+Never write a compressed progress line such as:
 
-If interrupted, continue from progress files.
+- grouped future step range
 
-Never make one giant risky commit.
+That is forbidden.
 
-## Quality standard
-
-Every step must include project inspection, implementation, security review, privacy review, performance review, tests where possible, docs update, changelog update, progress update, git diff review, and meaningful commit.
-
-Never claim something is done if tests/checks fail without documenting it.
+Each step must have its own checkbox, status, notes, risks, tests, and commit reference when possible.
 

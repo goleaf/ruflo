@@ -1,14 +1,14 @@
-# TODO Master Progress
+# TODO_MASTER_PROGRESS.md
 
-## Current status
+## Rule
 
-Not started.
+Never compress future work as `grouped future step range`. Every step has its own line.
 
 ## Current step
 
-Step 001
+Step 001 — Project audit and foundation
 
-## Completed steps
+## Steps
 
 - [ ] Step 001 — Project audit and foundation
 - [ ] Step 002 — Upgrade and normalize Laravel 13 stack
@@ -57,9 +57,9 @@ Step 001
 - [ ] Step 045 — Focus mode
 - [ ] Step 046 — Goals and milestones
 - [ ] Step 047 — Habits tracker
-- [ ] Step 048 — Pomodoro/focus timer
+- [ ] Step 048 — Pomodoro focus timer
 - [ ] Step 049 — Time tracking
-- [ ] Step 050 — Waiting/blocker/dependency system
+- [ ] Step 050 — Waiting blocker dependency system
 - [ ] Step 051 — Smart views and cleanup views
 - [ ] Step 052 — Automation rules web-only
 - [ ] Step 053 — Manual web processing engine
@@ -69,7 +69,7 @@ Step 001
 - [ ] Step 057 — Recurring task rules
 - [ ] Step 058 — Recurring occurrence generation
 - [ ] Step 059 — Recurring exceptions
-- [ ] Step 060 — Recurring edit occurrence vs series
+- [ ] Step 060 — Recurring edit occurrence versus series
 - [ ] Step 061 — Dashboard foundation
 - [ ] Step 062 — Dashboard customization
 - [ ] Step 063 — Project progress dashboard
@@ -80,7 +80,7 @@ Step 001
 - [ ] Step 068 — Collaboration foundation
 - [ ] Step 069 — Link-only invite system
 - [ ] Step 070 — Member management
-- [ ] Step 071 — Shared dashboard/search/filter scope
+- [ ] Step 071 — Shared dashboard search filter scope
 - [ ] Step 072 — Comments
 - [ ] Step 073 — Mentions
 - [ ] Step 074 — Comment moderation
@@ -95,26 +95,26 @@ Step 001
 - [ ] Step 083 — Language and timezone settings
 - [ ] Step 084 — Notification preferences
 - [ ] Step 085 — Privacy settings
-- [ ] Step 086 — Admin/security center
+- [ ] Step 086 — Admin security center
 - [ ] Step 087 — Demo reset and sample data tools
 - [ ] Step 088 — PWA basics free
-- [ ] Step 089 — Offline-friendly UX
+- [ ] Step 089 — Offline friendly UX
 - [ ] Step 090 — Keyboard shortcuts
 - [ ] Step 091 — Command palette
 - [ ] Step 092 — Help center and onboarding
 - [ ] Step 093 — Tooltips and microcopy polish
 - [ ] Step 094 — Accessibility full pass
-- [ ] Step 095 — Responsive/mobile full pass
+- [ ] Step 095 — Responsive mobile full pass
 - [ ] Step 096 — Performance pass
 - [ ] Step 097 — Security pass
 - [ ] Step 098 — Testing expansion
 - [ ] Step 099 — Documentation expansion
-- [ ] Step 100 — Release checklist and production readiness
+- [ ] Step 100 — Release checklist, production readiness, final 100-step QA, and final commit
 
 ## Last completed action
 
 None.
 
-## Next action
+## Next exact action
 
-Read MASTER_PROMPT.md and start Step 001.
+Start Step 001.

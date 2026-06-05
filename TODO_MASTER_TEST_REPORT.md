@@ -125,3 +125,16 @@ Record test/build/check results here.
 | 2026-06-06 | `php artisan test --compact tests/Feature/Settings/SetupStatusTest.php` | Passed | 6 tests, 23 assertions for the Step 007 setup status surface after sanitizing Livewire public state. |
 | 2026-06-06 | `rg setup diagnostics and public installer scan` | Passed | Setup route is only registered under settings, no public installer route was found, and raw SQL markers appear only in the regression test fixture. |
 | 2026-06-06 | `php artisan route:list --no-interaction --path=settings/setup` | Passed | Confirmed exactly the `GET|HEAD settings/setup` route for `setup.status`. |
+| 2026-06-06 | `mcp__laravel_boost.search_docs` | Passed | Reviewed Laravel 13 authorization gates and Livewire 4 action authorization/testing guidance before Step 008 hardening. |
+| 2026-06-06 | `mcp__laravel_boost.database_schema filter=users include_column_details=true` | Passed | Confirmed the users table had no admin/role column before Step 008 hardening. |
+| 2026-06-06 | `php artisan make:migration add_is_admin_to_users_table --table=users --no-interaction` | Passed | Created the Step 008 admin marker migration. |
+| 2026-06-06 | `php artisan test --compact tests/Feature/Settings/MaintenanceCenterTest.php tests/Feature/Settings/SetupStatusTest.php tests/Feature/RestrictedHostingModeTest.php tests/Feature/FactoryCoverageTest.php tests/Feature/SeederCoverageTest.php tests/Feature/DomainReadinessTest.php` | Passed | 31 tests, 177 assertions for maintenance authorization, setup/restricted-hosting behavior, factory/seeder admin states, and domain links. |
+| 2026-06-06 | `vendor/bin/pint --dirty --format agent` | Passed | Pint fixed import ordering after Step 008 hardening. |
+| 2026-06-06 | `php artisan test --compact tests/Feature/Settings/MaintenanceCenterTest.php tests/Feature/FactoryCoverageTest.php tests/Feature/SeederCoverageTest.php` | Passed | 17 tests, 114 assertions after Pint formatting. |
+| 2026-06-06 | `php artisan route:list --no-interaction --path=settings/maintenance` | Passed | Confirmed exactly the protected `settings/maintenance` route for `maintenance.center`. |
+| 2026-06-06 | `php artisan migrate --no-interaction` | Passed | Applied pending local migrations including `add_is_admin_to_users_table` so `https://ruflo.test` has the new admin column. |
+| 2026-06-06 | `php artisan db:seed --no-interaction` | Passed | Refreshed local demo data so the primary demo user is admin and the secondary demo user is non-admin. |
+| 2026-06-06 | `mcp__laravel_boost.get_absolute_url route=maintenance.center` | Passed | Boost resolved the maintenance center route as `https://ruflo.test/settings/maintenance`. |
+| 2026-06-06 | `mcp__laravel_boost.database_query` | Passed | Confirmed `test@example.com` has `is_admin=1` and `second@example.com` has `is_admin=0` in the local database. |
+| 2026-06-06 | `php artisan test --compact tests/Feature/Settings/MaintenanceCenterTest.php tests/Feature/FactoryCoverageTest.php tests/Feature/SeederCoverageTest.php` | Passed | Reconfirmed 17 tests, 114 assertions after local migrate/seed verification. |
+| 2026-06-06 | `php artisan test --compact` | Passed | Full suite passed with 173 tests and 631 assertions after Step 008 admin-gate hardening. |

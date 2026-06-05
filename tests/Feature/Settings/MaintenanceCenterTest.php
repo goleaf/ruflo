@@ -14,15 +14,24 @@ test('maintenance center requires authentication', function () {
 });
 
 test('maintenance center requires password confirmation', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->admin()->create();
 
     $this->actingAs($user)
         ->get(route('maintenance.center'))
         ->assertRedirect(route('password.confirm'));
 });
 
-test('maintenance center can be rendered after password confirmation', function () {
+test('maintenance center denies non admin users after password confirmation', function () {
     $user = User::factory()->create();
+
+    $this->actingAs($user)
+        ->withSession(['auth.password_confirmed_at' => time()])
+        ->get(route('maintenance.center'))
+        ->assertForbidden();
+});
+
+test('maintenance center can be rendered by an admin after password confirmation', function () {
+    $user = User::factory()->admin()->create();
 
     $this->actingAs($user)
         ->withSession(['auth.password_confirmed_at' => time()])
@@ -41,9 +50,12 @@ test('maintenance snapshot reports setup processing and runtime state', function
 });
 
 test('maintenance center can flush application cache', function () {
+    $admin = User::factory()->admin()->create();
+
     Cache::put('maintenance-test-key', 'value');
 
-    Livewire::test(MaintenanceCenter::class)
+    Livewire::actingAs($admin)
+        ->test(MaintenanceCenter::class)
         ->call('flushApplicationCache')
         ->assertSet('lastAction', __('maintenance.messages.cache_flushed'));
 
@@ -51,13 +63,15 @@ test('maintenance center can flush application cache', function () {
 });
 
 test('maintenance center can clear compiled views through a bounded web action', function () {
+    $admin = User::factory()->admin()->create();
     $compiledView = storage_path('framework/views/maintenance-test-view.php');
 
     File::put($compiledView, '<?php echo "test";');
 
     expect(File::exists($compiledView))->toBeTrue();
 
-    $component = Livewire::test(MaintenanceCenter::class)
+    $component = Livewire::actingAs($admin)
+        ->test(MaintenanceCenter::class)
         ->call('clearCompiledViews');
 
     expect($component->get('lastAction'))->toContain('compiled view');
@@ -72,4 +86,12 @@ test('compiled view cleanup action returns deleted file count', function () {
 
     expect(app(ClearCompiledViews::class)())->toBeGreaterThanOrEqual(1)
         ->and(File::exists($compiledView))->toBeFalse();
+});
+
+test('maintenance center denies direct Livewire access to non admin users', function () {
+    $user = User::factory()->create();
+
+    Livewire::actingAs($user)
+        ->test(MaintenanceCenter::class)
+        ->assertForbidden();
 });

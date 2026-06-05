@@ -16,7 +16,7 @@ Future models for reminders, recurrence, comments, attachments, activity, invite
 1. `DemoUserSeeder`
 2. `TodoSeeder`
 
-`DemoUserSeeder` creates the configured demo users only when the app is running in a safe environment: `local`, `testing`, or `demo`, and when the demo login panel is enabled.
+`DemoUserSeeder` creates the configured demo users only when the app is running in a safe environment: `local`, `testing`, or `demo`, and when the demo login panel is enabled. The first configured demo user is seeded as an admin for protected local maintenance access; the second configured demo user is seeded as a normal account for denial and isolation checks.
 
 `TodoSeeder` creates a private workspace for every existing user:
 

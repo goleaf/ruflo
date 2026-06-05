@@ -16,7 +16,7 @@ class DemoUserSeeder extends Seeder
             return;
         }
 
-        foreach (config('demo.login_panel.users', []) as $demoUser) {
+        foreach (config('demo.login_panel.users', []) as $index => $demoUser) {
             $user = User::query()
                 ->where('email', $demoUser['email'])
                 ->first() ?? new User;
@@ -25,6 +25,7 @@ class DemoUserSeeder extends Seeder
                 'name' => $demoUser['name'],
                 'email' => $demoUser['email'],
                 'email_verified_at' => $user->email_verified_at ?? now(),
+                'is_admin' => $index === 0,
                 'password' => (string) config('demo.login_panel.password', 'password'),
             ])->save();
         }

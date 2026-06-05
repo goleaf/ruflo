@@ -28,6 +28,7 @@ class UserFactory extends Factory
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
+            'is_admin' => false,
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
             'two_factor_secret' => null,
@@ -53,9 +54,17 @@ class UserFactory extends Factory
         ]);
     }
 
+    public function admin(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'is_admin' => true,
+        ]);
+    }
+
     public function demoPrimary(): static
     {
         return $this->withPassword((string) config('demo.login_panel.password', 'password'))
+            ->admin()
             ->state(fn (array $attributes) => [
                 'name' => (string) config('demo.login_panel.users.0.name', 'Test User'),
                 'email' => (string) config('demo.login_panel.users.0.email', 'test@example.com'),
@@ -70,6 +79,7 @@ class UserFactory extends Factory
                 'name' => (string) config('demo.login_panel.users.1.name', 'Second User'),
                 'email' => (string) config('demo.login_panel.users.1.email', 'second@example.com'),
                 'email_verified_at' => now(),
+                'is_admin' => false,
             ]);
     }
 

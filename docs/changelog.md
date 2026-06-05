@@ -121,13 +121,14 @@
 ### Implemented
 
 - Added a protected maintenance center at `/settings/maintenance` behind `auth`, `verified`, and `password.confirm`.
+- Added an admin gate for the maintenance center using `users.is_admin`.
 - Added a maintenance snapshot action that reuses setup health checks and reports web-processing/runtime state.
 - Added safe web actions to clear compiled Blade views and flush the application cache.
 - Added English maintenance translations and settings navigation.
 
 ### Testing
 
-- Added maintenance center tests for route protection, rendering, cache flush, compiled-view cleanup, and snapshot structure.
+- Added maintenance center tests for route protection, admin denial, rendering, cache flush, compiled-view cleanup, and snapshot structure.
 
 ### Documentation
 

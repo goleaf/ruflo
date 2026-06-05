@@ -14,12 +14,13 @@ The interrupted reminder scaffold is still untracked and is not part of the comm
 `UserFactory` covers:
 
 - default verified users with the shared test password,
+- admin users for protected maintenance/admin surfaces,
 - unverified users,
 - custom passwords,
 - confirmed two-factor authentication state,
 - configured primary and secondary demo users.
 
-Demo user factory states read from `config/demo.php` so the login panel, seeders, and tests stay aligned.
+Demo user factory states read from `config/demo.php` so the login panel, seeders, and tests stay aligned. The primary demo user is an admin; the secondary demo user is a normal user.
 
 ## Project And Tag Factories
 

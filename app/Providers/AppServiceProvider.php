@@ -2,9 +2,11 @@
 
 namespace App\Providers;
 
+use App\Models\User;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
@@ -35,6 +37,7 @@ class AppServiceProvider extends ServiceProvider
         Date::use(CarbonImmutable::class);
 
         $this->configureUrlDefaults();
+        $this->configureAuthorization();
 
         DB::prohibitDestructiveCommands(
             app()->isProduction(),
@@ -67,5 +70,13 @@ class AppServiceProvider extends ServiceProvider
         if (str_starts_with($appUrl, 'https://')) {
             URL::forceScheme('https');
         }
+    }
+
+    /**
+     * Register application-wide abilities that do not map to a model policy.
+     */
+    protected function configureAuthorization(): void
+    {
+        Gate::define('access-maintenance-center', fn (User $user): bool => $user->is_admin);
     }
 }

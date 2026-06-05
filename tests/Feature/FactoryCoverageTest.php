@@ -24,6 +24,7 @@ test('tracked models can be created from their default factories', function () {
 
 test('user factory covers authentication and demo states', function () {
     $passwordUser = User::factory()->withPassword('custom-secret')->create();
+    $admin = User::factory()->admin()->create();
     $unverified = User::factory()->unverified()->create();
     $twoFactor = User::factory()->withTwoFactor()->create();
     $primaryDemo = User::factory()->demoPrimary()->create();
@@ -31,12 +32,15 @@ test('user factory covers authentication and demo states', function () {
 
     expect(Hash::check('custom-secret', $passwordUser->password))->toBeTrue()
         ->and($unverified->email_verified_at)->toBeNull()
+        ->and($admin->is_admin)->toBeTrue()
         ->and($twoFactor->two_factor_secret)->not->toBeNull()
         ->and($twoFactor->two_factor_recovery_codes)->not->toBeNull()
         ->and($twoFactor->two_factor_confirmed_at)->not->toBeNull()
         ->and($primaryDemo->email)->toBe('test@example.com')
+        ->and($primaryDemo->is_admin)->toBeTrue()
         ->and(Hash::check('password', $primaryDemo->password))->toBeTrue()
         ->and($secondaryDemo->email)->toBe('second@example.com')
+        ->and($secondaryDemo->is_admin)->toBeFalse()
         ->and(Hash::check('password', $secondaryDemo->password))->toBeTrue();
 });
 

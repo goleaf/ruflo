@@ -14,6 +14,8 @@ test('database seeder creates safe demo users and complete private workspaces', 
 
     expect($users)->toHaveCount(2)
         ->and($users->pluck('email')->all())->toBe(['second@example.com', 'test@example.com'])
+        ->and($users->firstWhere('email', 'test@example.com')->is_admin)->toBeTrue()
+        ->and($users->firstWhere('email', 'second@example.com')->is_admin)->toBeFalse()
         ->and(Hash::check('password', $users->firstWhere('email', 'test@example.com')->password))->toBeTrue()
         ->and(Project::query()->count())->toBe(6)
         ->and(Tag::query()->count())->toBe(4)

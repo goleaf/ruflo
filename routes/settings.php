@@ -31,6 +31,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::livewire('settings/maintenance', MaintenanceCenter::class)
         ->middleware([
             'password.confirm',
+            'can:access-maintenance-center',
         ])
         ->name('maintenance.center');
 });

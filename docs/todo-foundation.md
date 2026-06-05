@@ -134,7 +134,7 @@ php artisan test --compact
 vendor/bin/pint --dirty --format agent
 ```
 
-Use `npm run dev` only when actively developing frontend assets.
+Use `npm run dev` or `composer run dev` only when actively developing frontend assets. Neither command starts a queue worker for normal usage.
 
 ## Step 2 Direction
 

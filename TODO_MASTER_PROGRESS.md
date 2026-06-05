@@ -2,7 +2,7 @@
 
 ## Current status
 
-Steps 001-005 are complete and verified from the existing baseline plus the Step 005 asset-layer update. Continuing from Step 006 in the current 100-step plan.
+Steps 001-006 are complete and verified from the existing baseline plus the Step 005 asset-layer update and Step 006 restricted-hosting contract. Continuing from Step 007 in the current 100-step plan.
 
 ## Completed steps
 
@@ -11,17 +11,18 @@ Steps 001-005 are complete and verified from the existing baseline plus the Step
 - [x] Step 003 — Livewire and Flux foundation
 - [x] Step 004 — Remove Volt and migrate to normal Livewire
 - [x] Step 005 — Tailwind CSS 4 and SCSS design layer
-- [ ] Step 006 — Restricted hosting web-only mode
-- [ ] Steps 007-100
+- [x] Step 006 — Restricted hosting web-only mode
+- [ ] Step 007 — Web installer and updater
+- [ ] Steps 008-100
 
 ## Current step
 
-Step 006
+Step 007
 
 ## Last completed action
 
-Completed Step 005 by wiring `resources/scss/app.scss` into Vite and shared Blade asset entry points, adding SCSS partials for tokens, accessibility, surfaces, and print rules, documenting the asset contract, and adding a focused Pest guard.
+Completed Step 006 by adding restricted-hosting defaults, the `WebProcessingProfile`, sync queue defaults, a Vite-only local dev script, an empty console route, documentation, and guard tests.
 
 ## Next action
 
-Start Step 006 restricted hosting web-only mode.
+Start Step 007 web installer and updater.

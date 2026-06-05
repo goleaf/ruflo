@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026-06-05 - Step 006 Restricted hosting web-only mode
+
+### Implemented
+
+- Added `config/hosting.php` and `App\Data\Hosting\WebProcessingProfile` to make chunked, resumable, web-triggered processing defaults explicit.
+- Changed the default queue connection to `sync` so normal app usage does not imply a queue worker.
+- Simplified `composer run dev` to Vite only because Laravel Herd serves the application locally.
+- Removed the default console `inspire` command so there are no application console workflows.
+- Updated `.env.example` for `https://ruflo.test`, sync queue defaults, and restricted-hosting processing knobs.
+
+### Testing
+
+- Added restricted-hosting tests that guard config defaults, queue/dev script assumptions, the empty console route, and the absence of `app/Jobs`.
+
+### Documentation
+
+- Added `docs/restricted-hosting.md` with the web-only processing contract and limitations.
+
 ## 2026-06-05 - Step 005 Tailwind CSS 4 and SCSS design layer
 
 ### Implemented

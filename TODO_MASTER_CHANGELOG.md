@@ -10,3 +10,4 @@ Record changes after every step.
 - Confirmed the full test suite passes before Step 05 work.
 - Normalized root progress and decisions to the current 100-step prompt pack and set the next executable step to Step 005.
 - Completed Step 005 by adding a clean SCSS Vite entry for tokens, accessibility helpers, surfaces, and print styles while keeping Tailwind CSS 4 as the primary styling layer.
+- Completed Step 006 by adding restricted-hosting config defaults, a web-processing profile, sync queue defaults, a Vite-only local dev script, docs, and drift tests.

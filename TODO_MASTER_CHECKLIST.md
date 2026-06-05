@@ -10,7 +10,7 @@ Use this file as a persistent task tracker.
 - [x] Tailwind 4 checked
 - [x] SCSS clean support
 - [x] Volt removed/migrated
-- [ ] Restricted hosting mode implemented
+- [x] Restricted hosting mode implemented
 - [ ] Seeds/factories complete
 - [ ] Link-only invites complete
 - [ ] Login demo users panel complete

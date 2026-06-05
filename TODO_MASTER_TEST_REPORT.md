@@ -13,3 +13,6 @@ Record test/build/check results here.
 | 2026-06-05 | `php artisan test --compact tests/Feature/FrontendAssetPipelineTest.php` | Passed | 2 tests, 17 assertions for Step 005 Tailwind/SCSS asset contract. |
 | 2026-06-05 | `npm run build` | Passed | Vite built Tailwind CSS, SCSS, app JS, passkeys JS, and font assets. |
 | 2026-06-05 | `vendor/bin/pint --dirty --format agent` | Passed | Pint ran after Step 005; it only adjusted uncommitted reminder skeleton PHP files from the interrupted worktree. |
+| 2026-06-05 | `php artisan test --compact tests/Feature/RestrictedHostingModeTest.php` | Passed | 4 tests, 22 assertions for Step 006 restricted-hosting defaults and drift guards. |
+| 2026-06-05 | `composer validate --strict --no-interaction` | Passed | Composer manifest remained valid after simplifying the local dev script. |
+| 2026-06-05 | `vendor/bin/pint --dirty --format agent` | Passed | PHP style passed after Step 006. |

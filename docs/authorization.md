@@ -34,7 +34,7 @@ scope) rather than across the whole codebase.
 | Ownership scoping | `App\Models\Concerns\BelongsToUser` (`scopeOwnedBy`, `isOwnedBy`) | The only way to scope a query or check ownership. |
 | Read boundary | `App\Queries\Todos\TodoListQuery` | The only place todos are read for the UI. Always owner-scoped. |
 | Per-action decisions | `App\Policies\TodoPolicy` | The only place "may this user do this?" is answered. |
-| Policy binding | `#[UsePolicy(TodoPolicy::class)]` on `App\Models\Todo` | Explicit, greppable mapping — not naming-convention magic. |
+| Policy binding | `#[UsePolicy(...Policy::class)]` on current private models | Explicit, greppable mapping — not naming-convention magic. |
 | Mutations | `App\Actions\Todos\*` | Assign ownership from the authenticated user; never from request input. |
 | Dashboard summary | `App\Queries\Dashboard\DailySummaryQuery` | Counts tasks, active projects, and tags through owner-scoped queries only. |
 
@@ -77,11 +77,15 @@ The safest query is one that never sees unauthorized data in the first place.
 
 The Livewire component authorizes **before** delegating to an action:
 
-- `viewAny` / `create` / `clearCompleted` — class-level abilities, allowed for
-  any authenticated user (they only ever touch that user's own workspace).
-- `view` / `update` / `complete` / `delete` / `restore` — per-record abilities,
-  owner-only, returning `denyAsNotFound()` so forbidden access is
-  indistinguishable from a missing record.
+- `viewAny` / `create` / `clearCompleted` / `bulk*` — class-level abilities,
+  allowed for any authenticated user (they only ever touch that user's own
+  workspace).
+- `view` / `update` / `complete` / `reopen` / `archive` / `delete` / `restore`
+  — per-record abilities, owner-only, returning `denyAsNotFound()` so forbidden
+  access is indistinguishable from a missing record.
+- `complete` and `reopen` are separate policy abilities even though the UI uses
+  one toggle action. The component chooses the ability from the task state
+  before calling the mutation action.
 - `forceDelete` — disabled for everyone. Permanent deletion is not a feature
   yet; when designed it must be protected more strictly than soft delete.
 
@@ -127,6 +131,9 @@ it on:
 - **Collaboration** — when added, the policy and `BelongsToUser` boundary
   expand to "authorized member" in one place each; do not hardcode
   "exactly one user" assumptions elsewhere.
+- **Roles** — viewer/editor/manager/owner roles do not exist yet. Until the
+  collaboration/member steps introduce a membership model, policy tests cover
+  owner, non-owner, and the existing admin-only maintenance gate.
 
 ## Testing requirements
 
@@ -147,3 +154,9 @@ reminders remain inaccessible until their real owner/schedule schema exists.
 queries are owner-scoped, tampered project/tag filters are empty rather than
 foreign-scoped, edit-form tag hydration uses the scoped query result, and
 server-assigned Livewire edit IDs are locked.
+
+`AuthorizationPoliciesTest` locks the Step 019 contract: every current private
+resource resolves to an explicit policy, todo lifecycle/bulk abilities are
+named and authorized before mutation, unsupported destructive abilities are
+denied, and placeholder reminders remain deny-all until the reminder schema is
+implemented.

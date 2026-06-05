@@ -31,6 +31,8 @@ it('allows the owner every per-record ability', function () {
     expect($gate->allows('view', $todo))->toBeTrue()
         ->and($gate->allows('update', $todo))->toBeTrue()
         ->and($gate->allows('complete', $todo))->toBeTrue()
+        ->and($gate->allows('reopen', $todo))->toBeTrue()
+        ->and($gate->allows('archive', $todo))->toBeTrue()
         ->and($gate->allows('delete', $todo))->toBeTrue()
         ->and($gate->allows('restore', $todo))->toBeTrue();
 });
@@ -45,6 +47,8 @@ it('denies every per-record ability to a non-owner', function () {
     expect($gate->denies('view', $todo))->toBeTrue()
         ->and($gate->denies('update', $todo))->toBeTrue()
         ->and($gate->denies('complete', $todo))->toBeTrue()
+        ->and($gate->denies('reopen', $todo))->toBeTrue()
+        ->and($gate->denies('archive', $todo))->toBeTrue()
         ->and($gate->denies('delete', $todo))->toBeTrue()
         ->and($gate->denies('restore', $todo))->toBeTrue();
 });

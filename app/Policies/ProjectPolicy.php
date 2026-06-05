@@ -54,7 +54,7 @@ final class ProjectPolicy
 
     private function ownerOnly(User $user, Project $project): Response
     {
-        return $project->user_id === $user->id
+        return $project->isOwnedBy($user)
             ? Response::allow()
             : Response::denyAsNotFound();
     }

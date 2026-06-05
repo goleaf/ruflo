@@ -49,6 +49,14 @@ final class TodoPolicy
     }
 
     /**
+     * Determine whether the user can reopen a completed task.
+     */
+    public function reopen(User $user, Todo $todo): Response
+    {
+        return $this->ownerOnly($user, $todo);
+    }
+
+    /**
      * Determine whether the user can archive the model.
      */
     public function archive(User $user, Todo $todo): Response
@@ -115,7 +123,7 @@ final class TodoPolicy
 
     private function ownerOnly(User $user, Todo $todo): Response
     {
-        return $todo->user_id === $user->id
+        return $todo->isOwnedBy($user)
             ? Response::allow()
             : Response::denyAsNotFound();
     }

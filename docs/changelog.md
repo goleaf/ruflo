@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026-06-06 - Step 019 Authorization policies
+
+### Implemented
+
+- Added an explicit todo `reopen` policy ability and made the Livewire completion toggle authorize `complete` or `reopen` based on task state.
+- Bound the placeholder `Reminder` model to its deny-all policy with an explicit `UsePolicy` attribute.
+- Standardized owner-only policy checks for todos, projects, and tags through the shared `isOwnedBy()` helper.
+- Added explicit tag `restore` and `forceDelete` denials for unsupported destructive actions.
+
+### Testing
+
+- Added `AuthorizationPoliciesTest` covering policy resolution, owner/non-owner matrices, not-found denials, class-level todo bulk abilities, unsupported destructive denials, and deny-all reminders.
+- Extended todo ownership coverage for `reopen` and `archive` abilities.
+
+### Documentation
+
+- Updated `docs/authorization.md` with explicit policy mappings, the separate reopen ability, role limitations, and Step 019 test coverage.
+
 ## 2026-06-06 - Step 018 Ownership and query scoping
 
 ### Implemented

@@ -219,7 +219,7 @@ class Index extends Component
     public function toggleTodo(int $todoId, TodoListQuery $query, ToggleTodoCompletion $toggle): void
     {
         $todo = $query->findVisibleFor($this->currentUser(), $todoId);
-        $this->authorize('complete', $todo);
+        $this->authorize($todo->is_completed ? 'reopen' : 'complete', $todo);
 
         try {
             $toggle->handle($todo);

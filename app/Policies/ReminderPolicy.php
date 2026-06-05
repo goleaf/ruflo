@@ -5,7 +5,7 @@ namespace App\Policies;
 use App\Models\Reminder;
 use App\Models\User;
 
-class ReminderPolicy
+final class ReminderPolicy
 {
     /**
      * Determine whether the user can view any models.

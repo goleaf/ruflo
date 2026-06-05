@@ -37,9 +37,19 @@ final class TagPolicy
         return $this->ownerOnly($user, $tag);
     }
 
+    public function restore(User $user, Tag $tag): bool
+    {
+        return false;
+    }
+
+    public function forceDelete(User $user, Tag $tag): bool
+    {
+        return false;
+    }
+
     private function ownerOnly(User $user, Tag $tag): Response
     {
-        return $tag->user_id === $user->id
+        return $tag->isOwnedBy($user)
             ? Response::allow()
             : Response::denyAsNotFound();
     }

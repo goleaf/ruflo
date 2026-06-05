@@ -2,19 +2,19 @@
 
 ## Current status
 
-Steps 001-018 are complete. The requested recheck from Step 001 has been completed through Step 018. The tracker is expanded to one ledger line per step from 001 through 100 so later work cannot be hidden behind a range.
+Steps 001-019 are complete. The requested recheck from Step 001 has been completed through Step 019. The tracker is expanded to one ledger line per step from 001 through 100 so later work cannot be hidden behind a range.
 
 ## Current step
 
-Step 019 — Authorization policies
+Step 020 — Guest and route protection
 
 ## Last completed action
 
-Completed Step 018 by locking server-assigned todo edit IDs, tightening tampered project/tag filter behavior, keeping edit-form tag hydration on scoped query results, documenting the query-scoping contract, and passing focused ownership query tests.
+Completed Step 019 by adding explicit policy coverage for current resources/actions, separating complete and reopen authorization, binding the reminder deny-all policy explicitly, documenting deferred role policies, and passing focused policy matrix tests.
 
 ## Next action
 
-Begin `steps/step-019-authorization-policies.md`, then implement the next not-yet-completed plan step without grouping it with later work.
+Begin `steps/step-020-guest-and-route-protection.md`, then implement the next not-yet-completed plan step without grouping it with later work.
 
 ## Step ledger
 
@@ -38,7 +38,7 @@ Begin `steps/step-019-authorization-policies.md`, then implement the next not-ye
 | 016 — English localization and message cleanup | Complete | Existing baseline finishes navigation, dashboard, welcome, settings, Livewire action messages, page titles, and localization regression tests through English language files; rechecked on 2026-06-06 against Laravel localization docs, language-file inventory, literal translation API scans, localized page rendering, and static translation-key existence. | Boost docs search, language-file inventory, literal translation API scan, localization/login/settings/setup/maintenance/todo focused tests, Pint, and full suite recorded. | `docs/localization.md`, `docs/changelog.md`, root progress, changelog, risks, and test report updated. | Localization scanner limitation remains documented and further mitigated with static key-existence coverage; no new Step 016 risk found. | f346426, 445fc11, be3329c, 6b73ebd |
 | 017 — Private workspace model | Complete | Rechecked the private workspace foundation and kept owning `User` as the workspace boundary. Added owner-scoped `DailySummaryQuery`, wired dashboard rendering through the existing class-based Livewire component, guarded todo project/tag relation hydration against malformed cross-user links, and added private-workspace architecture coverage. | Boost docs search, route inventory, schema checks for todos/projects/tags/tag_todo, failed-then-fixed focused privacy suite, 69-test focused suite, localization assertion fix, Pint, diff check, and full suite recorded in test report. | `docs/authorization.md`, `docs/changelog.md`, root progress, checklist, changelog, decisions, risks, and test report updated. | `tag_todo` pivot owner-column limitation logged and mitigated through validation/action scoping plus relation hydration constraints; reminder placeholder remains denied until real owner/schedule schema. | a7247a7 |
 | 018 — Ownership and query scoping | Complete | Locked `editingId` and `editingProjectId` Livewire properties, removed the unscoped edit-form tag reload, and tightened `TodoListQuery::filtered()` so foreign, archived, or missing project/tag IDs produce a safe empty result rather than applying another user's ID or falling back to an unfiltered list. | Boost docs search, private query/id scans, focused 79-test ownership query suite, Pint, compressed-progress scan, diff check, and full suite recorded in test report. | `docs/authorization.md`, `docs/task-organization.md`, `docs/changelog.md`, root progress, checklist, changelog, decisions, and test report updated. | No new open risk; the tampered filter behavior was mitigated and recorded as a decision. | 5a6e65f |
-| 019 — Authorization policies | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 019 — Authorization policies | Complete | Added `TodoPolicy::reopen()`, made the todo completion toggle authorize `complete` versus `reopen` from task state, explicitly bound `Reminder` to `ReminderPolicy`, made current owner-only policies use `isOwnedBy()`, and added explicit unsupported tag `restore`/`forceDelete` denials. | Boost docs search, policy inventory scan, focused 71-test policy/auth/ownership suite, Pint, compressed-progress scan, diff check, and full suite recorded in test report. | `docs/authorization.md`, `docs/changelog.md`, root progress, checklist, changelog, decisions, risks, and test report updated. | Viewer/editor/manager/owner role tests remain blocked by the absence of a membership model and are documented for later collaboration/member steps. | Pending |
 | 020 — Guest and route protection | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
 | 021 — Core task creation | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
 | 022 — Task list and private task views | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |

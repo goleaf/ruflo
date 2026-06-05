@@ -8,14 +8,17 @@
 - Applied the rules to task creation/editing, bulk selection validation, and bulk move project targets.
 - Changed Livewire request validation to reject forged foreign ids before mutation while keeping action-level owner scoping in place.
 - Added translated custom validation messages for todo ownership and active-project checks.
+- Removed the unused empty `ReminderAtIsActionable` placeholder rule during the Step 015 recheck.
 
 ### Testing
 
 - Updated organization and bulk action tests for stricter custom-rule validation.
+- Added architecture coverage that the custom rule inventory is implemented and uses translated failure messages.
 
 ### Documentation
 
 - Added `docs/validation-rules.md` with the current rule inventory, translation location, and postponed future-domain rule guidance.
+- Added the Step 015 recheck notes for the current custom-rule inventory and future-domain placeholder policy.
 
 ## 2026-06-05 - Step 014 Dedicated request classes
 

@@ -2,19 +2,19 @@
 
 ## Current status
 
-Steps 001-016 are complete. The requested recheck from Step 001 has been completed through Step 014. The tracker is expanded to one ledger line per step from 001 through 100 so later work cannot be hidden behind a range.
+Steps 001-016 are complete. The requested recheck from Step 001 has been completed through Step 015. The tracker is expanded to one ledger line per step from 001 through 100 so later work cannot be hidden behind a range.
 
 ## Current step
 
-Step 015 — Reusable custom validation rules recheck
+Step 016 — English localization and message cleanup recheck
 
 ## Last completed action
 
-Rechecked Step 014 by confirming the Fortify request-class boundary, Livewire-only validation boundary, translated request contracts, validation-focused tests, and full-suite coverage.
+Rechecked Step 015 by confirming the custom validation rule inventory, removing an empty reminder placeholder rule, adding custom-rule architecture coverage, and passing focused plus full-suite tests.
 
 ## Next action
 
-Continue the requested recheck with `steps/step-015-reusable-custom-validation-rules.md`, then verify the custom rule inventory and ownership validation coverage before advancing.
+Continue the requested recheck with `steps/step-016-english-localization-and-message-cleanup.md`, then verify localization coverage before advancing.
 
 ## Step ledger
 
@@ -34,7 +34,7 @@ Continue the requested recheck with `steps/step-015-reusable-custom-validation-r
 | 012 — Complete seeders for all models | Complete | Existing baseline splits safe demo user seeding and idempotent workspace demo data; rechecked on 2026-06-06 against Laravel 13 seeding docs, the current seeder inventory, local demo data, and the tracked placeholder `Reminder` model. Added explicit coverage that placeholder reminder rows remain unseeded until ownership and scheduling columns exist. | Boost docs search, reminders schema inspection, focused seeder/auth/factory tests, Pint, local `db:seed`, Boost DB queries, login URL resolution, and full suite recorded. | `docs/seeding-strategy.md`, `docs/changelog.md`, root progress, changelog, decisions, risks, and test report updated. | Reminder placeholder and future-domain seeder risks remain open and documented; no new Step 012 risk found. | c82fb1d, 264b8b3 |
 | 013 — Demo users and login panel | Complete | Existing baseline re-verifies demo login rendering, identifiers, and quick-login contract; rechecked on 2026-06-06 against Fortify login docs, route/config inventory, safe environment gates, Flux panel markup, both seeded demo accounts, and real local password hashes. | Boost docs search, Fortify route/config checks, focused auth/login/dashboard/todo tests, Pint, local hash check, Boost DB query, login URL resolution, browser logs, and full suite recorded. | `docs/auth-login-ux.md`, `docs/changelog.md`, root progress, changelog, and test report updated. | Existing demo credential environment-gating risk remains mitigated; no new Step 013 risk found. | 709cf2d, d958cc9 |
 | 014 — Dedicated request classes | Complete | Existing baseline adds auth Form Request classes and wires Fortify rule sources; rechecked on 2026-06-06 against Laravel 13 Form Request docs, Livewire form-object guidance, current route/controller inventory, Fortify actions, auth request classes, and Livewire-only validation surfaces. Added direct translated request-contract coverage. | Boost docs search, validation inventory scan, route inventory, failed-then-fixed feature test placement, auth request/auth route tests, broader validation-related tests, Pint, and full suite recorded. | `docs/request-validation.md`, `docs/changelog.md`, root progress, changelog, decisions, risks, and test report updated. | Form Request helper naming risk remains mitigated; no new Step 014 risk found. | 2dc906d, c44cab7 |
-| 015 — Reusable custom validation rules | Complete | Added reusable owned project/tag/todo rules and applied Livewire validation boundaries. | Todo organization, lifecycle/ownership tests, Pint, and full suite recorded. | Validation rules docs and root trackers updated. | Future-domain custom rules deferred until those domains exist. | f0174e4 |
+| 015 — Reusable custom validation rules | Complete | Existing baseline adds reusable owned project/tag/todo rules and applies Livewire validation boundaries; rechecked on 2026-06-06 against Laravel 13 rule-object docs, Livewire rule usage, current rule inventory, translation keys, and ownership tests. Removed the unused empty `ReminderAtIsActionable` placeholder rule and added custom-rule architecture coverage. | Boost docs search, custom-rule inventory scans, rule architecture test, todo ownership/organization tests, broader validation tests, Pint, and full suite recorded. | `docs/validation-rules.md`, `docs/changelog.md`, root progress, changelog, decisions, risks, and test report updated. | Future-domain custom rule risk remains open and documented; no new Step 015 risk found. | f0174e4 plus Step 015 recheck commit |
 | 016 — English localization and message cleanup | Complete | Finished navigation, dashboard, welcome, settings, Livewire action messages, page titles, and localization regression tests through English language files. | Localization/settings/dashboard checks, literal scan, Pint, and full suite passed. | `docs/localization.md`, changelog, checklist, decisions, risks, test report, and explicit 001-100 progress ledger updated. | Localization scanner limitation documented and mitigated. | f346426, 445fc11, be3329c |
 | 017 — Private workspace model | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
 | 018 — Ownership and query scoping | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |

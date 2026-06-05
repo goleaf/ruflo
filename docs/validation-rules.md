@@ -25,3 +25,15 @@ Rule failure messages live in `lang/en/todos.php` under `todos.validation`.
 ## Future Domains
 
 Invite token, recurrence, reminder time, file upload, import/export, settings, and role validation rules should be added with their feature steps when the corresponding stable models and request surfaces exist. Do not create placeholder rules for future domains without a concrete caller and test.
+
+## 2026-06-06 Recheck
+
+Step 015 was rechecked from `steps/step-015-reusable-custom-validation-rules.md`.
+
+Confirmed and updated:
+
+- The current implemented custom rule inventory is exactly the three todo ownership rules listed above.
+- Every current custom rule implements Laravel's `ValidationRule` contract and fails with a translated message.
+- Removed the unused `ReminderAtIsActionable` placeholder rule because it had an empty `validate()` body and no concrete caller.
+- Added architecture coverage so future custom rules cannot be silently committed as empty placeholders.
+- Future reminder, invite, recurrence, upload, import/export, settings, and role rules remain deferred until their feature steps add real request surfaces and tests.

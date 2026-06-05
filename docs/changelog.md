@@ -1,5 +1,35 @@
 # Changelog
 
+## 2026-06-05 - Step 3 Core task lifecycle
+
+### Implemented
+
+- Defined an explicit task state machine: active ⇄ completed, active/completed → archived → (restore to prior bucket), and any non-deleted → trashed (soft delete). States are derived from `is_completed`, `archived_at`, and `deleted_at`; archived takes precedence over completion.
+- Added `archived_at` to `todos` with a `(user_id, archived_at)` index; archive is distinct from both completion and deletion.
+- Added `App\Enums\TodoStatus` (Active/Completed/Archived) with translatable labels and badge colors, and model helpers/scopes (`status()`, `isActive()`, `isArchived()`, `scopeActive/Completed/Archived`).
+- Added one action per transition: `UpdateTodo`, `ArchiveTodo`, `UnarchiveTodo`; hardened `ToggleTodoCompletion` and `ClearCompletedTodos` to respect archive state. `archived_at` is set directly (system-controlled, never mass-assignable).
+- Added `InvalidTodoTransition` so completing or editing an archived task fails safely as a translatable warning, never a 500 or a leak.
+- Extended `TodoListQuery` with `forStatus()` buckets and a three-way `summaryFor()` (active/completed/archived counts) in a single scoped query.
+- Added domain events `TodoUpdated`, `TodoArchived`, `TodoUnarchived` (alongside the existing create/toggle/delete/clear events) for future activity history and reminders.
+
+### UI
+
+- Rebuilt the task list around a lifecycle segmented control (Flux Free has no tabs component) with live per-bucket counts, a create form on the Active tab, state-aware row actions in a dropdown (edit/archive on non-archived, restore on archived, delete always with `wire:confirm`), an edit modal, a reusable `x-ui.status-badge`, and per-tab empty states.
+- All new copy added to `lang/en/todos.php`; nothing user-facing is hardcoded.
+
+### Testing
+
+- Added `TodoLifecycleTest` (18 tests): status derivation, per-bucket listing and summary, archive/restore (completion preserved), archived-completion rejection, edit + edit validation, archived-edit refusal, soft delete, clear-completed isolation from archive, invalid-tab fallback, and cross-user denial across every lifecycle action (data-driven over toggle/edit/archive/restore/delete).
+- Full suite: 82 passed (was 64).
+
+### Documentation
+
+- Added `docs/task-lifecycle.md`: states, allowed/rejected transitions, where each concern lives, events, validation, UI states, and what Step 4 builds next.
+
+### Intentionally not implemented
+
+- Projects/lists, tags, priorities, due dates, search, non-lifecycle filters, sorting, pagination, bulk actions, a trash-restore UI, reminders, recurring tasks, dashboard, and collaboration.
+
 ## 2026-06-05 - Step 2 Private workspace, ownership & authorization
 
 ### Inspected

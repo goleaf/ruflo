@@ -34,4 +34,15 @@ class TodoFactory extends Factory
             'is_completed' => true,
         ]);
     }
+
+    /**
+     * Indicate that the todo is archived. Completion state is preserved so an
+     * archived-while-completed task restores back to completed.
+     */
+    public function archived(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'archived_at' => now(),
+        ]);
+    }
 }

@@ -1,0 +1,22 @@
+<?php
+
+namespace App\Events;
+
+use App\Models\Todo;
+use Illuminate\Foundation\Events\Dispatchable;
+use Illuminate\Queue\SerializesModels;
+
+/**
+ * A task's editable details (currently its title) were changed. Lifecycle
+ * transitions have their own events and do not dispatch this.
+ */
+final class TodoUpdated
+{
+    use Dispatchable, SerializesModels;
+
+    public function __construct(
+        public Todo $todo,
+    ) {
+        //
+    }
+}

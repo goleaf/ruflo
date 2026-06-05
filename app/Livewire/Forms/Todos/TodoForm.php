@@ -35,4 +35,12 @@ class TodoForm extends Form
     {
         return TodoData::fromArray($this->validate());
     }
+
+    /**
+     * Preload the form for editing an existing task.
+     */
+    public function setTitle(string $title): void
+    {
+        $this->title = $title;
+    }
 }

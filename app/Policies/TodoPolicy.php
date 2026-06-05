@@ -49,6 +49,14 @@ final class TodoPolicy
     }
 
     /**
+     * Determine whether the user can archive the model.
+     */
+    public function archive(User $user, Todo $todo): Response
+    {
+        return $this->ownerOnly($user, $todo);
+    }
+
+    /**
      * Determine whether the user can clear their completed todos.
      */
     public function clearCompleted(User $user): bool
@@ -65,7 +73,7 @@ final class TodoPolicy
     }
 
     /**
-     * Determine whether the user can restore the model.
+     * Determine whether the user can restore (un-archive) the model.
      */
     public function restore(User $user, Todo $todo): Response
     {

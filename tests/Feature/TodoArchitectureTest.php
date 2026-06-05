@@ -47,7 +47,8 @@ test('todo blade view uses translation keys and shared ui components', function 
 test('todo documentation exists for future implementation steps', function () {
     expect(file_exists(base_path('docs/todo-foundation.md')))->toBeTrue()
         ->and(file_exists(base_path('docs/changelog.md')))->toBeTrue()
-        ->and(file_exists(base_path('docs/authorization.md')))->toBeTrue();
+        ->and(file_exists(base_path('docs/authorization.md')))->toBeTrue()
+        ->and(file_exists(base_path('docs/task-lifecycle.md')))->toBeTrue();
 });
 
 test('todo model routes ownership through the shared concern and explicit policy', function () {

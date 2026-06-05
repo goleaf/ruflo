@@ -217,3 +217,11 @@ Record test/build/check results here.
 | 2026-06-06 | `php artisan test --compact tests/Feature/LocalizationCoverageTest.php tests/Feature/PrivateWorkspaceModelTest.php tests/Feature/DashboardTest.php` | Passed | 14 tests, 53 assertions after narrowing the localization assertion to specific dashboard translation keys. |
 | 2026-06-06 | `php artisan config:show app.url --no-interaction` | Passed | Runtime `app.url` still resolves to `https://ruflo.test`. |
 | 2026-06-06 | `php artisan test --compact` | Passed | Full suite passed with 190 tests and 710 assertions after Step 017 private workspace changes. |
+| 2026-06-06 | `mcp__laravel_boost.search_docs` | Passed | Reviewed Laravel 13 owner scopes/policies and Livewire 4 public-property, locked-property, and computed-property security guidance before Step 018 changes. |
+| 2026-06-06 | `rg private query/id scan` | Passed | Inspected private model queries, owner scopes, query objects, cache/session usage, and Livewire client-facing IDs before Step 018 changes. |
+| 2026-06-06 | `php artisan make:test --pest OwnershipQueryScopingTest --no-interaction` | Passed | Created the Step 018 private query scoping regression test. |
+| 2026-06-06 | `php artisan test --compact tests/Feature/OwnershipQueryScopingTest.php tests/Feature/PrivateWorkspaceModelTest.php tests/Feature/TodoOwnershipTest.php tests/Feature/TodoOrganizationTest.php tests/Feature/ProjectTest.php tests/Feature/TagTest.php tests/Feature/TodoArchitectureTest.php` | Passed | 79 tests, 262 assertions for owner-scoped picker queries, tampered filter empty results, locked edit IDs, edit-form tag hydration, and adjacent todo/project/tag privacy contracts. |
+| 2026-06-06 | `vendor/bin/pint --dirty --format agent` | Passed | PHP style passed after Step 018 query-scoping updates. |
+| 2026-06-06 | `git diff --check` | Passed | No whitespace errors after Step 018 changes. |
+| 2026-06-06 | `rg compressed-progress scan` | Passed | Mutable root progress/docs files contain no compressed grouped-step placeholder lines after Step 018. |
+| 2026-06-06 | `php artisan test --compact` | Passed | Full suite passed with 196 tests and 730 assertions after Step 018 ownership query-scoping changes. |

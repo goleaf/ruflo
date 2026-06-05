@@ -68,11 +68,19 @@ final class TodoListQuery
         if ($filters->withoutProject) {
             $query->withoutProject();
         } elseif ($filters->projectId !== null) {
-            $query->forProject($filters->projectId);
+            if ($this->ownedActiveProjectExists($user, $filters->projectId)) {
+                $query->forProject($filters->projectId);
+            } else {
+                $this->rejectInvalidFilter($query);
+            }
         }
 
         if ($filters->tagId !== null) {
-            $query->withTag($filters->tagId);
+            if ($this->ownedTagExists($user, $filters->tagId)) {
+                $query->withTag($filters->tagId);
+            } else {
+                $this->rejectInvalidFilter($query);
+            }
         }
 
         if ($filters->priority !== null) {
@@ -189,5 +197,31 @@ final class TodoListQuery
             'project' => fn (BelongsTo $project): BelongsTo => $project->where('projects.user_id', $user->id),
             'tags' => fn (BelongsToMany $tags): BelongsToMany => $tags->where('tags.user_id', $user->id),
         ]);
+    }
+
+    private function ownedActiveProjectExists(User $user, int $projectId): bool
+    {
+        return Project::query()
+            ->ownedBy($user)
+            ->active()
+            ->whereKey($projectId)
+            ->exists();
+    }
+
+    private function ownedTagExists(User $user, int $tagId): bool
+    {
+        return $user->tags()
+            ->whereKey($tagId)
+            ->exists();
+    }
+
+    /**
+     * Keep tampered numeric filters from falling back to an unfiltered list.
+     *
+     * @param  Builder<Todo>  $query
+     */
+    private function rejectInvalidFilter(Builder $query): void
+    {
+        $query->whereKey([]);
     }
 }

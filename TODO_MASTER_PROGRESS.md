@@ -2,19 +2,19 @@
 
 ## Current status
 
-Steps 001-017 are complete. The requested recheck from Step 001 has been completed through Step 017. The tracker is expanded to one ledger line per step from 001 through 100 so later work cannot be hidden behind a range.
+Steps 001-018 are complete. The requested recheck from Step 001 has been completed through Step 018. The tracker is expanded to one ledger line per step from 001 through 100 so later work cannot be hidden behind a range.
 
 ## Current step
 
-Step 018 — Ownership and query scoping
+Step 019 — Authorization policies
 
 ## Last completed action
 
-Rechecked Step 017 by confirming the owning-user workspace boundary, adding owner-scoped dashboard counters, guarding project/tag relation hydration, documenting the private-workspace contract, and passing focused privacy tests.
+Completed Step 018 by locking server-assigned todo edit IDs, tightening tampered project/tag filter behavior, keeping edit-form tag hydration on scoped query results, documenting the query-scoping contract, and passing focused ownership query tests.
 
 ## Next action
 
-Begin `steps/step-018-ownership-and-query-scoping.md`, then implement the next not-yet-completed plan step without grouping it with later work.
+Begin `steps/step-019-authorization-policies.md`, then implement the next not-yet-completed plan step without grouping it with later work.
 
 ## Step ledger
 
@@ -37,7 +37,7 @@ Begin `steps/step-018-ownership-and-query-scoping.md`, then implement the next n
 | 015 — Reusable custom validation rules | Complete | Existing baseline adds reusable owned project/tag/todo rules and applies Livewire validation boundaries; rechecked on 2026-06-06 against Laravel 13 rule-object docs, Livewire rule usage, current rule inventory, translation keys, and ownership tests. Removed the unused empty `ReminderAtIsActionable` placeholder rule and added custom-rule architecture coverage. | Boost docs search, custom-rule inventory scans, rule architecture test, todo ownership/organization tests, broader validation tests, Pint, and full suite recorded. | `docs/validation-rules.md`, `docs/changelog.md`, root progress, changelog, decisions, risks, and test report updated. | Future-domain custom rule risk remains open and documented; no new Step 015 risk found. | f0174e4, fcb014d |
 | 016 — English localization and message cleanup | Complete | Existing baseline finishes navigation, dashboard, welcome, settings, Livewire action messages, page titles, and localization regression tests through English language files; rechecked on 2026-06-06 against Laravel localization docs, language-file inventory, literal translation API scans, localized page rendering, and static translation-key existence. | Boost docs search, language-file inventory, literal translation API scan, localization/login/settings/setup/maintenance/todo focused tests, Pint, and full suite recorded. | `docs/localization.md`, `docs/changelog.md`, root progress, changelog, risks, and test report updated. | Localization scanner limitation remains documented and further mitigated with static key-existence coverage; no new Step 016 risk found. | f346426, 445fc11, be3329c, 6b73ebd |
 | 017 — Private workspace model | Complete | Rechecked the private workspace foundation and kept owning `User` as the workspace boundary. Added owner-scoped `DailySummaryQuery`, wired dashboard rendering through the existing class-based Livewire component, guarded todo project/tag relation hydration against malformed cross-user links, and added private-workspace architecture coverage. | Boost docs search, route inventory, schema checks for todos/projects/tags/tag_todo, failed-then-fixed focused privacy suite, 69-test focused suite, localization assertion fix, Pint, diff check, and full suite recorded in test report. | `docs/authorization.md`, `docs/changelog.md`, root progress, checklist, changelog, decisions, risks, and test report updated. | `tag_todo` pivot owner-column limitation logged and mitigated through validation/action scoping plus relation hydration constraints; reminder placeholder remains denied until real owner/schedule schema. | a7247a7 |
-| 018 — Ownership and query scoping | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 018 — Ownership and query scoping | Complete | Locked `editingId` and `editingProjectId` Livewire properties, removed the unscoped edit-form tag reload, and tightened `TodoListQuery::filtered()` so foreign, archived, or missing project/tag IDs produce a safe empty result rather than applying another user's ID or falling back to an unfiltered list. | Boost docs search, private query/id scans, focused 79-test ownership query suite, Pint, compressed-progress scan, diff check, and full suite recorded in test report. | `docs/authorization.md`, `docs/task-organization.md`, `docs/changelog.md`, root progress, checklist, changelog, decisions, and test report updated. | No new open risk; the tampered filter behavior was mitigated and recorded as a decision. | Pending |
 | 019 — Authorization policies | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
 | 020 — Guest and route protection | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
 | 021 — Core task creation | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |

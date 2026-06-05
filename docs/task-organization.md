@@ -74,6 +74,9 @@ the (sanitized) filter object.
   tag, priority, and due bucket. Every filter value is sanitized in the
   component's `buildFilters()` before it reaches the query: unknown enum/sort/
   due values fall back to safe defaults and can never widen scope.
+  Numeric project/tag filters are re-checked inside `TodoListQuery::filtered()`;
+  foreign, archived, or missing ids return an empty result rather than applying
+  another user's id or falling back to an unfiltered list.
 - **Sorting** — `created`, `updated`, `due` (nulls last), `priority` (by weight
   via a bounded `CASE`), `project` (by owned project name, ungrouped tasks last),
   or `title`, each asc/desc. The sort key is validated against

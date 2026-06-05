@@ -43,7 +43,7 @@ Use this file as a persistent task tracker. Step detail lives in `TODO_MASTER_PR
 - [x] Step 015 — Reusable custom validation rules
 - [x] Step 016 — English localization and message cleanup
 - [x] Step 017 — Private workspace model
-- [ ] Step 018 — Ownership and query scoping
+- [x] Step 018 — Ownership and query scoping
 - [ ] Step 019 — Authorization policies
 - [ ] Step 020 — Guest and route protection
 - [ ] Step 021 — Core task creation

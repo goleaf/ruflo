@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026-06-06 - Step 018 Ownership and query scoping
+
+### Implemented
+
+- Locked server-assigned todo edit identifiers in the class-based Livewire todo workspace.
+- Removed the unscoped edit-form tag reload so edit state uses the owner-constrained `TodoListQuery` result.
+- Tightened project and tag URL filters so foreign, archived, or missing IDs return an empty owner-scoped result instead of being applied as query predicates.
+- Added Step 018 coverage for picker queries, tampered filters, edit-form tag hydration, locked IDs, and component query delegation.
+
+### Testing
+
+- Added `OwnershipQueryScopingTest` for private query scoping and Livewire ID hardening.
+- Rechecked adjacent private workspace, ownership, organization, project, tag, and architecture tests.
+
+### Documentation
+
+- Updated `docs/authorization.md` and `docs/task-organization.md` with invalid-filter empty-state behavior and locked edit-ID expectations.
+
 ## 2026-06-06 - Step 017 Private workspace model
 
 ### Implemented

@@ -64,6 +64,9 @@ directly). Consequences that are mandatory, not optional:
   record's existence never leaks.
 - Aggregates (the remaining/completed summary) are computed inside the scope,
   so counters can never include another user's tasks.
+- URL filter IDs are re-checked against the owner before they become query
+  predicates. A foreign, archived, or missing project/tag filter resolves to an
+  empty result instead of being ignored or applied as another user's ID.
 - Related project and tag labels are constrained to the same owner before
   eager loading. Normal actions already prevent foreign links, but malformed
   legacy rows or manual database edits still must not leak names in the UI.
@@ -112,7 +115,8 @@ it on:
   cached later, cache keys must be per-user so data never mixes.
 - **Search & filters** — ownership is applied at the query level before any
   text/status/priority filtering; invalid filter input is validated and must
-  never widen the scope.
+  never widen the scope. Tampered numeric project/tag filters return a safe
+  empty state.
 - **Bulk actions** — never trust a submitted set of IDs. Re-scope every
   selected ID to the owner and authorize each before acting; a foreign ID in
   the payload is silently excluded, not processed.
@@ -138,3 +142,8 @@ models must use the shared owner concern, private policies must hide foreign
 records as not found, dashboard counts must be user-scoped, malformed
 cross-user project/tag links must not hydrate foreign labels, and placeholder
 reminders remain inaccessible until their real owner/schedule schema exists.
+
+`OwnershipQueryScopingTest` locks the Step 018 contract: project/tag picker
+queries are owner-scoped, tampered project/tag filters are empty rather than
+foreign-scoped, edit-form tag hydration uses the scoped query result, and
+server-assigned Livewire edit IDs are locked.

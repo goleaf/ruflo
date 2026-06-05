@@ -45,6 +45,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\Locked;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -96,6 +97,7 @@ class Index extends Component
     public string $direction = 'desc';
 
     // --- Edit modal ---
+    #[Locked]
     public ?int $editingId = null;
 
     public bool $showEditModal = false;
@@ -111,6 +113,7 @@ class Index extends Component
 
     public string $newProjectName = '';
 
+    #[Locked]
     public ?int $editingProjectId = null;
 
     public string $editingProjectName = '';
@@ -179,7 +182,6 @@ class Index extends Component
             return;
         }
 
-        $todo->load('tags');
         $this->editingId = $todo->id;
         $this->editForm->setFromTodo($todo);
         $this->showEditModal = true;

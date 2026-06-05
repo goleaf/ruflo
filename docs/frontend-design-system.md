@@ -35,3 +35,16 @@ New component styling should still prefer Flux components and Tailwind utility c
 ## Verification
 
 The frontend asset pipeline is guarded by `tests/Feature/FrontendAssetPipelineTest.php` and by `npm run build`.
+
+## 2026-06-06 Recheck
+
+Step 005 was rechecked from the root prompt pack and `steps/step-005-tailwind-css-4-and-scss-design-layer.md`.
+
+Confirmed:
+
+- Tailwind CSS 4.3, `@tailwindcss/vite` 4.3, Vite 8, Laravel Vite plugin 3.1, and `sass-embedded` 1.100 are installed.
+- `vite.config.js` keeps `resources/css/app.css` and `resources/scss/app.scss` as separate entries.
+- Shared and welcome heads load both CSS entries through `@vite`.
+- Runtime CSS/SCSS sources contain no deprecated Tailwind v3 utility syntax.
+- SCSS remains limited to tokens, accessibility helpers, shared surface helpers, and print rules.
+- `tests/Feature/FrontendAssetPipelineTest.php` and `npm run build` pass.

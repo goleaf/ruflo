@@ -77,7 +77,7 @@ Record test/build/check results here.
 | 2026-06-06 | `php artisan make:test LocalizationCoverageTest --pest --no-interaction` | Passed | Created the Step 016 localization regression test. |
 | 2026-06-06 | `php artisan test --compact tests/Feature/LocalizationCoverageTest.php tests/Feature/DashboardTest.php tests/Feature/Settings/SecurityTest.php tests/Feature/Settings/ProfileUpdateTest.php` | Passed | 15 tests, 50 assertions for localization source scanning and rendered page smoke coverage. |
 | 2026-06-06 | `vendor/bin/pint --dirty --format agent` | Passed | PHP style passed after Step 016 follow-up changes. |
-| 2026-06-06 | `rg compressed-progress scan` | Passed | Root progress files no longer contain the prior compressed Step 017-100 line. |
+| 2026-06-06 | `rg compressed-progress scan` | Passed | Root progress files no longer contain the prior compressed pending-step placeholder. |
 | 2026-06-06 | `php artisan test --compact` | Passed | Full suite passed with 170 tests and 620 assertions after Step 016. |
 | 2026-06-06 | `composer show laravel/framework livewire/livewire livewire/flux laravel/fortify pestphp/pest --no-interaction` | Corrected | Composer accepts one package argument; the corrected installed-package inventory command is recorded below. |
 | 2026-06-06 | `composer show --installed --no-interaction \| rg "^(laravel/framework\|livewire/livewire\|livewire/flux\|laravel/fortify\|pestphp/pest\|phpunit/phpunit\|laravel/pint)\\s"` | Passed | Confirmed Laravel 13.14, Livewire 4.3, Flux 2.14, Fortify 1.37, Pest 4.7, PHPUnit 12.5, and Pint 1.29 for Step 001 recheck. |
@@ -101,3 +101,9 @@ Record test/build/check results here.
 | 2026-06-06 | `find resources app routes tests config -iname '*volt*' -o -name '*⚡*'` | Passed | No Volt-named files or Livewire emoji component files found. |
 | 2026-06-06 | `rg Volt source scan` | Passed | No Volt dependency/import/directive/provider markers found; broad scan hits were unrelated notification `action(...)` methods. |
 | 2026-06-06 | `php artisan test --compact tests/Feature/TodoTest.php tests/Feature/TodoOrganizationTest.php tests/Feature/ProjectTest.php tests/Feature/TagTest.php tests/Feature/Settings/SecurityTest.php tests/Feature/Settings/ProfileUpdateTest.php` | Passed | 66 tests, 208 assertions for class-based Livewire todo/project/tag/settings behavior. |
+| 2026-06-06 | `mcp__laravel_boost.search_docs` | Passed | Reviewed Laravel 13 Vite asset entry guidance and Flux 2 styling references before the Step 005 recheck. |
+| 2026-06-06 | `npm ls tailwindcss @tailwindcss/vite sass-embedded vite laravel-vite-plugin --depth=0` | Passed | Confirmed Tailwind CSS 4.3, Tailwind Vite plugin 4.3, `sass-embedded` 1.100, Vite 8.0, and Laravel Vite plugin 3.1. |
+| 2026-06-06 | `find resources/scss -maxdepth 1 -type f -name '*.scss' -print` | Passed | Confirmed the SCSS support layer is limited to tokens, accessibility, print, surfaces, and the single app entry. |
+| 2026-06-06 | `rg Tailwind v3 runtime syntax scan` | Passed | No deprecated Tailwind v3 opacity/flex/ellipsis utilities or legacy `@tailwind base/components/utilities` directives found in `resources` or `app`. |
+| 2026-06-06 | `php artisan test --compact tests/Feature/FrontendAssetPipelineTest.php` | Passed | 2 tests, 17 assertions for the Step 005 Tailwind/SCSS asset contract. |
+| 2026-06-06 | `npm run build` | Passed | Vite built Tailwind CSS, SCSS, app JS, passkeys JS, and font assets without dirtying the worktree. |

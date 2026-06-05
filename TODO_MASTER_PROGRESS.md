@@ -2,19 +2,19 @@
 
 ## Current status
 
-Steps 001-016 are complete. The requested recheck from Step 001 has been completed through Step 015. The tracker is expanded to one ledger line per step from 001 through 100 so later work cannot be hidden behind a range.
+Steps 001-016 are complete. The requested recheck from Step 001 has been completed through Step 016. The tracker is expanded to one ledger line per step from 001 through 100 so later work cannot be hidden behind a range.
 
 ## Current step
 
-Step 016 — English localization and message cleanup recheck
+Step 017 — Private workspace model
 
 ## Last completed action
 
-Rechecked Step 015 by confirming the custom validation rule inventory, removing an empty reminder placeholder rule, adding custom-rule architecture coverage, and passing focused plus full-suite tests.
+Rechecked Step 016 by confirming localization language files, literal translation API scans, localized landing pages, static translation-key coverage, docs, and full-suite tests.
 
 ## Next action
 
-Continue the requested recheck with `steps/step-016-english-localization-and-message-cleanup.md`, then verify localization coverage before advancing.
+Begin `steps/step-017-private-workspace-model.md`, then implement the first not-yet-completed plan step without grouping it with later work.
 
 ## Step ledger
 
@@ -35,7 +35,7 @@ Continue the requested recheck with `steps/step-016-english-localization-and-mes
 | 013 — Demo users and login panel | Complete | Existing baseline re-verifies demo login rendering, identifiers, and quick-login contract; rechecked on 2026-06-06 against Fortify login docs, route/config inventory, safe environment gates, Flux panel markup, both seeded demo accounts, and real local password hashes. | Boost docs search, Fortify route/config checks, focused auth/login/dashboard/todo tests, Pint, local hash check, Boost DB query, login URL resolution, browser logs, and full suite recorded. | `docs/auth-login-ux.md`, `docs/changelog.md`, root progress, changelog, and test report updated. | Existing demo credential environment-gating risk remains mitigated; no new Step 013 risk found. | 709cf2d, d958cc9 |
 | 014 — Dedicated request classes | Complete | Existing baseline adds auth Form Request classes and wires Fortify rule sources; rechecked on 2026-06-06 against Laravel 13 Form Request docs, Livewire form-object guidance, current route/controller inventory, Fortify actions, auth request classes, and Livewire-only validation surfaces. Added direct translated request-contract coverage. | Boost docs search, validation inventory scan, route inventory, failed-then-fixed feature test placement, auth request/auth route tests, broader validation-related tests, Pint, and full suite recorded. | `docs/request-validation.md`, `docs/changelog.md`, root progress, changelog, decisions, risks, and test report updated. | Form Request helper naming risk remains mitigated; no new Step 014 risk found. | 2dc906d, c44cab7 |
 | 015 — Reusable custom validation rules | Complete | Existing baseline adds reusable owned project/tag/todo rules and applies Livewire validation boundaries; rechecked on 2026-06-06 against Laravel 13 rule-object docs, Livewire rule usage, current rule inventory, translation keys, and ownership tests. Removed the unused empty `ReminderAtIsActionable` placeholder rule and added custom-rule architecture coverage. | Boost docs search, custom-rule inventory scans, rule architecture test, todo ownership/organization tests, broader validation tests, Pint, and full suite recorded. | `docs/validation-rules.md`, `docs/changelog.md`, root progress, changelog, decisions, risks, and test report updated. | Future-domain custom rule risk remains open and documented; no new Step 015 risk found. | f0174e4, fcb014d |
-| 016 — English localization and message cleanup | Complete | Finished navigation, dashboard, welcome, settings, Livewire action messages, page titles, and localization regression tests through English language files. | Localization/settings/dashboard checks, literal scan, Pint, and full suite passed. | `docs/localization.md`, changelog, checklist, decisions, risks, test report, and explicit 001-100 progress ledger updated. | Localization scanner limitation documented and mitigated. | f346426, 445fc11, be3329c |
+| 016 — English localization and message cleanup | Complete | Existing baseline finishes navigation, dashboard, welcome, settings, Livewire action messages, page titles, and localization regression tests through English language files; rechecked on 2026-06-06 against Laravel localization docs, language-file inventory, literal translation API scans, localized page rendering, and static translation-key existence. | Boost docs search, language-file inventory, literal translation API scan, localization/login/settings/setup/maintenance/todo focused tests, Pint, and full suite recorded. | `docs/localization.md`, `docs/changelog.md`, root progress, changelog, risks, and test report updated. | Localization scanner limitation remains documented and further mitigated with static key-existence coverage; no new Step 016 risk found. | f346426, 445fc11, be3329c plus Step 016 recheck commit |
 | 017 — Private workspace model | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
 | 018 — Ownership and query scoping | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
 | 019 — Authorization policies | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |

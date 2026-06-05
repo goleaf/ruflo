@@ -20,6 +20,22 @@
 - Added `docs/validation-rules.md` with the current rule inventory, translation location, and postponed future-domain rule guidance.
 - Added the Step 015 recheck notes for the current custom-rule inventory and future-domain placeholder policy.
 
+## 2026-06-05 - Step 016 English localization and message cleanup
+
+### Implemented
+
+- Moved auth, settings, navigation, dashboard, welcome, setup, maintenance, todo, Livewire title, and action-message copy into English language files.
+- Kept localization render-time only with no external translation service dependency.
+
+### Testing
+
+- Added localization coverage for literal English strings passed to translation APIs, Flux toasts, `addError`, and Livewire titles.
+- Added static translation-key existence coverage during the Step 016 recheck.
+
+### Documentation
+
+- Added and rechecked `docs/localization.md` with language-file inventory, guardrails, and restricted-hosting behavior.
+
 ## 2026-06-05 - Step 014 Dedicated request classes
 
 ### Implemented

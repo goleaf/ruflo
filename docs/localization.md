@@ -17,8 +17,21 @@ Step 016 keeps visible application copy in English language files instead of har
 - Livewire `#[Title]` values should use translation keys when a matching language line exists.
 - `resources/views/partials/head.blade.php` resolves title keys through Laravel localization before rendering the browser title.
 - `tests/Feature/LocalizationCoverageTest.php` scans application and Blade source for literal English strings passed to `__()`, `@lang`, `Flux::toast`, `addError`, and Livewire `#[Title]`.
+- The same test file also checks static application translation keys referenced by `__()`, `@lang`, and Livewire `#[Title]` exist in the English language files.
 - Commands, URLs, package names, and other executable identifiers can remain literal because they are not translatable prose.
 
 ## Restricted hosting
 
 Localization is request/render-time only. It does not require cron, queue workers, Artisan commands, terminal access, external translation APIs, or paid services during normal application usage.
+
+## 2026-06-06 Recheck
+
+Step 016 was rechecked from `steps/step-016-english-localization-and-message-cleanup.md`.
+
+Confirmed and updated:
+
+- The current English language files are `auth`, `dashboard`, `maintenance`, `navigation`, `settings`, `setup`, `todos`, and `welcome`.
+- Public and authenticated landing pages render localized copy instead of raw translation keys.
+- Literal English strings are not passed directly to translation APIs, Flux toasts, `addError`, or Livewire `#[Title]` attributes.
+- Added coverage that static translation keys referenced from app and Blade source exist in the English language files.
+- Localization remains render-time only and does not depend on cron, queue workers, shell access, external translation services, or paid APIs.

@@ -2,6 +2,7 @@
 
 use App\Models\User;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Lang;
 
 test('source files do not use literal english copy in translation APIs', function () {
     $patterns = [
@@ -42,6 +43,36 @@ test('public and authenticated landing pages render localized copy', function ()
         ->assertSee(__('dashboard.heading'))
         ->assertSee(__('dashboard.install.heading'))
         ->assertDontSee('dashboard.');
+});
+
+test('static application translation keys referenced by source files exist', function () {
+    $patterns = [
+        '/__\(\s*[\'"]((?:[a-z0-9_]+\.)+[a-z0-9_]+)[\'"]/',
+        '/@lang\(\s*[\'"]((?:[a-z0-9_]+\.)+[a-z0-9_]+)[\'"]/',
+        '/#\[Title\([\'"]((?:[a-z0-9_]+\.)+[a-z0-9_]+)[\'"]\)\]/',
+    ];
+
+    $missing = [];
+
+    foreach (localizationSourceFiles() as $path) {
+        $source = file_get_contents($path) ?: '';
+
+        foreach ($patterns as $pattern) {
+            if (preg_match_all($pattern, $source, $matches) === false) {
+                continue;
+            }
+
+            foreach ($matches[1] as $key) {
+                if (! Lang::has($key)) {
+                    $missing[] = sprintf('%s: %s', relativePath($path), $key);
+                }
+            }
+        }
+    }
+
+    sort($missing);
+
+    expect($missing)->toBeEmpty();
 });
 
 /**

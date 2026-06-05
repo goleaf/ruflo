@@ -2,18 +2,28 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BelongsToUser;
+use App\Policies\TodoPolicy;
 use Database\Factories\TodoFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * A private task owned by a single user (their workspace).
+ *
+ * Mass assignment is restricted to user-controllable fields only. Ownership
+ * (`user_id`) is never fillable and must be assigned through the owning
+ * relationship in an action, never from request input.
+ */
 #[Fillable(['title', 'is_completed'])]
+#[UsePolicy(TodoPolicy::class)]
 class Todo extends Model
 {
     /** @use HasFactory<TodoFactory> */
-    use HasFactory, SoftDeletes;
+    use BelongsToUser, HasFactory, SoftDeletes;
 
     /**
      * The model's default values for attributes.
@@ -23,16 +33,6 @@ class Todo extends Model
     protected $attributes = [
         'is_completed' => false,
     ];
-
-    /**
-     * Get the user that owns the todo.
-     *
-     * @return BelongsTo<User, $this>
-     */
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
 
     /**
      * Get the attributes that should be cast.

@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-06-05 - Step 013 Demo users and login panel
+
+### Implemented
+
+- Re-verified the seeded demo login panel against the current Fortify email-login model.
+- Kept quick login buttons as normal Fortify POST `/login` submissions with CSRF protection.
+- Documented that demo users display email addresses because this app has no separate username column.
+
+### Testing
+
+- Expanded the login UX test to assert rendered demo roles and per-user descriptions.
+
+### Documentation
+
+- Updated `docs/auth-login-ux.md` with the email-only login identifier contract.
+
 ## 2026-06-05 - Step 012 Complete seeders for all models
 
 ### Implemented

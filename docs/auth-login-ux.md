@@ -15,6 +15,8 @@ The panel is configured in `config/demo.php`. The current seeded demo users are:
 - `test@example.com` with password `password`.
 - `second@example.com` with password `password`.
 
+The current authentication model uses email as the login identifier. The users table does not include a username column, so the panel displays each seeded user's email address, role, and description rather than introducing a separate username concept.
+
 Quick login buttons do not bypass authentication. Each button submits the configured email and password to Fortify's normal POST `/login` endpoint, so throttling, sessions, redirects, and two-factor challenge behavior remain in the existing auth pipeline.
 
 ## Production Safety

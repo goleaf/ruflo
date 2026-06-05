@@ -47,3 +47,8 @@ Record test/build/check results here.
 | 2026-06-05 | `vendor/bin/pint --dirty --format agent` | Passed | Pint fixed the new seeder files and then passed. |
 | 2026-06-05 | `php artisan test --compact tests/Feature/SeederCoverageTest.php` | Passed | 3 tests, 33 assertions after Pint formatting. |
 | 2026-06-05 | `php artisan test --compact` | Passed | Full suite passed with 159 tests and 550 assertions after Step 012. |
+| 2026-06-05 | `mcp__laravel_boost.database_schema filter=users` | Passed | Confirmed users authenticate by `email`; no separate username column exists for the demo panel. |
+| 2026-06-05 | `php artisan test --compact tests/Feature/AuthLoginUxTest.php tests/Feature/Auth/AuthenticationTest.php` | Passed | 11 tests, 49 assertions for Step 013 demo metadata rendering and Fortify authentication behavior. |
+| 2026-06-05 | `vendor/bin/pint --dirty --format agent` | Passed | PHP style passed after Step 013. |
+| 2026-06-05 | `php artisan test --compact` | Passed | Full suite passed with 159 tests and 554 assertions after Step 013. |
+| 2026-06-05 | `mcp__laravel_boost.get_absolute_url route=login` | Passed | Boost resolved the login route as `https://ruflo.test/login`. |

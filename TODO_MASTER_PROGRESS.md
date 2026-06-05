@@ -2,7 +2,7 @@
 
 ## Current status
 
-Steps 001-012 are complete and verified from the existing baseline plus Step 005 asset layer, Step 006 restricted-hosting contract, Step 007 protected setup status, Step 008 maintenance center, Step 009 domain readiness, Step 010 auth/login UX, Step 011 factory coverage, and Step 012 seeder coverage. Continuing from Step 013 in the current 100-step plan.
+Steps 001-013 are complete and verified from the existing baseline plus Step 005 asset layer, Step 006 restricted-hosting contract, Step 007 protected setup status, Step 008 maintenance center, Step 009 domain readiness, Step 010 auth/login UX, Step 011 factory coverage, Step 012 seeder coverage, and Step 013 demo login stabilization. Continuing from Step 014 in the current 100-step plan.
 
 ## Completed steps
 
@@ -18,17 +18,18 @@ Steps 001-012 are complete and verified from the existing baseline plus Step 005
 - [x] Step 010 — Authentication and login UX
 - [x] Step 011 — Complete factories for all models
 - [x] Step 012 — Complete seeders for all models
-- [ ] Step 013 — Demo users and login panel
-- [ ] Steps 014-100
+- [x] Step 013 — Demo users and login panel
+- [ ] Step 014 — Dedicated request classes
+- [ ] Steps 015-100
 
 ## Current step
 
-Step 013
+Step 014
 
 ## Last completed action
 
-Completed Step 012 by splitting demo user seeding, making demo/workspace seeders idempotent, covering every tracked model with usable demo data, documenting seeding rules, and adding seeder tests.
+Completed Step 013 by re-verifying the safe demo login panel, tightening role/description coverage, documenting the email-only login identifier contract, and confirming Fortify quick-login behavior stays in the normal auth pipeline.
 
 ## Next action
 
-Start Step 013 demo users and login panel.
+Start Step 014 dedicated request classes.

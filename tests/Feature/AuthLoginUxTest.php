@@ -37,6 +37,10 @@ test('demo login panel is rendered for seeded users in safe environments', funct
         ->assertSee('test@example.com')
         ->assertSee('second@example.com')
         ->assertSee('password')
+        ->assertSee(__('auth.demo.users.test.role'))
+        ->assertSee(__('auth.demo.users.test.description'))
+        ->assertSee(__('auth.demo.users.second.role'))
+        ->assertSee(__('auth.demo.users.second.description'))
         ->assertSee(__('auth.demo.quick_login', ['name' => 'Test User']))
         ->assertSee('data-test="demo-login-panel"', false)
         ->assertSee('data-test="demo-login-button"', false);

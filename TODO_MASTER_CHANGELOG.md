@@ -17,3 +17,4 @@ Record changes after every step.
 - Completed Step 010 by adding an environment-gated seeded demo login panel, Fortify quick-login forms, auth translations, safe demo seeding rules, docs, and tests.
 - Completed Step 011 by expanding all tracked model factories with auth/demo, lifecycle, date, priority, ownership, project, tag, and edge-case states plus coverage tests.
 - Completed Step 012 by splitting safe demo user seeding, making workspace seeders idempotent, seeding complete current-model demo data, and adding seeder coverage tests.
+- Completed Step 013 by re-verifying the demo login panel contract, asserting rendered roles/descriptions, documenting the email-only login identifier, and keeping quick login inside Fortify.

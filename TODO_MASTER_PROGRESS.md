@@ -2,7 +2,7 @@
 
 ## Current status
 
-Steps 001-010 are complete and verified from the existing baseline plus Step 005 asset layer, Step 006 restricted-hosting contract, Step 007 protected setup status, Step 008 maintenance center, Step 009 domain readiness, and Step 010 auth/login UX. Continuing from Step 011 in the current 100-step plan.
+Steps 001-011 are complete and verified from the existing baseline plus Step 005 asset layer, Step 006 restricted-hosting contract, Step 007 protected setup status, Step 008 maintenance center, Step 009 domain readiness, Step 010 auth/login UX, and Step 011 factory coverage. Continuing from Step 012 in the current 100-step plan.
 
 ## Completed steps
 
@@ -16,17 +16,18 @@ Steps 001-010 are complete and verified from the existing baseline plus Step 005
 - [x] Step 008 — Protected maintenance center
 - [x] Step 009 — Domain and ruflo.test readiness
 - [x] Step 010 — Authentication and login UX
-- [ ] Step 011 — Complete factories for all models
-- [ ] Steps 012-100
+- [x] Step 011 — Complete factories for all models
+- [ ] Step 012 — Complete seeders for all models
+- [ ] Steps 013-100
 
 ## Current step
 
-Step 011
+Step 012
 
 ## Last completed action
 
-Completed Step 010 by adding a safe environment-gated demo login panel, config-backed seeded demo users, Fortify quick login forms, English auth translations, documentation, and tests.
+Completed Step 011 by expanding factories for all tracked models, adding lifecycle/date/priority/relationship states, documenting the model inventory, and testing every important factory state.
 
 ## Next action
 
-Start Step 011 complete factories for all models.
+Start Step 012 complete seeders for all models.

@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-06-05 - Step 011 Complete factories for all models
+
+### Implemented
+
+- Expanded user factory states for custom passwords, configured demo users, and existing auth states.
+- Expanded project and tag factory states for names, colors, archived/active projects, and common demo labels.
+- Expanded todo factory states for lifecycle, due-date, priority, max-title, soft-delete, project, and tag relationship scenarios.
+- Added relationship helpers that preserve user ownership boundaries for project and tag-backed todos.
+
+### Testing
+
+- Added factory coverage tests for every tracked model and important factory state.
+
+### Documentation
+
+- Added `docs/factory-coverage.md` with the tracked model inventory and state coverage.
+
 ## 2026-06-05 - Step 010 Authentication and login UX
 
 ### Implemented

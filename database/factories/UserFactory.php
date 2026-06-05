@@ -46,6 +46,33 @@ class UserFactory extends Factory
         ]);
     }
 
+    public function withPassword(string $password): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'password' => Hash::make($password),
+        ]);
+    }
+
+    public function demoPrimary(): static
+    {
+        return $this->withPassword((string) config('demo.login_panel.password', 'password'))
+            ->state(fn (array $attributes) => [
+                'name' => (string) config('demo.login_panel.users.0.name', 'Test User'),
+                'email' => (string) config('demo.login_panel.users.0.email', 'test@example.com'),
+                'email_verified_at' => now(),
+            ]);
+    }
+
+    public function demoSecondary(): static
+    {
+        return $this->withPassword((string) config('demo.login_panel.password', 'password'))
+            ->state(fn (array $attributes) => [
+                'name' => (string) config('demo.login_panel.users.1.name', 'Second User'),
+                'email' => (string) config('demo.login_panel.users.1.email', 'second@example.com'),
+                'email_verified_at' => now(),
+            ]);
+    }
+
     /**
      * Indicate that the model has two-factor authentication configured.
      */

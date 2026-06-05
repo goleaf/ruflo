@@ -22,4 +22,28 @@ class TagFactory extends Factory
             'color' => fake()->randomElement(['zinc', 'blue', 'green', 'amber', 'red', 'purple']),
         ];
     }
+
+    public function named(string $name): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'name' => $name,
+        ]);
+    }
+
+    public function color(string $color): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'color' => $color,
+        ]);
+    }
+
+    public function urgent(): static
+    {
+        return $this->named('urgent')->color('red');
+    }
+
+    public function waiting(): static
+    {
+        return $this->named('waiting')->color('amber');
+    }
 }

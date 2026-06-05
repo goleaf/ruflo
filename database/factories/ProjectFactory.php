@@ -29,4 +29,35 @@ class ProjectFactory extends Factory
             'archived_at' => now(),
         ]);
     }
+
+    public function active(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'archived_at' => null,
+        ]);
+    }
+
+    public function named(string $name): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'name' => $name,
+        ]);
+    }
+
+    public function color(string $color): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'color' => $color,
+        ]);
+    }
+
+    public function work(): static
+    {
+        return $this->named('Work')->color('blue');
+    }
+
+    public function home(): static
+    {
+        return $this->named('Home')->color('green');
+    }
 }

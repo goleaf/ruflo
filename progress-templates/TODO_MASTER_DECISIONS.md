@@ -1,6 +1,4 @@
 # TODO Master Decisions
 
-Record important architecture/product decisions here.
-
-| Date | Area | Decision | Reason |
-|---|---|---|---|
+| Date | Step | Area | Decision | Reason |
+|---|---:|---|---|---|

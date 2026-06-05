@@ -1,111 +1,140 @@
-# MASTER PROMPT — Laravel Todo Application Full Build
+# MASTER PROMPT — Laravel Todo Application 100-Step Build
 
 You are working inside an existing Laravel project.
 
-Your task is to build a full production-style Todo application by following every rule and every step in this prompt pack.
+Your task is to build a complete modern free Todo/Productivity application by following all global rules and all 100 step files.
 
-You must not ask the user to run terminal commands manually. The target hosting is restricted shared hosting. The finished app must work through the browser.
+Work from the repository root.
 
-## Critical global requirements
+Do not ask the user for confirmation between steps.
 
-# GLOBAL MODERN STACK REQUIREMENT
+Do not require terminal, cron, jobs, workers, supervisor, or artisan for normal final app usage.
+
+The finished app must work through browser UI on restricted shared hosting.
+
+## Read first
+
+1. `GLOBAL_RULES.md`
+2. `FEATURE_CATALOG.md`
+3. `STEPS_INDEX.md`
+4. `steps/` in numeric order
+5. Existing progress files in repository root if present
+
+## If progress files do not exist
+
+Create them from `progress-templates/`.
+
+## Execute
+
+Execute all 100 steps in numeric order.
+
+After every step:
+
+1. Update progress files.
+2. Update documentation.
+3. Update changelog.
+4. Run available tests/checks/builds where possible.
+5. Review git diff.
+6. Commit stable changes with a meaningful message.
+7. Continue to next step.
+
+If interrupted, continue from progress files.
+
+## Non-negotiable target
+
+The final app must be:
+
+- Laravel 13 style
+- latest Livewire
+- Flux v2 UI
+- Tailwind CSS 4
+- clean SCSS support where useful
+- no Volt
+- free-only
+- web-only for restricted hosting
+- no cron dependency
+- no queue worker dependency
+- no artisan dependency for normal usage
+- demo-ready at https://ruflo.test/
+- fully seeded
+- link-only invites
+- login demo user list local/testing/demo only
+- request classes and custom rules organized
+- English translations complete
+- private-by-default
+- secure
+- tested
+- documented
+- production-readiness reviewed
+
+## Global rules
+
+# GLOBAL RULES — Laravel Todo 100-Step Master Plan
+
+## Modern stack
 
 Use the newest Laravel 13 conventions, latest Livewire, Flux v2, Tailwind CSS 4, and clean SCSS only where it gives real value.
 
+Use Laravel 13 as backend foundation, latest Livewire for dynamic web UI, Flux v2 as the main UI component system, Tailwind CSS 4 as the main styling layer, Vite for frontend assets, Laravel policies for authorization, dedicated request validation classes, custom validation rules, factories, seeders, tests, localization, and private storage.
+
 Do not use Volt. If Volt exists, remove it safely and migrate all Volt logic to normal class-based Livewire components.
 
-Use:
-- Laravel 13 as backend foundation
-- latest Livewire for dynamic interfaces
-- Flux v2 as the main UI component system
-- Tailwind CSS 4 as the main styling layer
-- SCSS only for clean reusable custom styles, not messy page hacks
-- Vite for frontend build
-- Laravel policies for authorization
-- Laravel validation/request classes/rules for safety
-- Laravel factories/seeders/tests for quality
-- Laravel localization for all visible text
-- Laravel private storage for private files
+Do not build old controller-heavy CRUD. Do not create custom messy UI when Flux provides a clean component. Do not hardcode visible text.
 
-Do not build old controller-heavy CRUD. Do not create custom messy UI when Flux provides a clean component. Do not hardcode visible text. Do not skip tests, docs, changelog, commits, security review, privacy review, or performance review.
+## Free-only requirement
 
+Use only free, open-source, first-party, self-hosted, or locally available solutions.
 
-# GLOBAL HOSTING LIMITATION REQUIREMENT
+Do not require paid APIs, paid SaaS services, paid cloud workers, paid queue infrastructure, paid analytics, paid AI services, paid maps, paid OCR, paid external search, paid file conversion, paid email delivery, or paid automation platforms.
 
-Build this project for restricted shared hosting.
+If a feature normally uses paid infrastructure, implement a free local/web-only version or document it as optional and disabled.
 
-Assume there is no:
-- SSH
-- terminal
-- cron
-- artisan access
-- queue worker
-- supervisor
-- shell scripts
-- long-running daemon
-- root/server configuration access
+## Restricted hosting
 
-Everything must work through authenticated web interface, preferably Livewire.
+Build for shared hosting with no SSH, terminal, cron, artisan access, queue worker, supervisor, shell scripts, long-running daemon, root access, or server configuration access.
 
-Rewrite every cron/job/artisan/scheduler/background-worker feature into web-triggered Livewire workflows.
+Everything must work through authenticated web UI.
 
-Use:
-- manual web triggers
-- Livewire progress screens
-- chunked processing
-- retry/resume buttons
-- timeout-safe batches
-- protected maintenance/admin panel
-- web health checks
-- web cleanup tools
-- web import/export wizards
-- web recurring-task processing
-- web reminder processing
+All long operations must be chunked, web-triggered, timeout-safe, resumable, and visible through Livewire progress screens.
 
-Do not promise exact automatic background execution. If exact-time automation is impossible without cron/workers, document the limitation and provide a web-based fallback.
+Do not require php artisan, cron, queue workers, or shell commands for normal production usage.
 
+## Web-only processing
 
-# GLOBAL DEMO, SEEDING, INVITES, REQUESTS, AND TRANSLATION REQUIREMENT
+Replace background processing with Livewire action buttons, protected maintenance center, chunked processing, progress reports, retry buttons, resume buttons, cancel buttons where useful, on-demand reminder processing, on-demand recurring generation, web import/export wizards, web cleanup tools, and web health checks.
+
+Do not promise exact-time automation without cron/workers. Document limitations honestly.
+
+## Domain and demo readiness
+
+The app must work immediately at https://ruflo.test/
+
+All generated links must use configured app URL correctly.
 
 Create complete factories and seeders for every model and every important state.
 
-The app must work immediately at:
+On login page, show a local/testing/demo-only demo users panel with display name, username/email, fixed demo password, role/description, and quick login usability if safe. Never show demo credentials in production.
 
-https://ruflo.test/
+## Link-only invites
 
-All generated links must use the correct app URL configuration.
+Invites must be link-only. No email invite dependency.
 
-Invites must be link-only:
-- no email invites
-- no mail dependency
-- invite link generated in UI
-- copyable link
-- safe expiration if supported
-- cancellation support
-- single-use behavior if chosen
-- correct authorization and tests
+The UI must generate copyable invite links. Invite links must support cancellation, expiration if supported, single-use behavior if chosen, role/scope validation, and safe access.
 
-On the login page show a local/testing/demo-only demo users panel with:
-- display name
-- username or email
-- fixed demo password
-- role/description
-- quick login usability if safe
+## Validation and localization
 
-Never show demo credentials in production.
+Every request-based action must have a dedicated request validation class where appropriate.
 
-Every request-based action must have a dedicated request validation class where appropriate. Reusable business checks must use dedicated custom validation rules. All errors, labels, attributes, validation messages, success messages, confirmation text, and UI text must be translated at least in English using the current language files.
+Repeated business validation must use custom validation rules.
 
-Do not hardcode visible text.
+Every visible text, validation message, error message, success message, confirmation message, field label, empty state, activity text, notification text, and setting label must be translated at least in English using current language files.
 
+No hardcoded visible text.
 
-# LONG-RUN CODEX EXECUTION RULES
+## Long-run execution
 
-The agent must be able to run from one master prompt, but it must not assume one uninterrupted 20-200 hour session is reliable.
+The agent must maintain progress files in repository root:
 
-The agent must create a persistent progress system inside the repository.
-
-Required progress files:
 - TODO_MASTER_PROGRESS.md
 - TODO_MASTER_CHECKLIST.md
 - TODO_MASTER_DECISIONS.md
@@ -113,86 +142,17 @@ Required progress files:
 - TODO_MASTER_TEST_REPORT.md
 - TODO_MASTER_CHANGELOG.md
 
-Before each step:
-1. Read all progress files.
-2. Check current git status.
-3. Continue only from unfinished tasks.
-4. Do not redo completed work unless broken.
-5. Update progress before and after each major phase.
+Before each step, read progress files and current git status.
 
-After each step:
-1. Run available tests/build/checks where possible.
-2. Update docs.
-3. Update changelog.
-4. Commit changes with meaningful message.
-5. Write current status and next step into progress files.
+After each stable step, update docs, changelog, progress files, tests/checks, and commit.
 
-If the agent is interrupted, the next run must continue from progress files.
+If interrupted, continue from progress files.
 
-Never make one giant risky commit. Commit after each stable step.
-Never hide failures. Document blockers and continue with safe tasks when possible.
+Never make one giant risky commit.
 
+## Quality standard
 
-## Execution mode
+Every step must include project inspection, implementation, security review, privacy review, performance review, tests where possible, docs update, changelog update, progress update, git diff review, and meaningful commit.
 
-Work through the steps in order:
+Never claim something is done if tests/checks fail without documenting it.
 
-- `01-project-foundation.md` — Full project analysis and professional Laravel Todo foundation preparation
-- `02-private-workspace-authorization.md` — Private workspace, ownership, authorization, and user access logic
-- `03-core-task-lifecycle.md` — Core Todo task lifecycle, safe actions, validation, and predictable behavior
-- `04-organization-search-filters-bulk.md` — Task organization, projects/lists, tags, priorities, due dates, search, filters, sorting, and bulk actions
-- `05-reminders-notifications-web-mode.md` — Reminders, notifications, overdue alerts, daily summary, and web-triggered scheduling
-- `06-recurring-tasks-web-mode.md` — Recurring tasks, repeat rules, generated occurrences, exceptions, and safe recurrence lifecycle
-- `07-dashboard-productivity.md` — Productivity dashboard, widgets, statistics, progress, and optimized private overview
-- `08-activity-history-audit.md` — Activity history, audit trail, timeline, privacy-safe logs, and change tracking
-- `09-collaboration-invites-links.md` — Collaboration, shared projects, members, roles, permissions, and link-only invites
-- `10-comments-mentions.md` — Task comments, discussion, mentions, comment permissions, notifications, and moderation
-- `11-attachments-private-storage.md` — Attachments, uploads, private downloads, image validation, and storage security
-- `12-import-export-backup.md` — Import, export, backup, data portability, duplicate handling, and privacy-safe data movement
-- `13-settings-personalization.md` — User preferences, workspace settings, language, timezone, dashboard customization, and defaults
-- `14-ui-ux-accessibility-polish.md` — UI/UX polish, accessibility, responsive design, states, and final design cleanup
-- `15-final-qa-production-readiness.md` — Final testing, security review, performance review, CI/checks, release checklist, and production readiness
-
-For every step:
-1. Read global rules.
-2. Read current progress files.
-3. Inspect the project.
-4. Implement only what belongs to the current step.
-5. Use Laravel 13 + Livewire + Flux + Tailwind 4.
-6. Do not use Volt.
-7. Respect restricted hosting mode.
-8. Add factories/seeders/tests/docs/changelog.
-9. Commit stable work.
-10. Update progress files.
-
-## Step instructions
-
-Read and execute every file in `steps/` in numeric order.
-
-If a step is too large, break it into internal substeps, but keep the same step number in progress files.
-
-## Required final result
-
-The finished project must be:
-
-- Laravel 13 style
-- Livewire-first
-- Flux UI based
-- Tailwind CSS 4 based
-- no Volt
-- restricted-hosting compatible
-- web-interface-only for maintenance/processing
-- no cron dependency
-- no worker dependency
-- no artisan dependency for normal usage
-- fully seeded
-- demo-ready at https://ruflo.test/
-- link-only invites
-- login page demo users panel in local/testing/demo only
-- dedicated request validation classes/rules where appropriate
-- translated English validation and UI messages
-- private-by-default
-- secure
-- tested
-- documented
-- production-readiness reviewed

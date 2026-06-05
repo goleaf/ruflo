@@ -1,7 +1,5 @@
 # TODO Master Changelog
 
-Record changes after every step.
-
 ## Unreleased
 
-- Master Todo implementation not started yet.
+- 100-step Todo/Productivity implementation not started yet.

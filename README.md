@@ -1,31 +1,28 @@
-# Todo Master Prompt Pack
+# Todo Master Prompt Pack — 100 Steps
 
-This pack is designed for Codex / AI coding agent work on a Laravel Todo application.
+This package contains a 100-step master prompt plan for building a modern free Laravel Todo/Productivity application.
 
-It contains:
+## Contents
 
-- `MASTER_PROMPT.md` — one big prompt to start the whole long-running process
-- `GLOBAL_RULES.md` — modern stack, restricted hosting, demo/seeding/invite/request rules
-- `steps/step-01...step-15.md` — separate step prompts
-- `checklists/FINAL_RELEASE_CHECKLIST.md`
-- `checklists/SECURITY_PRIVACY_CHECKLIST.md`
-- `checklists/WEB_ONLY_HOSTING_CHECKLIST.md`
-- `progress-templates/` — files the agent must create/update inside your repository
+- `MASTER_PROMPT.md` — one master prompt.
+- `START_ONE_TIME_PROMPT.txt` — short prompt to paste into Codex.
+- `GLOBAL_RULES.md` — Laravel 13, Livewire, Flux, no Volt, free-only, restricted hosting, seeding, invites, request/translation rules.
+- `FEATURE_CATALOG.md` — full feature list.
+- `STEPS_INDEX.md` — index of all 100 step files.
+- `steps/` — 100 separate markdown step prompts.
+- `checklists/` — QA, security, release, accessibility, web-only, free-only checklists.
+- `progress-templates/` — progress files for resumable long runs.
 
-## How to use
+## Usage
 
-1. Copy this whole folder into your project, for example:
-   `docs/todo-master-plan/`
+Copy this folder into your Laravel project, for example:
 
-2. Open `MASTER_PROMPT.md`.
+`docs/todo-master-plan/`
 
-3. Paste the full master prompt into Codex from the root of your Laravel project.
+Then paste into Codex:
 
-4. Let the agent work step by step.
+`Read docs/todo-master-plan/MASTER_PROMPT.md and execute it step by step. Continue from progress files if interrupted. Do not ask confirmation between steps.`
 
-5. If the session stops, restart Codex and paste:
-   `Continue from docs/todo-master-plan/MASTER_PROMPT.md and the progress files. Do not redo completed work. Read TODO_MASTER_PROGRESS.md first.`
+## Reality note
 
-## Important
-
-No AI agent can truly guarantee 20-200 hours of uninterrupted execution. This pack forces the agent to write progress files and commits after every stable step so work can continue after interruption.
+No agent can guarantee one uninterrupted 20-200 hour run. This plan forces progress files and commits after stable steps so work can resume after interruption.

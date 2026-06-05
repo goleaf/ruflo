@@ -1,6 +1,4 @@
 # TODO Master Test Report
 
-Record test/build/check results here.
-
-| Date | Command/check | Result | Notes |
-|---|---|---|---|
+| Date | Step | Check/Test | Result | Notes |
+|---|---:|---|---|---|

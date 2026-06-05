@@ -2,34 +2,25 @@
 
 ## Current status
 
-Steps 01-04 are complete and verified. Continuing from Step 05.
+Steps 001-004 are complete and verified from the existing baseline commits. Continuing from Step 005 in the current 100-step plan.
 
 ## Completed steps
 
-- [x] Step 01
-- [x] Step 02
-- [x] Step 03
-- [x] Step 04
-- [ ] Step 05
-- [ ] Step 06
-- [ ] Step 07
-- [ ] Step 08
-- [ ] Step 09
-- [ ] Step 10
-- [ ] Step 11
-- [ ] Step 12
-- [ ] Step 13
-- [ ] Step 14
-- [ ] Step 15
+- [x] Step 001 — Project audit and foundation
+- [x] Step 002 — Upgrade and normalize Laravel 13 stack
+- [x] Step 003 — Livewire and Flux foundation
+- [x] Step 004 — Remove Volt and migrate to normal Livewire
+- [ ] Step 005 — Tailwind CSS 4 and SCSS design layer
+- [ ] Steps 006-100
 
 ## Current step
 
-Step 05
+Step 005
 
 ## Last completed action
 
-Verified existing Step 01-04 commits, copied progress templates to repository root, read all step files, and ran the full Pest suite.
+Verified existing Step 001-004 commits, read the root `MASTER_PROMPT.md`, confirmed the requested `docs/todo-master-plan/MASTER_PROMPT.md` path is absent, and normalized progress to the repository root 100-step plan.
 
 ## Next action
 
-Start Step 05 reminders and in-app notifications with restricted-hosting web-triggered processing.
+Start Step 005 Tailwind CSS 4 and clean SCSS design layer.

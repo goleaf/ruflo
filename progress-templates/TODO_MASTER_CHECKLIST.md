@@ -1,20 +1,21 @@
 # TODO Master Checklist
 
-Use this file as a persistent task tracker.
-
-## Global
-
-- [ ] Laravel 13 checked
-- [ ] Livewire checked
-- [ ] Flux checked
-- [ ] Tailwind 4 checked
-- [ ] Volt removed/migrated
-- [ ] Restricted hosting mode implemented
-- [ ] Seeds/factories complete
-- [ ] Link-only invites complete
-- [ ] Login demo users panel complete
-- [ ] Request classes/rules complete
-- [ ] English translations complete
-- [ ] Tests complete
-- [ ] Docs complete
-- [ ] Final QA complete
+- [ ] Laravel 13 style
+- [ ] Livewire latest
+- [ ] Flux v2
+- [ ] Tailwind CSS 4
+- [ ] SCSS clean support
+- [ ] No Volt
+- [ ] Free-only
+- [ ] Restricted hosting mode
+- [ ] Web maintenance center
+- [ ] Complete seeds/factories
+- [ ] ruflo.test ready
+- [ ] Link-only invites
+- [ ] Login demo users panel
+- [ ] Request classes
+- [ ] Custom rules
+- [ ] English translations
+- [ ] Tests
+- [ ] Docs
+- [ ] Final QA

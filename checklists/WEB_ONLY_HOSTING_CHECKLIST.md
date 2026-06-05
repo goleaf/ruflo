@@ -1,16 +1,14 @@
-# Web-only Restricted Hosting Checklist
+# Web Only Hosting Checklist.Md
 
-- [ ] No required cron
-- [ ] No required queue worker
-- [ ] No required supervisor
-- [ ] No required terminal
-- [ ] No required artisan for normal usage
-- [ ] Reminders process through web UI/on visit
-- [ ] Recurring tasks generate on demand/web UI
-- [ ] Imports process through Livewire chunks
-- [ ] Exports process through Livewire chunks
-- [ ] Cleanup available through protected web maintenance
-- [ ] Demo seed generation available through protected web UI if needed
-- [ ] Health check available through protected web UI
-- [ ] Progress/retry/resume exists for heavy processes
-- [ ] Docs explain exact-time automation limitation
+- [ ] no cron dependency
+- [ ] no queue worker dependency
+- [ ] no artisan dependency for normal usage
+- [ ] no terminal dependency
+- [ ] web maintenance center exists
+- [ ] imports are chunked via Livewire
+- [ ] exports are chunked via Livewire
+- [ ] reminders process on demand
+- [ ] recurring tasks generate on demand
+- [ ] cleanup runs from web UI
+- [ ] health check runs from web UI
+- [ ] progress/retry/resume exists

@@ -35,6 +35,8 @@ use App\Queries\Projects\ProjectListQuery;
 use App\Queries\Tags\TagListQuery;
 use App\Queries\Todos\TodoFilters;
 use App\Queries\Todos\TodoListQuery;
+use App\Rules\Todos\OwnedActiveProject;
+use App\Rules\Todos\OwnedTodo;
 use Flux\Flux;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
@@ -42,7 +44,6 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
-use Illuminate\Validation\Rule;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
@@ -272,7 +273,7 @@ class Index extends Component
         }
     }
 
-    // --- Bulk actions (owner-scoped inside the action; foreign ids are dropped) ---
+    // --- Bulk actions (validated here and owner-scoped again inside actions) ---
 
     public function bulkComplete(BulkCompleteTodos $bulk): void
     {
@@ -573,10 +574,12 @@ class Index extends Component
 
     private function validateBulkSelection(): void
     {
+        $user = $this->currentUser();
+
         $this->validate(
             [
                 'selected' => ['required', 'array', 'min:1'],
-                'selected.*' => ['integer', 'min:1'],
+                'selected.*' => ['integer', 'min:1', new OwnedTodo($user)],
             ],
             attributes: [
                 'selected' => __('todos.bulk.selected_items'),
@@ -596,9 +599,7 @@ class Index extends Component
                 'bulkProject' => [
                     'required',
                     'integer',
-                    Rule::exists('projects', 'id')->where(fn ($query) => $query
-                        ->where('user_id', $this->currentUser()->id)
-                        ->whereNull('archived_at')),
+                    new OwnedActiveProject($this->currentUser()),
                 ],
             ],
             attributes: ['bulkProject' => __('todos.fields.project')],

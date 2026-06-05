@@ -5,6 +5,10 @@ namespace App\Livewire\Forms\Todos;
 use App\Data\Todos\TodoData;
 use App\Enums\Priority;
 use App\Models\Todo;
+use App\Models\User;
+use App\Rules\Todos\OwnedActiveProject;
+use App\Rules\Todos\OwnedTag;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Form;
 
 /**
@@ -31,13 +35,15 @@ class TodoForm extends Form
      */
     protected function rules(): array
     {
+        $user = $this->currentUser();
+
         return [
             'title' => ['required', 'string', 'max:120'],
             'priority' => ['required', 'string', 'in:'.implode(',', Priority::values())],
             'due_date' => ['nullable', 'date'],
-            'project_id' => ['nullable', 'integer'],
+            'project_id' => ['nullable', 'integer', new OwnedActiveProject($user)],
             'tag_ids' => ['array'],
-            'tag_ids.*' => ['integer'],
+            'tag_ids.*' => ['integer', new OwnedTag($user)],
         ];
     }
 
@@ -69,5 +75,14 @@ class TodoForm extends Form
         $this->due_date = $todo->due_date?->toDateString();
         $this->project_id = $todo->project_id !== null ? (string) $todo->project_id : null;
         $this->tag_ids = $todo->tags->pluck('id')->all();
+    }
+
+    private function currentUser(): User
+    {
+        $user = Auth::user();
+
+        abort_unless($user instanceof User, 403);
+
+        return $user;
     }
 }

@@ -19,6 +19,10 @@ Livewire component-only forms should continue to use Livewire form objects or co
 
 When a future feature adds a traditional controller or route action that accepts request input, create a dedicated Form Request and consume `$request->validated()` or `$request->safe()` instead of reading unvalidated payloads.
 
+## Custom Business Rules
+
+Reusable business validation rules are documented in `docs/validation-rules.md`.
+
 ## Localization
 
 Auth validation attributes and custom auth validation messages are translated in `lang/en/auth.php`.

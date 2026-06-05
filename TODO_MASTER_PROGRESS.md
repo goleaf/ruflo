@@ -2,7 +2,7 @@
 
 ## Current status
 
-Steps 001-014 are complete and verified from the existing baseline plus Step 005 asset layer, Step 006 restricted-hosting contract, Step 007 protected setup status, Step 008 maintenance center, Step 009 domain readiness, Step 010 auth/login UX, Step 011 factory coverage, Step 012 seeder coverage, Step 013 demo login stabilization, and Step 014 request-class validation. Continuing from Step 015 in the current 100-step plan.
+Steps 001-015 are complete and verified from the existing baseline plus Step 005 asset layer, Step 006 restricted-hosting contract, Step 007 protected setup status, Step 008 maintenance center, Step 009 domain readiness, Step 010 auth/login UX, Step 011 factory coverage, Step 012 seeder coverage, Step 013 demo login stabilization, Step 014 request-class validation, and Step 015 custom ownership validation rules. Continuing from Step 016 in the current 100-step plan.
 
 ## Completed steps
 
@@ -20,17 +20,18 @@ Steps 001-014 are complete and verified from the existing baseline plus Step 005
 - [x] Step 012 — Complete seeders for all models
 - [x] Step 013 — Demo users and login panel
 - [x] Step 014 — Dedicated request classes
-- [ ] Step 015 — Reusable custom validation rules
-- [ ] Steps 016-100
+- [x] Step 015 — Reusable custom validation rules
+- [ ] Step 016 — English localization and message cleanup
+- [ ] Steps 017-100
 
 ## Current step
 
-Step 015
+Step 016
 
 ## Last completed action
 
-Completed Step 014 by adding dedicated auth Form Request classes, wiring Fortify registration and password reset actions to those request rules, translating auth validation labels/messages, documenting the request boundary, and adding regression tests.
+Completed Step 015 by adding reusable todo ownership rule objects, applying them to task and bulk Livewire validation, translating rule failures, documenting the custom-rule inventory, and updating organization tests for stricter forged-id rejection.
 
 ## Next action
 
-Start Step 015 reusable custom validation rules.
+Start Step 016 English localization and message cleanup.

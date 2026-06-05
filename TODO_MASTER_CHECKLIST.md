@@ -18,7 +18,7 @@ Use this file as a persistent task tracker.
 - [x] Seeds/factories complete
 - [ ] Link-only invites complete
 - [x] Request classes complete
-- [ ] Custom validation rules complete
+- [x] Custom validation rules complete
 - [ ] English translations complete
 - [ ] Tests complete
 - [ ] Docs complete

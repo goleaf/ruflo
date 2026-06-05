@@ -191,6 +191,12 @@ return [
         'tag_deleted' => 'Tag deleted.',
     ],
 
+    'validation' => [
+        'owned_active_project' => 'Choose one of your active projects.',
+        'owned_tag' => 'Choose one of your tags.',
+        'owned_todo' => 'Choose one of your tasks.',
+    ],
+
     'modals' => [
         'edit' => [
             'heading' => 'Edit task',

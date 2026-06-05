@@ -59,3 +59,11 @@ Record test/build/check results here.
 | 2026-06-05 | `vendor/bin/pint --dirty --format agent` | Passed | PHP style passed after Step 014. |
 | 2026-06-05 | `php artisan test --compact tests/Feature/Auth` | Passed | 20 tests, 52 assertions across Fortify auth coverage after request-class wiring. |
 | 2026-06-05 | `php artisan test --compact` | Passed | Full suite passed with 161 tests and 565 assertions after Step 014. |
+| 2026-06-05 | `mcp__laravel_boost.search_docs` | Passed | Reviewed Laravel 13 custom rule object docs and Livewire rule-object validation docs before Step 015 code changes. |
+| 2026-06-05 | `php artisan make:rule Todos/OwnedActiveProject --no-interaction` | Passed | Created the owned active project validation rule. |
+| 2026-06-05 | `php artisan make:rule Todos/OwnedTag --no-interaction` | Passed | Created the owned tag validation rule. |
+| 2026-06-05 | `php artisan make:rule Todos/OwnedTodo --no-interaction` | Passed | Created the owned todo validation rule. |
+| 2026-06-05 | `php artisan test --compact tests/Feature/TodoOrganizationTest.php` | Passed | 32 tests, 109 assertions for stricter ownership and active-project validation. |
+| 2026-06-05 | `php artisan test --compact tests/Feature/TodoTest.php tests/Feature/TodoLifecycleTest.php tests/Feature/TodoOwnershipTest.php` | Passed | 37 tests, 100 assertions across adjacent todo lifecycle and ownership boundaries. |
+| 2026-06-05 | `vendor/bin/pint --dirty --format agent` | Passed | PHP style passed after Step 015. |
+| 2026-06-05 | `php artisan test --compact` | Passed | Full suite passed with 168 tests and 611 assertions after Step 015. |

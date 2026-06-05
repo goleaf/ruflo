@@ -85,3 +85,9 @@ Record test/build/check results here.
 | 2026-06-06 | `rg Volt scan` | Passed | No Volt usage found in app, resources, routes, config, package files, or tests. |
 | 2026-06-06 | `php artisan config:show app.url/app.env/queue.default --no-interaction` | Passed | Confirmed `https://ruflo.test`, `local`, and `sync` during Step 001 recheck. |
 | 2026-06-06 | `php artisan test --compact tests/Feature/ProjectTest.php tests/Feature/TodoOrganizationTest.php tests/Feature/TodoOwnershipTest.php` | Passed | 52 tests, 168 assertions for project/list creation, archive/restore/delete behavior, task movement, no-project fallback, and cross-user ownership boundaries. |
+| 2026-06-06 | `mcp__laravel_boost.application_info` | Passed | Reconfirmed Laravel 13.14, Livewire 4.3, Flux 2.14, Tailwind 4.3, Pest 4.7, PHP CLI 8.4, and SQLite for Step 002. |
+| 2026-06-06 | `mcp__laravel_boost.search_docs` | Passed | Reviewed Laravel 13 application/routing/Vite guidance plus Livewire 4 route/component upgrade notes and Flux 2 upgrade notes. |
+| 2026-06-06 | `composer validate --strict --no-interaction` | Passed | Composer manifest remains valid under strict validation. |
+| 2026-06-06 | `composer install --dry-run --no-interaction` | Passed | Lock file is installable on the current platform; no package install/update/remove changes needed. |
+| 2026-06-06 | `npm run build` | Passed | Vite built Tailwind CSS, SCSS, app JS, passkeys JS, and font assets without dirtying the worktree. |
+| 2026-06-06 | `php artisan test --compact tests/Feature/FrontendAssetPipelineTest.php tests/Feature/RestrictedHostingModeTest.php tests/Feature/DomainReadinessTest.php` | Passed | 10 tests, 57 assertions for Step 002 stack, asset, restricted-hosting, and URL readiness checks. |

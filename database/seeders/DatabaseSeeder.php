@@ -15,17 +15,15 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
-
-        // A second user proves private isolation: their tasks must never be
-        // visible from the first user's workspace.
-        User::factory()->create([
-            'name' => 'Second User',
-            'email' => 'second@example.com',
-        ]);
+        if (in_array((string) config('app.env'), config('demo.login_panel.environments', []), true)) {
+            foreach (config('demo.login_panel.users', []) as $demoUser) {
+                User::factory()->create([
+                    'name' => $demoUser['name'],
+                    'email' => $demoUser['email'],
+                    'password' => (string) config('demo.login_panel.password'),
+                ]);
+            }
+        }
 
         $this->call(TodoSeeder::class);
     }

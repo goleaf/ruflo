@@ -13,9 +13,9 @@ Use this file as a persistent task tracker.
 - [x] Restricted hosting mode implemented
 - [x] Web maintenance center
 - [x] Domain ruflo.test readiness
+- [x] Login demo users panel complete
 - [ ] Seeds/factories complete
 - [ ] Link-only invites complete
-- [ ] Login demo users panel complete
 - [ ] Request classes/rules complete
 - [ ] English translations complete
 - [ ] Tests complete

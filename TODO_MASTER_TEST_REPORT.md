@@ -30,3 +30,12 @@ Record test/build/check results here.
 | 2026-06-05 | `php artisan test --compact tests/Feature/Auth` | Passed | 18 tests, 41 assertions for Fortify auth redirects and signed verification behavior after URL forcing. |
 | 2026-06-05 | `vendor/bin/pint --dirty --format agent` | Passed | PHP style passed after Step 009. |
 | 2026-06-05 | `php artisan test --compact` | Passed | Full suite passed with 145 tests and 438 assertions after Step 009. |
+| 2026-06-05 | `php artisan view:clear --no-interaction` | Passed | Cleared compiled views after adding the translated demo login panel. |
+| 2026-06-05 | `php artisan test --compact tests/Feature/AuthLoginUxTest.php tests/Feature/Auth/AuthenticationTest.php` | Passed | 11 tests, 45 assertions for the Step 010 login panel, safe gates, and quick demo login behavior. |
+| 2026-06-05 | `php artisan test --compact tests/Feature/Auth tests/Feature/AuthLoginUxTest.php` | Passed | 24 tests, 73 assertions across Fortify auth and Step 010 login UX coverage. |
+| 2026-06-05 | `php artisan config:show demo.login_panel.enabled --no-interaction` | Passed | Confirmed the local demo login panel flag resolves to true. |
+| 2026-06-05 | `php artisan config:show app.env --no-interaction` | Passed | Confirmed the local runtime environment resolves to local. |
+| 2026-06-05 | `mcp__laravel_boost.get_absolute_url route=login` | Passed | Boost resolved the login route as `https://ruflo.test/login`. |
+| 2026-06-05 | `mcp__laravel_boost.database_query` | Passed | Confirmed `test@example.com` and `second@example.com` exist in the local database. |
+| 2026-06-05 | `vendor/bin/pint --dirty --format agent` | Passed | PHP style passed after Step 010. |
+| 2026-06-05 | `php artisan test --compact` | Passed | Full suite passed with 151 tests and 470 assertions after Step 010. |

@@ -2,7 +2,7 @@
 
 ## Current status
 
-Steps 001-009 are complete and verified from the existing baseline plus Step 005 asset layer, Step 006 restricted-hosting contract, Step 007 protected setup status, Step 008 maintenance center, and Step 009 domain readiness. Continuing from Step 010 in the current 100-step plan.
+Steps 001-010 are complete and verified from the existing baseline plus Step 005 asset layer, Step 006 restricted-hosting contract, Step 007 protected setup status, Step 008 maintenance center, Step 009 domain readiness, and Step 010 auth/login UX. Continuing from Step 011 in the current 100-step plan.
 
 ## Completed steps
 
@@ -15,17 +15,18 @@ Steps 001-009 are complete and verified from the existing baseline plus Step 005
 - [x] Step 007 — Web installer and updater
 - [x] Step 008 — Protected maintenance center
 - [x] Step 009 — Domain and ruflo.test readiness
-- [ ] Step 010 — Authentication and login UX
-- [ ] Steps 011-100
+- [x] Step 010 — Authentication and login UX
+- [ ] Step 011 — Complete factories for all models
+- [ ] Steps 012-100
 
 ## Current step
 
-Step 010
+Step 011
 
 ## Last completed action
 
-Completed Step 009 by aligning tracked defaults and local runtime with `https://ruflo.test`, forcing configured URL generation, documenting the domain contract, and adding tests for routes, redirects, signed URLs, and storage URLs.
+Completed Step 010 by adding a safe environment-gated demo login panel, config-backed seeded demo users, Fortify quick login forms, English auth translations, documentation, and tests.
 
 ## Next action
 
-Start Step 010 authentication and login UX.
+Start Step 011 complete factories for all models.

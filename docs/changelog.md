@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-06-05 - Step 010 Authentication and login UX
+
+### Implemented
+
+- Added a config-backed demo login catalog gated to local, testing, and demo environments.
+- Added a seeded-user lookup action so the login page only lists configured demo users that exist in the database.
+- Added a translated local/demo login panel with visible email/password details and quick login buttons that post through Fortify.
+- Updated the seeder to create known demo users only in safe environments.
+
+### Testing
+
+- Added auth login UX tests for safe rendering, production hiding, disabled-panel hiding, seeded-user filtering, and quick login through Fortify.
+
+### Documentation
+
+- Added `docs/auth-login-ux.md` with demo login safety rules and production configuration notes.
+
 ## 2026-06-05 - Step 009 Domain and ruflo.test readiness
 
 ### Implemented

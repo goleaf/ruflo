@@ -116,3 +116,12 @@ Record test/build/check results here.
 | 2026-06-06 | `php artisan test --compact tests/Feature/RestrictedHostingModeTest.php tests/Feature/Settings/SetupStatusTest.php tests/Feature/Settings/MaintenanceCenterTest.php` | Passed | 16 tests, 68 assertions for restricted-hosting defaults, setup status, and maintenance center exposure. |
 | 2026-06-06 | `composer validate --strict --no-interaction` | Passed | Composer manifest remains valid after the Step 006 recheck. |
 | 2026-06-06 | `php artisan test --compact tests/Feature/RestrictedHostingModeTest.php` | Passed | 4 tests, 22 assertions for the Step 006 restricted-hosting drift guards. |
+| 2026-06-06 | `mcp__laravel_boost.search_docs` | Passed | Reviewed Laravel 13 password-confirmation route protection and Livewire 4 testing guidance before the Step 007 recheck and hardening. |
+| 2026-06-06 | `php artisan route:list --no-interaction --path=settings` | Passed | Confirmed protected settings routes include `settings/setup` as `setup.status`. |
+| 2026-06-06 | `php artisan test --compact tests/Feature/Settings/SetupStatusTest.php tests/Feature/RestrictedHostingModeTest.php` | Failed | Initial Step 007 hardening test showed raw database exception text in the Livewire snapshot; fixed by sanitizing setup status before assigning public state. |
+| 2026-06-06 | `vendor/bin/pint --dirty --format agent` | Passed | PHP style passed after the Step 007 hardening changes. |
+| 2026-06-06 | `php artisan test --compact tests/Feature/Settings/SetupStatusTest.php tests/Feature/RestrictedHostingModeTest.php` | Passed | 10 tests, 45 assertions for setup route protection, setup status refresh, sanitized database diagnostics, and restricted-hosting guards. |
+| 2026-06-06 | `mcp__laravel_boost.get_absolute_url route=setup.status` | Passed | Boost resolved the setup status route as `https://ruflo.test/settings/setup`. |
+| 2026-06-06 | `php artisan test --compact tests/Feature/Settings/SetupStatusTest.php` | Passed | 6 tests, 23 assertions for the Step 007 setup status surface after sanitizing Livewire public state. |
+| 2026-06-06 | `rg setup diagnostics and public installer scan` | Passed | Setup route is only registered under settings, no public installer route was found, and raw SQL markers appear only in the regression test fixture. |
+| 2026-06-06 | `php artisan route:list --no-interaction --path=settings/setup` | Passed | Confirmed exactly the `GET|HEAD settings/setup` route for `setup.status`. |

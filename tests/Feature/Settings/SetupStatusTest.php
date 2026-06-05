@@ -1,6 +1,7 @@
 <?php
 
 use App\Actions\Setup\InspectSetupStatus;
+use App\Data\Setup\SetupStatusReport;
 use App\Livewire\Settings\SetupStatus;
 use App\Models\User;
 use Livewire\Livewire;
@@ -50,6 +51,33 @@ test('setup status inspector reports deployment checks', function () {
             'restricted_hosting',
             'storage_writable',
         );
+});
+
+test('setup status does not expose raw database exception details', function () {
+    app()->instance(InspectSetupStatus::class, new class extends InspectSetupStatus
+    {
+        public function __invoke(): SetupStatusReport
+        {
+            return new SetupStatusReport(
+                ready: false,
+                checks: [
+                    ['key' => 'database', 'ok' => false, 'value' => 'unavailable', 'value_key' => 'unavailable'],
+                ],
+                pendingMigrations: [],
+                databaseError: 'SQLSTATE[HY000] password=secret-hostname',
+            );
+        }
+    });
+
+    $user = User::factory()->create();
+
+    $this->actingAs($user)
+        ->withSession(['auth.password_confirmed_at' => time()])
+        ->get(route('setup.status'))
+        ->assertOk()
+        ->assertSee(__('setup.messages.database_error_detail'))
+        ->assertDontSee('SQLSTATE')
+        ->assertDontSee('secret-hostname');
 });
 
 test('setup status can be refreshed from Livewire', function () {

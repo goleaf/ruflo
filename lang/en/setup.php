@@ -47,6 +47,7 @@ return [
         'needs_attention' => 'Setup needs attention',
         'status_only' => 'This page is protected and status-only. It does not run migrations or expose a public installer.',
         'database_error' => 'Database error',
+        'database_error_detail' => 'The database could not be inspected from the web request. Review the connection settings without exposing raw server details here.',
     ],
 
     'pending' => [

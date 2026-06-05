@@ -6,7 +6,6 @@ use App\Data\Setup\SetupStatusReport;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Schema;
-use Throwable;
 
 class InspectSetupStatus
 {
@@ -26,8 +25,8 @@ class InspectSetupStatus
             $ranMigrations = $migrationsTableExists
                 ? DB::table('migrations')->pluck('migration')->all()
                 : [];
-        } catch (Throwable $exception) {
-            $databaseError = $exception->getMessage();
+        } catch (\Throwable) {
+            $databaseError = 'unavailable';
         }
 
         $pendingMigrations = array_values(array_diff($migrationFiles, $ranMigrations));

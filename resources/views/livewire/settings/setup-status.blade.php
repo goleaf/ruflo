@@ -42,7 +42,7 @@
             @if ($status['database_error'])
                 <flux:callout icon="x-circle" variant="danger">
                     <flux:callout.heading>{{ __('setup.messages.database_error') }}</flux:callout.heading>
-                    <flux:callout.text>{{ $status['database_error'] }}</flux:callout.text>
+                    <flux:callout.text>{{ __('setup.messages.database_error_detail') }}</flux:callout.text>
                 </flux:callout>
             @endif
 

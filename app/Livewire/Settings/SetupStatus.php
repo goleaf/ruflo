@@ -27,7 +27,13 @@ class SetupStatus extends Component
 
     public function refreshStatus(): void
     {
-        $this->status = app(InspectSetupStatus::class)()->toArray();
+        $status = app(InspectSetupStatus::class)()->toArray();
+
+        if ($status['database_error'] !== null) {
+            $status['database_error'] = 'unavailable';
+        }
+
+        $this->status = $status;
     }
 
     public function render(): View

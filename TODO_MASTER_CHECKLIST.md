@@ -15,7 +15,7 @@ Use this file as a persistent task tracker.
 - [x] Domain ruflo.test readiness
 - [x] Login demo users panel complete
 - [x] Factory coverage complete
-- [ ] Seeds/factories complete
+- [x] Seeds/factories complete
 - [ ] Link-only invites complete
 - [ ] Request classes/rules complete
 - [ ] English translations complete

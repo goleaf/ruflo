@@ -2,7 +2,7 @@
 
 ## Current status
 
-Steps 001-011 are complete and verified from the existing baseline plus Step 005 asset layer, Step 006 restricted-hosting contract, Step 007 protected setup status, Step 008 maintenance center, Step 009 domain readiness, Step 010 auth/login UX, and Step 011 factory coverage. Continuing from Step 012 in the current 100-step plan.
+Steps 001-012 are complete and verified from the existing baseline plus Step 005 asset layer, Step 006 restricted-hosting contract, Step 007 protected setup status, Step 008 maintenance center, Step 009 domain readiness, Step 010 auth/login UX, Step 011 factory coverage, and Step 012 seeder coverage. Continuing from Step 013 in the current 100-step plan.
 
 ## Completed steps
 
@@ -17,17 +17,18 @@ Steps 001-011 are complete and verified from the existing baseline plus Step 005
 - [x] Step 009 — Domain and ruflo.test readiness
 - [x] Step 010 — Authentication and login UX
 - [x] Step 011 — Complete factories for all models
-- [ ] Step 012 — Complete seeders for all models
-- [ ] Steps 013-100
+- [x] Step 012 — Complete seeders for all models
+- [ ] Step 013 — Demo users and login panel
+- [ ] Steps 014-100
 
 ## Current step
 
-Step 012
+Step 013
 
 ## Last completed action
 
-Completed Step 011 by expanding factories for all tracked models, adding lifecycle/date/priority/relationship states, documenting the model inventory, and testing every important factory state.
+Completed Step 012 by splitting demo user seeding, making demo/workspace seeders idempotent, covering every tracked model with usable demo data, documenting seeding rules, and adding seeder tests.
 
 ## Next action
 
-Start Step 012 complete seeders for all models.
+Start Step 013 demo users and login panel.

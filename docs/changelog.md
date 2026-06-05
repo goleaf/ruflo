@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-06-05 - Step 012 Complete seeders for all models
+
+### Implemented
+
+- Split demo user seeding into `DemoUserSeeder`.
+- Made demo user seeding safe-environment gated and config-backed.
+- Reworked todo workspace seeding to be idempotent for projects, tags, and seeded task titles.
+- Seeded active, due-today, overdue, upcoming, completed, archived, and archived-completed task scenarios for each demo user.
+
+### Testing
+
+- Added seeder coverage tests for safe demo creation, per-user workspace content, idempotency, and production no-op behavior.
+
+### Documentation
+
+- Added `docs/seeding-strategy.md` with the current model inventory, seeder order, safety gates, and postponed future domains.
+
 ## 2026-06-05 - Step 011 Complete factories for all models
 
 ### Implemented

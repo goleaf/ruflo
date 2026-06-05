@@ -33,6 +33,21 @@ Current defaults live in `config/hosting.php` and are exposed through `App\Data\
 
 Without cron or workers, RuFlo cannot promise exact-time automation. Reminder, recurrence, cleanup, import, export, and maintenance features must run when a user visits a relevant page or presses an authenticated processing button.
 
-## Later Steps
+## Related Steps
 
-Step 007 will cover web installer/updater principles. Step 008 will build the protected maintenance center. Step 053 will add the generic manual web processing engine that feature-specific processors can reuse.
+Step 007 added the protected setup status foundation. Step 008 added the protected maintenance center. Step 053 remains responsible for the generic manual web processing engine that feature-specific processors can reuse.
+
+## 2026-06-06 Recheck
+
+Step 006 was rechecked from the root prompt pack and `steps/step-006-restricted-hosting-web-only-mode.md`.
+
+Confirmed:
+
+- Normal runtime still defaults to `QUEUE_CONNECTION=sync`.
+- `RUFLO_RESTRICTED_HOSTING=true` and the web-processing knobs are present in `.env.example`.
+- `config/hosting.php` exposes the forbidden runtime dependency list and chunk/retry/resume defaults.
+- `App\Data\Hosting\WebProcessingProfile` resolves the configured web-processing profile.
+- `routes/console.php` defines no application console workflow.
+- `app/Jobs` does not exist.
+- Local `composer run dev` starts Vite only; Herd serves `https://ruflo.test`.
+- Setup and maintenance status surfaces expose the restricted-hosting profile through authenticated web UI.

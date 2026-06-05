@@ -6,15 +6,15 @@ Steps 001-016 are complete. The tracker is expanded to one ledger line per step 
 
 ## Current step
 
-Step 006 — Restricted hosting web-only mode recheck
+Step 007 — Web installer and updater recheck
 
 ## Last completed action
 
-Rechecked Step 005 by confirming the Tailwind CSS 4 and SCSS design layer remains a clean Vite asset split with focused tests and a production build.
+Rechecked Step 006 by confirming restricted hosting defaults, sync queue runtime, no terminal-only app workflows, web-processing profile exposure, docs, and focused tests.
 
 ## Next action
 
-Continue the requested recheck with `steps/step-006-restricted-hosting-web-only-mode.md`, then verify the current restricted-hosting baseline before advancing.
+Continue the requested recheck with `steps/step-007-web-installer-and-updater.md`, then verify the protected setup-status foundation before advancing.
 
 ## Step ledger
 
@@ -25,7 +25,7 @@ Continue the requested recheck with `steps/step-006-restricted-hosting-web-only-
 | 003 — Livewire and Flux foundation | Complete | Existing baseline establishes Livewire/Flux conventions; rechecked on 2026-06-06 against component inventory, routes, layouts, Flux tags, browser logs, and tests. | Boost docs search, component scans, deprecated tag scan, browser logs, focused Livewire/Flux tests, and full-suite evidence recorded. | `docs/livewire-flux-foundation.md`, root progress, changelog, and test report updated. | No active Step 003 risk. | 2149412, d3a15ab |
 | 004 — Remove Volt and migrate to normal Livewire | Complete | Existing baseline uses normal class-based Livewire and no Volt; rechecked on 2026-06-06 through dependency, command, filesystem, source, and tests. | Composer Volt absence, Artisan command scan, filesystem/source scans, focused Livewire tests, and full-suite evidence recorded. | `docs/no-volt-livewire.md`, root progress, changelog, and test report updated. | No active Volt risk. | b461fae, 90e9830 |
 | 005 — Tailwind CSS 4 and SCSS design layer | Complete | Existing baseline adds clean SCSS support beside Tailwind CSS 4 and Flux styling; rechecked on 2026-06-06 against Vite entries, shared heads, SCSS partials, package versions, deprecated syntax scans, tests, and build output. | Boost docs search, package inventory, SCSS inventory, runtime Tailwind v3 syntax scan, frontend asset pipeline test, and `npm run build` recorded. | `docs/frontend-design-system.md`, root progress, changelog, and test report updated. | No active Step 005 risk. | ff5cc6b plus 2026-06-06 recheck commit |
-| 006 — Restricted hosting web-only mode | Complete | Added restricted-hosting config defaults and web-processing profile. | Restricted hosting tests, composer validation, Pint, and full suite recorded. | Restricted-hosting docs and root trackers updated. | Restricted hosting limitations documented. | ff39026 |
+| 006 — Restricted hosting web-only mode | Complete | Existing baseline adds restricted-hosting config defaults and a web-processing profile; rechecked on 2026-06-06 against config, `.env.example`, console routes, `app/Jobs` absence, composer dev script, setup/maintenance integrations, and docs. | Boost docs search, config checks, terminal-workflow scans, focused restricted-hosting/setup/maintenance tests, composer validation, and clean worktree recorded. | `docs/restricted-hosting.md`, root progress, changelog, and test report updated. | Existing exact-time automation limitation remains documented; no new Step 006 risk found. | ff39026 plus 2026-06-06 recheck commit |
 | 007 — Web installer and updater | Complete | Added protected setup status page as status-only web installer foundation. | Setup status, restricted-hosting tests, route list, and Pint recorded. | Web installer/updater docs and root trackers updated. | Public installer exposure avoided. | 59356de |
 | 008 — Protected maintenance center | Complete | Added authenticated maintenance center with bounded safe cleanup controls. | Maintenance center, setup status, restricted-hosting tests, route list, and Pint recorded. | Maintenance center docs and root trackers updated. | Broader processors deferred to planned steps. | 350b2ae |
 | 009 — Domain and ruflo.test readiness | Complete | Aligned tracked defaults, tests, and runtime URL generation to `https://ruflo.test`. | Domain readiness, auth, setup/maintenance, Boost URL, config checks, Pint, and full suite recorded. | Domain readiness docs and root trackers updated. | Future link surfaces not implemented yet. | 0731985 |

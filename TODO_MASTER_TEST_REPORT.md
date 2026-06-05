@@ -107,3 +107,12 @@ Record test/build/check results here.
 | 2026-06-06 | `rg Tailwind v3 runtime syntax scan` | Passed | No deprecated Tailwind v3 opacity/flex/ellipsis utilities or legacy `@tailwind base/components/utilities` directives found in `resources` or `app`. |
 | 2026-06-06 | `php artisan test --compact tests/Feature/FrontendAssetPipelineTest.php` | Passed | 2 tests, 17 assertions for the Step 005 Tailwind/SCSS asset contract. |
 | 2026-06-06 | `npm run build` | Passed | Vite built Tailwind CSS, SCSS, app JS, passkeys JS, and font assets without dirtying the worktree. |
+| 2026-06-06 | `mcp__laravel_boost.search_docs` | Passed | Reviewed Laravel 13 queue, scheduling, maintenance mode, cache, and Vite guidance before the Step 006 recheck. |
+| 2026-06-06 | `php artisan config:show queue.default --no-interaction` | Passed | Runtime queue default resolves to `sync`. |
+| 2026-06-06 | `php artisan config:show hosting.restricted --no-interaction` | Passed | Restricted hosting mode resolves to true. |
+| 2026-06-06 | `php artisan config:show hosting.web_processing --no-interaction` | Passed | Web-processing profile resolves to chunk size 25, max runtime 8 seconds, retry cooldown 30 seconds, and resume enabled. |
+| 2026-06-06 | `test ! -d app/Jobs` | Passed | No application jobs directory exists, so normal runtime has no worker-only job surface. |
+| 2026-06-06 | `rg terminal-workflow scan` | Passed | No `Artisan::command`, `Schedule::`, queue worker/listener, `artisan serve`, supervisor, or cron workflow found in `routes`, `app`, `composer.json`, or `package.json`. |
+| 2026-06-06 | `php artisan test --compact tests/Feature/RestrictedHostingModeTest.php tests/Feature/Settings/SetupStatusTest.php tests/Feature/Settings/MaintenanceCenterTest.php` | Passed | 16 tests, 68 assertions for restricted-hosting defaults, setup status, and maintenance center exposure. |
+| 2026-06-06 | `composer validate --strict --no-interaction` | Passed | Composer manifest remains valid after the Step 006 recheck. |
+| 2026-06-06 | `php artisan test --compact tests/Feature/RestrictedHostingModeTest.php` | Passed | 4 tests, 22 assertions for the Step 006 restricted-hosting drift guards. |

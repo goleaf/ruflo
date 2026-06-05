@@ -96,3 +96,8 @@ Record test/build/check results here.
 | 2026-06-06 | `rg deprecated Flux/manual Livewire asset scan` | Passed | No deprecated Flux v1 aliases or manual `@livewireStyles`/`@livewireScripts` directives found. |
 | 2026-06-06 | `mcp__laravel_boost.browser_logs entries=20` | Passed | Only an old Vite reconnect message was present; no current Livewire/Flux browser error was found. |
 | 2026-06-06 | `php artisan test --compact tests/Feature/TodoTest.php tests/Feature/TodoOrganizationTest.php tests/Feature/Settings/SecurityTest.php tests/Feature/Settings/ProfileUpdateTest.php tests/Feature/LocalizationCoverageTest.php` | Passed | 53 tests, 176 assertions for Livewire todo/settings interactions, Flux-rendered forms, and localization guardrails. |
+| 2026-06-06 | `composer show livewire/volt --no-interaction` | Passed | Composer reported `livewire/volt` is not installed, which satisfies the Step 004 no-Volt dependency check. |
+| 2026-06-06 | `php artisan list --no-interaction \| rg -i "volt"` | Passed | No Volt Artisan commands are registered. |
+| 2026-06-06 | `find resources app routes tests config -iname '*volt*' -o -name '*⚡*'` | Passed | No Volt-named files or Livewire emoji component files found. |
+| 2026-06-06 | `rg Volt source scan` | Passed | No Volt dependency/import/directive/provider markers found; broad scan hits were unrelated notification `action(...)` methods. |
+| 2026-06-06 | `php artisan test --compact tests/Feature/TodoTest.php tests/Feature/TodoOrganizationTest.php tests/Feature/ProjectTest.php tests/Feature/TagTest.php tests/Feature/Settings/SecurityTest.php tests/Feature/Settings/ProfileUpdateTest.php` | Passed | 66 tests, 208 assertions for class-based Livewire todo/project/tag/settings behavior. |

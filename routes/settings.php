@@ -1,6 +1,7 @@
 <?php
 
 use App\Livewire\Settings\Appearance;
+use App\Livewire\Settings\MaintenanceCenter;
 use App\Livewire\Settings\Profile;
 use App\Livewire\Settings\Security;
 use App\Livewire\Settings\SetupStatus;
@@ -26,4 +27,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
             'password.confirm',
         ])
         ->name('setup.status');
+
+    Route::livewire('settings/maintenance', MaintenanceCenter::class)
+        ->middleware([
+            'password.confirm',
+        ])
+        ->name('maintenance.center');
 });

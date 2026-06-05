@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-06-05 - Step 008 Protected maintenance center
+
+### Implemented
+
+- Added a protected maintenance center at `/settings/maintenance` behind `auth`, `verified`, and `password.confirm`.
+- Added a maintenance snapshot action that reuses setup health checks and reports web-processing/runtime state.
+- Added safe web actions to clear compiled Blade views and flush the application cache.
+- Added English maintenance translations and settings navigation.
+
+### Testing
+
+- Added maintenance center tests for route protection, rendering, cache flush, compiled-view cleanup, and snapshot structure.
+
+### Documentation
+
+- Added `docs/maintenance-center.md` with current capabilities, safety boundaries, and later planned attachments.
+
 ## 2026-06-05 - Step 007 Web installer and updater
 
 ### Implemented

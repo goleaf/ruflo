@@ -11,6 +11,7 @@ Use this file as a persistent task tracker.
 - [x] SCSS clean support
 - [x] Volt removed/migrated
 - [x] Restricted hosting mode implemented
+- [x] Web maintenance center
 - [ ] Seeds/factories complete
 - [ ] Link-only invites complete
 - [ ] Login demo users panel complete

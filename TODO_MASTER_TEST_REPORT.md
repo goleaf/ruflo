@@ -19,3 +19,6 @@ Record test/build/check results here.
 | 2026-06-05 | `php artisan test --compact tests/Feature/Settings/SetupStatusTest.php tests/Feature/RestrictedHostingModeTest.php` | Passed | 9 tests, 41 assertions for Step 007 setup status and restricted-hosting guards. |
 | 2026-06-05 | `php artisan route:list --no-interaction --path=settings` | Passed | Confirmed protected `settings/setup` route is registered as `setup.status`. |
 | 2026-06-05 | `vendor/bin/pint --dirty --format agent` | Passed | PHP style passed after Step 007. |
+| 2026-06-05 | `php artisan test --compact tests/Feature/Settings/MaintenanceCenterTest.php tests/Feature/Settings/SetupStatusTest.php tests/Feature/RestrictedHostingModeTest.php` | Passed | 16 tests, 68 assertions for Step 008 maintenance center and setup/restricted-hosting guards. |
+| 2026-06-05 | `php artisan route:list --no-interaction --path=settings` | Passed | Confirmed protected `settings/maintenance` route is registered as `maintenance.center`. |
+| 2026-06-05 | `vendor/bin/pint --dirty --format agent` | Passed | PHP style passed after Step 008. |

@@ -2,7 +2,7 @@
 
 ## Current status
 
-Steps 001-007 are complete and verified from the existing baseline plus Step 005 asset layer, Step 006 restricted-hosting contract, and Step 007 protected setup status. Continuing from Step 008 in the current 100-step plan.
+Steps 001-008 are complete and verified from the existing baseline plus Step 005 asset layer, Step 006 restricted-hosting contract, Step 007 protected setup status, and Step 008 maintenance center. Continuing from Step 009 in the current 100-step plan.
 
 ## Completed steps
 
@@ -13,17 +13,18 @@ Steps 001-007 are complete and verified from the existing baseline plus Step 005
 - [x] Step 005 — Tailwind CSS 4 and SCSS design layer
 - [x] Step 006 — Restricted hosting web-only mode
 - [x] Step 007 — Web installer and updater
-- [ ] Step 008 — Protected maintenance center
-- [ ] Steps 009-100
+- [x] Step 008 — Protected maintenance center
+- [ ] Step 009 — Domain and ruflo.test readiness
+- [ ] Steps 010-100
 
 ## Current step
 
-Step 008
+Step 009
 
 ## Last completed action
 
-Completed Step 007 by adding a protected status-only setup/updater page under settings, an inspector action/DTO, setup translations, documentation, and route protection tests.
+Completed Step 008 by adding a protected maintenance center with health checks, runtime status, web-processing profile, safe cache flush, safe compiled-view cleanup, translations, documentation, and tests.
 
 ## Next action
 
-Start Step 008 protected maintenance center.
+Start Step 009 domain and ruflo.test readiness.

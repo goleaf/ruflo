@@ -1,0 +1,20 @@
+.ruflo-grid {
+    background-image:
+        linear-gradient(var(--ruflo-grid-line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--ruflo-grid-line) 1px, transparent 1px);
+    background-size: 48px 48px;
+}
+
+.ruflo-veil {
+    background: linear-gradient(180deg, var(--ruflo-veil-start), var(--ruflo-veil-end) 28%);
+}
+
+.app-surface {
+    border: 1px solid var(--ruflo-surface-border);
+    border-radius: 0.5rem;
+    box-shadow: var(--ruflo-surface-shadow);
+}
+
+.scrollbar-stable {
+    scrollbar-gutter: stable both-edges;
+}

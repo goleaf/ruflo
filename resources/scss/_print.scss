@@ -1,0 +1,29 @@
+.print-only {
+    display: none;
+}
+
+@media print {
+    .screen-only,
+    [data-no-print] {
+        display: none !important;
+    }
+
+    .print-only {
+        display: block;
+    }
+
+    body {
+        background: white !important;
+        color: black !important;
+    }
+
+    a {
+        color: black;
+        text-decoration: underline;
+    }
+
+    .app-surface {
+        border-color: rgb(161 161 170);
+        box-shadow: none;
+    }
+}

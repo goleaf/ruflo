@@ -8,6 +8,7 @@ Use this file as a persistent task tracker.
 - [x] Livewire checked
 - [x] Flux checked
 - [x] Tailwind 4 checked
+- [x] SCSS clean support
 - [x] Volt removed/migrated
 - [ ] Restricted hosting mode implemented
 - [ ] Seeds/factories complete

@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-06-05 - Step 005 Tailwind CSS 4 and SCSS design layer
+
+### Implemented
+
+- Kept `resources/css/app.css` as the Tailwind CSS 4 and Flux UI entry using CSS-first `@theme` configuration.
+- Added `resources/scss/app.scss` as a separate Vite entry for reusable tokens, accessibility helpers, shared surfaces, and print rules.
+- Moved the welcome-page grid and veil styles out of inline Blade CSS and into the SCSS surface layer.
+- Added the free `sass-embedded` compiler for Vite SCSS support.
+
+### Testing
+
+- Added `FrontendAssetPipelineTest` to guard the Tailwind/SCSS/Vite contract.
+
+### Documentation
+
+- Added `docs/frontend-design-system.md` with Tailwind 4, Flux, and SCSS usage rules.
+
 ## 2026-06-05 - Step 4 stabilization
 
 ### Implemented

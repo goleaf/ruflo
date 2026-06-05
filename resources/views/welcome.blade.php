@@ -11,31 +11,8 @@
         <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
         @fonts
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
+        @vite(['resources/css/app.css', 'resources/scss/app.scss', 'resources/js/app.js'])
         @fluxAppearance
-
-        <style>
-            .ruflo-grid {
-                background-image:
-                    linear-gradient(rgba(9, 9, 11, 0.05) 1px, transparent 1px),
-                    linear-gradient(90deg, rgba(9, 9, 11, 0.05) 1px, transparent 1px);
-                background-size: 48px 48px;
-            }
-
-            .dark .ruflo-grid {
-                background-image:
-                    linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
-                    linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
-            }
-
-            .ruflo-veil {
-                background: linear-gradient(180deg, rgba(255, 255, 255, 0.36), rgba(255, 255, 255, 0) 28%);
-            }
-
-            .dark .ruflo-veil {
-                background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0) 28%);
-            }
-        </style>
     </head>
     <body class="bg-white text-zinc-950 antialiased dark:bg-zinc-950 dark:text-zinc-100">
         <div class="relative min-h-screen overflow-hidden ruflo-grid">

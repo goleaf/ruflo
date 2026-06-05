@@ -61,10 +61,12 @@
 ### Testing
 
 - Added seeder coverage tests for safe demo creation, per-user workspace content, idempotency, and production no-op behavior.
+- Added coverage that the placeholder reminders table remains empty until reminder ownership and scheduling columns exist.
 
 ### Documentation
 
 - Added `docs/seeding-strategy.md` with the current model inventory, seeder order, safety gates, and postponed future domains.
+- Documented why placeholder reminder rows are intentionally excluded from the current demo seed catalog.
 
 ## 2026-06-05 - Step 011 Complete factories for all models
 

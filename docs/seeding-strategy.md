@@ -7,7 +7,7 @@ Step 012 covers the committed model set:
 - `Tag`
 - `Todo`
 
-The tracked `Reminder` model is currently a placeholder with no domain columns, so it is not seeded yet. Future models for recurrence, comments, attachments, activity, invites, settings, and collaboration are not seeded yet because those committed models do not exist yet.
+The tracked `Reminder` model is currently a placeholder with no ownership, schedule, lifecycle, or message columns, so it is not seeded yet. Seeder coverage asserts the placeholder table stays empty until the reminder domain exists. Future models for recurrence, comments, attachments, activity, invites, settings, and collaboration are not seeded yet because those committed models do not exist yet.
 
 ## Seeders
 
@@ -28,6 +28,8 @@ The tracked `Reminder` model is currently a placeholder with no domain columns, 
 ## Idempotency
 
 Seeders are idempotent for the current demo catalog. Re-running them updates existing demo records instead of creating duplicate users, tags, projects, or seeded task titles.
+
+Placeholder reminder rows are intentionally excluded from the current catalog because they would not be owned by a user or connected to a task.
 
 ## Production Safety
 

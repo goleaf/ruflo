@@ -160,3 +160,13 @@ Record test/build/check results here.
 | 2026-06-06 | `php artisan test --compact tests/Feature/FactoryCoverageTest.php tests/Feature/TodoOrganizationTest.php` | Passed | 37 tests, 160 assertions for factory creation, states, relationships, and ownership-safe organization behavior. |
 | 2026-06-06 | `vendor/bin/pint --dirty --format agent` | Passed | PHP style passed after Step 011 coverage updates. |
 | 2026-06-06 | `php artisan test --compact` | Passed | Full suite passed with 173 tests and 634 assertions after Step 011 factory coverage updates. |
+| 2026-06-06 | `mcp__laravel_boost.search_docs` | Passed | Reviewed Laravel 13 seeding, factory-backed seeding, production seeding safety, and database-test seeding guidance before the Step 012 recheck. |
+| 2026-06-06 | `mcp__laravel_boost.database_schema filter=reminders include_column_details=true` | Passed | Confirmed the tracked `reminders` table remains a placeholder with only `id`, `created_at`, and `updated_at`. |
+| 2026-06-06 | `php artisan test --compact tests/Feature/SeederCoverageTest.php tests/Feature/AuthLoginUxTest.php tests/Feature/FactoryCoverageTest.php` | Passed | 14 tests, 127 assertions for safe seeding, demo login data, factory coverage, and placeholder reminder no-op behavior. |
+| 2026-06-06 | `vendor/bin/pint --dirty --format agent` | Passed | PHP style passed after Step 012 seeder coverage updates. |
+| 2026-06-06 | `php artisan config:show app.env --no-interaction` | Passed | Runtime environment resolves to `local` before applying the local demo seed. |
+| 2026-06-06 | `php artisan config:show demo.login_panel.enabled --no-interaction` | Passed | Runtime demo login panel flag resolves to true before applying the local demo seed. |
+| 2026-06-06 | `php artisan db:seed --no-interaction` | Passed | Applied `DemoUserSeeder` and `TodoSeeder` to the local Herd database for `https://ruflo.test`. |
+| 2026-06-06 | `mcp__laravel_boost.database_query` | Passed | Local DB has `reminders_count=0`; configured demo users each have 3 projects, 2 tags, and 7 todos, with `test@example.com` admin and `second@example.com` non-admin. |
+| 2026-06-06 | `mcp__laravel_boost.get_absolute_url route=login` | Passed | Boost resolved the login route as `https://ruflo.test/login`. |
+| 2026-06-06 | `php artisan test --compact` | Passed | Full suite passed with 173 tests and 637 assertions after Step 012 seeder coverage updates. |

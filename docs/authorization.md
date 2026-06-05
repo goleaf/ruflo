@@ -96,9 +96,21 @@ only and is never sufficient.
 
 All private todo routes live behind `['auth', 'verified']` in
 `routes/web.php`. Guests are redirected to login; unverified users to
-verification. There are no public routes that touch private data. Future todo
-routes must join the same protected group — never a standalone public route
-"just for testing".
+verification. The `User` model implements Laravel's `MustVerifyEmail`
+contract so the `verified` middleware is active instead of being a no-op.
+There are no public routes that touch private data. Future todo routes must
+join the same protected group - never a standalone public route "just for
+testing".
+
+Settings routes use the same public/private boundary:
+
+- `settings/profile` is authenticated and can render for unverified users so
+  they can see and manage their verification status.
+- `settings/appearance` is authenticated and verified.
+- `settings/security`, `settings/setup`, and `settings/maintenance` are
+  authenticated, verified, and password-confirmed.
+- `settings/maintenance` also requires the admin-only
+  `access-maintenance-center` gate.
 
 ## Error behavior (no leakage)
 
@@ -160,3 +172,10 @@ resource resolves to an explicit policy, todo lifecycle/bulk abilities are
 named and authorized before mutation, unsupported destructive abilities are
 denied, and placeholder reminders remain deny-all until the reminder schema is
 implemented.
+
+`GuestRouteProtectionTest` locks the Step 020 contract: guests are redirected
+from every private app page, unverified users are redirected from verified
+routes, profile settings remain reachable to authenticated unverified users,
+sensitive settings require password confirmation, maintenance remains
+admin-only, protected route middleware cannot be removed silently, and the demo
+login panel never renders stored password hashes.

@@ -5,7 +5,7 @@ Record changes after every step.
 ## Unreleased
 
 - Copied root progress files from `progress-templates/`.
-- Verified existing Step 01-04 implementation commits and updated master progress to continue from Step 05.
+- Verified existing Step 001, Step 002, Step 003, and Step 004 implementation commits and updated master progress to continue from Step 005.
 - Recorded the root prompt-pack path adjustment because `docs/todo-master-plan/MASTER_PROMPT.md` is absent in this checkout.
 - Confirmed the full test suite passes before Step 05 work.
 - Normalized root progress and decisions to the current 100-step prompt pack and set the next executable step to Step 005.
@@ -40,3 +40,4 @@ Record changes after every step.
 - Rechecked Step 017 by keeping the owning user as the private workspace boundary, adding owner-scoped dashboard counters through `DailySummaryQuery`, guarding todo project/tag hydration against malformed cross-user links, documenting the contract, and adding private-workspace regression coverage.
 - Completed Step 018 by locking server-assigned todo edit IDs, keeping edit-form tag hydration on the owner-scoped query result, returning empty results for tampered foreign/archived project/tag filters, documenting the query-scoping contract, and adding ownership query-scoping regression tests.
 - Completed Step 019 by adding an explicit todo reopen policy ability, authorizing complete versus reopen based on task state, explicitly binding the reminder deny-all policy, standardizing owner policy checks through `isOwnedBy()`, documenting deferred membership roles, and adding authorization policy matrix tests.
+- Completed Step 020 by enabling Laravel's `MustVerifyEmail` contract on `User`, adding guest/unverified/password-confirmation/maintenance route-protection coverage, guarding protected route middleware expectations, and confirming the demo login panel never exposes stored password hashes.

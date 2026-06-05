@@ -57,3 +57,12 @@ Confirmed and updated:
 - Both configured seeded demo users authenticate through Fortify with the fixed local/demo password.
 - Private dashboard, todo, and profile settings routes redirect guests to the login route.
 - The real local database still has `test@example.com` as the admin demo user and `second@example.com` as a normal demo user.
+
+Step 020 was completed from `steps/step-020-guest-and-route-protection.md`.
+
+Confirmed and updated:
+
+- Guest access to dashboard, todos, settings, setup, security, and maintenance routes redirects to Fortify's login route.
+- Demo credentials remain visible only from the safe seeded demo catalog and never expose the stored password hash.
+- Quick login still submits to Fortify's normal login route; there is no alternate demo-only authentication bypass.
+- `User` now implements Laravel's `MustVerifyEmail` contract so the existing `verified` route middleware blocks unverified accounts before private verified pages render.

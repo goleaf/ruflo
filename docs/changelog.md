@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-06-06 - Step 020 Guest and route protection
+
+### Implemented
+
+- Enabled Laravel's `MustVerifyEmail` contract on the `User` model so the existing `verified` middleware blocks unverified users from private verified routes.
+- Added route-protection regression coverage for guest redirects, unverified-user redirects, password confirmation, the maintenance admin gate, protected route middleware, and demo password hash leakage.
+- Kept the demo login panel inside Fortify's normal login flow with no production bypass or custom authentication route.
+
+### Testing
+
+- Added `GuestRouteProtectionTest` covering every current private application route.
+- Rechecked the affected Fortify auth, demo login, dashboard, todo, settings, maintenance, setup, and domain readiness suites.
+
+### Documentation
+
+- Updated `docs/auth-login-ux.md` and `docs/authorization.md` with the Step 020 route-protection contract.
+
 ## 2026-06-06 - Step 019 Authorization policies
 
 ### Implemented

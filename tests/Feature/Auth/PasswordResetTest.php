@@ -63,3 +63,28 @@ test('password can be reset with valid token', function () {
         return true;
     });
 });
+
+test('password reset validates through the dedicated request rules', function () {
+    Notification::fake();
+
+    $user = User::factory()->create();
+
+    $this->post(route('password.request'), ['email' => $user->email]);
+
+    Notification::assertSentTo($user, ResetPassword::class, function ($notification) use ($user) {
+        $response = $this
+            ->from(route('password.reset', $notification->token))
+            ->post(route('password.update'), [
+                'token' => $notification->token,
+                'email' => $user->email,
+                'password' => 'short',
+                'password_confirmation' => 'different',
+            ]);
+
+        $response
+            ->assertRedirect(route('password.reset', $notification->token, absolute: false))
+            ->assertSessionHasErrors(['password']);
+
+        return true;
+    });
+});

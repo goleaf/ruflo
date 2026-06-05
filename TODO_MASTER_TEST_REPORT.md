@@ -52,3 +52,10 @@ Record test/build/check results here.
 | 2026-06-05 | `vendor/bin/pint --dirty --format agent` | Passed | PHP style passed after Step 013. |
 | 2026-06-05 | `php artisan test --compact` | Passed | Full suite passed with 159 tests and 554 assertions after Step 013. |
 | 2026-06-05 | `mcp__laravel_boost.get_absolute_url route=login` | Passed | Boost resolved the login route as `https://ruflo.test/login`. |
+| 2026-06-05 | `mcp__laravel_boost.search_docs` | Passed | Reviewed Laravel 13 Form Request validation and Livewire 4 validation/form-object docs before Step 014 code changes. |
+| 2026-06-05 | `php artisan make:request Auth/RegisterUserRequest --no-interaction` | Passed | Created the registration Form Request class. |
+| 2026-06-05 | `php artisan make:request Auth/ResetUserPasswordRequest --no-interaction` | Passed | Created the password reset Form Request class. |
+| 2026-06-05 | `php artisan test --compact tests/Feature/Auth/RegistrationTest.php tests/Feature/Auth/PasswordResetTest.php` | Passed | 8 tests, 24 assertions for Step 014 Fortify request validation coverage. |
+| 2026-06-05 | `vendor/bin/pint --dirty --format agent` | Passed | PHP style passed after Step 014. |
+| 2026-06-05 | `php artisan test --compact tests/Feature/Auth` | Passed | 20 tests, 52 assertions across Fortify auth coverage after request-class wiring. |
+| 2026-06-05 | `php artisan test --compact` | Passed | Full suite passed with 161 tests and 565 assertions after Step 014. |

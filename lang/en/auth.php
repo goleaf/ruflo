@@ -1,6 +1,16 @@
 <?php
 
 return [
+    'fields' => [
+        'name' => 'name',
+        'email' => 'email address',
+        'password' => 'password',
+    ],
+
+    'validation' => [
+        'email_unique' => 'This email address is already registered.',
+    ],
+
     'login' => [
         'title' => 'Log in',
         'heading' => 'Log in to your account',

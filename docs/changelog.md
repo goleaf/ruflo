@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-06-05 - Step 014 Dedicated request classes
+
+### Implemented
+
+- Added dedicated auth Form Request classes for registration and password reset validation.
+- Rewired the Fortify user creation and password reset actions to consume those request classes as the canonical rule, attribute, and message source.
+- Added English auth validation field labels and a translated duplicate-email validation message.
+
+### Testing
+
+- Added Fortify route regression tests for failed registration and failed password reset validation.
+
+### Documentation
+
+- Added `docs/request-validation.md` describing the HTTP/Fortify request-class boundary and why Livewire-only forms stay in Livewire form objects.
+
 ## 2026-06-05 - Step 013 Demo users and login panel
 
 ### Implemented

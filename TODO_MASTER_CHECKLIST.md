@@ -12,6 +12,7 @@ Use this file as a persistent task tracker.
 - [x] Volt removed/migrated
 - [x] Restricted hosting mode implemented
 - [x] Web maintenance center
+- [x] Domain ruflo.test readiness
 - [ ] Seeds/factories complete
 - [ ] Link-only invites complete
 - [ ] Login demo users panel complete

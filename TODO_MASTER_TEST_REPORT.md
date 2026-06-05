@@ -22,3 +22,11 @@ Record test/build/check results here.
 | 2026-06-05 | `php artisan test --compact tests/Feature/Settings/MaintenanceCenterTest.php tests/Feature/Settings/SetupStatusTest.php tests/Feature/RestrictedHostingModeTest.php` | Passed | 16 tests, 68 assertions for Step 008 maintenance center and setup/restricted-hosting guards. |
 | 2026-06-05 | `php artisan route:list --no-interaction --path=settings` | Passed | Confirmed protected `settings/maintenance` route is registered as `maintenance.center`. |
 | 2026-06-05 | `vendor/bin/pint --dirty --format agent` | Passed | PHP style passed after Step 008. |
+| 2026-06-05 | `php artisan config:clear --no-interaction` | Passed | Cleared cached configuration after aligning the local ignored `.env` with `https://ruflo.test`. |
+| 2026-06-05 | `php artisan config:show app.url --no-interaction` | Passed | Confirmed runtime `app.url` resolves to `https://ruflo.test`. |
+| 2026-06-05 | `php artisan config:show queue.default --no-interaction` | Passed | Confirmed runtime queue default resolves to `sync`. |
+| 2026-06-05 | `mcp__laravel_boost.get_absolute_url` | Passed | Boost resolved the application root as `https://ruflo.test`. |
+| 2026-06-05 | `php artisan test --compact tests/Feature/DomainReadinessTest.php tests/Feature/Settings/SetupStatusTest.php tests/Feature/Settings/MaintenanceCenterTest.php` | Passed | 16 tests, 64 assertions for Step 009 URL contract plus setup/maintenance guards. |
+| 2026-06-05 | `php artisan test --compact tests/Feature/Auth` | Passed | 18 tests, 41 assertions for Fortify auth redirects and signed verification behavior after URL forcing. |
+| 2026-06-05 | `vendor/bin/pint --dirty --format agent` | Passed | PHP style passed after Step 009. |
+| 2026-06-05 | `php artisan test --compact` | Passed | Full suite passed with 145 tests and 438 assertions after Step 009. |

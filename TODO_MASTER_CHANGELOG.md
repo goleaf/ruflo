@@ -13,3 +13,4 @@ Record changes after every step.
 - Completed Step 006 by adding restricted-hosting config defaults, a web-processing profile, sync queue defaults, a Vite-only local dev script, docs, and drift tests.
 - Completed Step 007 by adding a protected setup status page, setup status inspector, translations, docs, and route protection tests.
 - Completed Step 008 by adding a protected maintenance center with setup health, runtime/profile status, safe cache flush, safe compiled-view cleanup, docs, translations, and tests.
+- Completed Step 009 by aligning tracked defaults, test runtime, and local Herd runtime with `https://ruflo.test`, forcing configured URL generation, documenting future link rules, and adding URL contract tests.

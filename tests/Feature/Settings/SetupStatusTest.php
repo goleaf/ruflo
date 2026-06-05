@@ -54,7 +54,7 @@ test('setup status inspector reports deployment checks', function () {
 
 test('setup status can be refreshed from Livewire', function () {
     Livewire::test(SetupStatus::class)
-        ->assertSet('status.ready', false)
+        ->assertSet('status.ready', true)
         ->call('refreshStatus')
         ->assertHasNoErrors();
 });

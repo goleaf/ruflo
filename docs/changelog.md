@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-06-05 - Step 009 Domain and ruflo.test readiness
+
+### Implemented
+
+- Set tracked application, filesystem, mail, and test defaults to `https://ruflo.test`.
+- Added URL generation defaults in `AppServiceProvider` so named routes, redirects, signed routes, and storage URLs use the configured HTTPS root.
+- Aligned the local ignored `.env` for the secured Herd domain and sync queue mode.
+
+### Testing
+
+- Added domain readiness tests for tracked defaults, named route URLs, protected redirects, signed URLs, and public storage URLs.
+
+### Documentation
+
+- Added `docs/domain-readiness.md` documenting the domain contract and future invite/export/download link rules.
+
 ## 2026-06-05 - Step 008 Protected maintenance center
 
 ### Implemented

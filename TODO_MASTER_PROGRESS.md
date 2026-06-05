@@ -2,7 +2,7 @@
 
 ## Current status
 
-Steps 001-008 are complete and verified from the existing baseline plus Step 005 asset layer, Step 006 restricted-hosting contract, Step 007 protected setup status, and Step 008 maintenance center. Continuing from Step 009 in the current 100-step plan.
+Steps 001-009 are complete and verified from the existing baseline plus Step 005 asset layer, Step 006 restricted-hosting contract, Step 007 protected setup status, Step 008 maintenance center, and Step 009 domain readiness. Continuing from Step 010 in the current 100-step plan.
 
 ## Completed steps
 
@@ -14,17 +14,18 @@ Steps 001-008 are complete and verified from the existing baseline plus Step 005
 - [x] Step 006 — Restricted hosting web-only mode
 - [x] Step 007 — Web installer and updater
 - [x] Step 008 — Protected maintenance center
-- [ ] Step 009 — Domain and ruflo.test readiness
-- [ ] Steps 010-100
+- [x] Step 009 — Domain and ruflo.test readiness
+- [ ] Step 010 — Authentication and login UX
+- [ ] Steps 011-100
 
 ## Current step
 
-Step 009
+Step 010
 
 ## Last completed action
 
-Completed Step 008 by adding a protected maintenance center with health checks, runtime status, web-processing profile, safe cache flush, safe compiled-view cleanup, translations, documentation, and tests.
+Completed Step 009 by aligning tracked defaults and local runtime with `https://ruflo.test`, forcing configured URL generation, documenting the domain contract, and adding tests for routes, redirects, signed URLs, and storage URLs.
 
 ## Next action
 
-Start Step 009 domain and ruflo.test readiness.
+Start Step 010 authentication and login UX.

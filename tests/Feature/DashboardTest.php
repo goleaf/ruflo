@@ -1,5 +1,8 @@
 <?php
 
+use App\Models\Project;
+use App\Models\Tag;
+use App\Models\Todo;
 use App\Models\User;
 
 test('guests are redirected to the login page', function () {
@@ -9,11 +12,17 @@ test('guests are redirected to the login page', function () {
 
 test('authenticated users can visit the dashboard', function () {
     $user = User::factory()->create();
+    Todo::factory()->for($user)->overdue()->create();
+    Project::factory()->for($user)->create();
+    Tag::factory()->for($user)->create();
+
     $this->actingAs($user);
 
     $this->get(route('dashboard'))
         ->assertOk()
         ->assertSeeText('RuFlo Control Deck')
+        ->assertSeeText('Private workspace')
+        ->assertSeeText('Open todos')
         ->assertSeeText('npx ruflo@latest mcp start')
         ->assertSeeText('/plugin marketplace add ruvnet/ruflo');
 });

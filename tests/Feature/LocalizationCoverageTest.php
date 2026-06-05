@@ -42,7 +42,10 @@ test('public and authenticated landing pages render localized copy', function ()
         ->assertOk()
         ->assertSee(__('dashboard.heading'))
         ->assertSee(__('dashboard.install.heading'))
-        ->assertDontSee('dashboard.');
+        ->assertSee(__('dashboard.workspace.heading'))
+        ->assertDontSee('dashboard.heading')
+        ->assertDontSee('dashboard.install.heading')
+        ->assertDontSee('dashboard.workspace.heading');
 });
 
 test('static application translation keys referenced by source files exist', function () {

@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026-06-06 - Step 017 Private workspace model
+
+### Implemented
+
+- Kept the owning `User` as the private workspace boundary instead of adding a premature `Workspace` model.
+- Added `DailySummaryQuery` and wired the existing class-based dashboard Livewire component so dashboard counters are scoped to the authenticated user.
+- Hardened `TodoListQuery` relationship hydration so malformed cross-user project/tag links do not leak foreign labels into task rows or edit forms.
+- Added private-workspace architecture coverage for owner concerns, explicit policies, dashboard counts, relationship hydration, and the inaccessible reminder placeholder.
+
+### Testing
+
+- Added `PrivateWorkspaceModelTest` for Step 017 privacy invariants.
+- Rechecked dashboard, todo ownership, organization, project, and tag behavior through the focused privacy suite.
+
+### Documentation
+
+- Updated `docs/authorization.md` with the dashboard query boundary, relation hydration guard, and Step 017 regression-test contract.
+
 ## 2026-06-05 - Step 015 Reusable custom validation rules
 
 ### Implemented

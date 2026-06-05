@@ -4,7 +4,16 @@ return [
     'title' => 'RuFlo Control Deck',
     'eyebrow' => 'Authenticated workspace',
     'heading' => 'RuFlo Control Deck',
-    'description' => 'This workspace is already branded for RuFlo and wired into the existing MCP manifests. Use this page when you want the shortest path to the CLI install, the plugin path, or the hosted demo.',
+    'description' => 'Your private workspace summary is scoped to your account before any counts or labels render.',
+
+    'summary' => [
+        'active' => 'Active',
+        'overdue' => 'Overdue',
+        'completed' => 'Completed',
+        'archived' => 'Archived',
+        'projects' => 'Projects',
+        'tags' => 'Tags',
+    ],
 
     'cards' => [
         'mcp' => [
@@ -23,7 +32,7 @@ return [
 
     'install' => [
         'label' => 'CLI path',
-        'heading' => 'Full install',
+        'heading' => 'Install paths',
         'badge' => 'Hooks + daemon + memory',
         'description' => 'Run the wizard if you want the safest guided install. Use the direct MCP command when you already know the target client.',
     ],
@@ -37,7 +46,9 @@ return [
     ],
 
     'workspace' => [
-        'label' => 'Workspace note',
-        'description' => 'The local agent manifests in this repo already register both Laravel Boost and RuFlo.',
+        'label' => 'Private workspace',
+        'heading' => 'Todos stay owner-scoped',
+        'description' => 'Lists, project filters, tag filters, and dashboard counters use the same authenticated owner boundary.',
+        'action' => 'Open todos',
     ],
 ];

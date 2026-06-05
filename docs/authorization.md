@@ -36,6 +36,7 @@ scope) rather than across the whole codebase.
 | Per-action decisions | `App\Policies\TodoPolicy` | The only place "may this user do this?" is answered. |
 | Policy binding | `#[UsePolicy(TodoPolicy::class)]` on `App\Models\Todo` | Explicit, greppable mapping — not naming-convention magic. |
 | Mutations | `App\Actions\Todos\*` | Assign ownership from the authenticated user; never from request input. |
+| Dashboard summary | `App\Queries\Dashboard\DailySummaryQuery` | Counts tasks, active projects, and tags through owner-scoped queries only. |
 
 Do not scatter authorization across components, views, or query callers.
 Reuse these.
@@ -63,6 +64,9 @@ directly). Consequences that are mandatory, not optional:
   record's existence never leaks.
 - Aggregates (the remaining/completed summary) are computed inside the scope,
   so counters can never include another user's tasks.
+- Related project and tag labels are constrained to the same owner before
+  eager loading. Normal actions already prevent foreign links, but malformed
+  legacy rows or manual database edits still must not leak names in the UI.
 
 The safest query is one that never sees unauthorized data in the first place.
 
@@ -103,8 +107,9 @@ routes must join the same protected group — never a standalone public route
 These are documented now so later steps inherit the model instead of bolting
 it on:
 
-- **Dashboard** — every widget/counter uses the same owner scope; if cached,
-  cache keys must be per-user so data never mixes.
+- **Dashboard** — every current widget/counter uses
+  `DailySummaryQuery::for($user)` or `TodoListQuery::summaryFor($user)`; if
+  cached later, cache keys must be per-user so data never mixes.
 - **Search & filters** — ownership is applied at the query level before any
   text/status/priority filtering; invalid filter input is validated and must
   never widen the scope.
@@ -127,3 +132,9 @@ allow / non-owner deny for every per-record ability, not-found leakage
 behavior, mass-assignment refusal, owner-scoped queries and counters, and
 guest redirects. Every future todo capability must add the matching
 cross-user denial test before it is considered done.
+
+`PrivateWorkspaceModelTest` locks the Step 017 contract: todo-related private
+models must use the shared owner concern, private policies must hide foreign
+records as not found, dashboard counts must be user-scoped, malformed
+cross-user project/tag links must not hydrate foreign labels, and placeholder
+reminders remain inaccessible until their real owner/schedule schema exists.

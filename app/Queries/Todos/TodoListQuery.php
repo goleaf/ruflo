@@ -7,6 +7,8 @@ use App\Models\Project;
 use App\Models\Todo;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
  * The single owner-scoped read boundary for todos.
@@ -50,10 +52,12 @@ final class TodoListQuery
      */
     public function filtered(User $user, TodoFilters $filters): Builder
     {
-        $query = Todo::query()
-            ->select(['id', 'user_id', 'project_id', 'title', 'priority', 'due_date', 'is_completed', 'archived_at', 'created_at', 'updated_at'])
-            ->ownedBy($user)
-            ->with(['project:id,name,color', 'tags:id,name,color']);
+        $query = $this->withWorkspaceRelations(
+            Todo::query()
+                ->select(['id', 'user_id', 'project_id', 'title', 'priority', 'due_date', 'is_completed', 'archived_at', 'created_at', 'updated_at'])
+                ->ownedBy($user),
+            $user,
+        );
 
         $this->applyStatus($query, $filters->status);
 
@@ -96,7 +100,10 @@ final class TodoListQuery
      */
     public function findVisibleFor(User $user, int $todoId): Todo
     {
-        return Todo::query()->ownedBy($user)->findOrFail($todoId);
+        return $this->withWorkspaceRelations(
+            Todo::query()->ownedBy($user),
+            $user,
+        )->findOrFail($todoId);
     }
 
     /**
@@ -164,5 +171,23 @@ final class TodoListQuery
             'updated' => $query->orderBy('updated_at', $direction),
             default => $query->orderBy('created_at', $direction),
         };
+    }
+
+    /**
+     * Constrain related labels to the same private workspace before rendering.
+     *
+     * Normal actions already prevent cross-user project/tag links. This extra
+     * query-level guard means malformed legacy rows or manual database edits do
+     * not leak another user's project or tag names into the UI.
+     *
+     * @param  Builder<Todo>  $query
+     * @return Builder<Todo>
+     */
+    private function withWorkspaceRelations(Builder $query, User $user): Builder
+    {
+        return $query->with([
+            'project' => fn (BelongsTo $project): BelongsTo => $project->where('projects.user_id', $user->id),
+            'tags' => fn (BelongsToMany $tags): BelongsToMany => $tags->where('tags.user_id', $user->id),
+        ]);
     }
 }

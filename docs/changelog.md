@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-06-05 - Step 007 Web installer and updater
+
+### Implemented
+
+- Added a protected setup status page at `/settings/setup` behind `auth`, `verified`, and `password.confirm`.
+- Added `InspectSetupStatus` and `SetupStatusReport` to inspect app key, HTTPS URL, database, migrations table, pending migrations, sync queue mode, restricted-hosting mode, and storage writability without running shell commands.
+- Added English setup translations in `lang/en/setup.php`.
+- Added setup navigation inside the settings layout.
+
+### Testing
+
+- Added setup status tests for route protection, password confirmation, rendering, and the status inspector.
+
+### Documentation
+
+- Added `docs/web-installer-updater.md` documenting the status-only web updater foundation and the no-public-installer policy.
+
 ## 2026-06-05 - Step 006 Restricted hosting web-only mode
 
 ### Implemented

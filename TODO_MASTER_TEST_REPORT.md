@@ -16,3 +16,6 @@ Record test/build/check results here.
 | 2026-06-05 | `php artisan test --compact tests/Feature/RestrictedHostingModeTest.php` | Passed | 4 tests, 22 assertions for Step 006 restricted-hosting defaults and drift guards. |
 | 2026-06-05 | `composer validate --strict --no-interaction` | Passed | Composer manifest remained valid after simplifying the local dev script. |
 | 2026-06-05 | `vendor/bin/pint --dirty --format agent` | Passed | PHP style passed after Step 006. |
+| 2026-06-05 | `php artisan test --compact tests/Feature/Settings/SetupStatusTest.php tests/Feature/RestrictedHostingModeTest.php` | Passed | 9 tests, 41 assertions for Step 007 setup status and restricted-hosting guards. |
+| 2026-06-05 | `php artisan route:list --no-interaction --path=settings` | Passed | Confirmed protected `settings/setup` route is registered as `setup.status`. |
+| 2026-06-05 | `vendor/bin/pint --dirty --format agent` | Passed | PHP style passed after Step 007. |

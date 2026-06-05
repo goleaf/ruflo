@@ -2,7 +2,7 @@
 
 ## Current status
 
-Steps 001-006 are complete and verified from the existing baseline plus the Step 005 asset-layer update and Step 006 restricted-hosting contract. Continuing from Step 007 in the current 100-step plan.
+Steps 001-007 are complete and verified from the existing baseline plus Step 005 asset layer, Step 006 restricted-hosting contract, and Step 007 protected setup status. Continuing from Step 008 in the current 100-step plan.
 
 ## Completed steps
 
@@ -12,17 +12,18 @@ Steps 001-006 are complete and verified from the existing baseline plus the Step
 - [x] Step 004 — Remove Volt and migrate to normal Livewire
 - [x] Step 005 — Tailwind CSS 4 and SCSS design layer
 - [x] Step 006 — Restricted hosting web-only mode
-- [ ] Step 007 — Web installer and updater
-- [ ] Steps 008-100
+- [x] Step 007 — Web installer and updater
+- [ ] Step 008 — Protected maintenance center
+- [ ] Steps 009-100
 
 ## Current step
 
-Step 007
+Step 008
 
 ## Last completed action
 
-Completed Step 006 by adding restricted-hosting defaults, the `WebProcessingProfile`, sync queue defaults, a Vite-only local dev script, an empty console route, documentation, and guard tests.
+Completed Step 007 by adding a protected status-only setup/updater page under settings, an inspector action/DTO, setup translations, documentation, and route protection tests.
 
 ## Next action
 
-Start Step 007 web installer and updater.
+Start Step 008 protected maintenance center.

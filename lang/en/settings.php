@@ -14,6 +14,7 @@ return [
     'actions' => [
         'back' => 'Back',
         'cancel' => 'Cancel',
+        'close' => 'Close',
         'confirm' => 'Confirm',
         'continue' => 'Continue',
         'save' => 'Save',

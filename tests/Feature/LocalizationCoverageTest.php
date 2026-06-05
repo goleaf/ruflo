@@ -1,0 +1,75 @@
+<?php
+
+use App\Models\User;
+use Illuminate\Support\Facades\File;
+
+test('source files do not use literal english copy in translation APIs', function () {
+    $patterns = [
+        '/__\(\s*[\'"](?!(?:[a-z0-9_]+\.)+[a-z0-9_]+|[a-z0-9_]+::)[^\'"]*[A-Z][^\'"]*[\'"]\s*(?:,|\))/',
+        '/@lang\(\s*[\'"](?!(?:[a-z0-9_]+\.)+[a-z0-9_]+|[a-z0-9_]+::)[^\'"]*[A-Z][^\'"]*[\'"]\s*(?:,|\))/',
+        '/Flux::toast\([^;\n]*[\'"][A-Z][^\'"]*[\'"]/',
+        '/addError\([^;\n]*[\'"][A-Z][^\'"]*[\'"]/',
+        '/#\[Title\([\'"](?!(?:[a-z0-9_]+\.)+[a-z0-9_]+|[a-z0-9_]+::)[^\'"]*[A-Z][^\'"]*[\'"]\)\]/',
+    ];
+
+    $violations = [];
+
+    foreach (localizationSourceFiles() as $path) {
+        foreach (file($path) ?: [] as $lineNumber => $line) {
+            foreach ($patterns as $pattern) {
+                if (preg_match($pattern, $line) === 1) {
+                    $violations[] = sprintf('%s:%d: %s', relativePath($path), $lineNumber + 1, trim($line));
+                }
+            }
+        }
+    }
+
+    expect($violations)->toBeEmpty();
+});
+
+test('public and authenticated landing pages render localized copy', function () {
+    $this->get(route('home'))
+        ->assertOk()
+        ->assertSee(__('welcome.heading'))
+        ->assertSee(__('welcome.paths.cli.heading'))
+        ->assertDontSee('welcome.');
+
+    $user = User::factory()->create();
+
+    $this->actingAs($user)
+        ->get(route('dashboard'))
+        ->assertOk()
+        ->assertSee(__('dashboard.heading'))
+        ->assertSee(__('dashboard.install.heading'))
+        ->assertDontSee('dashboard.');
+});
+
+/**
+ * @return list<string>
+ */
+function localizationSourceFiles(): array
+{
+    $roots = [
+        app_path(),
+        resource_path('views'),
+    ];
+
+    $paths = [];
+
+    foreach ($roots as $root) {
+        foreach (File::allFiles($root) as $file) {
+            if (in_array($file->getExtension(), ['php'], true) || str_ends_with($file->getFilename(), '.blade.php')) {
+                $paths[] = $file->getPathname();
+            }
+        }
+    }
+
+    sort($paths);
+
+    return $paths;
+}
+
+function relativePath(string $path): string
+{
+    return str_replace(base_path().DIRECTORY_SEPARATOR, '', $path);
+}

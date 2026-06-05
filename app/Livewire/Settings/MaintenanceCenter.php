@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Cache;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 
-#[Title('Maintenance center')]
+#[Title('maintenance.pages.center.title')]
 class MaintenanceCenter extends Component
 {
     /**

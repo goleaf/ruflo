@@ -5,7 +5,7 @@ namespace App\Livewire\Settings;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 
-#[Title('Appearance settings')]
+#[Title('settings.appearance.title')]
 class Appearance extends Component
 {
     //

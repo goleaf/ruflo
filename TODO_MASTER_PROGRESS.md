@@ -2,31 +2,11 @@
 
 ## Current status
 
-Steps 001-015 are complete and verified from the existing baseline plus Step 005 asset layer, Step 006 restricted-hosting contract, Step 007 protected setup status, Step 008 maintenance center, Step 009 domain readiness, Step 010 auth/login UX, Step 011 factory coverage, Step 012 seeder coverage, Step 013 demo login stabilization, Step 014 request-class validation, and Step 015 custom ownership validation rules. Continuing from Step 016 in the current 100-step plan.
-
-## Completed steps
-
-- [x] Step 001 — Project audit and foundation
-- [x] Step 002 — Upgrade and normalize Laravel 13 stack
-- [x] Step 003 — Livewire and Flux foundation
-- [x] Step 004 — Remove Volt and migrate to normal Livewire
-- [x] Step 005 — Tailwind CSS 4 and SCSS design layer
-- [x] Step 006 — Restricted hosting web-only mode
-- [x] Step 007 — Web installer and updater
-- [x] Step 008 — Protected maintenance center
-- [x] Step 009 — Domain and ruflo.test readiness
-- [x] Step 010 — Authentication and login UX
-- [x] Step 011 — Complete factories for all models
-- [x] Step 012 — Complete seeders for all models
-- [x] Step 013 — Demo users and login panel
-- [x] Step 014 — Dedicated request classes
-- [x] Step 015 — Reusable custom validation rules
-- [ ] Step 016 — English localization and message cleanup
-- [ ] Steps 017-100
+Steps 001-016 are complete. The tracker is expanded to one ledger line per step from 001 through 100 so later work cannot be hidden behind a range.
 
 ## Current step
 
-Step 016
+Step 017 — Private workspace model
 
 ## Last completed action
 
@@ -34,4 +14,109 @@ Completed Step 015 by adding reusable todo ownership rule objects, applying them
 
 ## Next action
 
-Start Step 016 English localization and message cleanup.
+Start the requested recheck from Step 001 by reading `GLOBAL_RULES.md`, `steps/step-001-project-audit-and-foundation.md`, and all progress files, then verify the current baseline against Step 001 acceptance criteria before advancing to Step 017 implementation.
+
+## Step ledger
+
+| Step | Status | Notes | Tests/checks | Docs update | Risk entry | Commit |
+|---|---|---|---|---|---|---|
+| 001 — Project audit and foundation | Complete | Existing baseline establishes the Laravel todo foundation and project audit. | Full suite and route/app inspections recorded in test report. | Root progress, changelog, decisions, and todo foundation docs updated. | Prompt path risk recorded. | b69ac76 |
+| 002 — Upgrade and normalize Laravel 13 stack | Complete | Existing baseline confirms Laravel 13 stack normalization. | Full suite baseline recorded. | Root docs/progress updated. | PHP 8.4 versus requested PHP 8.5 risk recorded. | e53b67c |
+| 003 — Livewire and Flux foundation | Complete | Existing baseline establishes Livewire/Flux conventions. | Full suite baseline recorded. | Root docs/progress updated. | No active Step 003 risk. | 2149412 |
+| 004 — Remove Volt and migrate to normal Livewire | Complete | Existing baseline uses normal class-based Livewire and no Volt. | Todo organization and full suite checks recorded. | Root docs/progress updated. | No active Volt risk. | b461fae |
+| 005 — Tailwind CSS 4 and SCSS design layer | Complete | Added clean SCSS support beside Tailwind CSS 4 and Flux styling. | Frontend asset pipeline test, `npm run build`, Pint, and full suite recorded. | Frontend design docs and root trackers updated. | No active Step 005 risk. | ff5cc6b |
+| 006 — Restricted hosting web-only mode | Complete | Added restricted-hosting config defaults and web-processing profile. | Restricted hosting tests, composer validation, Pint, and full suite recorded. | Restricted-hosting docs and root trackers updated. | Restricted hosting limitations documented. | ff39026 |
+| 007 — Web installer and updater | Complete | Added protected setup status page as status-only web installer foundation. | Setup status, restricted-hosting tests, route list, and Pint recorded. | Web installer/updater docs and root trackers updated. | Public installer exposure avoided. | 59356de |
+| 008 — Protected maintenance center | Complete | Added authenticated maintenance center with bounded safe cleanup controls. | Maintenance center, setup status, restricted-hosting tests, route list, and Pint recorded. | Maintenance center docs and root trackers updated. | Broader processors deferred to planned steps. | 350b2ae |
+| 009 — Domain and ruflo.test readiness | Complete | Aligned tracked defaults, tests, and runtime URL generation to `https://ruflo.test`. | Domain readiness, auth, setup/maintenance, Boost URL, config checks, Pint, and full suite recorded. | Domain readiness docs and root trackers updated. | Future link surfaces not implemented yet. | 0731985 |
+| 010 — Authentication and login UX | Complete | Added safe demo login panel and Fortify quick-login flow. | Auth login UX, Fortify auth, config, Boost URL/database checks, Pint, and full suite recorded. | Auth login docs and root trackers updated. | Demo panel environment gating risk mitigated. | fded06b |
+| 011 — Complete factories for all models | Complete | Expanded committed model factories and factory-state coverage. | Factory coverage, todo organization, Pint, and full suite recorded. | Factory coverage docs and root trackers updated. | Future-domain models deferred until implemented. | 0e4acb0 |
+| 012 — Complete seeders for all models | Complete | Split safe demo user seeding and idempotent workspace demo data. | Seeder coverage, Pint, and full suite recorded. | Seeding strategy docs and root trackers updated. | Future-domain seeders deferred until implemented. | c82fb1d |
+| 013 — Demo users and login panel | Complete | Re-verified demo login rendering, identifiers, and quick-login contract. | Auth login UX, Fortify auth, Boost schema/URL checks, Pint, and full suite recorded. | Auth login docs and root trackers updated. | Email-only identifier decision recorded. | 709cf2d |
+| 014 — Dedicated request classes | Complete | Added auth Form Request classes and wired Fortify rule sources. | Registration/password reset tests, Fortify auth suite, Pint, and full suite recorded. | Request validation docs and root trackers updated. | Request helper naming risk mitigated. | 2dc906d |
+| 015 — Reusable custom validation rules | Complete | Added reusable owned project/tag/todo rules and applied Livewire validation boundaries. | Todo organization, lifecycle/ownership tests, Pint, and full suite recorded. | Validation rules docs and root trackers updated. | Future-domain custom rules deferred until those domains exist. | f0174e4 |
+| 016 — English localization and message cleanup | Complete | Finished navigation, dashboard, welcome, settings, Livewire action messages, page titles, and localization regression tests through English language files. | Localization/settings/dashboard checks, literal scan, Pint, and full suite passed. | `docs/localization.md`, changelog, checklist, decisions, risks, test report, and explicit 001-100 progress ledger updated. | Localization scanner limitation documented and mitigated. | f346426, 445fc11, ae5a585 |
+| 017 — Private workspace model | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 018 — Ownership and query scoping | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 019 — Authorization policies | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 020 — Guest and route protection | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 021 — Core task creation | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 022 — Task list and private task views | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 023 — Task editing | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 024 — Task completion and reopening | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 025 — Task archive and restore | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 026 — Task deletion and trash behavior | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 027 — Task lifecycle state machine | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 028 — Projects and lists | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 029 — Tags and labels | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 030 — Priorities | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 031 — Due dates and date logic | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 032 — Today view | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 033 — Overdue view | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 034 — Upcoming view | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 035 — Search | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 036 — Filters | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 037 — Sorting | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 038 — Saved views | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 039 — Bulk selection and actions | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 040 — Kanban board | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 041 — Calendar view | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 042 — Subtasks and checklists | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 043 — Task templates | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 044 — Quick capture inbox | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 045 — Focus mode | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 046 — Goals and milestones | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 047 — Habits tracker | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 048 — Pomodoro focus timer | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 049 — Time tracking | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 050 — Waiting blocker dependency system | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 051 — Smart views and cleanup views | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 052 — Automation rules web-only | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 053 — Manual web processing engine | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 054 — Reminder system web-mode | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 055 — Notification center | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 056 — Daily summary dashboard | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 057 — Recurring task rules | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 058 — Recurring occurrence generation | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 059 — Recurring exceptions | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 060 — Recurring edit occurrence versus series | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 061 — Dashboard foundation | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 062 — Dashboard customization | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 063 — Project progress dashboard | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 064 — Reports overview | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 065 — Charts without paid services | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 066 — Activity history | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 067 — Task timeline UI | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 068 — Collaboration foundation | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 069 — Link-only invite system | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 070 — Member management | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 071 — Shared dashboard search filter scope | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 072 — Comments | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 073 — Mentions | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 074 — Comment moderation | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 075 — Attachments | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 076 — Image handling | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 077 — Storage and cleanup center | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 078 — Import wizard | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 079 — Export wizard | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 080 — CSV and JSON portability | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 081 — Backup and restore principles | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 082 — Settings foundation | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 083 — Language and timezone settings | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 084 — Notification preferences | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 085 — Privacy settings | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 086 — Admin security center | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 087 — Demo reset and sample data tools | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 088 — PWA basics free | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 089 — Offline friendly UX | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 090 — Keyboard shortcuts | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 091 — Command palette | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 092 — Help center and onboarding | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 093 — Tooltips and microcopy polish | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 094 — Accessibility full pass | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 095 — Responsive mobile full pass | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 096 — Performance pass | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 097 — Security pass | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 098 — Testing expansion | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 099 — Documentation expansion | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 100 — Release checklist, production readiness, final 100-step QA, and final commit | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |

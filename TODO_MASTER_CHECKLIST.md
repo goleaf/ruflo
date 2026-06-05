@@ -1,6 +1,6 @@
 # TODO Master Checklist
 
-Use this file as a persistent task tracker.
+Use this file as a persistent task tracker. Step detail lives in `TODO_MASTER_PROGRESS.md`; this checklist keeps every step visible as its own checkbox.
 
 ## Global
 
@@ -19,7 +19,110 @@ Use this file as a persistent task tracker.
 - [ ] Link-only invites complete
 - [x] Request classes complete
 - [x] Custom validation rules complete
-- [ ] English translations complete
+- [x] English translations complete
 - [ ] Tests complete
 - [ ] Docs complete
 - [ ] Final QA complete
+
+## Step Completion
+
+- [x] Step 001 — Project audit and foundation
+- [x] Step 002 — Upgrade and normalize Laravel 13 stack
+- [x] Step 003 — Livewire and Flux foundation
+- [x] Step 004 — Remove Volt and migrate to normal Livewire
+- [x] Step 005 — Tailwind CSS 4 and SCSS design layer
+- [x] Step 006 — Restricted hosting web-only mode
+- [x] Step 007 — Web installer and updater
+- [x] Step 008 — Protected maintenance center
+- [x] Step 009 — Domain and ruflo.test readiness
+- [x] Step 010 — Authentication and login UX
+- [x] Step 011 — Complete factories for all models
+- [x] Step 012 — Complete seeders for all models
+- [x] Step 013 — Demo users and login panel
+- [x] Step 014 — Dedicated request classes
+- [x] Step 015 — Reusable custom validation rules
+- [x] Step 016 — English localization and message cleanup
+- [ ] Step 017 — Private workspace model
+- [ ] Step 018 — Ownership and query scoping
+- [ ] Step 019 — Authorization policies
+- [ ] Step 020 — Guest and route protection
+- [ ] Step 021 — Core task creation
+- [ ] Step 022 — Task list and private task views
+- [ ] Step 023 — Task editing
+- [ ] Step 024 — Task completion and reopening
+- [ ] Step 025 — Task archive and restore
+- [ ] Step 026 — Task deletion and trash behavior
+- [ ] Step 027 — Task lifecycle state machine
+- [ ] Step 028 — Projects and lists
+- [ ] Step 029 — Tags and labels
+- [ ] Step 030 — Priorities
+- [ ] Step 031 — Due dates and date logic
+- [ ] Step 032 — Today view
+- [ ] Step 033 — Overdue view
+- [ ] Step 034 — Upcoming view
+- [ ] Step 035 — Search
+- [ ] Step 036 — Filters
+- [ ] Step 037 — Sorting
+- [ ] Step 038 — Saved views
+- [ ] Step 039 — Bulk selection and actions
+- [ ] Step 040 — Kanban board
+- [ ] Step 041 — Calendar view
+- [ ] Step 042 — Subtasks and checklists
+- [ ] Step 043 — Task templates
+- [ ] Step 044 — Quick capture inbox
+- [ ] Step 045 — Focus mode
+- [ ] Step 046 — Goals and milestones
+- [ ] Step 047 — Habits tracker
+- [ ] Step 048 — Pomodoro focus timer
+- [ ] Step 049 — Time tracking
+- [ ] Step 050 — Waiting blocker dependency system
+- [ ] Step 051 — Smart views and cleanup views
+- [ ] Step 052 — Automation rules web-only
+- [ ] Step 053 — Manual web processing engine
+- [ ] Step 054 — Reminder system web-mode
+- [ ] Step 055 — Notification center
+- [ ] Step 056 — Daily summary dashboard
+- [ ] Step 057 — Recurring task rules
+- [ ] Step 058 — Recurring occurrence generation
+- [ ] Step 059 — Recurring exceptions
+- [ ] Step 060 — Recurring edit occurrence versus series
+- [ ] Step 061 — Dashboard foundation
+- [ ] Step 062 — Dashboard customization
+- [ ] Step 063 — Project progress dashboard
+- [ ] Step 064 — Reports overview
+- [ ] Step 065 — Charts without paid services
+- [ ] Step 066 — Activity history
+- [ ] Step 067 — Task timeline UI
+- [ ] Step 068 — Collaboration foundation
+- [ ] Step 069 — Link-only invite system
+- [ ] Step 070 — Member management
+- [ ] Step 071 — Shared dashboard search filter scope
+- [ ] Step 072 — Comments
+- [ ] Step 073 — Mentions
+- [ ] Step 074 — Comment moderation
+- [ ] Step 075 — Attachments
+- [ ] Step 076 — Image handling
+- [ ] Step 077 — Storage and cleanup center
+- [ ] Step 078 — Import wizard
+- [ ] Step 079 — Export wizard
+- [ ] Step 080 — CSV and JSON portability
+- [ ] Step 081 — Backup and restore principles
+- [ ] Step 082 — Settings foundation
+- [ ] Step 083 — Language and timezone settings
+- [ ] Step 084 — Notification preferences
+- [ ] Step 085 — Privacy settings
+- [ ] Step 086 — Admin security center
+- [ ] Step 087 — Demo reset and sample data tools
+- [ ] Step 088 — PWA basics free
+- [ ] Step 089 — Offline friendly UX
+- [ ] Step 090 — Keyboard shortcuts
+- [ ] Step 091 — Command palette
+- [ ] Step 092 — Help center and onboarding
+- [ ] Step 093 — Tooltips and microcopy polish
+- [ ] Step 094 — Accessibility full pass
+- [ ] Step 095 — Responsive mobile full pass
+- [ ] Step 096 — Performance pass
+- [ ] Step 097 — Security pass
+- [ ] Step 098 — Testing expansion
+- [ ] Step 099 — Documentation expansion
+- [ ] Step 100 — Release checklist, production readiness, final 100-step QA, and final commit

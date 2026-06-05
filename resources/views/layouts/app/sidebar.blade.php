@@ -11,9 +11,9 @@
             </flux:sidebar.header>
 
             <flux:sidebar.nav>
-                <flux:sidebar.group :heading="__('Platform')" class="grid">
+                <flux:sidebar.group :heading="__('navigation.groups.platform')" class="grid">
                     <flux:sidebar.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
-                        {{ __('Dashboard') }}
+                        {{ __('navigation.items.dashboard') }}
                     </flux:sidebar.item>
 
                     <flux:sidebar.item icon="check-circle" :href="route('todos.index')" :current="request()->routeIs('todos.*')" wire:navigate>
@@ -26,11 +26,11 @@
 
             <flux:sidebar.nav>
                 <flux:sidebar.item icon="folder-git-2" href="https://github.com/laravel/livewire-starter-kit" target="_blank">
-                    {{ __('Repository') }}
+                    {{ __('navigation.items.repository') }}
                 </flux:sidebar.item>
 
                 <flux:sidebar.item icon="book-open-text" href="https://laravel.com/docs/starter-kits#livewire" target="_blank">
-                    {{ __('Documentation') }}
+                    {{ __('navigation.items.documentation') }}
                 </flux:sidebar.item>
             </flux:sidebar.nav>
 
@@ -70,7 +70,7 @@
 
                     <flux:menu.radio.group>
                         <flux:menu.item :href="route('profile.edit')" icon="cog" wire:navigate>
-                            {{ __('Settings') }}
+                            {{ __('navigation.items.settings') }}
                         </flux:menu.item>
                     </flux:menu.radio.group>
 
@@ -85,7 +85,7 @@
                             class="w-full cursor-pointer"
                             data-test="logout-button"
                         >
-                            {{ __('Log out') }}
+                            {{ __('navigation.items.logout') }}
                         </flux:menu.item>
                     </form>
                 </flux:menu>

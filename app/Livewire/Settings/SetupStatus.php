@@ -7,7 +7,7 @@ use Illuminate\Contracts\View\View;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 
-#[Title('Setup status')]
+#[Title('setup.pages.status.title')]
 class SetupStatus extends Component
 {
     /**

@@ -60,7 +60,7 @@ use Livewire\WithPagination;
  * arriving via the URL are sanitized in {@see buildFilters()} so a tampered
  * query string can never widen scope or inject sort columns.
  */
-#[Title('Todos')]
+#[Title('todos.pages.index.title')]
 class Index extends Component
 {
     use AuthorizesRequests;

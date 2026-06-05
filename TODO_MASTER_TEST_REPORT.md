@@ -67,3 +67,15 @@ Record test/build/check results here.
 | 2026-06-05 | `php artisan test --compact tests/Feature/TodoTest.php tests/Feature/TodoLifecycleTest.php tests/Feature/TodoOwnershipTest.php` | Passed | 37 tests, 100 assertions across adjacent todo lifecycle and ownership boundaries. |
 | 2026-06-05 | `vendor/bin/pint --dirty --format agent` | Passed | PHP style passed after Step 015. |
 | 2026-06-05 | `php artisan test --compact` | Passed | Full suite passed with 168 tests and 611 assertions after Step 015. |
+| 2026-06-06 | `mcp__laravel_boost.application_info` | Passed | Detected Laravel 13.14, Livewire 4.3, Flux 2.14, Tailwind 4.3, Pest 4.7, PHP CLI 8.4, SQLite. |
+| 2026-06-06 | `mcp__laravel_boost.database_schema summary=true` | Passed | Confirmed current schema inventory before Step 016 follow-up. |
+| 2026-06-06 | `mcp__laravel_boost.get_absolute_url path=/` | Passed | Boost resolved the application root as `https://ruflo.test`. |
+| 2026-06-06 | `mcp__laravel_boost.browser_logs entries=20` | Passed | Only an old Vite reconnect message was present; no current browser error was found. |
+| 2026-06-06 | `mcp__laravel_boost.search_docs` | Passed | Reviewed Laravel localization, Livewire validation, Fortify auth views, and Flux field/error docs before Step 016 code changes. |
+| 2026-06-06 | `php artisan test --compact tests/Feature/DashboardTest.php tests/Feature/Settings/SecurityTest.php tests/Feature/Settings/ProfileUpdateTest.php` | Passed | 13 tests, 41 assertions after translating dashboard/settings views and action messages. |
+| 2026-06-06 | `rg literal translation/action/title scan` | Passed | No literal English `__()`, `@lang`, `Flux::toast`, `addError`, or Livewire `#[Title]` calls remain in app/resources. |
+| 2026-06-06 | `php artisan make:test LocalizationCoverageTest --pest --no-interaction` | Passed | Created the Step 016 localization regression test. |
+| 2026-06-06 | `php artisan test --compact tests/Feature/LocalizationCoverageTest.php tests/Feature/DashboardTest.php tests/Feature/Settings/SecurityTest.php tests/Feature/Settings/ProfileUpdateTest.php` | Passed | 15 tests, 50 assertions for localization source scanning and rendered page smoke coverage. |
+| 2026-06-06 | `vendor/bin/pint --dirty --format agent` | Passed | PHP style passed after Step 016 follow-up changes. |
+| 2026-06-06 | `rg compressed-progress scan` | Passed | Root progress files no longer contain the prior compressed Step 017-100 line. |
+| 2026-06-06 | `php artisan test --compact` | Passed | Full suite passed with 170 tests and 620 assertions after Step 016. |

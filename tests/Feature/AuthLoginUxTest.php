@@ -6,13 +6,8 @@ use App\Models\User;
 
 function seedAuthLoginUxDemoUsers(): void
 {
-    foreach (config('demo.login_panel.users') as $demoUser) {
-        User::factory()->create([
-            'name' => $demoUser['name'],
-            'email' => $demoUser['email'],
-            'password' => (string) config('demo.login_panel.password'),
-        ]);
-    }
+    User::factory()->demoPrimary()->create();
+    User::factory()->demoSecondary()->create();
 }
 
 test('demo login action returns only seeded users in safe environments', function () {
@@ -24,7 +19,9 @@ test('demo login action returns only seeded users in safe environments', functio
         ->and($demoUsers[0])->toBeInstanceOf(DemoLoginUser::class)
         ->and($demoUsers[0]->email)->toBe('test@example.com')
         ->and($demoUsers[0]->password)->toBe('password')
-        ->and($demoUsers[1]->email)->toBe('second@example.com');
+        ->and($demoUsers[1]->email)->toBe('second@example.com')
+        ->and(User::query()->where('email', 'test@example.com')->firstOrFail()->is_admin)->toBeTrue()
+        ->and(User::query()->where('email', 'second@example.com')->firstOrFail()->is_admin)->toBeFalse();
 });
 
 test('demo login panel is rendered for seeded users in safe environments', function () {
@@ -81,7 +78,7 @@ test('demo login panel is hidden outside safe environments', function () {
         ->assertOk()
         ->assertDontSee(__('auth.demo.heading'))
         ->assertDontSee('test@example.com')
-        ->assertDontSee('Primary demo workspace')
+        ->assertDontSee(__('auth.demo.users.test.role'))
         ->assertDontSee('data-test="demo-login-panel"', false);
 });
 

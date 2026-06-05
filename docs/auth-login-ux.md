@@ -12,8 +12,8 @@ The login page can show seeded demo users only when all of these are true:
 
 The panel is configured in `config/demo.php`. The current seeded demo users are:
 
-- `test@example.com` with password `password`.
-- `second@example.com` with password `password`.
+- `test@example.com` with password `password` and local maintenance admin access.
+- `second@example.com` with password `password` and normal user access.
 
 The current authentication model uses email as the login identifier. The users table does not include a username column, so the panel displays each seeded user's email address, role, and description rather than introducing a separate username concept.
 
@@ -35,3 +35,15 @@ The environment gate is the primary safety boundary. A production deployment mis
 ## Localization
 
 Login-page copy added in Step 010 lives in `lang/en/auth.php`. New visible login text should continue to use translation keys instead of inline fallback strings.
+
+## 2026-06-06 Recheck
+
+Step 010 was rechecked from the root prompt pack and `steps/step-010-authentication-and-login-ux.md`.
+
+Confirmed and updated:
+
+- The login page still posts to Fortify's `login.store` route.
+- Demo users render only when enabled, in a safe environment, and present in the database.
+- Demo quick-login buttons submit the configured email and fixed demo password through Fortify; there is no production bypass.
+- Demo-user tests now use the same factory states as the seeder.
+- The primary demo user is shown as the admin workspace and the secondary demo user remains a normal isolation workspace.

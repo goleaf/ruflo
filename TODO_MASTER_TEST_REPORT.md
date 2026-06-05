@@ -148,3 +148,9 @@ Record test/build/check results here.
 | 2026-06-06 | `php artisan config:show queue.default --no-interaction` | Passed | Runtime queue default remains `sync`. |
 | 2026-06-06 | `php artisan route:list --no-interaction --path=settings` | Passed | Confirmed settings route inventory includes setup and maintenance routes. |
 | 2026-06-06 | `mcp__laravel_boost.browser_logs entries=20` | Passed | Only an old Vite reconnect message was present; no current domain/runtime browser error was found. |
+| 2026-06-06 | `mcp__laravel_boost.search_docs` | Passed | Reviewed Fortify login view, login pipeline, authentication throttling, redirects, and HTTP auth test guidance before the Step 010 recheck. |
+| 2026-06-06 | `php artisan test --compact tests/Feature/AuthLoginUxTest.php tests/Feature/Auth tests/Feature/SeederCoverageTest.php tests/Feature/Settings/MaintenanceCenterTest.php tests/Feature/LocalizationCoverageTest.php` | Passed | 40 tests, 163 assertions for demo login gates, Fortify auth, seeded admin/normal roles, maintenance admin access, and localization coverage. |
+| 2026-06-06 | `vendor/bin/pint --dirty --format agent` | Passed | PHP style passed after the Step 010 test alignment. |
+| 2026-06-06 | `mcp__laravel_boost.database_query` | Passed | Confirmed the local seeded demo users remain `test@example.com` with `is_admin=1` and `second@example.com` with `is_admin=0`. |
+| 2026-06-06 | `mcp__laravel_boost.get_absolute_url route=login` | Passed | Boost resolved the login route as `https://ruflo.test/login`. |
+| 2026-06-06 | `php artisan tinker --execute 'Hash::check(...)'` | Passed | Confirmed both local seeded demo users authenticate with the fixed demo password `password`. |

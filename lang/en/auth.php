@@ -129,8 +129,8 @@ return [
         'quick_login' => 'Log in as :name',
         'users' => [
             'test' => [
-                'role' => 'Primary demo workspace',
-                'description' => 'A seeded personal workspace with realistic projects, tags, filters, and task states.',
+                'role' => 'Primary demo admin workspace',
+                'description' => 'A seeded personal workspace with realistic projects, tags, filters, task states, and maintenance access.',
             ],
             'second' => [
                 'role' => 'Isolation demo workspace',

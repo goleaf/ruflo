@@ -91,10 +91,11 @@
 - Added a seeded-user lookup action so the login page only lists configured demo users that exist in the database.
 - Added a translated local/demo login panel with visible email/password details and quick login buttons that post through Fortify.
 - Updated the seeder to create known demo users only in safe environments.
+- Rechecked the demo login flow after maintenance admin gating so the primary seeded demo user is shown as the admin workspace and the secondary seeded demo user remains a normal isolation workspace.
 
 ### Testing
 
-- Added auth login UX tests for safe rendering, production hiding, disabled-panel hiding, seeded-user filtering, and quick login through Fortify.
+- Added auth login UX tests for safe rendering, production hiding, disabled-panel hiding, seeded-user filtering, seeded admin/normal account roles, and quick login through Fortify.
 
 ### Documentation
 

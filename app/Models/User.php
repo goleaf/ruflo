@@ -123,6 +123,16 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
     }
 
     /**
+     * Task dependency rows owned by the private workspace.
+     *
+     * @return HasMany<TodoDependency, $this>
+     */
+    public function todoDependencies(): HasMany
+    {
+        return $this->hasMany(TodoDependency::class);
+    }
+
+    /**
      * Get the user's contained task checklist rows.
      *
      * @return HasMany<TodoChecklistItem, $this>

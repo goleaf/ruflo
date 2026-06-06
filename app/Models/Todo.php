@@ -141,6 +141,26 @@ class Todo extends Model
     }
 
     /**
+     * Tasks this task is waiting on.
+     *
+     * @return HasMany<TodoDependency, $this>
+     */
+    public function dependencies(): HasMany
+    {
+        return $this->hasMany(TodoDependency::class);
+    }
+
+    /**
+     * Tasks currently waiting on this task.
+     *
+     * @return HasMany<TodoDependency, $this>
+     */
+    public function blockingDependencies(): HasMany
+    {
+        return $this->hasMany(TodoDependency::class, 'depends_on_todo_id');
+    }
+
+    /**
      * Whether the task is archived (hidden from active/completed views).
      */
     public function isArchived(): bool
@@ -162,6 +182,30 @@ class Todo extends Model
     public function isInInbox(): bool
     {
         return $this->inbox_captured_at !== null;
+    }
+
+    public function openBlockerCount(): int
+    {
+        if (array_key_exists('open_dependencies_count', $this->attributes)) {
+            return (int) $this->attributes['open_dependencies_count'];
+        }
+
+        if ($this->relationLoaded('dependencies')) {
+            return $this->dependencies
+                ->filter(fn (TodoDependency $dependency): bool => $dependency->isOpen())
+                ->count();
+        }
+
+        return $this->dependencies()
+            ->whereHas('blocker', fn (Builder $blocker): Builder => $blocker
+                ->where('todos.user_id', $this->user_id)
+                ->where('todos.is_completed', false))
+            ->count();
+    }
+
+    public function isBlocked(): bool
+    {
+        return $this->isActive() && $this->openBlockerCount() > 0;
     }
 
     /**

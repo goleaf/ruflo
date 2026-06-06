@@ -14,6 +14,7 @@ Step 012 covers the committed model set:
 - `TimeEntry`
 - `Todo`
 - `TodoChecklistItem`
+- `TodoDependency`
 - `TodoTemplate`
 
 The tracked `Reminder` model is currently a placeholder with no ownership, schedule, lifecycle, or message columns, so it is not seeded yet. Seeder coverage asserts the placeholder table stays empty until the reminder domain exists. Future models for recurrence, comments, attachments, activity, invites, settings, and collaboration are not seeded yet because those committed models do not exist yet.
@@ -55,6 +56,9 @@ The tracked `Reminder` model is currently a placeholder with no ownership, sched
 - two completed time entries per user: one task-linked entry for `Review the
   current flow` and one project-only `Work` entry, so `/todos/time` shows task
   and project totals immediately after seeding.
+- one task dependency per user: `Send the overdue report` waits on `Review the
+  current flow`, so `/todos/blocked` and the main `due=blocked` filter have
+  immediate demo data.
 
 Step 041's calendar view reuses that catalog: the seeded due-today, overdue,
 upcoming, and no-due-date tasks give the local `/todos/calendar` page immediate
@@ -83,6 +87,10 @@ timer resume and state transitions on `/todos/focus`.
 Step 049's time tracking adds real completed `time_entries` rows for each
 seeded user. The rows are not active timers, do not require background work, and
 exist only as demo/history data for `/todos/time`.
+
+Step 050's dependencies add one real `todo_dependencies` edge per seeded user.
+The edge is private, owner-scoped, and exists only as demo/planning data for
+`/todos/blocked` and task detail pages.
 
 ## Idempotency
 
@@ -115,6 +123,10 @@ focus sessions.
 Time entries are upserted per user/task or user/project, source, and tracked
 date. Re-running the seeder refreshes demo durations/notes without creating
 duplicate time history rows.
+
+Task dependencies are upserted per user, waiting task, and blocker task.
+Re-running the seeder refreshes the same blocker relationship without creating
+duplicate dependency edges.
 
 Placeholder reminder rows are intentionally excluded from the current catalog because they would not be owned by a user or connected to a task.
 

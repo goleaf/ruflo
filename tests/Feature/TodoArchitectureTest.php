@@ -8,6 +8,7 @@ use App\Actions\Habits\CreateHabit;
 use App\Actions\Habits\LinkTodoToHabit;
 use App\Actions\Habits\ToggleHabitCheckIn;
 use App\Actions\Todos\AbandonPomodoroSession;
+use App\Actions\Todos\AddTodoDependency;
 use App\Actions\Todos\CaptureInboxTodo;
 use App\Actions\Todos\ClearCompletedTodos;
 use App\Actions\Todos\CompletePomodoroSession;
@@ -28,6 +29,7 @@ use App\Actions\Todos\DiscardTimeEntryTimer;
 use App\Actions\Todos\MoveTodoChecklistItem;
 use App\Actions\Todos\MoveTodoOnBoard;
 use App\Actions\Todos\PausePomodoroSession;
+use App\Actions\Todos\RemoveTodoDependency;
 use App\Actions\Todos\ReopenTodo;
 use App\Actions\Todos\RescheduleFocusedTodo;
 use App\Actions\Todos\RestoreDeletedTodo;
@@ -60,6 +62,7 @@ use App\Livewire\Forms\Todos\TodoForm;
 use App\Livewire\Goals\Index as GoalsIndex;
 use App\Livewire\Habits\Index as HabitsIndex;
 use App\Livewire\Projects\Show as ProjectShow;
+use App\Livewire\Todos\Blocked as TodoBlocked;
 use App\Livewire\Todos\Board as TodoBoard;
 use App\Livewire\Todos\Calendar as TodoCalendar;
 use App\Livewire\Todos\Focus as TodoFocus;
@@ -75,6 +78,7 @@ use App\Policies\PomodoroSessionPolicy;
 use App\Policies\SavedTodoViewPolicy;
 use App\Policies\TimeEntryPolicy;
 use App\Policies\TodoChecklistItemPolicy;
+use App\Policies\TodoDependencyPolicy;
 use App\Policies\TodoPolicy;
 use App\Policies\TodoTemplatePolicy;
 use App\Queries\Goals\GoalListQuery;
@@ -85,6 +89,7 @@ use App\Queries\Todos\TimeEntryQuery;
 use App\Queries\Todos\TodoBoardQuery;
 use App\Queries\Todos\TodoCalendarQuery;
 use App\Queries\Todos\TodoChecklistItemListQuery;
+use App\Queries\Todos\TodoDependencyQuery;
 use App\Queries\Todos\TodoFocusQuery;
 use App\Queries\Todos\TodoInboxQuery;
 use App\Queries\Todos\TodoListQuery;
@@ -93,6 +98,7 @@ use App\Rules\Goals\GoalTitle;
 use App\Rules\Goals\MilestoneTitle;
 use App\Rules\Habits\HabitTargetCount;
 use App\Rules\Habits\HabitTitle;
+use App\Rules\Todos\AcyclicTodoDependency;
 use App\Rules\Todos\BoardStatus;
 use App\Rules\Todos\CalendarMonth;
 use App\Rules\Todos\ChecklistItemTitle;
@@ -126,6 +132,8 @@ test('todo foundation classes exist', function () {
         ->and(class_exists(CaptureInboxTodo::class))->toBeTrue()
         ->and(class_exists(TriageInboxTodo::class))->toBeTrue()
         ->and(class_exists(RescheduleFocusedTodo::class))->toBeTrue()
+        ->and(class_exists(AddTodoDependency::class))->toBeTrue()
+        ->and(class_exists(RemoveTodoDependency::class))->toBeTrue()
         ->and(class_exists(StartPomodoroSession::class))->toBeTrue()
         ->and(class_exists(PausePomodoroSession::class))->toBeTrue()
         ->and(class_exists(ResumePomodoroSession::class))->toBeTrue()
@@ -163,10 +171,12 @@ test('todo foundation classes exist', function () {
         ->and(class_exists(TodoBoardQuery::class))->toBeTrue()
         ->and(class_exists(TodoCalendarQuery::class))->toBeTrue()
         ->and(class_exists(TodoChecklistItemListQuery::class))->toBeTrue()
+        ->and(class_exists(TodoDependencyQuery::class))->toBeTrue()
         ->and(class_exists(TodoFocusQuery::class))->toBeTrue()
         ->and(class_exists(TodoTemplateListQuery::class))->toBeTrue()
         ->and(class_exists(TodoInboxQuery::class))->toBeTrue()
         ->and(class_exists(BoardStatus::class))->toBeTrue()
+        ->and(class_exists(AcyclicTodoDependency::class))->toBeTrue()
         ->and(class_exists(CalendarMonth::class))->toBeTrue()
         ->and(class_exists(ChecklistItemTitle::class))->toBeTrue()
         ->and(class_exists(InboxCaptureTitle::class))->toBeTrue()
@@ -182,6 +192,7 @@ test('todo foundation classes exist', function () {
         ->and(class_exists(BulkActionResult::class))->toBeTrue()
         ->and(class_exists(SavedTodoViewPolicy::class))->toBeTrue()
         ->and(class_exists(TodoChecklistItemPolicy::class))->toBeTrue()
+        ->and(class_exists(TodoDependencyPolicy::class))->toBeTrue()
         ->and(class_exists(TodoTemplatePolicy::class))->toBeTrue()
         ->and(class_exists(GoalPolicy::class))->toBeTrue()
         ->and(class_exists(GoalMilestonePolicy::class))->toBeTrue()
@@ -191,6 +202,7 @@ test('todo foundation classes exist', function () {
         ->and(class_exists(TimeEntryPolicy::class))->toBeTrue()
         ->and(class_exists(TodoBoard::class))->toBeTrue()
         ->and(class_exists(TodoCalendar::class))->toBeTrue()
+        ->and(class_exists(TodoBlocked::class))->toBeTrue()
         ->and(class_exists(TodoShow::class))->toBeTrue()
         ->and(class_exists(TodoFocus::class))->toBeTrue()
         ->and(class_exists(GoalsIndex::class))->toBeTrue()
@@ -288,10 +300,27 @@ test('todo detail page delegates checklist responsibilities', function () {
         ->toContain('ToggleTodoChecklistItem')
         ->toContain('MoveTodoChecklistItem')
         ->toContain('DeleteTodoChecklistItem')
+        ->toContain('TodoDependencyQuery')
+        ->toContain('AddTodoDependency')
+        ->toContain('RemoveTodoDependency')
+        ->toContain('AcyclicTodoDependency')
         ->toContain('ChecklistItemTitle')
         ->toContain('$this->authorize')
         ->not->toContain('Todo::query()')
+        ->not->toContain('TodoDependency::query()')
         ->not->toContain('TodoChecklistItem::query()')
+        ->not->toContain('->save()');
+});
+
+test('todo blocked page delegates dependency responsibilities', function () {
+    $source = file_get_contents(app_path('Livewire/Todos/Blocked.php'));
+
+    expect($source)
+        ->toContain('TodoListQuery')
+        ->toContain('blockedFor($this->currentUser()')
+        ->toContain('$this->authorize')
+        ->not->toContain('Todo::query()')
+        ->not->toContain('TodoDependency::query()')
         ->not->toContain('->save()');
 });
 

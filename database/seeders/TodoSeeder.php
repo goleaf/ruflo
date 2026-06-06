@@ -19,6 +19,7 @@ use App\Models\Tag;
 use App\Models\TimeEntry;
 use App\Models\Todo;
 use App\Models\TodoChecklistItem;
+use App\Models\TodoDependency;
 use App\Models\TodoTemplate;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -206,6 +207,7 @@ class TodoSeeder extends Seeder
         $this->linkTodoToGoal($reviewFlow, $commandCenterGoal, $focusMilestone);
         $this->linkTodoToGoal($overdueReport, $commandCenterGoal);
         $this->upsertPomodoroSession($reviewFlow);
+        $this->upsertDependency($overdueReport, $reviewFlow);
         $this->upsertTimeEntry($reviewFlow, 35, today()->toDateString(), 'Reviewed task flow and captured the next improvement.');
         $this->upsertProjectTimeEntry($work, 25, today()->subDays(2)->toDateString(), 'Planned the next quiet work block.');
 
@@ -502,6 +504,23 @@ class TodoSeeder extends Seeder
         ])->save();
 
         return $session;
+    }
+
+    private function upsertDependency(Todo $todo, Todo $dependsOn): TodoDependency
+    {
+        $dependency = TodoDependency::query()
+            ->where('user_id', $todo->user_id)
+            ->where('todo_id', $todo->id)
+            ->where('depends_on_todo_id', $dependsOn->id)
+            ->first() ?? new TodoDependency;
+
+        $dependency->forceFill([
+            'user_id' => $todo->user_id,
+            'todo_id' => $todo->id,
+            'depends_on_todo_id' => $dependsOn->id,
+        ])->save();
+
+        return $dependency;
     }
 
     private function upsertTimeEntry(Todo $todo, int $minutes, string $entryDate, string $notes): TimeEntry

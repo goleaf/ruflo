@@ -14,6 +14,7 @@ test('custom validation rules are implemented and use translated failure message
             'Habits/HabitTargetCount.php',
             'Habits/HabitTitle.php',
             'Tags/TagName.php',
+            'Todos/AcyclicTodoDependency.php',
             'Todos/BoardStatus.php',
             'Todos/CalendarMonth.php',
             'Todos/ChecklistItemTitle.php',

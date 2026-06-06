@@ -18,6 +18,7 @@ use App\Models\Tag;
 use App\Models\TimeEntry;
 use App\Models\Todo;
 use App\Models\TodoChecklistItem;
+use App\Models\TodoDependency;
 use App\Models\TodoTemplate;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
@@ -32,6 +33,8 @@ test('tracked models can be created from their default factories', function () {
     $tag = Tag::factory()->for($user)->create();
     $todo = Todo::factory()->for($user)->forProject($project)->forMilestone($milestone)->forHabit($habit)->withTags($tag)->create();
     $checklistItem = TodoChecklistItem::factory()->forTodo($todo)->completed()->position(1)->create();
+    $blocker = Todo::factory()->for($user)->create();
+    $dependency = TodoDependency::factory()->forTodos($todo, $blocker)->create();
     $pomodoroSession = PomodoroSession::factory()->forTodo($todo)->completed()->create();
     $timeEntry = TimeEntry::factory()->forTodo($todo)->manual(45)->create();
     $template = TodoTemplate::factory()->for($user)->routine()->create();
@@ -60,6 +63,10 @@ test('tracked models can be created from their default factories', function () {
         ->and($checklistItem->todo->is($todo))->toBeTrue()
         ->and($checklistItem->is_completed)->toBeTrue()
         ->and($checklistItem->position)->toBe(1)
+        ->and($dependency->isOwnedBy($user))->toBeTrue()
+        ->and($dependency->todo->is($todo))->toBeTrue()
+        ->and($dependency->blocker->is($blocker))->toBeTrue()
+        ->and($dependency->isOpen())->toBeTrue()
         ->and($pomodoroSession->isOwnedBy($user))->toBeTrue()
         ->and($pomodoroSession->todo->is($todo))->toBeTrue()
         ->and($pomodoroSession->status)->toBe(PomodoroSessionStatus::Completed)
@@ -72,6 +79,22 @@ test('tracked models can be created from their default factories', function () {
         ->and($savedView->isOwnedBy($user))->toBeTrue()
         ->and($savedView->criteria['sort'])->toBe('created')
         ->and($reminder->exists)->toBeTrue();
+});
+
+test('todo dependency factory covers open and resolved blocker states', function () {
+    $todo = Todo::factory()->create();
+    $openBlocker = Todo::factory()->for($todo->user)->create();
+    $resolvedBlocker = Todo::factory()->for($todo->user)->completed()->create();
+
+    $open = TodoDependency::factory()->forTodos($todo, $openBlocker)->create();
+    $resolved = TodoDependency::factory()->forTodos($todo, $resolvedBlocker)->create();
+
+    expect($open->isOwnedBy($todo->user))->toBeTrue()
+        ->and($open->todo->is($todo))->toBeTrue()
+        ->and($open->blocker->is($openBlocker))->toBeTrue()
+        ->and($open->isOpen())->toBeTrue()
+        ->and($resolved->blocker->is($resolvedBlocker))->toBeTrue()
+        ->and($resolved->isOpen())->toBeFalse();
 });
 
 test('habit factories cover frequency goal check in and archive states', function () {

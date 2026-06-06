@@ -1,5 +1,44 @@
 # Changelog
 
+## 2026-06-06 - Step 050 Waiting blocker dependency system
+
+### Implemented
+
+- Added owner-scoped `todo_dependencies` rows that connect a waiting task to a
+  private blocker task with duplicate-edge protection.
+- Added `TodoDependency`, policy, factory, `TodoDependencyQuery`,
+  `AcyclicTodoDependency`, and add/remove dependency actions with owner,
+  active-state, duplicate, self-reference, and cycle guards.
+- Extended the task detail page with a translated dependency picker, open and
+  resolved blocker badges, blocked callout, removal controls, and "This task
+  blocks" context.
+- Added protected class-based Livewire smart view `todos.blocked`, plus the
+  main task-list `due=blocked` filter, blocked summary count, dashboard shortcut,
+  and blocked badges.
+- Seeded one realistic dependency per local/testing/demo user.
+
+### Testing
+
+- Added `TodoDependencyTest` for route protection, add/remove flows, duplicate,
+  self-reference, cycle and foreign-id denial, blocked smart-view filtering,
+  main-list blocked filter, and class-based/no-Volt guardrails.
+- Expanded route, domain, architecture, validation-rule, factory, seeder,
+  authorization, private-workspace, dashboard, localization, and
+  restricted-hosting coverage.
+
+### Documentation
+
+- Updated task organization, authorization, request validation, validation
+  rules, factory coverage, seeding, domain readiness, todo foundation, and root
+  progress ledgers with the Step 050 dependency contract.
+
+### Restricted Hosting
+
+- Blocked state is derived at read time from dependency rows and completed
+  blocker state. Completing or removing blockers needs no cron, queue worker,
+  supervisor, terminal access, Artisan command, paid service, background unblock
+  job, chunk processor, retry loop, or resume token during normal usage.
+
 ## 2026-06-06 - Step 049 Time tracking
 
 ### Implemented

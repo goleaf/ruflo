@@ -60,6 +60,7 @@ return [
         'upcoming_action' => 'Plan upcoming',
         'focus_action' => 'Focus',
         'time_action' => 'Track time',
+        'blocked_action' => 'Blocked',
         'goals_action' => 'Goals',
         'habits_action' => 'Habits',
     ],

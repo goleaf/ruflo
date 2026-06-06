@@ -9,6 +9,9 @@ The current committed app has tag-name and todo workspace ownership rules:
 - `App\Rules\Tags\TagName`
 - `App\Rules\Goals\GoalTitle`
 - `App\Rules\Goals\MilestoneTitle`
+- `App\Rules\Habits\HabitTargetCount`
+- `App\Rules\Habits\HabitTitle`
+- `App\Rules\Todos\AcyclicTodoDependency`
 - `App\Rules\Todos\BoardStatus`
 - `App\Rules\Todos\CalendarMonth`
 - `App\Rules\Todos\ChecklistItemTitle`
@@ -33,6 +36,16 @@ whitespace normalization and stay within the current 120-character title limit.
 `MilestoneTitle` validates that submitted milestone titles contain visible text
 after whitespace normalization and stay within the current 120-character title
 limit.
+
+`HabitTargetCount` validates daily/weekly target counts for habit check-ins.
+
+`HabitTitle` validates that submitted habit titles contain visible text after
+whitespace normalization and stay within the current 120-character title limit.
+
+`AcyclicTodoDependency` validates a task-dependency blocker id for the current
+user and current task. It rejects non-owned, inactive, duplicate,
+self-referential, and cyclic edges before a dependency can be attached through
+Livewire.
 
 `BoardStatus` validates Kanban target columns. It accepts only Active,
 Completed, and Archived so the board cannot move cards into Trash or an unknown
@@ -195,3 +208,10 @@ duration input. The Livewire page uses it for field validation, and
 `TimeEntryData` plus `CreateManualTimeEntry` repeat the backend guard so direct
 calls cannot persist zero, negative, non-numeric, or over-1440-minute manual
 entries.
+
+## 2026-06-06 Step 050 Recheck
+
+Step 050 added `App\Rules\Todos\AcyclicTodoDependency` for the task detail
+dependency picker. The rule delegates owner, active-state, duplicate, and cycle
+checks to `TodoDependencyQuery`, and `AddTodoDependency` repeats the same guard
+before writing a dependency row.

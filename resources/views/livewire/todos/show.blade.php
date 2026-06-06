@@ -11,6 +11,12 @@
                 <x-ui.status-badge :status="$this->todo->status()" />
                 <flux:badge size="sm" :color="$this->todo->priority->color()">{{ $this->todo->priority->label() }}</flux:badge>
 
+                @if ($this->openDependencies->isNotEmpty())
+                    <flux:badge size="sm" color="amber" icon="exclamation-triangle">
+                        {{ __('todos.dependencies.blocked_badge', ['count' => $this->openDependencies->count()]) }}
+                    </flux:badge>
+                @endif
+
                 @if ($this->todo->due_date)
                     <flux:badge size="sm" :color="$this->todo->isOverdue() ? 'red' : ($this->todo->isDueToday() ? 'amber' : 'zinc')" icon="calendar">
                         {{ $this->todo->due_date->isoFormat('MMM D, YYYY') }}
@@ -76,6 +82,118 @@
                 @endforelse
             </div>
         </div>
+    </flux:card>
+
+    <flux:card class="space-y-5" data-test="task-dependencies">
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div class="space-y-1">
+                <flux:subheading>{{ __('todos.dependencies.label') }}</flux:subheading>
+                <flux:heading size="lg">{{ __('todos.dependencies.heading') }}</flux:heading>
+                <flux:text class="text-sm text-zinc-500 dark:text-zinc-400">{{ __('todos.dependencies.description') }}</flux:text>
+            </div>
+
+            <flux:badge size="sm" :color="$this->openDependencies->isNotEmpty() ? 'amber' : 'green'" icon="link">
+                {{ __('todos.dependencies.open_count', ['count' => $this->openDependencies->count()]) }}
+            </flux:badge>
+        </div>
+
+        @if ($this->openDependencies->isNotEmpty())
+            <flux:callout icon="exclamation-triangle" variant="secondary" data-test="task-blocked-callout">
+                <flux:callout.heading>{{ __('todos.dependencies.waiting_heading') }}</flux:callout.heading>
+                <flux:callout.text>{{ __('todos.dependencies.waiting_description') }}</flux:callout.text>
+            </flux:callout>
+        @endif
+
+        @if (! $this->canManageDependencies())
+            <flux:callout icon="archive-box" variant="secondary" data-test="dependencies-locked">
+                <flux:callout.heading>{{ __('todos.dependencies.locked.heading') }}</flux:callout.heading>
+                <flux:callout.text>{{ __('todos.dependencies.locked.description') }}</flux:callout.text>
+            </flux:callout>
+        @endif
+
+        <form wire:submit="addDependency" class="space-y-2">
+            <flux:field>
+                <flux:label>{{ __('todos.dependencies.fields.blocker') }}</flux:label>
+
+                <div class="grid gap-2 sm:grid-cols-[1fr_auto]">
+                    <flux:select wire:model="dependencyTodoId" :disabled="! $this->canManageDependencies()">
+                        <flux:select.option value="">{{ __('todos.dependencies.fields.choose_blocker') }}</flux:select.option>
+                        @foreach ($this->dependencyOptions as $dependencyOption)
+                            <flux:select.option value="{{ $dependencyOption->id }}">{{ $dependencyOption->title }}</flux:select.option>
+                        @endforeach
+                    </flux:select>
+
+                    <flux:button
+                        type="submit"
+                        variant="primary"
+                        icon="link"
+                        wire:loading.attr="disabled"
+                        :disabled="! $this->canManageDependencies()"
+                    >
+                        {{ __('todos.dependencies.actions.add') }}
+                    </flux:button>
+                </div>
+
+                <flux:error name="dependencyTodoId" />
+            </flux:field>
+        </form>
+
+        <div class="space-y-2">
+            @forelse ($this->dependencies as $dependency)
+                <div wire:key="dependency-{{ $dependency->id }}" class="flex flex-col gap-3 rounded-lg border border-zinc-200 p-3 dark:border-white/10 sm:flex-row sm:items-center sm:justify-between">
+                    <div class="min-w-0 space-y-1">
+                        @if ($dependency->blocker)
+                            <a href="{{ route('todos.show', $dependency->blocker) }}" wire:navigate class="text-sm font-medium break-words text-zinc-950 hover:underline dark:text-white">
+                                {{ $dependency->blocker->title }}
+                            </a>
+                        @else
+                            <span class="text-sm font-medium text-zinc-500 dark:text-zinc-400">{{ __('todos.dependencies.missing_blocker') }}</span>
+                        @endif
+
+                        <div>
+                            <flux:badge size="sm" :color="$dependency->isOpen() ? 'amber' : 'green'" :icon="$dependency->isOpen() ? 'exclamation-triangle' : 'check-circle'">
+                                {{ $dependency->isOpen() ? __('todos.dependencies.status.open') : __('todos.dependencies.status.resolved') }}
+                            </flux:badge>
+                        </div>
+                    </div>
+
+                    <flux:button
+                        type="button"
+                        size="sm"
+                        variant="ghost"
+                        icon="x-mark"
+                        wire:click="removeDependency({{ $dependency->id }})"
+                        wire:loading.attr="disabled"
+                        :disabled="! $this->canManageDependencies()"
+                    >
+                        {{ __('todos.dependencies.actions.remove') }}
+                    </flux:button>
+                </div>
+            @empty
+                <x-ui.empty-state
+                    :title="__('todos.dependencies.empty.title')"
+                    :description="__('todos.dependencies.empty.description')"
+                />
+            @endforelse
+        </div>
+
+        @if ($this->blockingTasks->isNotEmpty())
+            <flux:separator />
+
+            <div class="space-y-2">
+                <flux:subheading>{{ __('todos.dependencies.blocking_label') }}</flux:subheading>
+
+                <div class="flex flex-wrap gap-2">
+                    @foreach ($this->blockingTasks as $blockedTask)
+                        <a href="{{ route('todos.show', $blockedTask) }}" wire:navigate>
+                            <flux:badge wire:key="blocking-task-{{ $blockedTask->id }}" size="sm" color="amber" icon="exclamation-triangle">
+                                {{ $blockedTask->title }}
+                            </flux:badge>
+                        </a>
+                    @endforeach
+                </div>
+            </div>
+        @endif
     </flux:card>
 
     <flux:card class="space-y-5" data-test="task-checklist">

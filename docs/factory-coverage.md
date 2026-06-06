@@ -15,6 +15,7 @@ Step 011 covers the tracked application models:
 - `App\Models\TimeEntry`
 - `App\Models\Todo`
 - `App\Models\TodoChecklistItem`
+- `App\Models\TodoDependency`
 - `App\Models\TodoTemplate`
 
 `App\Models\Reminder` is currently a placeholder model with only an `id` and timestamps. Its default factory creates a valid record, but named reminder states are intentionally deferred until the reminder feature steps add owned reminder fields, lifecycle columns, and processing status.
@@ -175,6 +176,19 @@ priority/date setup.
 
 Checklist rows are private resources and use the same `BelongsToUser` concern as
 todos, projects, tags, and saved views.
+
+## Todo Dependency Factory
+
+`TodoDependencyFactory` covers:
+
+- default dependency creation,
+- `forTodos()` to attach a waiting task to a blocker task while preserving the
+  waiting task owner,
+- `open()` blocker state for active unresolved blockers,
+- `resolved()` blocker state for completed blockers.
+
+Dependency rows are private resources and use the same `BelongsToUser` concern
+as todos, projects, tags, saved views, checklist rows, and time entries.
 
 ## Todo Template Factory
 

@@ -99,6 +99,7 @@ final class TodoListQuery
             'today' => $query->dueToday(),
             'overdue' => $query->overdue(),
             'upcoming' => $query->upcoming(),
+            'blocked' => $this->whereBlocked($query, $user),
             'with' => $query->whereNotNull('due_date'),
             'without' => $query->whereNull('due_date'),
             default => null,
@@ -209,6 +210,38 @@ final class TodoListQuery
     }
 
     /**
+     * Owner-scoped active tasks that are waiting on at least one open blocker.
+     *
+     * @return Builder<Todo>
+     */
+    public function blockedFor(User $user): Builder
+    {
+        $query = $this->withWorkspaceRelations(
+            Todo::query()
+                ->select(['id', 'user_id', 'project_id', 'title', 'priority', 'due_date', 'is_completed', 'archived_at', 'deleted_at', 'created_at', 'updated_at'])
+                ->ownedBy($user)
+                ->active(),
+            $user,
+        );
+
+        $this->whereBlocked($query, $user);
+
+        return $query
+            ->orderByRaw('due_date is null')
+            ->orderBy('due_date')
+            ->orderByDesc('created_at')
+            ->orderByDesc('id');
+    }
+
+    /**
+     * Resolve one blocked task for the blocked smart view.
+     */
+    public function findBlockedFor(User $user, int $todoId): Todo
+    {
+        return $this->blockedFor($user)->findOrFail($todoId);
+    }
+
+    /**
      * Resolve a single todo the user is allowed to see.
      *
      * Foreign or unknown ids yield not-found rather than leaking existence.
@@ -237,7 +270,7 @@ final class TodoListQuery
     /**
      * Aggregate lifecycle counts for the user's workspace in one scoped query.
      *
-     * @return array{active: int, completed: int, archived: int, trash: int, overdue: int}
+     * @return array{active: int, completed: int, archived: int, trash: int, overdue: int, blocked: int}
      */
     public function summaryFor(User $user): array
     {
@@ -257,6 +290,7 @@ final class TodoListQuery
             'archived' => (int) $summary->archived_count,
             'trash' => (int) $summary->trash_count,
             'overdue' => (int) $summary->overdue_count,
+            'blocked' => $this->blockedFor($user)->count(),
         ];
     }
 
@@ -359,7 +393,26 @@ final class TodoListQuery
         return $query->with([
             'project' => fn (BelongsTo $project): BelongsTo => $project->where('projects.user_id', $user->id),
             'tags' => fn (BelongsToMany $tags): BelongsToMany => $tags->where('tags.user_id', $user->id),
+            'dependencies.blocker' => fn ($blocker) => $blocker->where('todos.user_id', $user->id),
+        ])->withCount([
+            'dependencies as open_dependencies_count' => fn (Builder $dependencies): Builder => $dependencies
+                ->whereHas('blocker', fn (Builder $blocker): Builder => $blocker
+                    ->where('todos.user_id', $user->id)
+                    ->where('todos.is_completed', false)),
         ]);
+    }
+
+    /**
+     * @param  Builder<Todo>  $query
+     * @return Builder<Todo>
+     */
+    private function whereBlocked(Builder $query, User $user): Builder
+    {
+        return $query->whereHas('dependencies', fn (Builder $dependencies): Builder => $dependencies
+            ->where('todo_dependencies.user_id', $user->id)
+            ->whereHas('blocker', fn (Builder $blocker): Builder => $blocker
+                ->where('todos.user_id', $user->id)
+                ->where('todos.is_completed', false)));
     }
 
     private function ownedActiveProjectExists(User $user, int $projectId): bool

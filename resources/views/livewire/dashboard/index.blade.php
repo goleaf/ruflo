@@ -45,6 +45,10 @@
                         {{ __('dashboard.workspace.time_action') }}
                     </flux:button>
 
+                    <flux:button :href="route('todos.blocked')" wire:navigate variant="subtle" icon="exclamation-triangle">
+                        {{ __('dashboard.workspace.blocked_action') }}
+                    </flux:button>
+
                     <flux:button :href="route('goals.index')" wire:navigate variant="subtle" icon="flag">
                         {{ __('dashboard.workspace.goals_action') }}
                     </flux:button>

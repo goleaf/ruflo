@@ -35,6 +35,7 @@ scope) rather than across the whole codebase.
 | Read boundary | `App\Queries\Todos\TodoListQuery` | The only place todos are read for the UI. Always owner-scoped. |
 | Board read boundary | `App\Queries\Todos\TodoBoardQuery` | Owner-scoped Kanban columns for active, completed, and archived tasks. |
 | Checklist read boundary | `App\Queries\Todos\TodoChecklistItemListQuery` | Owner-scoped checklist rows for one already scoped parent task. |
+| Dependency read boundary | `App\Queries\Todos\TodoDependencyQuery` | Owner-scoped dependency rows and blocker candidates for already scoped tasks. |
 | Template read boundary | `App\Queries\Todos\TodoTemplateListQuery` | Owner-scoped reusable task/project/checklist/routine templates. |
 | Inbox read boundary | `App\Queries\Todos\TodoInboxQuery` | Owner-scoped active captured tasks waiting for triage. |
 | Focus read boundary | `App\Queries\Todos\TodoFocusQuery` | Owner-scoped active urgent/overdue/due-today/high-priority focus set. |
@@ -106,6 +107,12 @@ The Livewire component authorizes **before** delegating to an action:
   `delete` are owner-only and hide foreign ids as not found. Checklist actions
   also authorize the parent task update before mutating, so a malformed row
   cannot use one user's `user_id` to change another user's task.
+- Dependency rows use `TodoDependencyPolicy`: `viewAny` and `create` are
+  available to authenticated users, while per-row `view`, `update`, and
+  `delete` are owner-only and hide foreign ids as not found. Add/remove actions
+  resolve blocker ids through `TodoDependencyQuery`, authorize the parent task,
+  and never trust a submitted dependency id until it has been re-scoped to the
+  current user and current task.
 - Templates use `TodoTemplatePolicy`: `viewAny` and `create` are available to
   authenticated users for their own workspace; `view`, `update`, `delete`, and
   `instantiate` are owner-only and hide foreign ids as not found. Shared
@@ -179,6 +186,13 @@ class-based Livewire page behind `auth` and `verified`. `TimeEntry` uses
 back to the current user before writing; foreign, archived, trashed, or
 otherwise untrackable task ids do not create time entries.
 
+Blocked tasks use the same private route and owner boundary. `todos.blocked` is
+a class-based Livewire page behind `auth` and `verified`. It reads active
+blocked tasks through `TodoListQuery::blockedFor()`, eager-loads only
+current-user project/tag/dependency labels, and links back to private task
+detail pages. Dependency add/remove actions live on `todos.show`, where the
+task is already resolved through `TodoListQuery::findVisibleFor()`.
+
 ## Error behavior (no leakage)
 
 - Forbidden private records resolve as **not found** (404-style), never
@@ -210,6 +224,11 @@ it on:
   `TodoChecklistItemListQuery::findFor($user, $todo, $itemId)`. That means a
   submitted checklist id must belong to both the current user and the current
   task before it can be toggled, edited, moved, or deleted.
+- **Dependencies** — task detail pages resolve the parent through
+  `TodoListQuery::findVisibleFor()` and resolve each dependency row or blocker
+  candidate through `TodoDependencyQuery`. Submitted blocker ids must belong to
+  the current user, be active, not duplicate an existing edge, and not create a
+  cycle before they can be attached.
 - **Templates** — template create/edit/delete/use flows stay owner-scoped.
   Instantiation creates a normal task through `CreateTodo`, resolves or creates
   an owner-scoped active project by template project name, and adds contained

@@ -1,9 +1,10 @@
 # Task Organization
 
-Through Step 045, the private task lifecycle is extended into a usable productivity system:
+Through Step 050, the private task lifecycle is extended into a usable productivity system:
 projects, tags, priorities, due dates, search, filters, sorting, and bulk
-actions, calendar/board/focus views, contained checklists, templates, and a
-quick capture Inbox. Everything here is owner-scoped on top of the model in
+actions, calendar/board/focus views, contained checklists, templates, a quick
+capture Inbox, time tracking, and task dependencies. Everything here is
+owner-scoped on top of the model in
 [`authorization.md`](authorization.md) and the lifecycle in
 [`task-lifecycle.md`](task-lifecycle.md).
 
@@ -18,6 +19,7 @@ quick capture Inbox. Everything here is owner-scoped on top of the model in
 | **Saved view** | `saved_todo_views` table; normalized criteria JSON | `saved_todo_views.user_id`, private |
 | **Checklist item** | `todo_checklist_items` table; `todo_id`, ordered `position`, completion fields | `todo_checklist_items.user_id`, private, contained by parent task |
 | **Inbox capture** | `todos.inbox_captured_at` nullable timestamp | `todos.user_id`, private |
+| **Task dependency** | `todo_dependencies` table; waiting task plus blocker task ids | `todo_dependencies.user_id`, private, both tasks must belong to the same owner |
 
 ## Subtasks and checklists
 
@@ -329,6 +331,39 @@ and timer-based tracking against private tasks and projects.
   server-side scheduler during normal hosted usage. Elapsed active-timer
   seconds are saved only when the user stops or discards the timer through the
   web UI.
+
+## Blockers and dependencies
+
+Step 050 adds owner-scoped task dependencies through `todo_dependencies`. A
+dependency means the current task is waiting on another private task before it
+is unblocked.
+
+- `TodoDependency` stores `user_id`, `todo_id` (the waiting task), and
+  `depends_on_todo_id` (the blocker). A unique index prevents duplicate edges
+  for the same user/task/blocker combination.
+- `TodoDependencyQuery` is the single read and validation boundary. It lists
+  dependencies for a task, lists candidate blockers, finds rows for removal,
+  computes the blocked smart view, and prevents self-references, duplicate
+  edges, foreign tasks, inactive blockers, and cycles.
+- `AcyclicTodoDependency` gives Livewire field-level feedback for dependency
+  picker validation, while `AddTodoDependency` repeats the owner, active-state,
+  duplicate, and cycle checks at the action boundary.
+- The task detail page remains a normal class-based Livewire component. It
+  shows open/resolved blocker badges, a translated blocked callout, a private
+  blocker picker, removal buttons, and a "This task blocks" summary.
+- A task's blocked state is derived from open dependency rows whose blocker task
+  is not completed. Completing the blocker resolves the waiting task immediately
+  on the next read; no background job or scheduled unblock process is needed.
+- `/todos/blocked` is a protected class-based Livewire smart view for active
+  owner tasks with open blockers. The main task list also has a `due=blocked`
+  filter, blocked summary count, and blocked badges.
+- Archived waiting tasks are hidden from blocked views because they are not
+  active. Archived blocker tasks still count as unresolved until completed or
+  removed from the dependency list, which keeps the relationship explicit.
+- Dependency management is synchronous and web-triggered. It requires no cron,
+  queue worker, supervisor, shell, Artisan command, paid service, chunk
+  processor, retry loop, or background unblock process during normal hosted
+  usage.
 
 ## Inbox
 

@@ -26,6 +26,7 @@ test('authenticated users can visit the dashboard', function () {
         ->assertSeeText('Trash')
         ->assertSeeText('Open todos')
         ->assertSeeText('Track time')
+        ->assertSeeText('Blocked')
         ->assertSeeText('npx ruflo@latest mcp start')
         ->assertSeeText('/plugin marketplace add ruvnet/ruflo');
 });

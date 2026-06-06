@@ -12,6 +12,7 @@ use App\Models\Tag;
 use App\Models\TimeEntry;
 use App\Models\Todo;
 use App\Models\TodoChecklistItem;
+use App\Models\TodoDependency;
 use App\Models\TodoTemplate;
 use App\Models\User;
 use App\Queries\Todos\TodoFocusQuery;
@@ -39,6 +40,7 @@ test('database seeder creates safe demo users and complete private workspaces', 
         ->and(SavedTodoView::query()->count())->toBe(6)
         ->and(Tag::query()->count())->toBe(4)
         ->and(TodoChecklistItem::query()->count())->toBe(18)
+        ->and(TodoDependency::query()->count())->toBe(2)
         ->and(TodoTemplate::query()->count())->toBe(6)
         ->and(Todo::query()->count())->toBe(16)
         ->and(Todo::withTrashed()->count())->toBe(18);
@@ -69,6 +71,9 @@ test('database seeder creates safe demo users and complete private workspaces', 
             ->and($user->todos()->inInbox()->count())->toBe(2)
             ->and($user->todoChecklistItems()->count())->toBe(9)
             ->and($user->todoChecklistItems()->where('is_completed', true)->count())->toBe(3)
+            ->and($user->todoDependencies()->count())->toBe(1)
+            ->and($user->todoDependencies()->first()?->todo?->title)->toBe('Send the overdue report')
+            ->and($user->todoDependencies()->first()?->blocker?->title)->toBe('Review the current flow')
             ->and($user->todoTemplates()->pluck('name')->sort()->values()->all())->toBe([
                 'Bug triage checklist',
                 'Daily planning routine',
@@ -103,6 +108,7 @@ test('database seeder is idempotent for the current demo catalog', function () {
         ->and(SavedTodoView::query()->count())->toBe(6)
         ->and(Tag::query()->count())->toBe(4)
         ->and(TodoChecklistItem::query()->count())->toBe(18)
+        ->and(TodoDependency::query()->count())->toBe(2)
         ->and(TodoTemplate::query()->count())->toBe(6)
         ->and(Todo::query()->count())->toBe(16)
         ->and(Todo::withTrashed()->count())->toBe(18)
@@ -126,6 +132,7 @@ test('database seeder does not create known demo credentials in production envir
         ->and(SavedTodoView::query()->count())->toBe(0)
         ->and(Tag::query()->count())->toBe(0)
         ->and(TodoChecklistItem::query()->count())->toBe(0)
+        ->and(TodoDependency::query()->count())->toBe(0)
         ->and(TodoTemplate::query()->count())->toBe(0)
         ->and(Todo::query()->count())->toBe(0);
 });

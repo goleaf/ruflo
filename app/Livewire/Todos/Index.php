@@ -616,7 +616,7 @@ class Index extends Component
     }
 
     /**
-     * @return array{active: int, completed: int, archived: int, trash: int, overdue: int}
+     * @return array{active: int, completed: int, archived: int, trash: int, overdue: int, blocked: int}
      */
     #[Computed]
     public function summary(): array
@@ -837,6 +837,7 @@ class Index extends Component
             'today' => (string) __('todos.filters.due_today'),
             'overdue' => (string) __('todos.filters.overdue'),
             'upcoming' => (string) __('todos.filters.upcoming'),
+            'blocked' => (string) __('todos.filters.blocked'),
             'with' => (string) __('todos.filters.with_due_date'),
             'without' => (string) __('todos.filters.without_due_date'),
             default => (string) __('todos.filters.unavailable_filter'),

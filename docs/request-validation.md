@@ -69,6 +69,13 @@ rules; `TimeEntryData` and action classes repeat backend guards so direct calls
 cannot persist unsupported durations, future dates, foreign context, duplicate
 active timers, or running-entry deletion.
 
+Step 050 task dependencies remain Livewire-only. No HTTP Form Request is
+introduced because dependency add/remove actions live on the class-based
+`/todos/{todo}` Livewire page and `/todos/blocked` is read-only. The component
+validates the blocker picker with `AcyclicTodoDependency`; `AddTodoDependency`
+and `TodoDependencyQuery` repeat owner, active-state, duplicate, self-reference,
+and cycle guards for direct calls.
+
 ## Custom Business Rules
 
 Reusable business validation rules are documented in `docs/validation-rules.md`.

@@ -47,6 +47,6 @@ final readonly class TodoFilters
      */
     public static function dueOptions(): array
     {
-        return ['today', 'overdue', 'upcoming', 'with', 'without'];
+        return ['today', 'overdue', 'upcoming', 'blocked', 'with', 'without'];
     }
 }

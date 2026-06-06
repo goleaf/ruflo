@@ -2,18 +2,23 @@
 
 namespace App\Livewire\Todos;
 
+use App\Actions\Todos\AddTodoDependency;
 use App\Actions\Todos\CreateTodoChecklistItem;
 use App\Actions\Todos\DeleteTodoChecklistItem;
 use App\Actions\Todos\MoveTodoChecklistItem;
+use App\Actions\Todos\RemoveTodoDependency;
 use App\Actions\Todos\ToggleTodoChecklistItem;
 use App\Actions\Todos\UpdateTodoChecklistItem;
 use App\Enums\TodoStatus;
 use App\Exceptions\InvalidTodoTransition;
 use App\Models\Todo;
 use App\Models\TodoChecklistItem;
+use App\Models\TodoDependency;
 use App\Models\User;
 use App\Queries\Todos\TodoChecklistItemListQuery;
+use App\Queries\Todos\TodoDependencyQuery;
 use App\Queries\Todos\TodoListQuery;
+use App\Rules\Todos\AcyclicTodoDependency;
 use App\Rules\Todos\ChecklistItemTitle;
 use Flux\Flux;
 use Illuminate\Contracts\View\View;
@@ -40,6 +45,8 @@ class Show extends Component
 
     public string $editingChecklistItemTitle = '';
 
+    public string $dependencyTodoId = '';
+
     public function mount(int $todo, TodoListQuery $query): void
     {
         $resolvedTodo = $query->findVisibleFor($this->currentUser(), $todo);
@@ -52,6 +59,57 @@ class Show extends Component
     public function render(): View
     {
         return view('livewire.todos.show');
+    }
+
+    public function addDependency(AddTodoDependency $addDependency): void
+    {
+        if (! $this->canManageDependencies()) {
+            $this->toastDependenciesLocked();
+
+            return;
+        }
+
+        $this->validate(
+            [
+                'dependencyTodoId' => [
+                    'required',
+                    'integer',
+                    new AcyclicTodoDependency($this->currentUser(), $this->todo),
+                ],
+            ],
+            messages: [
+                'dependencyTodoId.required' => __('todos.validation.todo_dependency'),
+                'dependencyTodoId.integer' => __('todos.validation.todo_dependency'),
+            ],
+            attributes: [
+                'dependencyTodoId' => __('todos.dependencies.fields.blocker'),
+            ],
+        );
+
+        $addDependency->handle($this->currentUser(), $this->todo, (int) $this->dependencyTodoId);
+
+        $this->dependencyTodoId = '';
+        $this->refreshDependencies();
+
+        Flux::toast(variant: 'success', text: __('todos.dependencies.messages.added'));
+    }
+
+    public function removeDependency(int $dependencyId, TodoDependencyQuery $query, RemoveTodoDependency $removeDependency): void
+    {
+        if (! $this->canManageDependencies()) {
+            $this->toastDependenciesLocked();
+
+            return;
+        }
+
+        $dependency = $query->findFor($this->currentUser(), $this->todo, $dependencyId);
+        $this->authorize('delete', $dependency);
+
+        $removeDependency->handle($this->currentUser(), $dependency);
+
+        $this->refreshDependencies();
+
+        Flux::toast(variant: 'success', text: __('todos.dependencies.messages.removed'));
     }
 
     public function createChecklistItem(CreateTodoChecklistItem $createChecklistItem): void
@@ -205,6 +263,42 @@ class Show extends Component
     }
 
     /**
+     * @return Collection<int, TodoDependency>
+     */
+    #[Computed]
+    public function dependencies(): Collection
+    {
+        return app(TodoDependencyQuery::class)->forTodo($this->currentUser(), $this->todo);
+    }
+
+    /**
+     * @return Collection<int, TodoDependency>
+     */
+    #[Computed]
+    public function openDependencies(): Collection
+    {
+        return app(TodoDependencyQuery::class)->openForTodo($this->currentUser(), $this->todo);
+    }
+
+    /**
+     * @return Collection<int, Todo>
+     */
+    #[Computed]
+    public function dependencyOptions(): Collection
+    {
+        return app(TodoDependencyQuery::class)->candidatesFor($this->currentUser(), $this->todo);
+    }
+
+    /**
+     * @return Collection<int, Todo>
+     */
+    #[Computed]
+    public function blockingTasks(): Collection
+    {
+        return app(TodoDependencyQuery::class)->blockedBy($this->currentUser(), $this->todo);
+    }
+
+    /**
      * @return array{total: int, completed: int, percent: int}
      */
     #[Computed]
@@ -222,6 +316,11 @@ class Show extends Component
     }
 
     public function canManageChecklist(): bool
+    {
+        return in_array($this->todo->status(), [TodoStatus::Active, TodoStatus::Completed], true);
+    }
+
+    public function canManageDependencies(): bool
     {
         return in_array($this->todo->status(), [TodoStatus::Active, TodoStatus::Completed], true);
     }
@@ -248,9 +347,19 @@ class Show extends Component
         unset($this->checklistItems, $this->checklistProgress);
     }
 
+    private function refreshDependencies(): void
+    {
+        unset($this->dependencies, $this->openDependencies, $this->dependencyOptions, $this->blockingTasks, $this->todo);
+    }
+
     private function toastChecklistLocked(): void
     {
         Flux::toast(variant: 'warning', text: __('todos.messages.cannot_change_checklist_archived'));
+    }
+
+    private function toastDependenciesLocked(): void
+    {
+        Flux::toast(variant: 'warning', text: __('todos.dependencies.messages.locked'));
     }
 
     private function currentUser(): User

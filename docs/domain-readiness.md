@@ -29,6 +29,7 @@ The current application surface covers these URL consumers:
 - Authenticated task Inbox route at `/todos/inbox`.
 - Authenticated task focus route at `/todos/focus`.
 - Authenticated task time tracking route at `/todos/time`.
+- Authenticated blocked tasks route at `/todos/blocked`.
 - Authenticated todo route at `/todos`.
 - Authenticated Today route at `/todos/today`.
 - Authenticated Overdue route at `/todos/overdue`.

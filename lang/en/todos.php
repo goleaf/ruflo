@@ -50,6 +50,10 @@ return [
             'title' => 'Time tracking',
             'description' => 'Log manual work and run one resumable web timer for private tasks and projects.',
         ],
+        'blocked' => [
+            'title' => 'Blocked tasks',
+            'description' => 'Review private tasks waiting on other unfinished work.',
+        ],
     ],
 
     'fields' => [
@@ -72,6 +76,7 @@ return [
     'summary' => [
         'active' => 'Active',
         'overdue' => 'Overdue',
+        'blocked' => 'Blocked',
         'completed' => 'Completed',
         'archived' => 'Archived',
         'trash' => 'Trash',
@@ -112,6 +117,7 @@ return [
         'due_today' => 'Due today',
         'overdue' => 'Overdue',
         'upcoming' => 'Upcoming',
+        'blocked' => 'Blocked',
         'with_due_date' => 'With due date',
         'without_due_date' => 'Without due date',
         'sort' => 'Sort by',
@@ -262,6 +268,9 @@ return [
             'upcoming' => [
                 'title' => 'No upcoming tasks.',
             ],
+            'blocked' => [
+                'title' => 'No blocked tasks.',
+            ],
             'with' => [
                 'title' => 'No tasks with a due date.',
             ],
@@ -363,6 +372,21 @@ return [
         'empty_description' => 'Active tasks with future due dates will appear here.',
     ],
 
+    'blocked' => [
+        'label' => 'Waiting work',
+        'heading' => 'Blocked tasks',
+        'count' => 'Blocked',
+        'open_filtered' => 'Filtered list',
+        'review' => 'Review',
+        'actions' => [
+            'open_blocked' => 'Blocked',
+        ],
+        'empty' => [
+            'title' => 'No blocked tasks.',
+            'description' => 'Tasks with open blockers will appear here until the blocker is completed or removed.',
+        ],
+    ],
+
     'exceptions' => [
         'cannot_complete_archived' => 'Archived tasks must be unarchived before they can be completed.',
         'cannot_reopen_archived' => 'Archived tasks must be unarchived before they can be reopened.',
@@ -410,6 +434,46 @@ return [
         'time_entry_active_timer' => 'Stop or discard the current timer before starting another one.',
         'time_entry_timer_required' => 'Start a timer before changing timer state.',
         'time_entry_delete_running' => 'Stop or discard the running timer before deleting it.',
+        'todo_dependency' => 'Choose an active task in your workspace that does not already block or depend on this task.',
+    ],
+
+    'dependencies' => [
+        'label' => 'Dependencies',
+        'heading' => 'Waiting on',
+        'description' => 'Attach private tasks that must finish before this task is unblocked.',
+        'open_count' => ':count open blockers',
+        'waiting_badge' => 'Waiting',
+        'waiting_heading' => 'This task is blocked.',
+        'waiting_description' => 'Complete the blocker or remove the dependency to unblock this task.',
+        'blocked_badge' => ':count blockers',
+        'blocked_by' => 'Blocked by :title',
+        'blocking_label' => 'This task blocks',
+        'missing_blocker' => 'Unavailable blocker',
+        'fields' => [
+            'blocker' => 'Blocking task',
+            'choose_blocker' => 'Choose a task',
+        ],
+        'actions' => [
+            'add' => 'Add blocker',
+            'remove' => 'Remove',
+        ],
+        'status' => [
+            'open' => 'Open',
+            'resolved' => 'Resolved',
+        ],
+        'messages' => [
+            'added' => 'Dependency added.',
+            'removed' => 'Dependency removed.',
+            'locked' => 'Unarchive this task before changing dependencies.',
+        ],
+        'locked' => [
+            'heading' => 'Dependencies are locked.',
+            'description' => 'Archived tasks keep dependency context, but dependency changes are available after unarchiving.',
+        ],
+        'empty' => [
+            'title' => 'No blockers.',
+            'description' => 'Add a task dependency when this task is waiting on another task.',
+        ],
     ],
 
     'inbox' => [

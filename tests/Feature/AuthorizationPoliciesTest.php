@@ -12,6 +12,7 @@ use App\Models\Tag;
 use App\Models\TimeEntry;
 use App\Models\Todo;
 use App\Models\TodoChecklistItem;
+use App\Models\TodoDependency;
 use App\Models\TodoTemplate;
 use App\Models\User;
 use App\Policies\GoalMilestonePolicy;
@@ -25,6 +26,7 @@ use App\Policies\SavedTodoViewPolicy;
 use App\Policies\TagPolicy;
 use App\Policies\TimeEntryPolicy;
 use App\Policies\TodoChecklistItemPolicy;
+use App\Policies\TodoDependencyPolicy;
 use App\Policies\TodoPolicy;
 use App\Policies\TodoTemplatePolicy;
 use Illuminate\Support\Facades\Gate;
@@ -40,6 +42,7 @@ test('tracked private resources resolve explicit policies', function () {
         ->and(Gate::getPolicyFor(TimeEntry::class))->toBeInstanceOf(TimeEntryPolicy::class)
         ->and(Gate::getPolicyFor(Tag::class))->toBeInstanceOf(TagPolicy::class)
         ->and(Gate::getPolicyFor(TodoChecklistItem::class))->toBeInstanceOf(TodoChecklistItemPolicy::class)
+        ->and(Gate::getPolicyFor(TodoDependency::class))->toBeInstanceOf(TodoDependencyPolicy::class)
         ->and(Gate::getPolicyFor(TodoTemplate::class))->toBeInstanceOf(TodoTemplatePolicy::class)
         ->and(Gate::getPolicyFor(SavedTodoView::class))->toBeInstanceOf(SavedTodoViewPolicy::class)
         ->and(Gate::getPolicyFor(Reminder::class))->toBeInstanceOf(ReminderPolicy::class);
@@ -185,6 +188,31 @@ test('time entry policy covers owner timer and manual log abilities', function (
         ->and($ownerGate->allows('create', TimeEntry::class))->toBeTrue()
         ->and($ownerGate->denies('restore', $entry))->toBeTrue()
         ->and($ownerGate->denies('forceDelete', $entry))->toBeTrue();
+});
+
+test('todo dependency policy covers owner blocker abilities', function () {
+    $owner = User::factory()->create();
+    $intruder = User::factory()->create();
+    $todo = Todo::factory()->for($owner)->create();
+    $blocker = Todo::factory()->for($owner)->create();
+    $dependency = TodoDependency::factory()->forTodos($todo, $blocker)->create();
+
+    $ownerGate = Gate::forUser($owner);
+    $intruderGate = Gate::forUser($intruder);
+
+    foreach (['view', 'update', 'delete'] as $ability) {
+        expect($ownerGate->allows($ability, $dependency))->toBeTrue();
+
+        $response = $intruderGate->inspect($ability, $dependency);
+
+        expect($response->denied())->toBeTrue()
+            ->and($response->status())->toBe(404);
+    }
+
+    expect($ownerGate->allows('viewAny', TodoDependency::class))->toBeTrue()
+        ->and($ownerGate->allows('create', TodoDependency::class))->toBeTrue()
+        ->and($ownerGate->denies('restore', $dependency))->toBeTrue()
+        ->and($ownerGate->denies('forceDelete', $dependency))->toBeTrue();
 });
 
 test('todo template policy covers owner template abilities', function () {

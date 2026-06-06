@@ -1,8 +1,9 @@
 <section class="mx-auto flex w-full max-w-5xl flex-col gap-6">
     <x-ui.page-header :title="__('todos.pages.index.title')" :description="__('todos.pages.index.description')">
-        <div class="grid grid-cols-2 gap-3 text-sm sm:grid-cols-5 sm:min-w-[32rem]">
+        <div class="grid grid-cols-2 gap-3 text-sm sm:grid-cols-3 lg:grid-cols-6 lg:min-w-[42rem]">
             <x-ui.stat :label="__('todos.summary.active')" :value="$this->summary['active']" />
             <x-ui.stat :label="__('todos.summary.overdue')" :value="$this->summary['overdue']" tone="danger" />
+            <x-ui.stat :label="__('todos.summary.blocked')" :value="$this->summary['blocked']" tone="danger" />
             <x-ui.stat :label="__('todos.summary.completed')" :value="$this->summary['completed']" tone="success" />
             <x-ui.stat :label="__('todos.summary.archived')" :value="$this->summary['archived']" tone="muted" />
             <x-ui.stat :label="__('todos.summary.trash')" :value="$this->summary['trash']" tone="danger" />
@@ -120,6 +121,10 @@
                     {{ __('todos.time.actions.open_time') }}
                 </flux:button>
 
+                <flux:button size="sm" variant="ghost" icon="exclamation-triangle" :href="route('todos.blocked')" wire:navigate>
+                    {{ __('todos.blocked.actions.open_blocked') }}
+                </flux:button>
+
                 <flux:button size="sm" variant="ghost" icon="adjustments-horizontal" wire:click="$set('showManageModal', true)">
                     {{ __('todos.actions.manage') }}
                 </flux:button>
@@ -208,6 +213,7 @@
                     <flux:select.option value="today">{{ __('todos.filters.due_today') }}</flux:select.option>
                     <flux:select.option value="overdue">{{ __('todos.filters.overdue') }}</flux:select.option>
                     <flux:select.option value="upcoming">{{ __('todos.filters.upcoming') }}</flux:select.option>
+                    <flux:select.option value="blocked">{{ __('todos.filters.blocked') }}</flux:select.option>
                     <flux:select.option value="with">{{ __('todos.filters.with_due_date') }}</flux:select.option>
                     <flux:select.option value="without">{{ __('todos.filters.without_due_date') }}</flux:select.option>
                 </flux:select>
@@ -362,6 +368,12 @@
                             @if ($todo->due_date)
                                 <flux:badge size="sm" :color="$todo->isOverdue() ? 'red' : ($todo->isDueToday() ? 'amber' : 'zinc')" icon="calendar">
                                     {{ $todo->due_date->isoFormat('MMM D') }}
+                                </flux:badge>
+                            @endif
+
+                            @if ($todo->openBlockerCount() > 0)
+                                <flux:badge size="sm" color="amber" icon="exclamation-triangle">
+                                    {{ __('todos.dependencies.blocked_badge', ['count' => $todo->openBlockerCount()]) }}
                                 </flux:badge>
                             @endif
 

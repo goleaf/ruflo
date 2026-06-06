@@ -31,6 +31,7 @@ use App\Models\TimeEntry;
 use App\Models\Todo;
 use App\Models\TodoChecklistItem;
 use App\Models\TodoComment;
+use App\Models\TodoCommentMention;
 use App\Models\TodoDependency;
 use App\Models\TodoRecurrenceException;
 use App\Models\TodoRecurrenceRule;
@@ -53,6 +54,8 @@ test('tracked models can be created from their default factories', function () {
     $checklistItem = TodoChecklistItem::factory()->forTodo($todo)->completed()->position(1)->create();
     $commentAuthor = User::factory()->create();
     $comment = TodoComment::factory()->forTodo($todo)->authoredBy($commentAuthor)->edited()->create(['body' => 'Factory edited comment']);
+    $mentionedUser = User::factory()->create(['name' => 'Mention Target']);
+    $commentMention = TodoCommentMention::factory()->forComment($comment)->mentionedUser($mentionedUser, 'mention-target')->create();
     $blocker = Todo::factory()->for($user)->create();
     $dependency = TodoDependency::factory()->forTodos($todo, $blocker)->create();
     $pomodoroSession = PomodoroSession::factory()->forTodo($todo)->completed()->create();
@@ -97,12 +100,16 @@ test('tracked models can be created from their default factories', function () {
         ->and($checklistItem->todo->is($todo))->toBeTrue()
         ->and($checklistItem->is_completed)->toBeTrue()
         ->and($checklistItem->position)->toBe(1)
-        ->and($dependency->isOwnedBy($user))->toBeTrue()
-        ->and($dependency->todo->is($todo))->toBeTrue()
         ->and($comment->isOwnedBy($user))->toBeTrue()
         ->and($comment->todo->is($todo))->toBeTrue()
         ->and($comment->isAuthoredBy($commentAuthor))->toBeTrue()
         ->and($comment->edited_at)->not->toBeNull()
+        ->and($commentMention->isOwnedBy($user))->toBeTrue()
+        ->and($commentMention->comment->is($comment))->toBeTrue()
+        ->and($commentMention->mentionedUser->is($mentionedUser))->toBeTrue()
+        ->and($commentMention->handle)->toBe('mention-target')
+        ->and($dependency->isOwnedBy($user))->toBeTrue()
+        ->and($dependency->todo->is($todo))->toBeTrue()
         ->and($dependency->blocker->is($blocker))->toBeTrue()
         ->and($dependency->isOpen())->toBeTrue()
         ->and($pomodoroSession->isOwnedBy($user))->toBeTrue()

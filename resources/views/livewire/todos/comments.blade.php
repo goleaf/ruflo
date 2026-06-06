@@ -24,7 +24,7 @@
         <flux:field>
             <flux:label>{{ __('todos.comments.fields.body') }}</flux:label>
             <flux:textarea
-                wire:model="body"
+                wire:model.live.debounce.300ms="body"
                 rows="4"
                 maxlength="2000"
                 :placeholder="__('todos.comments.fields.body_placeholder')"
@@ -32,6 +32,67 @@
             />
             <flux:error name="body" />
         </flux:field>
+
+        @if ($this->canComment())
+            <div
+                class="rounded-lg border border-zinc-200 bg-zinc-50 p-3 dark:border-white/10 dark:bg-white/5"
+                data-test="comment-mention-picker"
+            >
+                <flux:field>
+                    <flux:label>{{ __('todos.comments.mentions.fields.search') }}</flux:label>
+                    <flux:input
+                        wire:model.live.debounce.250ms="mentionSearch"
+                        type="search"
+                        icon="at-symbol"
+                        :placeholder="__('todos.comments.mentions.fields.search_placeholder')"
+                    />
+                    <flux:description>{{ __('todos.comments.mentions.description') }}</flux:description>
+                </flux:field>
+
+                @if ($this->selectedMentions->isNotEmpty())
+                    <div class="mt-3 flex flex-wrap gap-2" data-test="comment-selected-mentions">
+                        @foreach ($this->selectedMentions as $mention)
+                            <flux:button
+                                wire:key="comment-selected-mention-{{ $mention['id'] }}"
+                                type="button"
+                                size="xs"
+                                variant="ghost"
+                                icon="x-mark"
+                                wire:click="removeMention({{ $mention['id'] }})"
+                            >
+                                {{ $mention['token'] }}
+                            </flux:button>
+                        @endforeach
+                    </div>
+                @endif
+
+                @if ($this->mentionCandidates->isNotEmpty())
+                    <div class="mt-3 grid gap-2 sm:grid-cols-2" data-test="comment-mention-candidates" role="listbox" aria-label="{{ __('todos.comments.mentions.suggestions.label') }}">
+                        @foreach ($this->mentionCandidates as $candidate)
+                            <flux:button
+                                wire:key="comment-mention-candidate-{{ $candidate['id'] }}"
+                                type="button"
+                                size="sm"
+                                variant="ghost"
+                                icon="at-symbol"
+                                wire:click="addMention({{ $candidate['id'] }})"
+                                aria-label="{{ __('todos.comments.mentions.actions.insert', ['name' => $candidate['name']]) }}"
+                                class="justify-start"
+                            >
+                                <span class="flex min-w-0 flex-col items-start">
+                                    <span class="truncate">{{ $candidate['name'] }}</span>
+                                    <span class="text-xs text-zinc-500 dark:text-zinc-400">{{ $candidate['token'] }} · {{ $candidate['role'] }}</span>
+                                </span>
+                            </flux:button>
+                        @endforeach
+                    </div>
+                @elseif (filled($this->mentionSearch))
+                    <flux:text class="mt-3 text-xs text-zinc-500 dark:text-zinc-400">
+                        {{ __('todos.comments.mentions.empty') }}
+                    </flux:text>
+                @endif
+            </div>
+        @endif
 
         <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-end">
             <flux:text class="text-xs text-zinc-500 dark:text-zinc-400">
@@ -118,9 +179,70 @@
                         <form wire:submit="update" class="mt-4 space-y-3">
                             <flux:field>
                                 <flux:label>{{ __('todos.comments.fields.body') }}</flux:label>
-                                <flux:textarea wire:model="editingBody" rows="4" maxlength="2000" />
+                                <flux:textarea wire:model.live.debounce.300ms="editingBody" rows="4" maxlength="2000" />
                                 <flux:error name="editingBody" />
                             </flux:field>
+
+                            @if ($this->editingCommentId !== null)
+                                <div
+                                    class="rounded-lg border border-zinc-200 bg-zinc-50 p-3 dark:border-white/10 dark:bg-white/5"
+                                    data-test="comment-edit-mention-picker"
+                                >
+                                    <flux:field>
+                                        <flux:label>{{ __('todos.comments.mentions.fields.search') }}</flux:label>
+                                        <flux:input
+                                            wire:model.live.debounce.250ms="editingMentionSearch"
+                                            type="search"
+                                            icon="at-symbol"
+                                            :placeholder="__('todos.comments.mentions.fields.search_placeholder')"
+                                        />
+                                        <flux:description>{{ __('todos.comments.mentions.description') }}</flux:description>
+                                    </flux:field>
+
+                                    @if ($this->editingSelectedMentions->isNotEmpty())
+                                        <div class="mt-3 flex flex-wrap gap-2" data-test="comment-edit-selected-mentions">
+                                            @foreach ($this->editingSelectedMentions as $mention)
+                                                <flux:button
+                                                    wire:key="comment-edit-selected-mention-{{ $mention['id'] }}"
+                                                    type="button"
+                                                    size="xs"
+                                                    variant="ghost"
+                                                    icon="x-mark"
+                                                    wire:click="removeEditingMention({{ $mention['id'] }})"
+                                                >
+                                                    {{ $mention['token'] }}
+                                                </flux:button>
+                                            @endforeach
+                                        </div>
+                                    @endif
+
+                                    @if ($this->editingMentionCandidates->isNotEmpty())
+                                        <div class="mt-3 grid gap-2 sm:grid-cols-2" data-test="comment-edit-mention-candidates" role="listbox" aria-label="{{ __('todos.comments.mentions.suggestions.label') }}">
+                                            @foreach ($this->editingMentionCandidates as $candidate)
+                                                <flux:button
+                                                    wire:key="comment-edit-mention-candidate-{{ $candidate['id'] }}"
+                                                    type="button"
+                                                    size="sm"
+                                                    variant="ghost"
+                                                    icon="at-symbol"
+                                                    wire:click="addEditingMention({{ $candidate['id'] }})"
+                                                    aria-label="{{ __('todos.comments.mentions.actions.insert', ['name' => $candidate['name']]) }}"
+                                                    class="justify-start"
+                                                >
+                                                    <span class="flex min-w-0 flex-col items-start">
+                                                        <span class="truncate">{{ $candidate['name'] }}</span>
+                                                        <span class="text-xs text-zinc-500 dark:text-zinc-400">{{ $candidate['token'] }} · {{ $candidate['role'] }}</span>
+                                                    </span>
+                                                </flux:button>
+                                            @endforeach
+                                        </div>
+                                    @elseif (filled($this->editingMentionSearch))
+                                        <flux:text class="mt-3 text-xs text-zinc-500 dark:text-zinc-400">
+                                            {{ __('todos.comments.mentions.empty') }}
+                                        </flux:text>
+                                    @endif
+                                </div>
+                            @endif
 
                             <div class="flex flex-col gap-2 sm:flex-row sm:justify-end">
                                 <flux:button type="button" variant="ghost" icon="x-mark" wire:click="cancelEditing">
@@ -138,6 +260,20 @@
                         </flux:text>
                     @else
                         <div class="mt-4 whitespace-pre-line break-words text-sm text-zinc-700 dark:text-zinc-200" data-test="comment-body-{{ $comment->id }}">{{ $comment->body }}</div>
+
+                        @if ($comment->mentions->isNotEmpty())
+                            <div
+                                class="mt-3 flex flex-wrap gap-2"
+                                data-test="comment-mentions-{{ $comment->id }}"
+                                aria-label="{{ trans_choice('todos.comments.mentions.count', $comment->mentions->count(), ['count' => $comment->mentions->count()]) }}"
+                            >
+                                @foreach ($comment->mentions as $mention)
+                                    <flux:badge wire:key="todo-comment-mention-{{ $mention->id }}" size="sm" color="blue" icon="at-symbol">
+                                        {{ $this->mentionHandle($mention) }} · {{ $this->mentionName($mention) }}
+                                    </flux:badge>
+                                @endforeach
+                            </div>
+                        @endif
                     @endif
                 </article>
             @endforeach

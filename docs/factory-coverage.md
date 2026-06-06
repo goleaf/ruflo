@@ -21,6 +21,7 @@ Step 011 covers the tracked application models:
 - `App\Models\Todo`
 - `App\Models\TodoChecklistItem`
 - `App\Models\TodoComment`
+- `App\Models\TodoCommentMention`
 - `App\Models\TodoDependency`
 - `App\Models\TodoRecurrenceException`
 - `App\Models\TodoRecurrenceRule`
@@ -269,6 +270,20 @@ todos, projects, tags, and saved views.
 Comment rows are owned by the parent task owner's workspace and store the
 writer separately in `author_id`, so shared participants can comment without
 changing resource ownership.
+
+## Todo Comment Mention Factory
+
+`TodoCommentMentionFactory` covers:
+
+- default mention rows with a generated owner, comment, mentioned user, and
+  handle,
+- `forComment()` to attach a mention to an existing comment while preserving
+  the comment owner,
+- `mentionedUser()` to target a specific user with an explicit deterministic
+  handle.
+
+Mention rows are owned by the parent comment owner's workspace and target an
+already allowed user through `mentioned_user_id`.
 
 ## Todo Dependency Factory
 

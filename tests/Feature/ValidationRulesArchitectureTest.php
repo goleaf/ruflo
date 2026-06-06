@@ -14,6 +14,9 @@ test('custom validation rules are implemented and use translated failure message
             'Goals/MilestoneTitle.php',
             'Habits/HabitTargetCount.php',
             'Habits/HabitTitle.php',
+            'Projects/ProjectInvitationExpiryDays.php',
+            'Projects/ProjectInviteRole.php',
+            'Projects/ProjectMemberRole.php',
             'Reminders/ReminderAt.php',
             'Tags/TagName.php',
             'Todos/AcyclicTodoDependency.php',
@@ -32,6 +35,8 @@ test('custom validation rules are implemented and use translated failure message
             'Todos/TemplateChecklistItems.php',
             'Todos/TemplateName.php',
             'Todos/TimeEntryDuration.php',
+            'Todos/TodoCommentBody.php',
+            'Todos/TodoCommentMentionTargets.php',
         ]);
 
     $ruleFiles->each(function (string $path): void {

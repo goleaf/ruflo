@@ -138,6 +138,11 @@ flows use it through `StoreTodoCommentRequest` and
 `UpdateTodoCommentRequest`, and the action layer repeats the same validation so
 direct calls cannot persist blank or oversized comments.
 
+`TodoCommentMentionTargets` validates selected task-comment mention IDs. It
+re-resolves the actor's allowed mention candidates for the parent task and
+rejects non-integer, removed-member, or unrelated-user IDs before mention rows
+or mention notifications are created.
+
 The action layer still re-scopes ids to the current user before writing. The rule objects improve request feedback; the action layer remains the defense-in-depth boundary.
 
 ## Translation

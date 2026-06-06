@@ -2,7 +2,10 @@
 
 namespace App\Http\Requests\Todos;
 
+use App\Models\Todo;
+use App\Models\User;
 use App\Rules\Todos\TodoCommentBody;
+use App\Rules\Todos\TodoCommentMentionTargets;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -37,6 +40,16 @@ final class StoreTodoCommentRequest extends FormRequest
     }
 
     /**
+     * @return array<string, list<ValidationRule|string>>
+     */
+    public static function mentionRules(User $actor, Todo $todo): array
+    {
+        return [
+            'mentioned_user_ids' => ['array', new TodoCommentMentionTargets($actor, $todo)],
+        ];
+    }
+
+    /**
      * @return array<string, string>
      */
     public function attributes(): array
@@ -51,6 +64,7 @@ final class StoreTodoCommentRequest extends FormRequest
     {
         return [
             'body' => __('todos.comments.fields.body'),
+            'mentioned_user_ids' => __('todos.comments.mentions.fields.search'),
         ];
     }
 }

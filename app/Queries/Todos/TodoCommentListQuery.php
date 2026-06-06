@@ -20,7 +20,7 @@ final class TodoCommentListQuery
 
         return TodoComment::query()
             ->withTrashed()
-            ->with(['author:id,name,email'])
+            ->with(['author:id,name,email', 'mentions.mentionedUser:id,name,email'])
             ->where('todo_id', $todo->id)
             ->where('user_id', $todo->user_id)
             ->oldest('created_at')

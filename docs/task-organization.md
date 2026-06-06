@@ -93,9 +93,12 @@ Comment text is rendered as escaped Blade output, normalized through
 plain-text cap. Deleted comments are soft deleted and stay visible as
 translated placeholders so thread chronology remains understandable.
 
-Step 072 intentionally keeps `@mention` text inert. It does not generate
-mention suggestions, links, or notifications; safe mention behavior is reserved
-for Step 073.
+Step 073 resolves safe mentions for allowed users only. The Flux mention picker
+is backed by `TodoMentionCandidateQuery`, which reuses the parent task access
+boundary and active project memberships. `todo_comment_mentions` stores the
+resolved mentioned user and handle; `TodoCommentMentionTargets` rejects forged
+selected IDs before writes, and `todo-comment-mentioned` notifications stay
+database-only.
 
 ## Subtasks and checklists
 

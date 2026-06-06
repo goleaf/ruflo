@@ -203,6 +203,26 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
     }
 
     /**
+     * Get mention rows owned by the user's private workspace.
+     *
+     * @return HasMany<TodoCommentMention, $this>
+     */
+    public function todoCommentMentions(): HasMany
+    {
+        return $this->hasMany(TodoCommentMention::class);
+    }
+
+    /**
+     * Get comment mentions that target this user.
+     *
+     * @return HasMany<TodoCommentMention, $this>
+     */
+    public function mentionedInTodoComments(): HasMany
+    {
+        return $this->hasMany(TodoCommentMention::class, 'mentioned_user_id');
+    }
+
+    /**
      * Get the user's reusable task templates.
      *
      * @return HasMany<TodoTemplate, $this>

@@ -19,7 +19,12 @@ Step 055 adds a private in-app notification center at `/notifications`.
 - Step 072 task-comment notifications are database-only. When a shared
   participant comments on a task, the task owner receives a
   `todo-comment-added` database notification. The comment author and unrelated
-  shared viewers are not notified in this step.
+  shared viewers are not notified by that owner notification.
+- Step 073 mention notifications are also database-only. Newly mentioned
+  allowed users receive `todo-comment-mentioned` notifications, while the
+  author is excluded. A shared participant mentioning the owner on a new comment
+  does not create a duplicate mention notification because the owner already
+  receives the normal comment notification.
 
 ## UI
 
@@ -40,9 +45,9 @@ workers, supervisors, shell access, Artisan commands, or paid services during
 normal usage. It reads and updates database notifications synchronously during
 authenticated browser requests.
 
-Task-comment notifications follow that same contract. They are created
-synchronously inside the comment creation request and do not require email,
-queues, workers, cron, supervisors, shell access, Artisan commands during
+Task-comment and mention notifications follow that same contract. They are
+created synchronously inside comment create/edit requests and do not require
+email, queues, workers, cron, supervisors, shell access, Artisan commands during
 normal usage, hosted services, or paid providers.
 
 ## Verification
@@ -51,8 +56,8 @@ normal usage, hosted services, or paid providers.
   mark-all-read owner scoping, same-host link filtering, protocol-relative and
   unsupported-scheme filtering, stale private task-link hiding, known task-link
   prechecks, and target-route authorization.
-- `TaskCommentTest` covers Step 072 owner database notifications and confirms
-  inert `@mention` text does not notify unrelated users before the dedicated
-  mentions step.
+- `TaskCommentTest` covers Step 072 owner database notifications and Step 073
+  mention notifications, candidate privacy, removed-member denial, and tampered
+  selected-ID rejection.
 - Guest route, domain, localization, and architecture coverage include the
   protected `/notifications` surface.

@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -44,6 +45,16 @@ class TodoComment extends Model
     public function author(): BelongsTo
     {
         return $this->belongsTo(User::class, 'author_id');
+    }
+
+    /**
+     * Users safely resolved from mention tokens in this comment.
+     *
+     * @return HasMany<TodoCommentMention, $this>
+     */
+    public function mentions(): HasMany
+    {
+        return $this->hasMany(TodoCommentMention::class);
     }
 
     public function isAuthoredBy(User $user): bool

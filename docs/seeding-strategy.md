@@ -19,6 +19,7 @@ Step 012 covers the committed model set:
 - `Todo`
 - `TodoChecklistItem`
 - `TodoComment`
+- `TodoCommentMention`
 - `TodoDependency`
 - `TodoRecurrenceException`
 - `TodoRecurrenceRule`
@@ -33,8 +34,10 @@ seeded with local/testing/demo project sharing between the configured demo
 users. The tracked `ProjectInvitation` model is seeded with local/testing/demo
 pending, accepted, cancelled, and expired link-only invite examples. The tracked
 `TodoComment` model is seeded with local/testing/demo comment threads on shared
-demo tasks. Future models for attachments and settings are not seeded yet
-because those committed models do not exist yet.
+demo tasks, and `TodoCommentMentionSeeder` repairs deterministic mention rows
+from those comment bodies without notifications. Future models for attachments
+and settings are not seeded yet because those committed models do not exist
+yet.
 
 ## Seeders
 
@@ -45,9 +48,10 @@ because those committed models do not exist yet.
 3. `ProjectMembershipSeeder`
 4. `ProjectInvitationSeeder`
 5. `TodoCommentSeeder`
-6. `ExecutiveWorkspaceSeeder`
-7. `TodoRecurrenceRuleSeeder`
-8. `ActivityRecordSeeder`
+6. `TodoCommentMentionSeeder`
+7. `ExecutiveWorkspaceSeeder`
+8. `TodoRecurrenceRuleSeeder`
+9. `ActivityRecordSeeder`
 
 `DemoUserSeeder` creates the configured demo users only when the app is running in a safe environment: `local`, `testing`, or `demo`, and when the demo login panel is enabled. The first configured demo user is seeded as an admin for protected local maintenance access; the second configured demo user is seeded as a normal account for denial and isolation checks.
 

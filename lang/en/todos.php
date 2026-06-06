@@ -229,6 +229,24 @@ return [
         'count' => '{0} No comments|{1} 1 comment|[2,*] :count comments',
         'plain_text_notice' => 'Plain text only. Links and markup are shown as text.',
         'deleted_body' => 'This comment was deleted.',
+        'mentions' => [
+            'count' => '{1} 1 resolved mention|[2,*] :count resolved mentions',
+            'description' => 'Search and add only people who already have access to this task.',
+            'deleted_user' => 'Deleted user',
+            'empty' => 'No allowed people match that search.',
+            'fields' => [
+                'search' => 'Mention people',
+                'search_placeholder' => 'Search allowed people',
+            ],
+            'suggestions' => [
+                'label' => 'Mention suggestions',
+                'description' => 'Only people who can access this task are shown.',
+            ],
+            'actions' => [
+                'insert' => 'Mention :name',
+                'remove' => 'Remove mention for :name',
+            ],
+        ],
         'fields' => [
             'body' => 'Comment',
             'body_placeholder' => 'Add a concise update or decision note',
@@ -270,6 +288,7 @@ return [
         'validation' => [
             'body_required' => 'Enter a comment with visible text.',
             'body_max' => 'Keep comments under :max characters.',
+            'mention_targets' => 'Only people who can access this task can be mentioned.',
         ],
     ],
 

@@ -9,6 +9,7 @@ use App\Models\Project;
 use App\Models\ProjectMembership;
 use App\Models\Todo;
 use App\Models\TodoComment;
+use App\Models\TodoCommentMention;
 use App\Models\User;
 use Database\Seeders\DemoUserSeeder;
 use Database\Seeders\ProjectMembershipSeeder;
@@ -153,7 +154,87 @@ test('comment body validation rejects empty and oversized input', function () {
     expect(TodoComment::query()->count())->toBe(0);
 });
 
-test('plain mention text does not leak users or create mention notifications in this step', function () {
+test('mention suggestions only expose users who can access the task', function () {
+    $owner = User::factory()->create(['name' => 'Task Owner']);
+    $editor = User::factory()->create(['name' => 'Shared Editor']);
+    $viewer = User::factory()->create(['name' => 'Shared Viewer']);
+    $privateUser = User::factory()->create(['name' => 'Private Person']);
+    $project = Project::factory()->for($owner)->create();
+    $todo = Todo::factory()->forProject($project)->create(['title' => 'Mention suggestion task']);
+
+    ProjectMembership::factory()->forProject($project)->forMember($editor)->editor()->create();
+    ProjectMembership::factory()->forProject($project)->forMember($viewer)->viewer()->create();
+
+    Livewire::actingAs($editor)
+        ->test(Comments::class, ['todoId' => $todo->id])
+        ->set('body', 'Please review')
+        ->assertSee(__('todos.comments.mentions.fields.search'))
+        ->assertSee('@task-owner')
+        ->assertSee('Task Owner')
+        ->assertSee('@shared-viewer')
+        ->assertSee('Shared Viewer')
+        ->assertDontSee('Private Person')
+        ->call('addMention', $owner->id)
+        ->assertSet('body', 'Please review @task-owner')
+        ->assertSet('selectedMentionIds', [$owner->id]);
+
+    expect($privateUser->notifications()->count())->toBe(0);
+});
+
+test('comment mentions resolve allowed users and send database mention notifications', function () {
+    $owner = User::factory()->create(['name' => 'Task Owner']);
+    $editor = User::factory()->create(['name' => 'Shared Editor']);
+    $project = Project::factory()->for($owner)->create();
+    $todo = Todo::factory()->forProject($project)->create(['title' => 'Mentioned launch task']);
+
+    ProjectMembership::factory()->forProject($project)->forMember($editor)->editor()->create();
+
+    Livewire::actingAs($owner)
+        ->test(Comments::class, ['todoId' => $todo->id])
+        ->set('body', 'Please review the final note.')
+        ->call('addMention', $editor->id)
+        ->call('create')
+        ->assertHasNoErrors()
+        ->assertSee('@shared-editor')
+        ->assertSee('Shared Editor');
+
+    $comment = TodoComment::query()->firstOrFail();
+    $mention = TodoCommentMention::query()->firstOrFail();
+
+    expect($mention->isOwnedBy($owner))->toBeTrue()
+        ->and($mention->comment->is($comment))->toBeTrue()
+        ->and($mention->mentionedUser->is($editor))->toBeTrue()
+        ->and($mention->handle)->toBe('shared-editor');
+
+    expect($editor->notifications()->where('type', 'todo-comment-mentioned')->count())->toBe(1)
+        ->and($owner->notifications()->count())->toBe(0);
+});
+
+test('editing a comment syncs newly added mentions without trusting frontend ids', function () {
+    $owner = User::factory()->create(['name' => 'Task Owner']);
+    $editor = User::factory()->create(['name' => 'Shared Editor']);
+    $project = Project::factory()->for($owner)->create();
+    $todo = Todo::factory()->forProject($project)->create(['title' => 'Editable mention task']);
+    $comment = TodoComment::factory()->forTodo($todo)->create(['body' => 'Original note']);
+
+    ProjectMembership::factory()->forProject($project)->forMember($editor)->editor()->create();
+
+    Livewire::actingAs($owner)
+        ->test(Comments::class, ['todoId' => $todo->id])
+        ->call('startEditing', $comment->id)
+        ->set('editingBody', 'Updated note for')
+        ->call('addEditingMention', $editor->id)
+        ->call('update')
+        ->assertHasNoErrors()
+        ->assertSee('@shared-editor')
+        ->assertSee('Shared Editor');
+
+    expect(TodoCommentMention::query()->count())->toBe(1)
+        ->and(TodoCommentMention::query()->first()?->mentionedUser->is($editor))->toBeTrue()
+        ->and($editor->notifications()->where('type', 'todo-comment-mentioned')->count())->toBe(1);
+});
+
+test('unresolved mention text does not leak private users or create mention notifications', function () {
     $owner = User::factory()->create();
     $privateUser = User::factory()->create([
         'name' => 'Private Mention Target',
@@ -171,26 +252,73 @@ test('plain mention text does not leak users or create mention notifications in 
         ->assertDontSee('Private Mention Target')
         ->assertDontSee('private-mention@example.com');
 
-    expect($privateUser->notifications()->count())->toBe(0);
+    expect(TodoCommentMention::query()->count())->toBe(0)
+        ->and($privateUser->notifications()->count())->toBe(0);
+});
+
+test('tampered mention ids are rejected before comment creation', function () {
+    $owner = User::factory()->create();
+    $privateUser = User::factory()->create(['name' => 'Private Mention Target']);
+    $todo = Todo::factory()->for($owner)->create(['title' => 'Tampered mention task']);
+
+    Livewire::actingAs($owner)
+        ->test(Comments::class, ['todoId' => $todo->id])
+        ->set('body', 'Please review this unsafe mention.')
+        ->set('selectedMentionIds', [$privateUser->id])
+        ->call('create')
+        ->assertHasErrors(['mentioned_user_ids']);
+
+    expect(TodoComment::query()->count())->toBe(0)
+        ->and(TodoCommentMention::query()->count())->toBe(0)
+        ->and($privateUser->notifications()->count())->toBe(0);
+});
+
+test('removed members cannot be mentioned after losing task access', function () {
+    $owner = User::factory()->create(['name' => 'Task Owner']);
+    $removedMember = User::factory()->create(['name' => 'Removed Editor']);
+    $project = Project::factory()->for($owner)->create();
+    $todo = Todo::factory()->forProject($project)->create(['title' => 'Removed mention task']);
+
+    ProjectMembership::factory()
+        ->forProject($project)
+        ->forMember($removedMember)
+        ->editor()
+        ->removed()
+        ->create();
+
+    app(CreateTodoComment::class)->handle($owner, $todo, 'Do not notify @removed-editor about this private task.');
+
+    expect(TodoCommentMention::query()->count())->toBe(0)
+        ->and($removedMember->notifications()->count())->toBe(0);
 });
 
 test('comment factory and seeder create idempotent local demo threads', function () {
     $todo = Todo::factory()->create();
     $comment = TodoComment::factory()->forTodo($todo)->edited()->demoBody('Factory comment')->create();
+    $mentionedUser = User::factory()->create(['name' => 'Factory Mention']);
+    $mention = TodoCommentMention::factory()->forComment($comment)->mentionedUser($mentionedUser, 'factory-mention')->create();
 
     expect($comment->isOwnedBy($todo->user))->toBeTrue()
         ->and($comment->author->is($todo->user))->toBeTrue()
         ->and($comment->edited_at)->not->toBeNull()
-        ->and($comment->excerpt())->toBe('Factory comment');
+        ->and($comment->excerpt())->toBe('Factory comment')
+        ->and($mention->isOwnedBy($todo->user))->toBeTrue()
+        ->and($mention->mentionedUser->is($mentionedUser))->toBeTrue()
+        ->and($mention->handle)->toBe('factory-mention');
 
     $this->seed([DemoUserSeeder::class, TodoSeeder::class, ProjectMembershipSeeder::class, TodoCommentSeeder::class]);
 
-    expect(TodoComment::query()->count())->toBeGreaterThanOrEqual(5);
+    expect(TodoComment::query()->count())->toBeGreaterThanOrEqual(5)
+        ->and(TodoCommentMention::query()->count())->toBeGreaterThanOrEqual(4);
 
-    $counts = TodoComment::withTrashed()->count();
+    $counts = [
+        'comments' => TodoComment::withTrashed()->count(),
+        'mentions' => TodoCommentMention::query()->count(),
+    ];
 
     $this->seed(TodoCommentSeeder::class);
 
-    expect(TodoComment::withTrashed()->count())->toBe($counts)
+    expect(TodoComment::withTrashed()->count())->toBe($counts['comments'])
+        ->and(TodoCommentMention::query()->count())->toBe($counts['mentions'])
         ->and(TodoComment::onlyTrashed()->count())->toBeGreaterThanOrEqual(1);
 });

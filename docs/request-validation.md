@@ -134,6 +134,11 @@ backend action calls share one translated rule source. Authorization remains in
 `TodoCommentPolicy` and the parent `TodoPolicy::comment` ability; the request
 classes are the rule source, not the security boundary.
 
+Step 073 extends those same request classes with `mentionRules()` for selected
+mention IDs. `TodoCommentMentionTargets` re-resolves the current actor's
+allowed mention candidates for the parent task and rejects forged IDs before a
+mention row or mention notification can be created.
+
 ## Custom Business Rules
 
 Reusable business validation rules are documented in `docs/validation-rules.md`.

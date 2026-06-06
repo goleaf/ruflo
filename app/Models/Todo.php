@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -130,6 +131,16 @@ class Todo extends Model
     public function comments(): HasMany
     {
         return $this->hasMany(TodoComment::class);
+    }
+
+    /**
+     * Mention rows attached through task comments.
+     *
+     * @return HasManyThrough<TodoCommentMention, TodoComment, $this>
+     */
+    public function commentMentions(): HasManyThrough
+    {
+        return $this->hasManyThrough(TodoCommentMention::class, TodoComment::class, 'todo_id', 'todo_comment_id');
     }
 
     /**

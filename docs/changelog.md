@@ -1,5 +1,34 @@
 # Changelog
 
+## 2026-06-06 - Step 073 Mentions
+
+### Added
+
+- Added safe task-comment mentions backed by `todo_comment_mentions`, a
+  server-side mention candidate query, mention handle formatting, and
+  synchronous mention syncing during comment create and edit requests.
+- Added a translated Flux mention picker to the class-based task comments
+  component. Suggestions are limited to the task owner and active project
+  members who already have access to the parent task.
+- Added database-only `todo-comment-mentioned` notifications for newly
+  mentioned allowed users while excluding the author and avoiding duplicate
+  owner notifications on new shared comments.
+- Added local/testing/demo mention rows through the comment seeder and
+  `TodoCommentMentionSeeder`.
+
+### Tests
+
+- Expanded `TaskCommentTest` coverage for mention suggestions, selected-ID
+  tampering, removed-member denial, edit syncing, notification fanout, private
+  user leakage, and factory/seeder mention coverage.
+
+### Restricted Hosting
+
+- Mention parsing, syncing, and notification fanout run during normal
+  authenticated Livewire requests. No cron, queue worker, supervisor, terminal
+  action, Artisan command during normal usage, email provider, hosted mention
+  service, or paid service is required.
+
 ## 2026-06-06 - Step 072 Comments
 
 ### Added

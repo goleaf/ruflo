@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Actions\Todos\SyncTodoCommentMentions;
 use App\Models\Todo;
 use App\Models\TodoComment;
 use App\Models\User;
@@ -34,11 +35,11 @@ class TodoCommentSeeder extends Seeder
             $this->seedThread($avery, $morgan, 'Review the current flow', [
                 [
                     'author' => $avery,
-                    'body' => 'I tightened the next action and left the remaining review point in the checklist.',
+                    'body' => 'I tightened the next action and tagged @morgan-blake for the remaining review point.',
                 ],
                 [
                     'author' => $morgan,
-                    'body' => 'Shared note: I can review the flow after the owner confirms the final decision point.',
+                    'body' => 'Shared note: @avery-chen I can review the flow after the owner confirms the final decision point.',
                     'edited_at' => now()->subMinutes(15),
                 ],
                 [
@@ -51,11 +52,11 @@ class TodoCommentSeeder extends Seeder
             $this->seedThread($morgan, $avery, 'Send the overdue report', [
                 [
                     'author' => $morgan,
-                    'body' => 'The overdue report is ready for final numbers before it goes out.',
+                    'body' => 'The overdue report is ready for final numbers before it goes out. @avery-chen can you verify the audience?',
                 ],
                 [
                     'author' => $avery,
-                    'body' => 'Shared manager note: confirm the audience and keep the summary short.',
+                    'body' => 'Shared manager note: @morgan-blake confirmed the audience and kept the summary short.',
                 ],
             ]);
         });
@@ -96,6 +97,8 @@ class TodoCommentSeeder extends Seeder
                 'edited_at' => $comment['edited_at'] ?? null,
                 'deleted_at' => $comment['deleted_at'] ?? null,
             ])->save();
+
+            app(SyncTodoCommentMentions::class)->handle($author, $todoComment, notify: false);
         }
     }
 }

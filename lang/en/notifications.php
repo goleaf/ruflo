@@ -55,6 +55,10 @@ return [
             'title' => 'New task comment',
             'message' => ':author commented on ":task".',
         ],
+        'mentioned' => [
+            'title' => 'You were mentioned',
+            'message' => ':author mentioned you on ":task".',
+        ],
     ],
 
     'fallback' => [

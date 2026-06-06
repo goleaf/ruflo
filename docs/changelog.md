@@ -1,5 +1,38 @@
 # Changelog
 
+## 2026-06-06 - Step 051 Smart cleanup views
+
+### Implemented
+
+- Added protected class-based Livewire/Flux smart view `todos.cleanup` for stale,
+  unplanned, blocked, and risky active tasks.
+- Added `TodoCleanupFilters` and `TodoCleanupQuery` so URL state is allow-listed,
+  invalid cleanup views fail closed, invalid sort/order values fall back safely,
+  and reads remain owner-scoped.
+- Linked cleanup from the dashboard workspace card and the main task toolbar.
+- Seeded one stale cleanup task and one unplanned cleanup task per safe demo user.
+
+### Testing
+
+- Added `TodoCleanupViewTest` for route protection, private bucket filtering,
+  search/sort/pagination/reset behavior, invalid query parameters, and
+  class-based/no-Volt guardrails.
+- Expanded route, domain, dashboard, architecture, seeder, dependency, factory,
+  private-workspace, restricted-hosting, and localization coverage.
+
+### Documentation
+
+- Updated task organization, authorization, request validation, seeding, domain
+  readiness, todo foundation, changelog, and root progress ledgers with the Step
+  051 cleanup contract.
+
+### Restricted Hosting
+
+- Cleanup views are derived at read time from existing private task rows and need
+  no cron, queue worker, supervisor, terminal access, Artisan command, paid
+  service, background cleanup job, chunk processor, retry loop, or resume token
+  during normal usage.
+
 ## 2026-06-06 - Step 050 Waiting blocker dependency system
 
 ### Implemented

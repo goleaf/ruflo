@@ -76,7 +76,7 @@ Use this file as a persistent task tracker. Step detail lives in `TODO_MASTER_PR
 - [x] Step 048 — Pomodoro focus timer
 - [x] Step 049 — Time tracking
 - [x] Step 050 — Waiting blocker dependency system
-- [ ] Step 051 — Smart views and cleanup views
+- [x] Step 051 — Smart views and cleanup views
 - [ ] Step 052 — Automation rules web-only
 - [ ] Step 053 — Manual web processing engine
 - [ ] Step 054 — Reminder system web-mode

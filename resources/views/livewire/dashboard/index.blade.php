@@ -49,6 +49,10 @@
                         {{ __('dashboard.workspace.blocked_action') }}
                     </flux:button>
 
+                    <flux:button :href="route('todos.cleanup')" wire:navigate variant="subtle" icon="sparkles">
+                        {{ __('dashboard.workspace.cleanup_action') }}
+                    </flux:button>
+
                     <flux:button :href="route('goals.index')" wire:navigate variant="subtle" icon="flag">
                         {{ __('dashboard.workspace.goals_action') }}
                     </flux:button>

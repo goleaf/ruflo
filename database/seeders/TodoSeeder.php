@@ -22,6 +22,7 @@ use App\Models\TodoChecklistItem;
 use App\Models\TodoDependency;
 use App\Models\TodoTemplate;
 use App\Models\User;
+use DateTimeInterface;
 use Illuminate\Database\Seeder;
 
 /**
@@ -90,6 +91,17 @@ class TodoSeeder extends Seeder
         $this->upsertTodo($user, 'Review the quick note', [
             'priority' => Priority::Normal,
             'inbox_captured_at' => now()->subMinutes(15),
+        ]);
+
+        $staleCleanup = $this->upsertTodo($user, 'Refresh the old cleanup note', [
+            'project_id' => $work->id,
+            'priority' => Priority::Normal,
+            'due_date' => today()->addDays(5)->toDateString(),
+        ]);
+        $this->setTodoTimestamps($staleCleanup, now()->subDays(23), now()->subDays(22));
+
+        $this->upsertTodo($user, 'Choose a home admin next step', [
+            'priority' => Priority::Low,
         ]);
 
         $smallImprovement = $this->upsertTodo($user, 'Ship one small improvement', [
@@ -308,6 +320,16 @@ class TodoSeeder extends Seeder
         $todo->tags()->sync(collect($tags)->pluck('id')->all());
 
         return $todo;
+    }
+
+    private function setTodoTimestamps(Todo $todo, DateTimeInterface|string $createdAt, DateTimeInterface|string $updatedAt): void
+    {
+        $todo->timestamps = false;
+        $todo->forceFill([
+            'created_at' => $createdAt,
+            'updated_at' => $updatedAt,
+        ])->save();
+        $todo->timestamps = true;
     }
 
     /**

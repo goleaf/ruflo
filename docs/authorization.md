@@ -36,6 +36,7 @@ scope) rather than across the whole codebase.
 | Board read boundary | `App\Queries\Todos\TodoBoardQuery` | Owner-scoped Kanban columns for active, completed, and archived tasks. |
 | Checklist read boundary | `App\Queries\Todos\TodoChecklistItemListQuery` | Owner-scoped checklist rows for one already scoped parent task. |
 | Dependency read boundary | `App\Queries\Todos\TodoDependencyQuery` | Owner-scoped dependency rows and blocker candidates for already scoped tasks. |
+| Cleanup read boundary | `App\Queries\Todos\TodoCleanupQuery` | Owner-scoped active cleanup smart views for stale, unplanned, blocked, and risky tasks. |
 | Template read boundary | `App\Queries\Todos\TodoTemplateListQuery` | Owner-scoped reusable task/project/checklist/routine templates. |
 | Inbox read boundary | `App\Queries\Todos\TodoInboxQuery` | Owner-scoped active captured tasks waiting for triage. |
 | Focus read boundary | `App\Queries\Todos\TodoFocusQuery` | Owner-scoped active urgent/overdue/due-today/high-priority focus set. |
@@ -192,6 +193,12 @@ blocked tasks through `TodoListQuery::blockedFor()`, eager-loads only
 current-user project/tag/dependency labels, and links back to private task
 detail pages. Dependency add/remove actions live on `todos.show`, where the
 task is already resolved through `TodoListQuery::findVisibleFor()`.
+
+Cleanup smart views use the same private route and owner boundary.
+`todos.cleanup` is a class-based Livewire page behind `auth` and `verified`. It
+reads active tasks through `TodoCleanupQuery`, eager-loads only current-user
+project/tag/dependency labels, treats invalid view parameters as an empty result,
+and never trusts URL search/sort state to widen the owner scope.
 
 ## Error behavior (no leakage)
 

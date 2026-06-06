@@ -1,9 +1,9 @@
 # Task Organization
 
-Through Step 050, the private task lifecycle is extended into a usable productivity system:
+Through Step 051, the private task lifecycle is extended into a usable productivity system:
 projects, tags, priorities, due dates, search, filters, sorting, and bulk
 actions, calendar/board/focus views, contained checklists, templates, a quick
-capture Inbox, time tracking, and task dependencies. Everything here is
+capture Inbox, time tracking, task dependencies, and cleanup smart views. Everything here is
 owner-scoped on top of the model in
 [`authorization.md`](authorization.md) and the lifecycle in
 [`task-lifecycle.md`](task-lifecycle.md).
@@ -364,6 +364,31 @@ is unblocked.
   queue worker, supervisor, shell, Artisan command, paid service, chunk
   processor, retry loop, or background unblock process during normal hosted
   usage.
+
+## Cleanup smart views
+
+Step 051 adds `/todos/cleanup`, a protected class-based Livewire/Flux page for
+reviewing owner-scoped active tasks that need planning attention. It does not add
+storage; the page is derived from existing task, tag, project, and dependency
+rows.
+
+- `TodoCleanupFilters` stores allow-listed URL state for `view`, `search`,
+  `sort`, and `direction`.
+- `TodoCleanupQuery` is the read boundary for cleanup lists and summary counts.
+  It starts from `Todo::ownedBy($user)->active()`, then applies one cleanup view:
+  stale, unplanned, blocked, or risky.
+- Stale tasks are active tasks untouched for 14 days. Unplanned tasks have no
+  project, no due date, no owner tags, and are not still in the quick-capture
+  Inbox. Blocked tasks have at least one open owner-scoped blocker. Risky tasks
+  are urgent undated/due work, overdue high-priority work, or due blocked work.
+- Invalid cleanup view URL state fails closed to an empty result instead of
+  widening the query. Invalid sort and direction values fall back to safe
+  ordering and render translated unavailable chips.
+- The page includes a debounced search input, Flux filter panel controls, active
+  chips, Flux pagination, translated empty states, and task/project links.
+- Cleanup is read-only and synchronous. It requires no cron, queue worker,
+  supervisor, shell, Artisan command, paid service, chunk processor, retry loop,
+  or background cleanup job during normal hosted usage.
 
 ## Inbox
 

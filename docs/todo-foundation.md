@@ -254,6 +254,11 @@ owner-scoped dependency add/remove flows, duplicate/self/cycle validation,
 foreign blocker denial, blocked smart-view filtering, main list blocked filter,
 seeded dependency coverage, and no-Volt class-based Livewire guardrails.
 
+Step 051 adds `TodoCleanupViewTest`, which locks the protected Cleanup route,
+owner-scoped stale/unplanned/blocked/risky smart views, invalid URL fail-closed
+behavior, search/sort/pagination/reset state, seeded cleanup coverage, and
+no-Volt class-based Livewire guardrails.
+
 ## 2026-06-06 Recheck
 
 The Step 001 recheck confirmed the foundation still matches the current master-plan rules after Steps 002-016:

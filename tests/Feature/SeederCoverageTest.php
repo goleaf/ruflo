@@ -15,6 +15,7 @@ use App\Models\TodoChecklistItem;
 use App\Models\TodoDependency;
 use App\Models\TodoTemplate;
 use App\Models\User;
+use App\Queries\Todos\TodoCleanupQuery;
 use App\Queries\Todos\TodoFocusQuery;
 use Database\Seeders\DatabaseSeeder;
 use Illuminate\Support\Facades\Hash;
@@ -42,8 +43,8 @@ test('database seeder creates safe demo users and complete private workspaces', 
         ->and(TodoChecklistItem::query()->count())->toBe(18)
         ->and(TodoDependency::query()->count())->toBe(2)
         ->and(TodoTemplate::query()->count())->toBe(6)
-        ->and(Todo::query()->count())->toBe(16)
-        ->and(Todo::withTrashed()->count())->toBe(18);
+        ->and(Todo::query()->count())->toBe(20)
+        ->and(Todo::withTrashed()->count())->toBe(22);
 
     $users->each(function (User $user): void {
         expect($user->projects()->whereNull('archived_at')->count())->toBe(2)
@@ -64,7 +65,7 @@ test('database seeder creates safe demo users and complete private workspaces', 
             ->and($user->timeEntries()->count())->toBe(2)
             ->and($user->timeEntries()->sum('duration_seconds'))->toBe(3600)
             ->and($user->tags()->pluck('name')->sort()->values()->all())->toBe(['urgent', 'waiting'])
-            ->and($user->todos()->active()->count())->toBe(5)
+            ->and($user->todos()->active()->count())->toBe(7)
             ->and($user->todos()->completed()->count())->toBe(1)
             ->and($user->todos()->archived()->count())->toBe(2)
             ->and($user->todos()->onlyTrashed()->count())->toBe(1)
@@ -81,14 +82,21 @@ test('database seeder creates safe demo users and complete private workspaces', 
             ])
             ->and($user->todos()->overdue()->count())->toBe(1)
             ->and($user->todos()->dueToday()->count())->toBe(1)
-            ->and($user->todos()->upcoming()->count())->toBe(1)
+            ->and($user->todos()->upcoming()->count())->toBe(2)
             ->and($user->savedTodoViews()->pluck('name')->sort()->values()->all())->toBe([
                 'Today focus',
                 'Urgent work',
                 'Waiting on others',
             ])
             ->and(app(TodoFocusQuery::class)->for($user)->pluck('title')->all())
-            ->toContain('Review the current flow', 'Send the overdue report');
+            ->toContain('Review the current flow', 'Send the overdue report')
+            ->and(app(TodoCleanupQuery::class)->summaryFor($user))
+            ->toMatchArray([
+                'stale' => 1,
+                'unplanned' => 1,
+                'blocked' => 1,
+                'risky' => 1,
+            ]);
     });
 });
 
@@ -110,8 +118,8 @@ test('database seeder is idempotent for the current demo catalog', function () {
         ->and(TodoChecklistItem::query()->count())->toBe(18)
         ->and(TodoDependency::query()->count())->toBe(2)
         ->and(TodoTemplate::query()->count())->toBe(6)
-        ->and(Todo::query()->count())->toBe(16)
-        ->and(Todo::withTrashed()->count())->toBe(18)
+        ->and(Todo::query()->count())->toBe(20)
+        ->and(Todo::withTrashed()->count())->toBe(22)
         ->and(Todo::query()->where('title', 'Review the current flow')->count())->toBe(2);
 });
 

@@ -125,6 +125,10 @@
                     {{ __('todos.blocked.actions.open_blocked') }}
                 </flux:button>
 
+                <flux:button size="sm" variant="ghost" icon="sparkles" :href="route('todos.cleanup')" wire:navigate>
+                    {{ __('todos.cleanup.actions.open_cleanup') }}
+                </flux:button>
+
                 <flux:button size="sm" variant="ghost" icon="adjustments-horizontal" wire:click="$set('showManageModal', true)">
                     {{ __('todos.actions.manage') }}
                 </flux:button>

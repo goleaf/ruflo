@@ -76,6 +76,12 @@ validates the blocker picker with `AcyclicTodoDependency`; `AddTodoDependency`
 and `TodoDependencyQuery` repeat owner, active-state, duplicate, self-reference,
 and cycle guards for direct calls.
 
+Step 051 cleanup views remain Livewire-only and read-only. No HTTP Form Request
+or new custom validation rule is introduced because `/todos/cleanup` has no
+controller endpoint and writes no data. URL-backed cleanup state is bounded by
+`TodoCleanupFilters`, invalid views fail closed to an empty result, and invalid
+sort/direction values fall back to safe query defaults.
+
 ## Custom Business Rules
 
 Reusable business validation rules are documented in `docs/validation-rules.md`.

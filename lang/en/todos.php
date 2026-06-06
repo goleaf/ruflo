@@ -54,6 +54,10 @@ return [
             'title' => 'Blocked tasks',
             'description' => 'Review private tasks waiting on other unfinished work.',
         ],
+        'cleanup' => [
+            'title' => 'Smart cleanup',
+            'description' => 'Review stale, unplanned, blocked, and risky tasks without leaving your private workspace.',
+        ],
     ],
 
     'fields' => [
@@ -384,6 +388,63 @@ return [
         'empty' => [
             'title' => 'No blocked tasks.',
             'description' => 'Tasks with open blockers will appear here until the blocker is completed or removed.',
+        ],
+    ],
+
+    'cleanup' => [
+        'label' => 'Smart views',
+        'heading' => 'Smart cleanup',
+        'updated_at' => 'Updated :time',
+        'views' => [
+            'stale' => 'Stale',
+            'unplanned' => 'Unplanned',
+            'blocked' => 'Blocked',
+            'risky' => 'Risky',
+        ],
+        'descriptions' => [
+            'stale' => 'Active tasks untouched for :days days.',
+            'unplanned' => 'Active tasks with no project, due date, or tags.',
+            'blocked' => 'Active tasks waiting on unfinished blockers.',
+            'risky' => 'Urgent, overdue high-priority, or blocked due work.',
+            'invalid' => 'The requested cleanup view is not available.',
+        ],
+        'filters' => [
+            'search_placeholder' => 'Search cleanup tasks...',
+            'view_chip' => 'View: :view',
+        ],
+        'sort' => [
+            'risk' => 'Risk',
+            'updated' => 'Updated',
+            'due' => 'Due date',
+            'priority' => 'Priority',
+            'title' => 'Title',
+        ],
+        'actions' => [
+            'open_cleanup' => 'Cleanup',
+            'review' => 'Review',
+        ],
+        'empty' => [
+            'invalid' => [
+                'title' => 'No matching cleanup view.',
+                'description' => 'Reset filters to return to the stale cleanup view.',
+            ],
+            'stale' => [
+                'title' => 'No stale tasks.',
+                'description' => 'Active tasks updated within the last two weeks stay out of this view.',
+            ],
+            'unplanned' => [
+                'title' => 'No unplanned tasks.',
+                'description' => 'Tasks without project, due date, or tags will appear here after they leave the inbox.',
+            ],
+            'blocked' => [
+                'title' => 'No blocked cleanup tasks.',
+                'description' => 'Tasks with open blockers will appear here until their blockers are resolved.',
+            ],
+            'risky' => [
+                'title' => 'No risky tasks.',
+                'description' => 'Urgent undated tasks, overdue high-priority tasks, and due blocked tasks will appear here.',
+            ],
+            'search_description' => 'No tasks in this cleanup view match that search.',
         ],
     ],
 

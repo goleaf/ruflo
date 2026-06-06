@@ -50,6 +50,7 @@ use App\Data\Habits\HabitProgress;
 use App\Data\Todos\BulkActionResult;
 use App\Data\Todos\SavedTodoViewData;
 use App\Data\Todos\TimeEntryData;
+use App\Data\Todos\TodoCleanupFilters;
 use App\Data\Todos\TodoData;
 use App\Data\Todos\TodoTemplateData;
 use App\Enums\PomodoroSessionStatus;
@@ -65,6 +66,7 @@ use App\Livewire\Projects\Show as ProjectShow;
 use App\Livewire\Todos\Blocked as TodoBlocked;
 use App\Livewire\Todos\Board as TodoBoard;
 use App\Livewire\Todos\Calendar as TodoCalendar;
+use App\Livewire\Todos\Cleanup as TodoCleanup;
 use App\Livewire\Todos\Focus as TodoFocus;
 use App\Livewire\Todos\Inbox as TodoInbox;
 use App\Livewire\Todos\Show as TodoShow;
@@ -89,6 +91,7 @@ use App\Queries\Todos\TimeEntryQuery;
 use App\Queries\Todos\TodoBoardQuery;
 use App\Queries\Todos\TodoCalendarQuery;
 use App\Queries\Todos\TodoChecklistItemListQuery;
+use App\Queries\Todos\TodoCleanupQuery;
 use App\Queries\Todos\TodoDependencyQuery;
 use App\Queries\Todos\TodoFocusQuery;
 use App\Queries\Todos\TodoInboxQuery;
@@ -157,6 +160,7 @@ test('todo foundation classes exist', function () {
         ->and(class_exists(DeleteSavedTodoView::class))->toBeTrue()
         ->and(class_exists(SavedTodoViewData::class))->toBeTrue()
         ->and(class_exists(TimeEntryData::class))->toBeTrue()
+        ->and(class_exists(TodoCleanupFilters::class))->toBeTrue()
         ->and(class_exists(TodoTemplateData::class))->toBeTrue()
         ->and(class_exists(GoalData::class))->toBeTrue()
         ->and(class_exists(GoalMilestoneData::class))->toBeTrue()
@@ -171,6 +175,7 @@ test('todo foundation classes exist', function () {
         ->and(class_exists(TodoBoardQuery::class))->toBeTrue()
         ->and(class_exists(TodoCalendarQuery::class))->toBeTrue()
         ->and(class_exists(TodoChecklistItemListQuery::class))->toBeTrue()
+        ->and(class_exists(TodoCleanupQuery::class))->toBeTrue()
         ->and(class_exists(TodoDependencyQuery::class))->toBeTrue()
         ->and(class_exists(TodoFocusQuery::class))->toBeTrue()
         ->and(class_exists(TodoTemplateListQuery::class))->toBeTrue()
@@ -203,6 +208,7 @@ test('todo foundation classes exist', function () {
         ->and(class_exists(TodoBoard::class))->toBeTrue()
         ->and(class_exists(TodoCalendar::class))->toBeTrue()
         ->and(class_exists(TodoBlocked::class))->toBeTrue()
+        ->and(class_exists(TodoCleanup::class))->toBeTrue()
         ->and(class_exists(TodoShow::class))->toBeTrue()
         ->and(class_exists(TodoFocus::class))->toBeTrue()
         ->and(class_exists(GoalsIndex::class))->toBeTrue()
@@ -318,6 +324,18 @@ test('todo blocked page delegates dependency responsibilities', function () {
     expect($source)
         ->toContain('TodoListQuery')
         ->toContain('blockedFor($this->currentUser()')
+        ->toContain('$this->authorize')
+        ->not->toContain('Todo::query()')
+        ->not->toContain('TodoDependency::query()')
+        ->not->toContain('->save()');
+});
+
+test('todo cleanup page delegates smart view responsibilities', function () {
+    $source = file_get_contents(app_path('Livewire/Todos/Cleanup.php'));
+
+    expect($source)
+        ->toContain('TodoCleanupQuery')
+        ->toContain('TodoCleanupFilters')
         ->toContain('$this->authorize')
         ->not->toContain('Todo::query()')
         ->not->toContain('TodoDependency::query()')

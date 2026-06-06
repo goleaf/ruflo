@@ -37,6 +37,8 @@ The tracked `Reminder` model is currently a placeholder with no ownership, sched
   archived-completed, and trashed tasks.
 - two quick-capture inbox tasks per user, backed by `todos.inbox_captured_at`,
   so `/todos/inbox` is useful immediately after seeding.
+- two cleanup demo tasks per user: `Refresh the old cleanup note` for stale
+  review and `Choose a home admin next step` for unplanned review.
 - contained checklist rows on due-today, overdue, upcoming, and archived tasks
   so task detail pages show progress and locked archived checklist behavior.
 - three saved views per user: `Today focus`, `Urgent work`, and
@@ -91,6 +93,12 @@ exist only as demo/history data for `/todos/time`.
 Step 050's dependencies add one real `todo_dependencies` edge per seeded user.
 The edge is private, owner-scoped, and exists only as demo/planning data for
 `/todos/blocked` and task detail pages.
+
+Step 051's cleanup views add two normal task rows per seeded user. The stale
+cleanup task is organized under `Work` and has an intentionally old `updated_at`
+timestamp reapplied on every seed run. The unplanned cleanup task has no project,
+due date, tag, or inbox timestamp, so `/todos/cleanup?view=unplanned` has
+immediate demo data without confusing it with the quick-capture Inbox.
 
 ## Idempotency
 

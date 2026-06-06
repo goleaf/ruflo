@@ -61,6 +61,7 @@ return [
         'focus_action' => 'Focus',
         'time_action' => 'Track time',
         'blocked_action' => 'Blocked',
+        'cleanup_action' => 'Cleanup',
         'goals_action' => 'Goals',
         'habits_action' => 'Habits',
     ],

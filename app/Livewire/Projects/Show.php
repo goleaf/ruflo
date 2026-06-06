@@ -4,8 +4,11 @@ namespace App\Livewire\Projects;
 
 use App\Actions\Projects\CancelProjectInvitation;
 use App\Actions\Projects\CreateProjectInvitation;
+use App\Actions\Projects\RemoveProjectMember;
+use App\Actions\Projects\UpdateProjectMemberRole;
 use App\Enums\ProjectRole;
 use App\Http\Requests\Projects\StoreProjectInvitationRequest;
+use App\Http\Requests\Projects\UpdateProjectMembershipRequest;
 use App\Models\Project;
 use App\Models\ProjectInvitation;
 use App\Models\ProjectMembership;
@@ -23,6 +26,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\Title;
@@ -41,6 +45,11 @@ class Show extends Component
     public string $inviteRole = 'viewer';
 
     public string $inviteExpiresInDays = '7';
+
+    #[Locked]
+    public ?int $editingMembershipId = null;
+
+    public string $memberRole = 'viewer';
 
     public function mount(int $project, ProjectListQuery $projects): void
     {
@@ -98,6 +107,61 @@ class Show extends Component
         $this->clearInviteState();
 
         Flux::toast(variant: 'success', text: __('todos.collaboration.invites.messages.cancelled'));
+    }
+
+    public function prepareMemberRoleEdit(int $membershipId, ProjectMembershipQuery $memberships): void
+    {
+        $membership = $memberships->findActiveForProject($this->project, $membershipId);
+
+        Gate::forUser($this->currentUser())->authorize('update', $membership);
+
+        $this->editingMembershipId = $membership->id;
+        $this->memberRole = $membership->role->value;
+        $this->resetValidation('memberRole');
+
+        Flux::modal('project-member-role-edit')->show();
+    }
+
+    public function updateMemberRole(ProjectMembershipQuery $memberships, UpdateProjectMemberRole $updateMemberRole): void
+    {
+        if ($this->editingMembershipId === null) {
+            $this->addError('memberRole', __('todos.collaboration.members.validation.member_required'));
+
+            return;
+        }
+
+        $validated = $this->validate(
+            UpdateProjectMembershipRequest::baseRules(),
+            attributes: UpdateProjectMembershipRequest::attributeNames(),
+        );
+
+        $membership = $memberships->findActiveForProject($this->project, $this->editingMembershipId);
+
+        $updateMemberRole->handle(
+            $this->currentUser(),
+            $this->project,
+            $membership,
+            ProjectRole::from((string) $validated['memberRole']),
+        );
+
+        $this->editingMembershipId = null;
+        $this->memberRole = ProjectRole::Viewer->value;
+        $this->clearMemberState();
+
+        Flux::modal('project-member-role-edit')->close();
+        Flux::toast(variant: 'success', text: __('todos.collaboration.members.messages.role_updated'));
+    }
+
+    public function removeMember(int $membershipId, ProjectMembershipQuery $memberships, RemoveProjectMember $removeMember): void
+    {
+        $membership = $memberships->findActiveForProject($this->project, $membershipId);
+
+        Gate::forUser($this->currentUser())->authorize('delete', $membership);
+
+        $removeMember->handle($this->currentUser(), $this->project, $membership->user);
+        $this->clearMemberState();
+
+        Flux::toast(variant: 'success', text: __('todos.collaboration.members.messages.removed'));
     }
 
     #[Computed]
@@ -207,5 +271,11 @@ class Show extends Component
     private function clearInviteState(): void
     {
         unset($this->invitations);
+    }
+
+    private function clearMemberState(): void
+    {
+        unset($this->memberships);
+        unset($this->summary);
     }
 }

@@ -39,4 +39,14 @@ final class ProjectMembershipQuery
             ->active()
             ->first();
     }
+
+    public function findActiveForProject(Project $project, int $membershipId): ProjectMembership
+    {
+        return ProjectMembership::query()
+            ->with(['project', 'user:id,name,email'])
+            ->where('project_id', $project->id)
+            ->whereKey($membershipId)
+            ->active()
+            ->firstOrFail();
+    }
 }

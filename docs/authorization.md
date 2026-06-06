@@ -148,7 +148,11 @@ The Livewire component authorizes **before** delegating to an action:
 - Project memberships use `ProjectMembershipPolicy`: members are visible only
   through an accessible project, and updates/deletes are reserved for users who
   can manage the project members. The project owner is derived from
-  `projects.user_id` and cannot be added as or removed as a membership row.
+  `projects.user_id` and cannot be added as, role-edited as, or removed as a
+  membership row. Member role edits and removals resolve submitted membership
+  ids through `ProjectMembershipQuery::findActiveForProject()` before the
+  policy or action can mutate anything, so foreign and removed membership ids
+  fail closed.
 - Project invitations use `ProjectInvitationPolicy`: invite lifecycle rows are
   visible and cancellable only to users who can manage the project members.
   Invite acceptance is a signed-link workflow that re-checks pending status,

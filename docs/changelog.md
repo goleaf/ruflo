@@ -1,5 +1,29 @@
 # Changelog
 
+## 2026-06-06 - Step 070 Member management
+
+### Added
+
+- Added manager/owner member-management controls to the project detail page for
+  role editing and member removal.
+- Added `UpdateProjectMemberRole`, `UpdateProjectMembershipRequest`, and
+  `ProjectMemberRole` so member role updates use a dedicated action, request
+  rule source, and reusable translated validation rule.
+- Added active project membership lookup for scoped role edits and removals so
+  foreign or removed membership ids fail closed.
+
+### Tests
+
+- Added `ProjectMemberManagementTest` coverage for owner and manager role
+  updates, editor/viewer denial, owner protection, foreign membership ids,
+  removed member old-link access, and shared/private isolation.
+
+### Restricted Hosting
+
+- Member role edits and removals run during normal authenticated web requests.
+  No cron, queue worker, supervisor, terminal action, Artisan command during
+  normal usage, email provider, hosted service, or paid service is required.
+
 ## 2026-06-06 - Step 069 Link-only invite system
 
 ### Added

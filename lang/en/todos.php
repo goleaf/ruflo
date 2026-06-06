@@ -1034,6 +1034,29 @@ return [
             'description' => 'Active members can open this project according to their role. Removed members immediately lose old-link access.',
             'count' => '{1} :count member|[2,*] :count members',
             'empty' => 'Only the owner can access this private project.',
+            'fields' => [
+                'role' => 'Member role',
+            ],
+            'actions' => [
+                'edit_role' => 'Edit role',
+                'save_role' => 'Save role',
+                'remove' => 'Remove',
+            ],
+            'role_modal' => [
+                'heading' => 'Edit member role',
+                'description' => 'Change the access this member has for the shared project.',
+                'warning' => 'Role changes apply immediately. Removed members lose project and task access right away.',
+            ],
+            'confirm_remove' => 'Remove this member from the project?',
+            'messages' => [
+                'role_updated' => 'Member role updated.',
+                'removed' => 'Member removed.',
+            ],
+            'validation' => [
+                'role' => 'Choose a valid member role.',
+                'member_required' => 'Choose a project member first.',
+                'owner_not_editable' => 'The project owner role cannot be edited.',
+            ],
         ],
         'invites' => [
             'label' => 'Invites',

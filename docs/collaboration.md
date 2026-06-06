@@ -80,6 +80,27 @@ Acceptance re-checks that:
 The membership write reuses `AddProjectMember`, so owner-role and owner-member
 guards stay centralized.
 
+## Member Management
+
+Step 070 adds role editing and member removal to the project detail page for
+owners and managers. Editors and viewers can see the member list, scope badge,
+and their own role, but they do not receive role-edit or removal controls.
+
+Role changes use the dedicated `UpdateProjectMemberRole` action, the
+`UpdateProjectMembershipRequest` rule source, and the `ProjectMemberRole`
+custom rule. Only `manager`, `editor`, and `viewer` are assignable from the UI;
+the project owner role remains derived from `projects.user_id` and cannot be
+assigned or edited as a membership row.
+
+Member removal reuses `RemoveProjectMember`, sets `removed_at`, and immediately
+removes access through `ProjectAccess`. Old project and task links for removed
+members return not found instead of revealing project names, task titles, or
+member details.
+
+Every submitted membership id is re-queried through
+`ProjectMembershipQuery::findActiveForProject()` before authorization and
+mutation, so stale, removed, and foreign membership rows fail closed.
+
 ## Seeding
 
 `ProjectMembershipSeeder` runs only in local, testing, or demo environments. It
@@ -105,3 +126,7 @@ Link-only invites follow the same restricted-hosting contract. Creation,
 cancellation, and acceptance are normal web requests. There is no cron, queue
 worker, supervisor, terminal action, Artisan command during normal usage, email
 provider, hosted invite service, or paid dependency.
+
+Member role changes and removals are normal authenticated Livewire requests.
+They require no cron, queue worker, supervisor, terminal action, Artisan command
+during normal usage, hosted service, email provider, or paid dependency.

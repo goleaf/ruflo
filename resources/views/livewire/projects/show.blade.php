@@ -68,7 +68,38 @@
                         <flux:text class="text-xs text-zinc-500 dark:text-zinc-400">{{ $membership->user->email }}</flux:text>
                     </div>
 
-                    <flux:badge size="sm" :color="$membership->role->color()">{{ $membership->role->label() }}</flux:badge>
+                    <div class="flex flex-col gap-2 sm:flex-row sm:items-center">
+                        <flux:badge size="sm" :color="$membership->role->color()">{{ $membership->role->label() }}</flux:badge>
+
+                        @if ($this->canManageMembers)
+                            <div class="flex flex-wrap gap-2">
+                                <flux:button
+                                    type="button"
+                                    size="sm"
+                                    variant="subtle"
+                                    icon="pencil-square"
+                                    wire:click="prepareMemberRoleEdit({{ $membership->id }})"
+                                    data-test="project-member-edit-role-{{ $membership->id }}"
+                                >
+                                    {{ __('todos.collaboration.members.actions.edit_role') }}
+                                </flux:button>
+
+                                <flux:button
+                                    type="button"
+                                    size="sm"
+                                    variant="ghost"
+                                    icon="user-minus"
+                                    wire:click="removeMember({{ $membership->id }})"
+                                    wire:confirm="{{ __('todos.collaboration.members.confirm_remove') }}"
+                                    wire:loading.attr="disabled"
+                                    wire:target="removeMember({{ $membership->id }})"
+                                    data-test="project-member-remove-{{ $membership->id }}"
+                                >
+                                    {{ __('todos.collaboration.members.actions.remove') }}
+                                </flux:button>
+                            </div>
+                        @endif
+                    </div>
                 </div>
             @empty
                 <div class="px-3 py-3">
@@ -81,6 +112,36 @@
     </flux:card>
 
     @if ($this->canManageMembers)
+        <flux:modal name="project-member-role-edit" class="md:w-[26rem]">
+            <form wire:submit="updateMemberRole" class="space-y-5" data-test="project-member-role-form">
+                <div>
+                    <flux:heading size="lg">{{ __('todos.collaboration.members.role_modal.heading') }}</flux:heading>
+                    <flux:text class="mt-2">{{ __('todos.collaboration.members.role_modal.description') }}</flux:text>
+                </div>
+
+                <flux:select wire:model="memberRole" :label="__('todos.collaboration.members.fields.role')">
+                    @foreach ($this->inviteRoleOptions as $option)
+                        <flux:select.option :value="$option['value']">{{ $option['label'] }}</flux:select.option>
+                    @endforeach
+                </flux:select>
+                <flux:error name="memberRole" />
+
+                <flux:callout icon="shield-check" variant="secondary">
+                    <flux:callout.text>{{ __('todos.collaboration.members.role_modal.warning') }}</flux:callout.text>
+                </flux:callout>
+
+                <div class="flex justify-end gap-2">
+                    <flux:modal.close>
+                        <flux:button type="button" variant="ghost">{{ __('todos.actions.cancel') }}</flux:button>
+                    </flux:modal.close>
+
+                    <flux:button type="submit" variant="primary" icon="shield-check" wire:loading.attr="disabled" wire:target="updateMemberRole">
+                        {{ __('todos.collaboration.members.actions.save_role') }}
+                    </flux:button>
+                </div>
+            </form>
+        </flux:modal>
+
         <flux:card class="space-y-4" data-test="project-invites">
             <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div class="space-y-1">

@@ -14,6 +14,7 @@ ownership rules:
 - `App\Rules\Habits\HabitTitle`
 - `App\Rules\Projects\ProjectInvitationExpiryDays`
 - `App\Rules\Projects\ProjectInviteRole`
+- `App\Rules\Projects\ProjectMemberRole`
 - `App\Rules\Reminders\ReminderAt`
 - `App\Rules\Todos\AcyclicTodoDependency`
 - `App\Rules\Todos\BoardStatus`
@@ -55,6 +56,10 @@ string inputs before `CreateProjectInvitation` stores a signed, expiring link.
 `ProjectInviteRole` validates assignable project invitation roles. It accepts
 only non-owner collaboration roles so forged Livewire payloads cannot create an
 owner invite.
+
+`ProjectMemberRole` validates assignable project member-management roles. It
+accepts only manager, editor, and viewer values so forged Livewire payloads
+cannot assign or edit the derived project owner role.
 
 `ReminderAt` validates browser `datetime-local` reminder timestamps. It accepts
 canonical minute/second browser values in the configured app timezone and
@@ -131,6 +136,7 @@ The action layer still re-scopes ids to the current user before writing. The rul
 
 Rule failure messages live in `lang/en/todos.php` under `todos.validation` and
 feature sections such as `todos.collaboration.invites.validation`, in
+`todos.collaboration.members.validation`, in
 `lang/en/goals.php` under `goals.validation`, and feature-specific files such
 as `lang/en/automation.php` and `lang/en/reminders.php`.
 
@@ -217,6 +223,13 @@ Step 044 added `App\Rules\Todos\InboxCaptureTitle` and wired it into the
 quick-capture Livewire form plus `CaptureInboxTodo` and `TriageInboxTodo`.
 The rule keeps captured titles visible-text-only, normalized, translated, and
 bounded before a captured task can be written or triaged.
+
+## 2026-06-06 Step 070 Update
+
+Step 070 adds `App\Rules\Projects\ProjectMemberRole` for project
+member-management role updates. The rule rejects owner and unknown role values
+at the Livewire validation boundary, while `UpdateProjectMemberRole` repeats
+the owner-role and assignable-role guards for direct backend calls.
 
 ## 2026-06-06 Step 046 Recheck
 

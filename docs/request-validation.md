@@ -118,6 +118,13 @@ component consumes its `baseRules()` and `attributeNames()` helpers, while
 `CreateProjectInvitation` repeats role, expiration, project, and authorization
 guards before a signed link-only invite is stored.
 
+Step 070 project member management remains Livewire-only. No controller action
+is introduced, but `UpdateProjectMembershipRequest` is the canonical source for
+member-role form rules and translated attributes. The project page consumes its
+`baseRules()` and `attributeNames()` helpers, while `UpdateProjectMemberRole`
+repeats active-membership, owner-role, assignable-role, and authorization
+guards before updating a membership row.
+
 ## Custom Business Rules
 
 Reusable business validation rules are documented in `docs/validation-rules.md`.

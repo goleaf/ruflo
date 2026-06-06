@@ -309,10 +309,15 @@ final class TodoListQuery
         $direction = $direction === 'asc' ? 'asc' : 'desc';
 
         match ($sort) {
-            'due' => $query->orderByRaw('due_date is null')->orderBy('due_date', $direction)->orderByDesc('created_at'),
+            'due' => $query
+                ->orderByRaw('due_date is null')
+                ->orderBy('due_date', $direction)
+                ->orderByDesc('created_at')
+                ->orderByDesc('id'),
             'priority' => $query
                 ->orderByRaw(Priority::sortCaseSql().' '.$direction)
-                ->orderByDesc('created_at'),
+                ->orderByDesc('created_at')
+                ->orderByDesc('id'),
             'project' => $query
                 ->orderByRaw('project_id is null')
                 ->orderBy(
@@ -323,10 +328,19 @@ final class TodoListQuery
                         ->limit(1),
                     $direction,
                 )
-                ->orderByDesc('created_at'),
-            'title' => $query->orderBy('title', $direction),
-            'updated' => $query->orderBy('updated_at', $direction),
-            default => $query->orderBy('created_at', $direction),
+                ->orderByDesc('created_at')
+                ->orderByDesc('id'),
+            'title' => $query
+                ->orderBy('title', $direction)
+                ->orderByDesc('created_at')
+                ->orderByDesc('id'),
+            'updated' => $query
+                ->orderBy('updated_at', $direction)
+                ->orderByDesc('created_at')
+                ->orderByDesc('id'),
+            default => $query
+                ->orderBy('created_at', $direction)
+                ->orderBy('id', $direction),
         };
     }
 

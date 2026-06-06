@@ -98,6 +98,8 @@ return [
         'tag_chip' => 'Tag: :tag',
         'priority_chip' => 'Priority: :priority',
         'due_chip' => 'Due: :due',
+        'sort_chip' => 'Sort: :sort',
+        'direction_chip' => 'Order: :direction',
         'unavailable_filter' => 'Unavailable',
     ],
 

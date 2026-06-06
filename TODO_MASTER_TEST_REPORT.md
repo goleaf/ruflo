@@ -505,3 +505,20 @@ Record test/build/check results here.
 | 2026-06-06 | `git diff --check` | Passed | No whitespace errors after Step 036 changes. |
 | 2026-06-06 | `mcp__laravel_boost.browser_logs entries=20` | Passed | Only an old Vite reconnect message from 2026-06-05 was present; no current filter UI browser/runtime error was found. |
 | 2026-06-06 | `php artisan test --compact` | Passed | Full suite passed with 329 tests and 1484 assertions after Step 036 filter changes. |
+| 2026-06-06 | `mcp__laravel_boost.application_info` | Passed | Confirmed Step 037 runtime context: Laravel 13.14.0, Livewire 4.3.1, Flux 2.14.1, Tailwind 4.3.0, Pest 4.7.2, PHP CLI 8.4, SQLite. |
+| 2026-06-06 | `mcp__laravel_boost.search_docs` | Passed | Reviewed Laravel query sorting/raw expressions, Livewire URL query state and pagination, Flux select/badge localization, and Pest/Laravel response assertions before Step 037 changes. |
+| 2026-06-06 | `mcp__laravel_boost.database_schema summary/todos/projects` | Passed | Reconfirmed todo/project ownership, date, priority, project, timestamp, and index columns before tightening sorting. |
+| 2026-06-06 | `php artisan make:test TaskSortingTest --pest --no-interaction` | Passed | Created the Step 037 sorting regression test. |
+| 2026-06-06 | `php artisan test --compact tests/Feature/TaskSortingTest.php` | Failed then fixed | First run caught unavailable Flux `icon.arrow-up-down` in rendered sort/order chips; changed chips to the installed `adjustments-horizontal` icon. |
+| 2026-06-06 | `php artisan view:clear --no-interaction && php artisan test --compact tests/Feature/TaskSortingTest.php` | Passed | 6 tests, 22 assertions for owner-scoped sorting, null-last due sorting, deterministic tie-breakers, URL pagination/chips, reset, and tampered sort/direction fallback. |
+| 2026-06-06 | `vendor/bin/pint --dirty --format agent` | Passed | PHP style passed after Step 037 query, Livewire, translation, test, and documentation updates. |
+| 2026-06-06 | `php artisan test --compact tests/Feature/TaskSortingTest.php` | Passed | 6 tests, 22 assertions after Pint formatting. |
+| 2026-06-06 | `php artisan test --compact tests/Feature/TaskSortingTest.php tests/Feature/TaskFilterTest.php tests/Feature/TaskSearchTest.php tests/Feature/TodoOrganizationTest.php tests/Feature/TaskPriorityTest.php tests/Feature/TaskDueDateTest.php tests/Feature/OwnershipQueryScopingTest.php tests/Feature/TaskPrivateViewsTest.php tests/Feature/TodoArchitectureTest.php` | Passed | 78 tests, 327 assertions across sorting, filters, search, organization, priority, due dates, ownership scoping, private views, and architecture guards. |
+| 2026-06-06 | `rg Volt scan` | Passed | No Volt usage found in app, resources, routes, config, tests, Composer, or package files after Step 037. |
+| 2026-06-06 | `rg hardcoded sort/order copy scan` | Passed | No hardcoded visible sort/order labels remain outside English language files. |
+| 2026-06-06 | `rg sorting source guard scan` | Passed | Confirmed translated sort chips, direction chips, safe sort labels, priority sort SQL, allow-listed sort options, and deterministic id tie-breakers are in the expected source locations. |
+| 2026-06-06 | `rg compressed-progress scan` | Passed | Mutable root progress/docs files contain no compressed grouped-step placeholder lines after Step 037. |
+| 2026-06-06 | `php artisan route:list --no-interaction -vv --path=todos` | Passed | Reconfirmed todo routes remain behind auth and verified middleware after Step 037. |
+| 2026-06-06 | `git diff --check` | Passed | No whitespace errors after Step 037 changes. |
+| 2026-06-06 | `mcp__laravel_boost.browser_logs entries=20` | Passed | Only an old Vite reconnect message from 2026-06-05 was present; no current sort UI browser/runtime error was found. |
+| 2026-06-06 | `php artisan test --compact` | Passed | Full suite passed with 335 tests and 1506 assertions after Step 037 sorting changes. |

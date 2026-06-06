@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-06-06 - Step 037 Sorting
+
+### Implemented
+
+- Added deterministic tie-breakers to every todo sort path so pagination remains stable for tied created, updated, due-date, priority, project, and title values.
+- Added translated Flux chips for non-default or tampered sort and direction URL state.
+- Kept sorting owner-scoped through `TodoListQuery`, with allow-listed sort keys and safe direction fallback.
+
+### Testing
+
+- Added `TaskSortingTest` for owner-scoped title sorting, due-date null-last ordering, project/priority sorting, created-at tie-breakers, URL-backed sort pagination, reset behavior, and tampered sort/direction fallback.
+- Rechecked the focused sorting test after fixing an invalid Flux icon name caught by the first test run.
+
+### Documentation
+
+- Updated `docs/task-organization.md` and `docs/todo-foundation.md` with the Step 037 sorting contract.
+
 ## 2026-06-06 - Step 036 Filters
 
 ### Implemented

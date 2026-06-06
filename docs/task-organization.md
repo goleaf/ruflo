@@ -112,8 +112,9 @@ the (sanitized) filter object.
   active filter chip. Search composes with pagination and reset behavior.
 - **Filters** — lifecycle tab (active/completed/archived), project (or "none"),
   tag, priority, and due bucket. Every filter value is sanitized in the
-  component's `buildFilters()` before it reaches the query: unknown enum/sort/
-  due values fall back to safe defaults and can never widen scope.
+  component's `buildFilters()` before it reaches the query: unknown sort values
+  fall back to safe defaults, and invalid lifecycle/priority/due values are
+  carried as invalid filter state so they can never widen scope.
   Numeric project/tag filters are re-checked inside `TodoListQuery::filtered()`;
   foreign, archived, or missing ids return an empty result rather than applying
   another user's id or falling back to an unfiltered list. Step 035 also treats
@@ -128,7 +129,11 @@ the (sanitized) filter object.
   via a bounded `CASE`), `project` (by owned project name, ungrouped tasks last),
   or `title`, each asc/desc. The sort key is validated against
   an allow-list, so a tampered `?sort=` string can never inject SQL — it falls
-  back to `created`. (Tested with an injection-style value.)
+  back to `created`. Step 037 adds deterministic tie-breakers for every sort
+  path so pagination remains stable when tasks share the same title, date,
+  project, priority, or timestamp. Non-default and tampered sort/direction URL
+  state renders as translated Flux chips so users can see the current ordering
+  and reset it with the rest of the filter panel.
 - **Pagination** — the list is paginated (15/page) via `WithPagination`; it
   never loads an unbounded result set.
 

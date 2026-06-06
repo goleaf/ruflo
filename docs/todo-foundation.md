@@ -190,6 +190,11 @@ filters, filter chips, filter pagination, invalid priority/due/lifecycle query
 state returning empty results, and reset behavior for filters, selection, and
 pagination.
 
+Step 037 adds `TaskSortingTest`, which locks owner-scoped title sorting, due
+date null-last ordering, project and priority sorting, deterministic created-at
+tie-breakers, URL-backed sort pagination, translated sort/order chips, reset
+behavior, and tampered sort/direction fallback.
+
 ## 2026-06-06 Recheck
 
 The Step 001 recheck confirmed the foundation still matches the current master-plan rules after Steps 002-016:

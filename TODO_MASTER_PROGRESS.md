@@ -2,19 +2,19 @@
 
 ## Current status
 
-Steps 001-036 are complete. The requested recheck from Step 001 has been completed through Step 036. The tracker is expanded to one ledger line per step from 001 through 100 so later work cannot be hidden behind a range.
+Steps 001-037 are complete. The requested recheck from Step 001 has been completed through Step 037. The tracker is expanded to one ledger line per step from 001 through 100 so later work cannot be hidden behind a range.
 
 ## Current step
 
-Step 037 — Sorting
+Step 038 — Saved views
 
 ## Last completed action
 
-Completed Step 036 by adding invalid-filter state to the task filter value object, returning empty results for invalid lifecycle/priority/due filter state, preserving composed private filter pagination, and adding filter regression tests.
+Completed Step 037 by adding deterministic tie-breakers to every allowed todo sort path, rendering translated sort/order chips for URL sort state, preserving owner-scoped sort pagination, and adding sorting regression tests.
 
 ## Next action
 
-Begin `steps/step-037-sorting.md`, then implement the next not-yet-completed plan step without grouping it with later work.
+Begin `steps/step-038-saved-views.md`, then implement the next not-yet-completed plan step without grouping it with later work.
 
 ## Step ledger
 
@@ -56,7 +56,7 @@ Begin `steps/step-037-sorting.md`, then implement the next not-yet-completed pla
 | 034 — Upcoming view | Complete | Added protected class-based `App\Livewire\Todos\Upcoming` at `todos.upcoming`, added `TodoListQuery::upcomingFor()` and `findUpcomingFor()`, rendered a focused Flux Upcoming list with owner-scoped project/tag badges and complete action, and linked the dashboard to Upcoming. | Boost app info/docs/schema checks, focused `UpcomingViewTest`, adjacent upcoming/overdue/today/date/list/private-view/project-detail/dashboard/domain/route-protection/architecture suite, static scans, browser logs, and full-suite checks passed; final evidence recorded in test report. | `docs/task-organization.md`, `docs/domain-readiness.md`, `docs/todo-foundation.md`, `docs/changelog.md`, root changelog, decisions, risks, checklist, and test report updated. | Upcoming action scope risk logged and mitigated with `findUpcomingFor()`. | 114e7e0 |
 | 035 — Search | Complete | Added translated Flux active filter chips for search and existing filters, kept private title search local through owner-scoped bound `LIKE ... ESCAPE` queries, and hardened non-numeric project/tag URL filters so searched lists cannot be widened by unexpected query params. | Boost app info/docs/schema checks, focused `TaskSearchTest`, adjacent search/organization/ownership/private-view/due-date/dashboard/route-protection/architecture suite, static scans, browser logs, and full-suite checks passed; final evidence recorded in test report. | `docs/task-organization.md`, `docs/todo-foundation.md`, `docs/changelog.md`, root changelog, decisions, risks, checklist, and test report updated. | Non-numeric project/tag query-param widening risk logged and mitigated. | 0f42e4e |
 | 036 — Filters | Complete | Added `TodoFilters::hasInvalidFilter`, made `TodoListQuery` resolve invalid scalar filter state to an empty owner-scoped result, hardened invalid lifecycle/priority/due URL state, and preserved composed project/tag/priority/due filter chips, pagination, and reset behavior. | Boost app info/docs/schema checks, focused `TaskFilterTest`, adjacent filter/search/organization/ownership/due-date/private-view/dashboard/route-protection/architecture suite, static scans, browser logs, and full-suite checks passed; final evidence recorded in test report. | `docs/task-organization.md`, `docs/todo-foundation.md`, `docs/changelog.md`, root changelog, decisions, risks, checklist, and test report updated. | Invalid lifecycle/priority/due filter widening risk logged and mitigated. | 1a49e1c |
-| 037 — Sorting | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 037 — Sorting | Complete | Added stable secondary ordering to every allow-listed todo sort path, kept unsafe sort/direction URL state on safe fallbacks, rendered translated sort/order chips, and preserved owner-scoped pagination for sorted private task lists. | Boost app info/docs/schema checks, focused `TaskSortingTest`, failed-then-fixed Flux icon render check, adjacent todo/filter/privacy suite, static scans, route/browser checks, and full suite passed; evidence recorded in test report. | `docs/task-organization.md`, `docs/todo-foundation.md`, `docs/changelog.md`, root changelog, decisions, risks, checklist, and test report updated. | Flux sort-chip icon availability risk logged and mitigated. | Pending stable commit |
 | 038 — Saved views | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
 | 039 — Bulk selection and actions | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
 | 040 — Kanban board | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |

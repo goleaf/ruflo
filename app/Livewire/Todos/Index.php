@@ -643,6 +643,24 @@ class Index extends Component
             ];
         }
 
+        if ($this->sort !== '' && $this->sort !== 'created') {
+            $chips[] = [
+                'key' => 'sort',
+                'label' => (string) __('todos.filters.sort_chip', ['sort' => $this->sortFilterLabel()]),
+                'color' => 'zinc',
+                'icon' => 'adjustments-horizontal',
+            ];
+        }
+
+        if ($this->direction !== '' && $this->direction !== 'desc') {
+            $chips[] = [
+                'key' => 'direction',
+                'label' => (string) __('todos.filters.direction_chip', ['direction' => $this->directionFilterLabel()]),
+                'color' => 'zinc',
+                'icon' => 'adjustments-horizontal',
+            ];
+        }
+
         return $chips;
     }
 
@@ -695,6 +713,22 @@ class Index extends Component
             'upcoming' => (string) __('todos.filters.upcoming'),
             'with' => (string) __('todos.filters.with_due_date'),
             'without' => (string) __('todos.filters.without_due_date'),
+            default => (string) __('todos.filters.unavailable_filter'),
+        };
+    }
+
+    private function sortFilterLabel(): string
+    {
+        return in_array($this->sort, TodoFilters::sortOptions(), true)
+            ? (string) __('todos.sort.'.$this->sort)
+            : (string) __('todos.filters.unavailable_filter');
+    }
+
+    private function directionFilterLabel(): string
+    {
+        return match ($this->direction) {
+            'asc' => (string) __('todos.sort.asc'),
+            'desc' => (string) __('todos.sort.desc'),
             default => (string) __('todos.filters.unavailable_filter'),
         };
     }

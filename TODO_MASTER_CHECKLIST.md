@@ -58,7 +58,7 @@ Use this file as a persistent task tracker. Step detail lives in `TODO_MASTER_PR
 - [x] Step 030 — Priorities
 - [x] Step 031 — Due dates and date logic
 - [x] Step 032 — Today view
-- [ ] Step 033 — Overdue view
+- [x] Step 033 — Overdue view
 - [ ] Step 034 — Upcoming view
 - [ ] Step 035 — Search
 - [ ] Step 036 — Filters

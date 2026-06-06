@@ -144,6 +144,28 @@ The Today page:
 The dashboard workspace card now links directly to Today for quick review while
 keeping the full task workspace one click away.
 
+## Overdue view
+
+Step 033 adds a dedicated `todos.overdue` Livewire page for active tasks with a
+due date before today. It is protected by the same `auth` and `verified`
+middleware as the main todo workspace and uses `TodoListQuery::overdueFor()`
+so reads stay owner-scoped, active-only, and eager-loaded for project/tag
+badges.
+
+The Overdue page:
+
+- displays only current-user active tasks where `due_date` is before today in
+  the app timezone,
+- excludes today, upcoming, completed, archived, trashed, and foreign tasks,
+- links each task to its private detail page,
+- includes project/tag badges that reuse existing owner-scoped links,
+- offers a complete action limited through `TodoListQuery::findOverdueFor()`,
+- links back to the main task workspace with the equivalent `due=overdue`
+  filter.
+
+The dashboard workspace card links to Overdue beside the Today and full Todo
+workspace shortcuts.
+
 ## Bulk actions
 
 `BulkCompleteTodos`, `BulkArchiveTodos`, `BulkUnarchiveTodos`, `BulkMoveTodos`,

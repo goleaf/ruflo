@@ -52,5 +52,6 @@ return [
         'description' => 'Lists, project filters, tag filters, and dashboard counters use the same authenticated owner boundary.',
         'action' => 'Open todos',
         'today_action' => 'Open today',
+        'overdue_action' => 'Review overdue',
     ],
 ];

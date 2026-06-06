@@ -53,3 +53,4 @@ Record changes after every step.
 - Completed Step 030 by tightening priority validation with Laravel enum rules, rejecting invalid direct DTO priority data, centralizing priority sort SQL on the enum weights, and adding priority validation/filter/sort regression tests.
 - Completed Step 031 by adding a reusable date-only due-date rule, hardening direct DTO due-date parsing, documenting app-timezone bucket behavior, and adding due-date validation/filter/timezone regression tests.
 - Completed Step 032 by adding a protected Today Livewire page, owner-scoped due-today query/action boundaries, a dashboard shortcut, translated Today copy, and Today route/privacy tests.
+- Completed Step 033 by adding a protected Overdue Livewire page, owner-scoped overdue query/action boundaries, a dashboard shortcut, translated Overdue copy, and overdue route/privacy tests.

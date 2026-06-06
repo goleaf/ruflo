@@ -450,6 +450,32 @@
 
 - Added `docs/frontend-design-system.md` with Tailwind 4, Flux, and SCSS usage rules.
 
+## 2026-06-06 - Step 033 Overdue view
+
+### Implemented
+
+- Added a protected class-based Livewire Overdue page at `todos.overdue`
+  (`/todos/overdue`) for active tasks past their due date.
+- Added `TodoListQuery::overdueFor()` and `findOverdueFor()` so Overdue reads
+  and actions stay owner-scoped and limited to active overdue tasks.
+- Added a dashboard shortcut to the Overdue page beside the Today and full todo
+  workspace links.
+- Added translated Overdue page copy, empty-state copy, count labels, and
+  filtered list action text.
+
+### Testing
+
+- Added `OverdueViewTest` for guest/unverified redirects, owner-only overdue
+  rendering, active-only exclusions, translated empty state, overdue-only
+  completion, route middleware, and URL contract.
+- Re-ran adjacent Today, date, organization, private-view, project-detail,
+  dashboard, domain, route-protection, and architecture coverage.
+
+### Documentation
+
+- Updated `docs/task-organization.md`, `docs/domain-readiness.md`, and
+  `docs/todo-foundation.md` for the dedicated Overdue view and route contract.
+
 ## 2026-06-06 - Step 032 Today view
 
 ### Implemented

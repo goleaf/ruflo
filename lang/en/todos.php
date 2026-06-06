@@ -18,6 +18,10 @@ return [
             'title' => 'Today',
             'description' => 'Focus on active tasks due today in your private workspace.',
         ],
+        'overdue' => [
+            'title' => 'Overdue',
+            'description' => 'Review active tasks that are past their due date without exposing another workspace.',
+        ],
     ],
 
     'fields' => [
@@ -229,6 +233,14 @@ return [
         'count' => 'Due today',
         'open_filtered' => 'Filtered list',
         'empty_description' => 'Tasks with today as their due date will appear here while they are active.',
+    ],
+
+    'overdue' => [
+        'label' => 'Past due',
+        'date' => 'Before :date',
+        'count' => 'Overdue',
+        'open_filtered' => 'Filtered list',
+        'empty_description' => 'Active tasks appear here after their due date passes.',
     ],
 
     'exceptions' => [

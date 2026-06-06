@@ -170,6 +170,11 @@ Step 032 adds `TodayViewTest`, which locks the protected Today route, owner-only
 due-today rendering, active-only exclusions, empty state, dashboard/domain link
 contract, and the Today page's due-today-only complete action boundary.
 
+Step 033 adds `OverdueViewTest`, which locks the protected Overdue route,
+owner-only past-due rendering, active-only exclusions, empty state,
+dashboard/domain link contract, and the Overdue page's overdue-only complete
+action boundary.
+
 ## 2026-06-06 Recheck
 
 The Step 001 recheck confirmed the foundation still matches the current master-plan rules after Steps 002-016:

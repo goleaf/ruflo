@@ -152,6 +152,10 @@ Step 028 adds `ProjectDetailTest`, which locks private project detail routing,
 owner-scoped project/task rendering, archived project readability, translated
 empty states, and project badge links from task list/detail surfaces.
 
+Step 029 expands `TagTest`, which locks tag-name normalization, whitespace-only
+name rejection, direct-action bypass protection, scoped tag filter links, and
+cross-user tag isolation.
+
 ## 2026-06-06 Recheck
 
 The Step 001 recheck confirmed the foundation still matches the current master-plan rules after Steps 002-016:

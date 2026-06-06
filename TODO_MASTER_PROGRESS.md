@@ -2,19 +2,19 @@
 
 ## Current status
 
-Steps 001-028 are complete. The requested recheck from Step 001 has been completed through Step 028. The tracker is expanded to one ledger line per step from 001 through 100 so later work cannot be hidden behind a range.
+Steps 001-029 are complete. The requested recheck from Step 001 has been completed through Step 029. The tracker is expanded to one ledger line per step from 001 through 100 so later work cannot be hidden behind a range.
 
 ## Current step
 
-Step 029 — Tags and labels
+Step 030 — Priorities
 
 ## Last completed action
 
-Completed Step 028 by adding a private owner-scoped project detail route and class-based Livewire page, linking project badges from task list/detail surfaces, keeping archived projects readable but out of active filters, and adding project-detail privacy coverage.
+Completed Step 029 by adding normalized tag-name validation, hardening direct tag creation against empty normalized names, linking rendered tag badges to owner-scoped tag filters, and expanding tag privacy/assignment/filter tests.
 
 ## Next action
 
-Begin `steps/step-029-tags-and-labels.md`, then implement the next not-yet-completed plan step without grouping it with later work.
+Begin `steps/step-030-priorities.md`, then implement the next not-yet-completed plan step without grouping it with later work.
 
 ## Step ledger
 
@@ -48,7 +48,7 @@ Begin `steps/step-029-tags-and-labels.md`, then implement the next not-yet-compl
 | 026 — Task deletion and trash behavior | Complete | Added the `trash` lifecycle tab and summary count, `RestoreDeletedTodo`, `BulkRestoreDeletedTodos`, `TodoRestoredFromTrash`, owner-scoped `findTrashedFor()`, `TodoPolicy::restore`, selected deleted-task validation, restore-only trash UI, dashboard trash count, and one trashed demo task per seeded user. Kept `forceDelete` denied and absent from UI. | Boost docs search, route/delete/trash inventory, make:class/make:event/make:test, focused `TaskDeletionTrashTest`, adjacent todo/privacy/dashboard/seeder suite, Pint, source scans, compressed-progress scan, diff check, browser logs, local seed verification, and full suite recorded in test report. | `docs/task-lifecycle.md`, `docs/authorization.md`, `docs/task-organization.md`, `docs/todo-foundation.md`, `docs/seeding-strategy.md`, `docs/factory-coverage.md`, `docs/changelog.md`, root changelog, decisions, risks, and test report updated. | Permanent-delete data-loss risk logged and mitigated by keeping `forceDelete` disabled; bulk-delete event skipping fixed by delegating to `DeleteTodo`. | c931e4e |
 | 027 — Task lifecycle state machine | Complete | Added `TodoTransition` and `TodoLifecycleStateMachine` as the centralized accepted-source-state and target-bucket contract. Routed complete, reopen, archive, unarchive, delete, restore-from-trash, and update actions through the state-machine guard before mutation. Added language-backed trash-specific invalid transition exceptions for direct action calls. | Boost docs search, lifecycle/action inventory, make:class/make:test, focused `TaskLifecycleStateMachineTest`, adjacent lifecycle/action/policy/ownership/architecture suite, Pint, translation/source scans, compressed-progress scan, diff check, browser logs, and full suite recorded in test report. | `docs/task-lifecycle.md`, `docs/todo-foundation.md`, `docs/changelog.md`, `lang/en/todos.php`, root changelog, decisions, risks, and test report updated. | Lifecycle rule drift risk logged and mitigated with the centralized state machine and regression tests. | e1ecf6b |
 | 028 — Projects and lists | Complete | Added `App\Livewire\Projects\Show` and the protected `projects.show` route. Project badges now link to private project detail pages, project detail reads/counts use owner-scoped query methods, archived projects remain readable for review while active pickers/filters still exclude them, and empty project states are translated. Existing create, rename, archive, restore, delete, no-project, and bulk move behavior was rechecked. | Boost app info/docs search/schema inspection, project/action/query/policy/UI/test inventory, make:class/make:test, focused `ProjectDetailTest`, projects route middleware check, adjacent project/organization/privacy/architecture/factory/seeder suite, plus scans and full-suite checks recorded in test report. | `docs/task-organization.md`, `docs/authorization.md`, `docs/todo-foundation.md`, `docs/changelog.md`, `lang/en/todos.php`, root changelog, decisions, risks, and test report updated. | Project detail route leak risk logged and mitigated with owner-scoped lookup, locked id, route protection, and regression tests. | 9d10797 |
-| 029 — Tags and labels | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 029 — Tags and labels | Complete | Added `App\Rules\Tags\TagName`, wired it into tag creation, and hardened `CreateTag` so whitespace-only names cannot persist after normalization. Rendered tag badges now link to the existing `todos.index` tag filter from task list, task detail, and project detail pages. Existing scoped tag creation, duplicate handling, assignment/removal, deletion, filtering, factories, and seeders were rechecked. | Boost app info/docs search/schema inspection, tag model/action/query/policy/UI/test inventory, make:rule, focused `TagTest`, adjacent tag/organization/create/edit/privacy/validation/policy/factory/seeder suite, plus scans and full-suite checks recorded in test report. | `docs/task-organization.md`, `docs/validation-rules.md`, `docs/todo-foundation.md`, `docs/changelog.md`, `lang/en/todos.php`, root changelog, decisions, risks, and test report updated. | Whitespace-only normalized tag-name risk logged and mitigated with a reusable rule, action-level guard, translation key, and regression tests. | Pending stable commit |
 | 030 — Priorities | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
 | 031 — Due dates and date logic | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
 | 032 — Today view | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |

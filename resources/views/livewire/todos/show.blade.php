@@ -68,7 +68,9 @@
 
             <div class="flex flex-wrap gap-1.5">
                 @forelse ($this->todo->tags as $tagBadge)
-                    <flux:badge wire:key="detail-tag-{{ $tagBadge->id }}" size="sm" :color="$tagBadge->color" variant="outline">#{{ $tagBadge->name }}</flux:badge>
+                    <a href="{{ route('todos.index', ['tag' => $tagBadge->id]) }}" wire:navigate>
+                        <flux:badge wire:key="detail-tag-{{ $tagBadge->id }}" size="sm" :color="$tagBadge->color" variant="outline">#{{ $tagBadge->name }}</flux:badge>
+                    </a>
                 @empty
                     <flux:text class="text-sm">{{ __('todos.fields.no_tags') }}</flux:text>
                 @endforelse

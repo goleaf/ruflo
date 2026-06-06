@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-06-06 - Step 029 Tags and labels
+
+### Implemented
+
+- Added `App\Rules\Tags\TagName` so tag names must contain visible content after normalization.
+- Hardened `CreateTag` so direct backend callers cannot persist an empty normalized tag name.
+- Linked rendered tag badges from task list, task detail, and project detail pages to the existing owner-scoped tag filter.
+
+### Testing
+
+- Expanded `TagTest` for whitespace-only Livewire validation, direct action bypass protection, normalized duplicate behavior, current-user-only tag filter links, delete behavior, and cross-user isolation.
+- Rechecked organization, create/edit, ownership, private view, project detail, validation-rule architecture, authorization, factory, seeder, and architecture suites.
+
+### Documentation
+
+- Updated `docs/task-organization.md`, `docs/validation-rules.md`, and `docs/todo-foundation.md` with the Step 029 tag validation and filter-link contracts.
+
 ## 2026-06-06 - Step 028 Projects and lists
 
 ### Implemented

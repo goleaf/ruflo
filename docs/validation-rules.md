@@ -4,11 +4,16 @@ RuFlo uses reusable Laravel rule objects for business validation that appears in
 
 ## Current Rules
 
-The current committed app has task, project, and tag ownership rules:
+The current committed app has tag-name and todo workspace ownership rules:
 
+- `App\Rules\Tags\TagName`
 - `App\Rules\Todos\OwnedActiveProject`
 - `App\Rules\Todos\OwnedTag`
 - `App\Rules\Todos\OwnedTodo`
+
+`TagName` validates that a submitted tag name still has visible content after
+normalization (`squish()` + lower-case). It prevents whitespace-only labels
+from being persisted if a form input contains only spaces.
 
 `OwnedActiveProject` validates that a project id belongs to the authenticated user and is not archived. It is used for task project assignment and bulk move targets.
 
@@ -37,3 +42,9 @@ Confirmed and updated:
 - Removed the unused `ReminderAtIsActionable` placeholder rule because it had an empty `validate()` body and no concrete caller.
 - Added architecture coverage so future custom rules cannot be silently committed as empty placeholders.
 - Future reminder, invite, recurrence, upload, import/export, settings, and role rules remain deferred until their feature steps add real request surfaces and tests.
+
+## 2026-06-06 Step 029 Recheck
+
+Step 029 added `App\Rules\Tags\TagName` and wired it into tag creation. The
+`CreateTag` action also rejects a normalized empty name so backend callers stay
+safe if Livewire validation is bypassed.

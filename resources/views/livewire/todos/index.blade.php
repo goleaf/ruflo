@@ -265,7 +265,9 @@
                             @endif
 
                             @foreach ($todo->tags as $tagBadge)
-                                <flux:badge size="sm" :color="$tagBadge->color" variant="outline">#{{ $tagBadge->name }}</flux:badge>
+                                <a href="{{ route('todos.index', ['tag' => $tagBadge->id]) }}" wire:navigate>
+                                    <flux:badge size="sm" :color="$tagBadge->color" variant="outline">#{{ $tagBadge->name }}</flux:badge>
+                                </a>
                             @endforeach
                         </div>
                     </div>

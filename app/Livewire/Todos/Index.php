@@ -38,6 +38,7 @@ use App\Queries\Projects\ProjectListQuery;
 use App\Queries\Tags\TagListQuery;
 use App\Queries\Todos\TodoFilters;
 use App\Queries\Todos\TodoListQuery;
+use App\Rules\Tags\TagName;
 use App\Rules\Todos\OwnedActiveProject;
 use App\Rules\Todos\OwnedTodo;
 use Flux\Flux;
@@ -462,7 +463,7 @@ class Index extends Component
     {
         $this->authorize('create', Tag::class);
         $this->validate(
-            ['newTagName' => ['required', 'string', 'max:50']],
+            ['newTagName' => ['required', 'string', 'max:50', new TagName]],
             attributes: ['newTagName' => __('todos.fields.tag_name')],
         );
 

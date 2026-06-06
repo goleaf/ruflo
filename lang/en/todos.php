@@ -236,6 +236,7 @@ return [
         'owned_tag' => 'Choose one of your tags.',
         'owned_todo' => 'Choose one of your tasks.',
         'owned_deleted_todo' => 'Choose one of your deleted tasks.',
+        'tag_name' => 'Enter a tag name with at least one letter or number.',
     ],
 
     'modals' => [

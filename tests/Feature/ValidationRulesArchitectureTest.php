@@ -9,6 +9,7 @@ test('custom validation rules are implemented and use translated failure message
 
     expect($ruleFiles->map(fn (string $path): string => str_replace(app_path('Rules').'/', '', $path))->all())
         ->toBe([
+            'Tags/TagName.php',
             'Todos/OwnedActiveProject.php',
             'Todos/OwnedTag.php',
             'Todos/OwnedTodo.php',

@@ -37,10 +37,14 @@ actions. Everything here is owner-scoped on top of the model in
 - Many-to-many with tasks. Tag names are normalized (squished + lower-cased) so
   "Work", "work", and " work " collapse to one label; a per-user unique
   constraint enforces it. Two different users may each own a tag named "work".
-- Creating a tag uses `firstOrCreate`, so the same name never fragments.
+- Creating a tag uses `TagName` validation and `firstOrCreate`, so whitespace-only
+  names are rejected and the same normalized name never fragments.
 - Deleting a tag removes the pivot rows (cascade) but never the tasks.
 - Tag ids on a task are re-scoped to the user before syncing — foreign tag ids
   are silently dropped.
+- Rendered tag badges link to the existing `todos.index?tag=...` owner-scoped
+  filter instead of a separate tag detail page. Bulk tag assignment remains
+  deferred to the later bulk workflow steps.
 - Authorization: `TagPolicy` (owner-only; not-found denials).
 
 ## Priority
@@ -136,6 +140,9 @@ page and clears the bulk selection.
 - Project badges in task lists and task detail pages link to the private
   project detail page. The detail page renders the project status, scoped
   lifecycle counts, a paginated task list, and a translated empty state.
+- Tag badges in task lists, task detail pages, and project detail pages link to
+  the existing tag filter with `wire:navigate`; foreign tag ids still resolve
+  to an empty owner-scoped result if a URL is tampered.
 - All text is translatable via `lang/en/todos.php`. Project/tag pickers only
   ever list the current user's own resources.
 

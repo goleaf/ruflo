@@ -58,7 +58,9 @@
                         @if ($todo->tags->isNotEmpty())
                             <div class="flex flex-wrap gap-1.5">
                                 @foreach ($todo->tags as $tagBadge)
-                                    <flux:badge wire:key="project-task-{{ $todo->id }}-tag-{{ $tagBadge->id }}" size="sm" :color="$tagBadge->color" variant="outline">#{{ $tagBadge->name }}</flux:badge>
+                                    <a href="{{ route('todos.index', ['tag' => $tagBadge->id]) }}" wire:navigate>
+                                        <flux:badge wire:key="project-task-{{ $todo->id }}-tag-{{ $tagBadge->id }}" size="sm" :color="$tagBadge->color" variant="outline">#{{ $tagBadge->name }}</flux:badge>
+                                    </a>
                                 @endforeach
                             </div>
                         @endif

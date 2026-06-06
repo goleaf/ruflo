@@ -3,6 +3,7 @@
 use App\Actions\Habits\LinkTodoToHabit;
 use App\Actions\Habits\ToggleHabitCheckIn;
 use App\Data\Habits\HabitProgress;
+use App\Livewire\Habits\Create as HabitsCreate;
 use App\Livewire\Habits\Index as HabitsIndex;
 use App\Models\Goal;
 use App\Models\Habit;
@@ -21,10 +22,17 @@ test('habits route redirects guests and unverified users', function () {
     $this->get(route('habits.index'))
         ->assertRedirect(route('login'));
 
+    $this->get(route('habits.create'))
+        ->assertRedirect(route('login'));
+
     $user = User::factory()->unverified()->create();
 
     $this->actingAs($user)
         ->get(route('habits.index'))
+        ->assertRedirect(route('verification.notice'));
+
+    $this->actingAs($user)
+        ->get(route('habits.create'))
         ->assertRedirect(route('verification.notice'));
 });
 
@@ -68,11 +76,15 @@ test('habits render owner scoped check ins linked tasks and honest streak progre
         ->assertSee('Plan every day')
         ->assertSee('Build calmer routines')
         ->assertSee('Run weekly review')
-        ->assertSee('Linked habit task')
         ->assertSee(__('habits.progress.text', ['completed' => 1, 'target' => 1, 'period' => __('habits.period.daily'), 'percent' => 100]))
         ->assertSee(__('habits.progress.text', ['completed' => 2, 'target' => 2, 'period' => __('habits.period.weekly'), 'percent' => 100]))
         ->assertSee(__('habits.progress.streak', ['count' => 3]))
         ->assertDontSee('Foreign habit')
+        ->assertDontSee('Deleted habit task');
+
+    Livewire::actingAs($user)->test(HabitsIndex::class)
+        ->set('tab', 'tasks')
+        ->assertSee('Linked habit task')
         ->assertDontSee('Deleted habit task');
 });
 
@@ -81,7 +93,7 @@ test('habit creation validates translated input and owner scoped goals', functio
     $goal = Goal::factory()->for($user)->create();
     $foreignGoal = Goal::factory()->create();
 
-    Livewire::actingAs($user)->test(HabitsIndex::class)
+    Livewire::actingAs($user)->test(HabitsCreate::class)
         ->set('title', '   ')
         ->call('createHabit')
         ->assertHasErrors(['title'])
@@ -99,7 +111,8 @@ test('habit creation validates translated input and owner scoped goals', functio
         ->assertHasErrors(['goal_id'])
         ->set('goalId', (string) $goal->id)
         ->call('createHabit')
-        ->assertHasNoErrors();
+        ->assertHasNoErrors()
+        ->assertRedirect(route('habits.index'));
 
     $habit = Habit::query()->whereBelongsTo($user)->where('title', 'Run weekly review')->firstOrFail();
 
@@ -155,26 +168,77 @@ test('tasks link to habits through owner scoped actions only', function () {
         ->toThrow(ValidationException::class);
 });
 
+test('habits index uses tabs and creation lives on its own page', function () {
+    $user = User::factory()->create();
+    $habit = Habit::factory()->for($user)->daily()->titled('Read every morning')->create();
+    Todo::factory()->forHabit($habit)->active()->create(['title' => 'Prepare reading list']);
+
+    $this->actingAs($user)
+        ->get(route('habits.index'))
+        ->assertOk()
+        ->assertSee('data-test="habits-tabs"', false)
+        ->assertSee('role="tablist"', false)
+        ->assertSee(__('habits.tabs.habits'))
+        ->assertSee(__('habits.tabs.tasks'))
+        ->assertSee('data-test="habit-list-panel"', false)
+        ->assertSee(route('habits.create'), false)
+        ->assertDontSee(__('habits.create.description'));
+
+    $this->actingAs($user)
+        ->get(route('habits.create'))
+        ->assertOk()
+        ->assertSee(__('habits.pages.create.title'))
+        ->assertSee(__('habits.create.description'))
+        ->assertSee(route('habits.index'), false);
+
+    Livewire::actingAs($user)
+        ->test(HabitsIndex::class)
+        ->assertSet('tab', 'habits')
+        ->assertSee('Read every morning')
+        ->assertDontSee('Prepare reading list')
+        ->set('tab', 'tasks')
+        ->assertSee('Prepare reading list')
+        ->assertSee(__('habits.link.heading'))
+        ->assertDontSee(__('habits.progress.label'));
+});
+
 test('habits route component and view follow architecture guardrails', function () {
     $route = Route::getRoutes()->getByName('habits.index');
+    $createRoute = Route::getRoutes()->getByName('habits.create');
     $componentSource = file_get_contents(app_path('Livewire/Habits/Index.php'));
+    $createComponentSource = file_get_contents(app_path('Livewire/Habits/Create.php'));
     $viewSource = file_get_contents(resource_path('views/livewire/habits/index.blade.php'));
+    $createViewSource = file_get_contents(resource_path('views/livewire/habits/create.blade.php'));
 
     expect(route('habits.index'))->toBe('https://ruflo.test/habits')
+        ->and(route('habits.create'))->toBe('https://ruflo.test/habits/create')
         ->and($route?->gatherMiddleware())->toContain('auth', 'verified')
+        ->and($createRoute?->gatherMiddleware())->toContain('auth', 'verified')
         ->and($componentSource)
         ->toContain('HabitListQuery')
-        ->toContain('CreateHabit')
         ->toContain('ToggleHabitCheckIn')
         ->toContain('LinkTodoToHabit')
-        ->toContain('HabitTitle')
-        ->toContain('HabitTargetCount')
         ->toContain('$this->authorize')
         ->not->toContain('Habit::query()')
         ->not->toContain('Todo::query()')
         ->not->toContain('->save()')
+        ->and($createComponentSource)
+        ->toContain('CreateHabit')
+        ->toContain('GoalListQuery')
+        ->toContain('HabitTitle')
+        ->toContain('HabitTargetCount')
+        ->toContain('$this->authorize')
+        ->not->toContain('Habit::query()')
+        ->not->toContain('->save()')
         ->and($viewSource)
+        ->toContain('data-test="habits-tabs"')
+        ->toContain('role="tablist"')
         ->toContain('<flux:progress')
         ->toContain('habits.progress.text')
+        ->not->toContain('wire:submit="createHabit"')
+        ->not->toContain('habits.create.description')
+        ->and($createViewSource)
+        ->toContain('wire:submit="createHabit"')
+        ->toContain('habits.create.description')
         ->not->toContain('@php');
 });

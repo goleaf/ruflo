@@ -33,6 +33,8 @@ class Index extends Component
 {
     use AuthorizesRequests;
 
+    public string $tab = 'goals';
+
     public string $title = '';
 
     public string $description = '';
@@ -68,6 +70,7 @@ class Index extends Component
         $goal = $createGoal->handle($this->currentUser(), GoalData::fromArray($this->validatedGoalInput()));
 
         $this->reset(['title', 'description', 'projectId', 'targetDate']);
+        $this->tab = 'goals';
         $this->refreshGoalState();
 
         Flux::toast(variant: 'success', text: __('goals.messages.created', ['title' => $goal->title]));
@@ -78,6 +81,7 @@ class Index extends Component
         $milestone = $createMilestone->handle($this->currentUser(), GoalMilestoneData::fromArray($this->validatedMilestoneInput()));
 
         $this->reset(['milestoneGoalId', 'milestoneTitle', 'milestoneTargetDate']);
+        $this->tab = 'goals';
         $this->refreshGoalState();
 
         Flux::toast(variant: 'success', text: __('goals.messages.milestone_created', ['title' => $milestone->title]));

@@ -144,6 +144,33 @@ test('tasks link to goals and milestones through owner scoped actions only', fun
         ->toThrow(ValidationException::class);
 });
 
+test('goals page presents workflow blocks as tabs', function () {
+    $user = User::factory()->create();
+
+    $this->actingAs($user)
+        ->get(route('goals.index'))
+        ->assertOk()
+        ->assertSee('data-test="goals-tabs"', false)
+        ->assertSee('role="tablist"', false)
+        ->assertSee(__('goals.tabs.goals'))
+        ->assertSee(__('goals.tabs.create'))
+        ->assertSee(__('goals.tabs.milestones'))
+        ->assertSee('data-test="goal-list-panel"', false)
+        ->assertDontSee(__('goals.create.description'))
+        ->assertDontSee(__('goals.milestones.create_description'));
+
+    Livewire::actingAs($user)
+        ->test(GoalsIndex::class)
+        ->assertSet('tab', 'goals')
+        ->assertSee(__('goals.empty.title'))
+        ->set('tab', 'create')
+        ->assertSee(__('goals.create.heading'))
+        ->assertDontSee(__('goals.milestones.create_heading'))
+        ->set('tab', 'milestones')
+        ->assertSee(__('goals.milestones.create_heading'))
+        ->assertDontSee(__('goals.create.description'));
+});
+
 test('goals route component and view follow architecture guardrails', function () {
     $route = Route::getRoutes()->getByName('goals.index');
     $componentSource = file_get_contents(app_path('Livewire/Goals/Index.php'));
@@ -162,6 +189,9 @@ test('goals route component and view follow architecture guardrails', function (
         ->not->toContain('Todo::query()')
         ->not->toContain('->save()')
         ->and($viewSource)
+        ->toContain('data-test="goals-tabs"')
+        ->toContain('role="tablist"')
+        ->toContain("wire:click=\"\$set('tab', '{{ \$tabValue }}')\"")
         ->toContain('<flux:progress')
         ->toContain('goals.progress.text')
         ->not->toContain('@php');

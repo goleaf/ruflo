@@ -71,6 +71,7 @@ use App\Enums\TodoTransition;
 use App\Events\TodoChecklistChanged;
 use App\Livewire\Forms\Todos\TodoForm;
 use App\Livewire\Goals\Index as GoalsIndex;
+use App\Livewire\Habits\Create as HabitsCreate;
 use App\Livewire\Habits\Index as HabitsIndex;
 use App\Livewire\Projects\Show as ProjectShow;
 use App\Livewire\Todos\Automations as TodoAutomations;
@@ -227,6 +228,7 @@ test('todo foundation classes exist', function () {
         ->and(class_exists(TodoShow::class))->toBeTrue()
         ->and(class_exists(TodoFocus::class))->toBeTrue()
         ->and(class_exists(GoalsIndex::class))->toBeTrue()
+        ->and(class_exists(HabitsCreate::class))->toBeTrue()
         ->and(class_exists(HabitsIndex::class))->toBeTrue()
         ->and(class_exists(TodoTemplates::class))->toBeTrue()
         ->and(class_exists(TodoInbox::class))->toBeTrue()
@@ -258,17 +260,23 @@ test('todo foundation classes exist', function () {
 
 test('habits page delegates habit responsibilities', function () {
     $source = file_get_contents(app_path('Livewire/Habits/Index.php'));
+    $createSource = file_get_contents(app_path('Livewire/Habits/Create.php'));
 
     expect($source)
         ->toContain('HabitListQuery')
-        ->toContain('CreateHabit')
         ->toContain('ToggleHabitCheckIn')
         ->toContain('LinkTodoToHabit')
+        ->toContain('$this->authorize')
+        ->not->toContain('Habit::query()')
+        ->not->toContain('Todo::query()')
+        ->not->toContain('->save()')
+        ->and($createSource)
+        ->toContain('CreateHabit')
+        ->toContain('GoalListQuery')
         ->toContain('HabitTitle')
         ->toContain('HabitTargetCount')
         ->toContain('$this->authorize')
         ->not->toContain('Habit::query()')
-        ->not->toContain('Todo::query()')
         ->not->toContain('->save()');
 });
 

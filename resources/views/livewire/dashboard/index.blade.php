@@ -1,4 +1,4 @@
-<section class="space-y-8">
+<x-ui.page-container gap="gap-8">
     <x-ui.page-header :title="__('dashboard.heading')" :description="__('dashboard.description')" />
 
     <div class="overflow-x-auto pb-2" data-test="dashboard-summary-widgets">
@@ -73,4 +73,4 @@
             </div>
         </div>
     </flux:card>
-</section>
+</x-ui.page-container>

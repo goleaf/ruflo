@@ -71,3 +71,25 @@ test('authenticated users can visit the dashboard', function () {
         ->assertDontSeeText('npx ruflo@latest mcp start')
         ->assertDontSeeText('/plugin marketplace add ruvnet/ruflo');
 });
+
+test('workspace pages use the shared page container width', function () {
+    $containerSource = file_get_contents(resource_path('views/components/ui/page-container.blade.php'));
+
+    expect($containerSource)
+        ->toContain('max-w-6xl')
+        ->toContain('$attributes->class');
+
+    foreach ([
+        'dashboard/index.blade.php',
+        'todos/index.blade.php',
+        'goals/index.blade.php',
+        'habits/index.blade.php',
+    ] as $view) {
+        $source = file_get_contents(resource_path("views/livewire/{$view}"));
+
+        expect($source)
+            ->toContain('<x-ui.page-container')
+            ->not->toContain('max-w-5xl')
+            ->not->toContain('max-w-6xl');
+    }
+});

@@ -10,6 +10,10 @@ return [
             'title' => 'Habits tracker',
             'description' => 'Track daily and weekly habits with real check-ins, streaks, and linked work.',
         ],
+        'create' => [
+            'title' => 'Create habit',
+            'description' => 'Define a private daily or weekly routine, then return to the tracker for check-ins.',
+        ],
     ],
 
     'summary' => [
@@ -19,6 +23,11 @@ return [
         'current_streak' => 'Current streak',
         'best_streak' => 'Best streak',
         'linked_tasks' => 'Linked tasks',
+    ],
+
+    'tabs' => [
+        'habits' => 'Habits',
+        'tasks' => 'Linked tasks',
     ],
 
     'fields' => [
@@ -49,7 +58,9 @@ return [
 
     'actions' => [
         'back_to_dashboard' => 'Back to dashboard',
+        'back_to_habits' => 'Back to habits',
         'open_goals' => 'Open goals',
+        'new_habit' => 'New habit',
         'create' => 'Create habit',
         'check_in_today' => 'Check in today',
         'undo_today' => 'Undo today',
@@ -75,6 +86,10 @@ return [
     'linked_tasks' => [
         'heading' => 'Linked tasks',
         'completed' => 'Completed',
+        'empty' => [
+            'title' => 'No linked tasks yet.',
+            'description' => 'Choose a task below to connect work to this habit.',
+        ],
     ],
 
     'link' => [

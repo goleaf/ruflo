@@ -19,6 +19,12 @@ return [
         'linkable_tasks' => 'Linkable tasks',
     ],
 
+    'tabs' => [
+        'goals' => 'Goals',
+        'create' => 'Create goal',
+        'milestones' => 'Add milestone',
+    ],
+
     'fields' => [
         'goal' => 'Goal',
         'choose_goal' => 'Choose a goal',

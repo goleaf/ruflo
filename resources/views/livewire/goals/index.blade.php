@@ -1,4 +1,4 @@
-<section class="mx-auto flex w-full max-w-6xl flex-col gap-6">
+<x-ui.page-container>
     <x-ui.page-header :title="__('goals.pages.index.title')" :description="__('goals.pages.index.description')">
         <div class="flex flex-col gap-3 sm:min-w-80">
             <div class="grid grid-cols-2 gap-3 text-sm">
@@ -18,8 +18,28 @@
         </div>
     </x-ui.page-header>
 
-    <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <flux:card class="space-y-5" data-test="goal-create">
+    <div class="space-y-4" data-test="goals-tabs">
+        <div role="tablist" class="flex flex-wrap gap-1 rounded-lg border border-zinc-200 bg-zinc-50 p-1 dark:border-white/10 dark:bg-zinc-900">
+            @foreach (['goals', 'create', 'milestones'] as $tabValue)
+                <button
+                    type="button"
+                    role="tab"
+                    wire:click="$set('tab', '{{ $tabValue }}')"
+                    @class([
+                        'rounded-md px-3 py-1.5 text-sm font-medium transition',
+                        'bg-white text-zinc-950 shadow-sm dark:bg-white/10 dark:text-white' => $tab === $tabValue,
+                        'text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-100' => $tab !== $tabValue,
+                    ])
+                    aria-selected="{{ $tab === $tabValue ? 'true' : 'false' }}"
+                >
+                    {{ __('goals.tabs.'.$tabValue) }}
+                </button>
+            @endforeach
+        </div>
+
+        @if ($tab === 'create')
+            <div role="tabpanel" data-test="goal-create-panel">
+                <flux:card class="space-y-5" data-test="goal-create">
             <div>
                 <flux:heading size="lg">{{ __('goals.create.heading') }}</flux:heading>
                 <flux:text class="mt-1">{{ __('goals.create.description') }}</flux:text>
@@ -59,9 +79,12 @@
                     </flux:button>
                 </div>
             </form>
-        </flux:card>
+                </flux:card>
+            </div>
 
-        <flux:card class="space-y-5" data-test="goal-milestone-create">
+        @elseif ($tab === 'milestones')
+            <div role="tabpanel" data-test="goal-milestone-panel">
+                <flux:card class="space-y-5" data-test="goal-milestone-create">
             <div>
                 <flux:heading size="lg">{{ __('goals.milestones.create_heading') }}</flux:heading>
                 <flux:text class="mt-1">{{ __('goals.milestones.create_description') }}</flux:text>
@@ -96,10 +119,12 @@
                     </flux:button>
                 </div>
             </form>
-        </flux:card>
-    </div>
+                </flux:card>
+            </div>
 
-    <div class="grid grid-cols-1 gap-4 lg:grid-cols-2" data-test="goal-list">
+        @else
+            <div role="tabpanel" data-test="goal-list-panel">
+                <div class="grid grid-cols-1 gap-4 lg:grid-cols-2" data-test="goal-list">
         @forelse ($this->goalCards as $card)
             <flux:card wire:key="goal-card-{{ $card['goal']->id }}" class="space-y-5" data-test="goal-card">
                 <div class="flex items-start gap-3">
@@ -229,5 +254,8 @@
                 />
             </div>
         @endforelse
+                </div>
+            </div>
+        @endif
     </div>
-</section>
+</x-ui.page-container>

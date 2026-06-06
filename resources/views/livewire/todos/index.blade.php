@@ -1,4 +1,4 @@
-<section class="mx-auto flex w-full max-w-5xl flex-col gap-6">
+<x-ui.page-container>
     <x-ui.page-header :title="__('todos.pages.index.title')" :description="__('todos.pages.index.description')">
         <div class="grid grid-cols-2 gap-3 text-sm sm:grid-cols-3 lg:grid-cols-6 lg:min-w-[42rem]">
             <x-ui.stat :label="__('todos.summary.active')" :value="$this->summary['active']" />
@@ -597,4 +597,4 @@
             </div>
         </div>
     </flux:modal>
-</section>
+</x-ui.page-container>

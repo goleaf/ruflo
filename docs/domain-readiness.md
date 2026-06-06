@@ -22,6 +22,7 @@ The current application surface covers these URL consumers:
 - Public home route at `/`.
 - Authenticated dashboard route at `/dashboard`.
 - Authenticated todo route at `/todos`.
+- Authenticated task detail routes at `/todos/{todo}`.
 - Protected setup route at `/settings/setup`.
 - Protected maintenance route at `/settings/maintenance`.
 - Fortify login, registration, password confirmation, and verification routes.

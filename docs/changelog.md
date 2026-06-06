@@ -1,5 +1,24 @@
 # Changelog
 
+## 2026-06-06 - Step 022 Task list and private task views
+
+### Implemented
+
+- Added a class-based Livewire task detail page at `todos.show` (`/todos/{todo}`) behind the existing authenticated and verified todo route group.
+- Resolved task detail records through `TodoListQuery::findVisibleFor()` with a locked route id so guessed or foreign IDs return not found without leaking content.
+- Linked rendered task titles in the private list to their owner-scoped detail pages.
+- Added translated detail-page copy and metadata labels for status, due date, project, tags, created, and updated timestamps.
+
+### Testing
+
+- Added `TaskPrivateViewsTest` for guest redirects, unverified redirects, own-task rendering, foreign 404 behavior, list-link privacy, direct Livewire foreign-id denial, and route/component guardrails.
+- Extended the domain readiness route contract for `todos.show`.
+- Rechecked adjacent todo list, ownership, lifecycle, organization, project, tag, creation, route-protection, and domain suites.
+
+### Documentation
+
+- Updated `docs/authorization.md`, `docs/task-organization.md`, and `docs/domain-readiness.md` with the Step 022 private detail-view contract.
+
 ## 2026-06-06 - Step 021 Core task creation
 
 ### Implemented

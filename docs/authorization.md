@@ -112,6 +112,12 @@ Settings routes use the same public/private boundary:
 - `settings/maintenance` also requires the admin-only
   `access-maintenance-center` gate.
 
+Task detail pages use the same private route boundary. `todos.show` is a
+class-based Livewire page behind `auth` and `verified`, accepts only a numeric
+task id, resolves the record through `TodoListQuery::findVisibleFor()`, and
+locks the public `todoId` property. A guessed or foreign id returns not found
+without rendering the foreign title, project, tag, priority, or due date.
+
 ## Error behavior (no leakage)
 
 - Forbidden private records resolve as **not found** (404-style), never
@@ -179,3 +185,8 @@ routes, profile settings remain reachable to authenticated unverified users,
 sensitive settings require password confirmation, maintenance remains
 admin-only, protected route middleware cannot be removed silently, and the demo
 login panel never renders stored password hashes.
+
+`TaskPrivateViewsTest` locks the Step 022 contract: task detail pages redirect
+guests and unverified users, render only the owner's task data, return not
+found for foreign ids, expose only current-user detail links in the task list,
+and keep the detail component on locked IDs plus owner-scoped queries.

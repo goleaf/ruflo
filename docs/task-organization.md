@@ -114,6 +114,9 @@ and `BulkDeleteTodos` each take the user plus a list of selected ids and
   recoverable.
 - Per-row badges: priority (hidden when Normal to reduce noise), due date
   (red overdue / amber today / zinc upcoming), project, and tags.
+- Task titles link to `todos.show`, a private detail page that reuses the same
+  status, priority, due-date, project, and tag badges after resolving the task
+  through the owner-scoped query boundary.
 - A filter toolbar (search, project, tag, priority, due, sort, direction,
   reset), a bulk toolbar that appears on selection, and a "Manage" modal for
   creating/renaming/archiving/restoring/deleting projects and creating/deleting

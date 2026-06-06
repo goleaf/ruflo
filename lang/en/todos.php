@@ -10,18 +10,27 @@ return [
             'title' => 'Todos',
             'description' => 'Capture the next useful action, organize it, and move tasks cleanly through their lifecycle.',
         ],
+        'show' => [
+            'title' => 'Task details',
+            'description' => 'Review one private task without exposing another workspace.',
+        ],
     ],
 
     'fields' => [
         'title' => 'Task',
         'title_placeholder' => 'What needs doing?',
+        'status' => 'Status',
         'priority' => 'Priority',
         'due_date' => 'Due date',
+        'no_due_date' => 'No due date',
         'project' => 'Project',
         'no_project' => 'No project',
         'project_name' => 'New project name',
         'tags' => 'Tags',
+        'no_tags' => 'No tags',
         'tag_name' => 'New tag name',
+        'created_at' => 'Created',
+        'updated_at' => 'Updated',
     ],
 
     'summary' => [
@@ -91,6 +100,7 @@ return [
         'restore' => 'Restore',
         'delete' => 'Delete',
         'more' => 'More actions',
+        'back_to_list' => 'Back to tasks',
         'manage' => 'Manage',
         'rename' => 'Rename',
         'clear_completed' => 'Clear completed',

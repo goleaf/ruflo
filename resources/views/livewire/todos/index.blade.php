@@ -222,14 +222,17 @@
                     @endunless
 
                     <div class="min-w-0 flex-1 space-y-1">
-                        <div @class([
+                        <a
+                            href="{{ route('todos.show', $todo) }}"
+                            wire:navigate
+                            @class([
                             'text-sm font-medium break-words',
                             'text-zinc-950 dark:text-white' => $todo->isActive(),
                             'text-zinc-500 line-through dark:text-zinc-400' => $todo->is_completed && ! $todo->isArchived(),
                             'text-zinc-500 dark:text-zinc-400' => $todo->isArchived(),
                         ])>
                             {{ $todo->title }}
-                        </div>
+                        </a>
 
                         <div class="flex flex-wrap items-center gap-1.5">
                             @if ($todo->priority->value !== 'normal')

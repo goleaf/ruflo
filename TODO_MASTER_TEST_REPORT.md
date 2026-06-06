@@ -257,3 +257,18 @@ Record test/build/check results here.
 | 2026-06-06 | `git diff --check` | Passed | No whitespace errors after Step 021 changes. |
 | 2026-06-06 | `php artisan test --compact` | Passed | Full suite passed with 235 tests and 911 assertions after Step 021 core task creation changes. |
 | 2026-06-06 | `mcp__laravel_boost.browser_logs entries=20` | Passed | Only an old Vite reconnect message was present; no current task-form browser/runtime error was found. |
+| 2026-06-06 | `mcp__laravel_boost.search_docs` | Passed | Reviewed Laravel 13 route model binding/scoped binding, policy not-found behavior, Livewire 4 full-page route parameters/model binding, and Flux card/pagination guidance before Step 022 changes. |
+| 2026-06-06 | `php artisan route:list --no-interaction -vv --path=todos` | Passed | Confirmed the pre-Step 022 todo route surface had only the protected `todos.index` route behind `auth` and `verified`. |
+| 2026-06-06 | `rg private list/detail inventory` | Passed | Inspected current routes, owner concerns, todo query object, list UI, route links, tests, translations, and docs before adding the private task detail page. |
+| 2026-06-06 | `php artisan make:livewire Todos/Show --class --no-interaction` | Passed | Created the Step 022 class-based Livewire task detail component scaffold. |
+| 2026-06-06 | `php artisan make:test --pest TaskPrivateViewsTest --no-interaction` | Passed | Created Step 022 private task list/detail regression coverage. |
+| 2026-06-06 | `php artisan test --compact tests/Feature/TaskPrivateViewsTest.php` | Passed | 7 tests, 27 assertions for guest redirects, unverified redirects, own-task details, foreign-task 404s, list-link privacy, direct Livewire foreign-id denial, and route/component guardrails. |
+| 2026-06-06 | `php artisan test --compact tests/Feature/TaskPrivateViewsTest.php tests/Feature/TodoTest.php tests/Feature/TodoOrganizationTest.php tests/Feature/TodoOwnershipTest.php tests/Feature/TodoLifecycleTest.php tests/Feature/TodoArchitectureTest.php tests/Feature/OwnershipQueryScopingTest.php tests/Feature/PrivateWorkspaceModelTest.php tests/Feature/CoreTaskCreationTest.php tests/Feature/ProjectTest.php tests/Feature/TagTest.php tests/Feature/GuestRouteProtectionTest.php tests/Feature/DomainReadinessTest.php` | Passed | 149 tests, 469 assertions across task private views, list/privacy behavior, lifecycle, organization, project/tag pickers, creation, route protection, and domain readiness. |
+| 2026-06-06 | `php artisan test --compact tests/Feature/TaskPrivateViewsTest.php tests/Feature/DomainReadinessTest.php` | Passed | 11 tests, 46 assertions after extending the `https://ruflo.test` route contract for `todos.show`. |
+| 2026-06-06 | `vendor/bin/pint --dirty --format agent` | Passed | PHP style passed after Step 022 route/component/test updates. |
+| 2026-06-06 | `php artisan test --compact tests/Feature/TaskPrivateViewsTest.php tests/Feature/DomainReadinessTest.php` | Passed | 11 tests, 46 assertions after Pint formatting. |
+| 2026-06-06 | `php artisan route:list --no-interaction -vv --path=todos` | Passed | Confirmed `todos.index` and `todos.show` are both behind `auth` and `verified`. |
+| 2026-06-06 | `rg compressed-progress scan` | Passed | Mutable root progress/docs files contain no compressed grouped-step placeholder lines after Step 022. |
+| 2026-06-06 | `git diff --check` | Passed | No whitespace errors after Step 022 changes. |
+| 2026-06-06 | `php artisan test --compact` | Passed | Full suite passed with 242 tests and 939 assertions after Step 022 private task view changes. |
+| 2026-06-06 | `mcp__laravel_boost.browser_logs entries=20` | Passed | Only an old Vite reconnect message was present; no current task-detail browser/runtime error was found. |

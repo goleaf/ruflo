@@ -47,7 +47,7 @@ Use this file as a persistent task tracker. Step detail lives in `TODO_MASTER_PR
 - [x] Step 019 — Authorization policies
 - [x] Step 020 — Guest and route protection
 - [x] Step 021 — Core task creation
-- [ ] Step 022 — Task list and private task views
+- [x] Step 022 — Task list and private task views
 - [ ] Step 023 — Task editing
 - [ ] Step 024 — Task completion and reopening
 - [ ] Step 025 — Task archive and restore

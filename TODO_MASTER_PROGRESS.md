@@ -2,19 +2,19 @@
 
 ## Current status
 
-Steps 001-021 are complete. The requested recheck from Step 001 has been completed through Step 021. The tracker is expanded to one ledger line per step from 001 through 100 so later work cannot be hidden behind a range.
+Steps 001-022 are complete. The requested recheck from Step 001 has been completed through Step 022. The tracker is expanded to one ledger line per step from 001 through 100 so later work cannot be hidden behind a range.
 
 ## Current step
 
-Step 022 — Task list and private task views
+Step 023 — Task editing
 
 ## Last completed action
 
-Completed Step 021 by hardening the core task creation boundary, excluding lifecycle fields from todo mass assignment, trimming titles inside `CreateTodo`, adding create-form validation error placement, and passing focused plus adjacent todo/privacy suites.
+Completed Step 022 by adding a private task detail Livewire page, linking list rows to owner-scoped detail routes, locking the route task id, translating detail metadata, and passing focused plus adjacent list/privacy suites.
 
 ## Next action
 
-Begin `steps/step-022-task-list-and-private-task-views.md`, then implement the next not-yet-completed plan step without grouping it with later work.
+Begin `steps/step-023-task-editing.md`, then implement the next not-yet-completed plan step without grouping it with later work.
 
 ## Step ledger
 
@@ -41,7 +41,7 @@ Begin `steps/step-022-task-list-and-private-task-views.md`, then implement the n
 | 019 — Authorization policies | Complete | Added `TodoPolicy::reopen()`, made the todo completion toggle authorize `complete` versus `reopen` from task state, explicitly bound `Reminder` to `ReminderPolicy`, made current owner-only policies use `isOwnedBy()`, and added explicit unsupported tag `restore`/`forceDelete` denials. | Boost docs search, policy inventory scan, focused 71-test policy/auth/ownership suite, Pint, compressed-progress scan, diff check, and full suite recorded in test report. | `docs/authorization.md`, `docs/changelog.md`, root progress, checklist, changelog, decisions, risks, and test report updated. | Viewer/editor/manager/owner role tests remain blocked by the absence of a membership model and are documented for later collaboration/member steps. | e904438 |
 | 020 — Guest and route protection | Complete | Enabled `MustVerifyEmail` on `User` so the existing `verified` middleware actively blocks unverified accounts, added guest/unverified/password-confirmation/maintenance route coverage, locked current protected-route middleware expectations, and asserted the demo login panel never renders stored password hashes. | Boost app info and docs search, route list/middleware inventory, focused `GuestRouteProtectionTest`, affected auth/login/dashboard/todo/settings/domain suite, Pint, compressed-progress scan, diff check, and full suite recorded in test report. | `docs/auth-login-ux.md`, `docs/authorization.md`, `docs/changelog.md`, root progress, checklist, changelog, decisions, risks, and test report updated. | Prior `verified` middleware was inert because `User` did not implement `MustVerifyEmail`; mitigated with the contract and route-protection tests. | 9f3b9b5 |
 | 021 — Core task creation | Complete | Hardened task creation so titles are trimmed at the action write boundary, ownership is assigned through the user relationship, organization ids are re-scoped even if validation is bypassed, and lifecycle/system fields cannot be mass-assigned during creation. Added Flux create-form error surfaces for priority, due date, project, and tampered tag selections. | Boost docs search, task model/action/form/component/UI/schema/test/doc inspection, failed-then-fixed direct action normalization test, focused `CoreTaskCreationTest`, adjacent todo/privacy route suite, Pint, compressed-progress scan, diff check, and full suite recorded in test report. | `docs/todo-foundation.md`, `docs/task-lifecycle.md`, `docs/task-organization.md`, `docs/changelog.md`, root progress, checklist, changelog, decisions, risks, and test report updated. | Directly constructed `TodoData` could persist wrapper whitespace and `Todo` allowed completion mass assignment; both mitigated with action-level trimming, guarded lifecycle state, and regression tests. | 000d3f5 |
-| 022 — Task list and private task views | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 022 — Task list and private task views | Complete | Added class-based `App\Livewire\Todos\Show` at `todos.show`, kept it behind `auth` and `verified`, constrained route ids to numbers, resolved details through `TodoListQuery::findVisibleFor()`, locked the public task id, and linked list titles only for rendered owner-scoped tasks. | Boost docs search, todo route/list/detail/source inventory, focused `TaskPrivateViewsTest`, domain route check, adjacent todo/list/privacy/project/tag suites, Pint, compressed-progress scan, diff check, and full suite recorded in test report. | `docs/authorization.md`, `docs/task-organization.md`, `docs/domain-readiness.md`, `docs/changelog.md`, root progress, checklist, changelog, decisions, risks, and test report updated. | Task detail pages could leak guessed foreign IDs if they used implicit binding or raw model lookup; mitigated with owner-scoped lookup, locked id, numeric route constraint, and regression tests. | Pending stable commit |
 | 023 — Task editing | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
 | 024 — Task completion and reopening | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
 | 025 — Task archive and restore | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |

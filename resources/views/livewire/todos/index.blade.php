@@ -116,6 +116,10 @@
                     {{ __('todos.focus.actions.open_focus') }}
                 </flux:button>
 
+                <flux:button size="sm" variant="ghost" icon="clock" :href="route('todos.time')" wire:navigate>
+                    {{ __('todos.time.actions.open_time') }}
+                </flux:button>
+
                 <flux:button size="sm" variant="ghost" icon="adjustments-horizontal" wire:click="$set('showManageModal', true)">
                     {{ __('todos.actions.manage') }}
                 </flux:button>

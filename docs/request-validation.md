@@ -61,6 +61,14 @@ before a session row is created. Timer state changes resolve the active session
 through `PomodoroSessionQuery` and authorize the owner-scoped policy before
 mutation.
 
+Step 049 time tracking remains Livewire-only. No HTTP Form Request is
+introduced because `/todos/time` is a class-based Livewire page, not a
+controller endpoint. The component validates task/project context, tracked
+date, notes, and manual duration; `TimeEntryDuration` handles reusable duration
+rules; `TimeEntryData` and action classes repeat backend guards so direct calls
+cannot persist unsupported durations, future dates, foreign context, duplicate
+active timers, or running-entry deletion.
+
 ## Custom Business Rules
 
 Reusable business validation rules are documented in `docs/validation-rules.md`.

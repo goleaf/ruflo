@@ -41,6 +41,10 @@
                         {{ __('dashboard.workspace.focus_action') }}
                     </flux:button>
 
+                    <flux:button :href="route('todos.time')" wire:navigate variant="subtle" icon="clock">
+                        {{ __('dashboard.workspace.time_action') }}
+                    </flux:button>
+
                     <flux:button :href="route('goals.index')" wire:navigate variant="subtle" icon="flag">
                         {{ __('dashboard.workspace.goals_action') }}
                     </flux:button>

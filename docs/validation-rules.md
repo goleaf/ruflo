@@ -21,6 +21,7 @@ The current committed app has tag-name and todo workspace ownership rules:
 - `App\Rules\Todos\SavedViewName`
 - `App\Rules\Todos\TemplateChecklistItems`
 - `App\Rules\Todos\TemplateName`
+- `App\Rules\Todos\TimeEntryDuration`
 
 `TagName` validates that a submitted tag name still has visible content after
 normalization (`squish()` + lower-case). It prevents whitespace-only labels
@@ -77,6 +78,10 @@ template names for visible text after whitespace normalization.
 normalizes blank rows away, allows at most 10 visible checklist items, caps
 each item at 120 characters, and requires at least one item for checklist and
 routine templates.
+
+`TimeEntryDuration` validates manual time-entry duration values. It accepts
+only whole minutes from 1 to 1440, so a forged Livewire request cannot create a
+zero-length or multi-day manual time entry.
 
 The action layer still re-scopes ids to the current user before writing. The rule objects improve request feedback; the action layer remains the defense-in-depth boundary.
 
@@ -182,3 +187,11 @@ Step 048 added `App\Rules\Todos\PomodoroDuration` for Focus timer duration
 selection. `StartPomodoroSession` reuses the same rule so direct calls cannot
 create unsupported timer lengths, and the Livewire page shows translated field
 errors beside the Flux duration select.
+
+## 2026-06-06 Step 049 Recheck
+
+Step 049 added `App\Rules\Todos\TimeEntryDuration` for manual time-entry
+duration input. The Livewire page uses it for field validation, and
+`TimeEntryData` plus `CreateManualTimeEntry` repeat the backend guard so direct
+calls cannot persist zero, negative, non-numeric, or over-1440-minute manual
+entries.

@@ -172,6 +172,13 @@ private task. Focus-page timer actions read active sessions through
 not found. Starting a session still resolves the linked task through
 `TodoFocusQuery` so a forged task id cannot start a timer for non-focus work.
 
+Time tracking uses the same private route and owner boundary. `todos.time` is a
+class-based Livewire page behind `auth` and `verified`. `TimeEntry` uses
+`BelongsToUser`, resolves `TimeEntryPolicy`, and all reads flow through
+`TimeEntryQuery`. Manual and timer actions resolve submitted task/project ids
+back to the current user before writing; foreign, archived, trashed, or
+otherwise untrackable task ids do not create time entries.
+
 ## Error behavior (no leakage)
 
 - Forbidden private records resolve as **not found** (404-style), never
@@ -220,6 +227,10 @@ it on:
   `PomodoroSessionQuery`, authorize `PomodoroSessionPolicy::update`, and never
   trust a frontend session or task id. Complete/defer/snooze task actions close
   only a linked active session owned by the current user.
+- **Time entries** — manual/timer writes authorize `TimeEntryPolicy`, resolve
+  context through `TimeEntryQuery`, and reject foreign project/task ids. Only
+  one active timer is allowed per user, and completed Pomodoro sessions create a
+  single linked time entry through a unique `pomodoro_session_id`.
 - **Bulk actions** — never trust a submitted set of IDs. Re-scope every
   selected ID to the owner and authorize each actionable record before acting;
   a foreign ID in the Livewire payload is rejected at validation, while direct

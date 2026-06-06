@@ -3,6 +3,8 @@
 use App\Enums\PomodoroSessionStatus;
 use App\Enums\Priority;
 use App\Enums\TaskTemplateKind;
+use App\Enums\TimeEntrySource;
+use App\Enums\TimeEntryStatus;
 use App\Enums\TodoStatus;
 use App\Models\Goal;
 use App\Models\GoalMilestone;
@@ -13,6 +15,7 @@ use App\Models\Project;
 use App\Models\Reminder;
 use App\Models\SavedTodoView;
 use App\Models\Tag;
+use App\Models\TimeEntry;
 use App\Models\Todo;
 use App\Models\TodoChecklistItem;
 use App\Models\TodoTemplate;
@@ -30,6 +33,7 @@ test('tracked models can be created from their default factories', function () {
     $todo = Todo::factory()->for($user)->forProject($project)->forMilestone($milestone)->forHabit($habit)->withTags($tag)->create();
     $checklistItem = TodoChecklistItem::factory()->forTodo($todo)->completed()->position(1)->create();
     $pomodoroSession = PomodoroSession::factory()->forTodo($todo)->completed()->create();
+    $timeEntry = TimeEntry::factory()->forTodo($todo)->manual(45)->create();
     $template = TodoTemplate::factory()->for($user)->routine()->create();
     $savedView = SavedTodoView::factory()->for($user)->create();
     $reminder = Reminder::factory()->create();
@@ -59,6 +63,10 @@ test('tracked models can be created from their default factories', function () {
         ->and($pomodoroSession->isOwnedBy($user))->toBeTrue()
         ->and($pomodoroSession->todo->is($todo))->toBeTrue()
         ->and($pomodoroSession->status)->toBe(PomodoroSessionStatus::Completed)
+        ->and($timeEntry->isOwnedBy($user))->toBeTrue()
+        ->and($timeEntry->todo->is($todo))->toBeTrue()
+        ->and($timeEntry->duration_seconds)->toBe(2700)
+        ->and($timeEntry->status)->toBe(TimeEntryStatus::Completed)
         ->and($template->isOwnedBy($user))->toBeTrue()
         ->and($template->checklist_items)->toHaveCount(3)
         ->and($savedView->isOwnedBy($user))->toBeTrue()
@@ -106,6 +114,36 @@ test('pomodoro session factory covers task duration and lifecycle states', funct
         ->and($abandoned->abandoned_at)->not->toBeNull()
         ->and($demo->status)->toBe(PomodoroSessionStatus::Paused)
         ->and($demo->elapsed_seconds)->toBe(480);
+});
+
+test('time entry factory covers manual timer project pomodoro and lifecycle states', function () {
+    $project = Project::factory()->work()->create();
+    $todo = Todo::factory()->forProject($project)->create();
+    $session = PomodoroSession::factory()->forTodo($todo)->completed(1500)->create();
+
+    $manual = TimeEntry::factory()->forTodo($todo)->manual(45)->create();
+    $timer = TimeEntry::factory()->forTodo($todo)->timer(30)->create();
+    $running = TimeEntry::factory()->forProject($project)->running(12)->create();
+    $discarded = TimeEntry::factory()->forTodo($todo)->discarded(5)->create();
+    $pomodoro = TimeEntry::factory()->fromPomodoro($session)->create();
+    $demo = TimeEntry::factory()->forTodo($todo)->demo()->create();
+
+    expect($manual->isOwnedBy($project->user))->toBeTrue()
+        ->and($manual->todo->is($todo))->toBeTrue()
+        ->and($manual->project->is($project))->toBeTrue()
+        ->and($manual->duration_seconds)->toBe(2700)
+        ->and($manual->source)->toBe(TimeEntrySource::Manual)
+        ->and($manual->status)->toBe(TimeEntryStatus::Completed)
+        ->and($timer->source)->toBe(TimeEntrySource::Timer)
+        ->and($timer->duration_seconds)->toBe(1800)
+        ->and($timer->started_at)->not->toBeNull()
+        ->and($running->isRunning())->toBeTrue()
+        ->and($running->todo_id)->toBeNull()
+        ->and($running->project->is($project))->toBeTrue()
+        ->and($discarded->isDiscarded())->toBeTrue()
+        ->and($pomodoro->source)->toBe(TimeEntrySource::Pomodoro)
+        ->and($pomodoro->pomodoroSession->is($session))->toBeTrue()
+        ->and($demo->notes)->toBe('Reviewed task flow and captured the next improvement.');
 });
 
 test('goal and milestone factories cover ownership project and lifecycle states', function () {

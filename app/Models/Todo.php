@@ -131,6 +131,16 @@ class Todo extends Model
     }
 
     /**
+     * Time entries logged against this task.
+     *
+     * @return HasMany<TimeEntry, $this>
+     */
+    public function timeEntries(): HasMany
+    {
+        return $this->hasMany(TimeEntry::class);
+    }
+
+    /**
      * Whether the task is archived (hidden from active/completed views).
      */
     public function isArchived(): bool

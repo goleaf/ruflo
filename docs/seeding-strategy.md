@@ -11,6 +11,7 @@ Step 012 covers the committed model set:
 - `Project`
 - `SavedTodoView`
 - `Tag`
+- `TimeEntry`
 - `Todo`
 - `TodoChecklistItem`
 - `TodoTemplate`
@@ -51,6 +52,9 @@ The tracked `Reminder` model is currently a placeholder with no ownership, sched
 - one paused Pomodoro focus session per user, linked to `Review the current
   flow`, so `/todos/focus` can demonstrate timer resume immediately after
   seeding.
+- two completed time entries per user: one task-linked entry for `Review the
+  current flow` and one project-only `Work` entry, so `/todos/time` shows task
+  and project totals immediately after seeding.
 
 Step 041's calendar view reuses that catalog: the seeded due-today, overdue,
 upcoming, and no-due-date tasks give the local `/todos/calendar` page immediate
@@ -75,6 +79,10 @@ Step 048's Pomodoro focus timer links a paused session to the existing
 `Review the current flow` focus task for each seeded user. It does not add fake
 time tracking totals; the row exists only to demonstrate browser-triggered
 timer resume and state transitions on `/todos/focus`.
+
+Step 049's time tracking adds real completed `time_entries` rows for each
+seeded user. The rows are not active timers, do not require background work, and
+exist only as demo/history data for `/todos/time`.
 
 ## Idempotency
 
@@ -103,6 +111,10 @@ manual testing without duplicating habit rows or check-in dates.
 Pomodoro sessions are upserted per user, task, and active status. Re-running
 the seeder refreshes the paused demo timer without creating duplicate active
 focus sessions.
+
+Time entries are upserted per user/task or user/project, source, and tracked
+date. Re-running the seeder refreshes demo durations/notes without creating
+duplicate time history rows.
 
 Placeholder reminder rows are intentionally excluded from the current catalog because they would not be owned by a user or connected to a task.
 

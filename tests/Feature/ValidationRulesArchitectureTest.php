@@ -26,6 +26,7 @@ test('custom validation rules are implemented and use translated failure message
             'Todos/SavedViewName.php',
             'Todos/TemplateChecklistItems.php',
             'Todos/TemplateName.php',
+            'Todos/TimeEntryDuration.php',
         ]);
 
     $ruleFiles->each(function (string $path): void {

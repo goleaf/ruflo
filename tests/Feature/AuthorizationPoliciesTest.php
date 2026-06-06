@@ -9,6 +9,7 @@ use App\Models\Project;
 use App\Models\Reminder;
 use App\Models\SavedTodoView;
 use App\Models\Tag;
+use App\Models\TimeEntry;
 use App\Models\Todo;
 use App\Models\TodoChecklistItem;
 use App\Models\TodoTemplate;
@@ -22,6 +23,7 @@ use App\Policies\ProjectPolicy;
 use App\Policies\ReminderPolicy;
 use App\Policies\SavedTodoViewPolicy;
 use App\Policies\TagPolicy;
+use App\Policies\TimeEntryPolicy;
 use App\Policies\TodoChecklistItemPolicy;
 use App\Policies\TodoPolicy;
 use App\Policies\TodoTemplatePolicy;
@@ -35,6 +37,7 @@ test('tracked private resources resolve explicit policies', function () {
         ->and(Gate::getPolicyFor(Habit::class))->toBeInstanceOf(HabitPolicy::class)
         ->and(Gate::getPolicyFor(HabitCheckIn::class))->toBeInstanceOf(HabitCheckInPolicy::class)
         ->and(Gate::getPolicyFor(PomodoroSession::class))->toBeInstanceOf(PomodoroSessionPolicy::class)
+        ->and(Gate::getPolicyFor(TimeEntry::class))->toBeInstanceOf(TimeEntryPolicy::class)
         ->and(Gate::getPolicyFor(Tag::class))->toBeInstanceOf(TagPolicy::class)
         ->and(Gate::getPolicyFor(TodoChecklistItem::class))->toBeInstanceOf(TodoChecklistItemPolicy::class)
         ->and(Gate::getPolicyFor(TodoTemplate::class))->toBeInstanceOf(TodoTemplatePolicy::class)
@@ -158,6 +161,30 @@ test('pomodoro session policy covers owner timer abilities', function () {
         ->and($ownerGate->allows('create', PomodoroSession::class))->toBeTrue()
         ->and($ownerGate->denies('restore', $session))->toBeTrue()
         ->and($ownerGate->denies('forceDelete', $session))->toBeTrue();
+});
+
+test('time entry policy covers owner timer and manual log abilities', function () {
+    $owner = User::factory()->create();
+    $intruder = User::factory()->create();
+    $todo = Todo::factory()->for($owner)->create();
+    $entry = TimeEntry::factory()->forTodo($todo)->manual()->create();
+
+    $ownerGate = Gate::forUser($owner);
+    $intruderGate = Gate::forUser($intruder);
+
+    foreach (['view', 'update', 'delete'] as $ability) {
+        expect($ownerGate->allows($ability, $entry))->toBeTrue();
+
+        $response = $intruderGate->inspect($ability, $entry);
+
+        expect($response->denied())->toBeTrue()
+            ->and($response->status())->toBe(404);
+    }
+
+    expect($ownerGate->allows('viewAny', TimeEntry::class))->toBeTrue()
+        ->and($ownerGate->allows('create', TimeEntry::class))->toBeTrue()
+        ->and($ownerGate->denies('restore', $entry))->toBeTrue()
+        ->and($ownerGate->denies('forceDelete', $entry))->toBeTrue();
 });
 
 test('todo template policy covers owner template abilities', function () {

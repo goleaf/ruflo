@@ -12,15 +12,19 @@ use App\Actions\Todos\CaptureInboxTodo;
 use App\Actions\Todos\ClearCompletedTodos;
 use App\Actions\Todos\CompletePomodoroSession;
 use App\Actions\Todos\CompleteTodo;
+use App\Actions\Todos\CreateManualTimeEntry;
+use App\Actions\Todos\CreatePomodoroTimeEntry;
 use App\Actions\Todos\CreateSavedTodoView;
 use App\Actions\Todos\CreateTodo;
 use App\Actions\Todos\CreateTodoChecklistItem;
 use App\Actions\Todos\CreateTodoFromTemplate;
 use App\Actions\Todos\CreateTodoTemplate;
 use App\Actions\Todos\DeleteSavedTodoView;
+use App\Actions\Todos\DeleteTimeEntry;
 use App\Actions\Todos\DeleteTodo;
 use App\Actions\Todos\DeleteTodoChecklistItem;
 use App\Actions\Todos\DeleteTodoTemplate;
+use App\Actions\Todos\DiscardTimeEntryTimer;
 use App\Actions\Todos\MoveTodoChecklistItem;
 use App\Actions\Todos\MoveTodoOnBoard;
 use App\Actions\Todos\PausePomodoroSession;
@@ -29,6 +33,8 @@ use App\Actions\Todos\RescheduleFocusedTodo;
 use App\Actions\Todos\RestoreDeletedTodo;
 use App\Actions\Todos\ResumePomodoroSession;
 use App\Actions\Todos\StartPomodoroSession;
+use App\Actions\Todos\StartTimeEntryTimer;
+use App\Actions\Todos\StopTimeEntryTimer;
 use App\Actions\Todos\TodoLifecycleStateMachine;
 use App\Actions\Todos\ToggleTodoChecklistItem;
 use App\Actions\Todos\TriageInboxTodo;
@@ -41,10 +47,13 @@ use App\Data\Habits\HabitData;
 use App\Data\Habits\HabitProgress;
 use App\Data\Todos\BulkActionResult;
 use App\Data\Todos\SavedTodoViewData;
+use App\Data\Todos\TimeEntryData;
 use App\Data\Todos\TodoData;
 use App\Data\Todos\TodoTemplateData;
 use App\Enums\PomodoroSessionStatus;
 use App\Enums\TaskTemplateKind;
+use App\Enums\TimeEntrySource;
+use App\Enums\TimeEntryStatus;
 use App\Enums\TodoTransition;
 use App\Events\TodoChecklistChanged;
 use App\Livewire\Forms\Todos\TodoForm;
@@ -57,12 +66,14 @@ use App\Livewire\Todos\Focus as TodoFocus;
 use App\Livewire\Todos\Inbox as TodoInbox;
 use App\Livewire\Todos\Show as TodoShow;
 use App\Livewire\Todos\Templates as TodoTemplates;
+use App\Livewire\Todos\Time as TodoTime;
 use App\Policies\GoalMilestonePolicy;
 use App\Policies\GoalPolicy;
 use App\Policies\HabitCheckInPolicy;
 use App\Policies\HabitPolicy;
 use App\Policies\PomodoroSessionPolicy;
 use App\Policies\SavedTodoViewPolicy;
+use App\Policies\TimeEntryPolicy;
 use App\Policies\TodoChecklistItemPolicy;
 use App\Policies\TodoPolicy;
 use App\Policies\TodoTemplatePolicy;
@@ -70,6 +81,7 @@ use App\Queries\Goals\GoalListQuery;
 use App\Queries\Habits\HabitListQuery;
 use App\Queries\Todos\PomodoroSessionQuery;
 use App\Queries\Todos\SavedTodoViewListQuery;
+use App\Queries\Todos\TimeEntryQuery;
 use App\Queries\Todos\TodoBoardQuery;
 use App\Queries\Todos\TodoCalendarQuery;
 use App\Queries\Todos\TodoChecklistItemListQuery;
@@ -89,6 +101,7 @@ use App\Rules\Todos\PomodoroDuration;
 use App\Rules\Todos\SavedViewName;
 use App\Rules\Todos\TemplateChecklistItems;
 use App\Rules\Todos\TemplateName;
+use App\Rules\Todos\TimeEntryDuration;
 
 test('todo foundation classes exist', function () {
     expect(class_exists(TodoPolicy::class))->toBeTrue()
@@ -118,6 +131,12 @@ test('todo foundation classes exist', function () {
         ->and(class_exists(ResumePomodoroSession::class))->toBeTrue()
         ->and(class_exists(CompletePomodoroSession::class))->toBeTrue()
         ->and(class_exists(AbandonPomodoroSession::class))->toBeTrue()
+        ->and(class_exists(CreateManualTimeEntry::class))->toBeTrue()
+        ->and(class_exists(StartTimeEntryTimer::class))->toBeTrue()
+        ->and(class_exists(StopTimeEntryTimer::class))->toBeTrue()
+        ->and(class_exists(DiscardTimeEntryTimer::class))->toBeTrue()
+        ->and(class_exists(CreatePomodoroTimeEntry::class))->toBeTrue()
+        ->and(class_exists(DeleteTimeEntry::class))->toBeTrue()
         ->and(class_exists(CreateGoal::class))->toBeTrue()
         ->and(class_exists(CreateGoalMilestone::class))->toBeTrue()
         ->and(class_exists(CheckInGoalMilestone::class))->toBeTrue()
@@ -129,6 +148,7 @@ test('todo foundation classes exist', function () {
         ->and(class_exists(CreateSavedTodoView::class))->toBeTrue()
         ->and(class_exists(DeleteSavedTodoView::class))->toBeTrue()
         ->and(class_exists(SavedTodoViewData::class))->toBeTrue()
+        ->and(class_exists(TimeEntryData::class))->toBeTrue()
         ->and(class_exists(TodoTemplateData::class))->toBeTrue()
         ->and(class_exists(GoalData::class))->toBeTrue()
         ->and(class_exists(GoalMilestoneData::class))->toBeTrue()
@@ -138,6 +158,7 @@ test('todo foundation classes exist', function () {
         ->and(class_exists(GoalListQuery::class))->toBeTrue()
         ->and(class_exists(HabitListQuery::class))->toBeTrue()
         ->and(class_exists(PomodoroSessionQuery::class))->toBeTrue()
+        ->and(class_exists(TimeEntryQuery::class))->toBeTrue()
         ->and(class_exists(SavedTodoViewListQuery::class))->toBeTrue()
         ->and(class_exists(TodoBoardQuery::class))->toBeTrue()
         ->and(class_exists(TodoCalendarQuery::class))->toBeTrue()
@@ -154,6 +175,7 @@ test('todo foundation classes exist', function () {
         ->and(class_exists(HabitTitle::class))->toBeTrue()
         ->and(class_exists(HabitTargetCount::class))->toBeTrue()
         ->and(class_exists(PomodoroDuration::class))->toBeTrue()
+        ->and(class_exists(TimeEntryDuration::class))->toBeTrue()
         ->and(class_exists(TemplateChecklistItems::class))->toBeTrue()
         ->and(class_exists(TemplateName::class))->toBeTrue()
         ->and(class_exists(SavedViewName::class))->toBeTrue()
@@ -166,6 +188,7 @@ test('todo foundation classes exist', function () {
         ->and(class_exists(HabitPolicy::class))->toBeTrue()
         ->and(class_exists(HabitCheckInPolicy::class))->toBeTrue()
         ->and(class_exists(PomodoroSessionPolicy::class))->toBeTrue()
+        ->and(class_exists(TimeEntryPolicy::class))->toBeTrue()
         ->and(class_exists(TodoBoard::class))->toBeTrue()
         ->and(class_exists(TodoCalendar::class))->toBeTrue()
         ->and(class_exists(TodoShow::class))->toBeTrue()
@@ -174,9 +197,12 @@ test('todo foundation classes exist', function () {
         ->and(class_exists(HabitsIndex::class))->toBeTrue()
         ->and(class_exists(TodoTemplates::class))->toBeTrue()
         ->and(class_exists(TodoInbox::class))->toBeTrue()
+        ->and(class_exists(TodoTime::class))->toBeTrue()
         ->and(class_exists(ProjectShow::class))->toBeTrue()
         ->and(class_exists(TodoChecklistChanged::class))->toBeTrue()
         ->and(enum_exists(PomodoroSessionStatus::class))->toBeTrue()
+        ->and(enum_exists(TimeEntrySource::class))->toBeTrue()
+        ->and(enum_exists(TimeEntryStatus::class))->toBeTrue()
         ->and(enum_exists(TodoTransition::class))->toBeTrue()
         ->and(enum_exists(TaskTemplateKind::class))->toBeTrue()
         ->and(class_exists(ClearCompletedTodos::class))->toBeTrue();
@@ -317,6 +343,25 @@ test('todo focus page delegates focus responsibilities', function () {
         ->toContain('$this->authorize')
         ->not->toContain('Todo::query()')
         ->not->toContain('PomodoroSession::query()')
+        ->not->toContain('->save()');
+});
+
+test('todo time page delegates time tracking responsibilities', function () {
+    $source = file_get_contents(app_path('Livewire/Todos/Time.php'));
+
+    expect($source)
+        ->toContain('TimeEntryQuery')
+        ->toContain('CreateManualTimeEntry')
+        ->toContain('StartTimeEntryTimer')
+        ->toContain('StopTimeEntryTimer')
+        ->toContain('DiscardTimeEntryTimer')
+        ->toContain('DeleteTimeEntry')
+        ->toContain('TimeEntryData')
+        ->toContain('TimeEntryDuration')
+        ->toContain('$this->authorize')
+        ->not->toContain('TimeEntry::query()')
+        ->not->toContain('Todo::query()')
+        ->not->toContain('Project::query()')
         ->not->toContain('->save()');
 });
 

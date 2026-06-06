@@ -59,6 +59,7 @@ return [
         'overdue_action' => 'Review overdue',
         'upcoming_action' => 'Plan upcoming',
         'focus_action' => 'Focus',
+        'time_action' => 'Track time',
         'goals_action' => 'Goals',
         'habits_action' => 'Habits',
     ],

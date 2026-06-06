@@ -12,6 +12,7 @@ Step 011 covers the tracked application models:
 - `App\Models\Reminder`
 - `App\Models\SavedTodoView`
 - `App\Models\Tag`
+- `App\Models\TimeEntry`
 - `App\Models\Todo`
 - `App\Models\TodoChecklistItem`
 - `App\Models\TodoTemplate`
@@ -105,6 +106,24 @@ Demo user factory states read from `config/demo.php` so the login panel, seeders
 Pomodoro sessions are private resources. They are linked to a task and use the
 same `BelongsToUser` concern as todos, projects, goals, habits, and saved
 views.
+
+## Time Entry Factory
+
+`TimeEntryFactory` covers:
+
+- default completed entries,
+- `forTodo()` and `forProject()` ownership-safe relationship helpers,
+- manual entries through `manual()`,
+- completed timer entries through `timer()`,
+- active resumable timers through `running()`,
+- discarded timer rows through `discarded()`,
+- Pomodoro-derived entries through `fromPomodoro()`,
+- demo notes through `demo()`.
+
+Time entries are private resources. They are scoped by `user_id`, can link to a
+task and/or project, and preserve Pomodoro provenance through
+`pomodoro_session_id` when a completed focus session is converted into tracked
+time.
 
 ## Saved Todo View Factory
 

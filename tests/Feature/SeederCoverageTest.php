@@ -9,6 +9,7 @@ use App\Models\Project;
 use App\Models\Reminder;
 use App\Models\SavedTodoView;
 use App\Models\Tag;
+use App\Models\TimeEntry;
 use App\Models\Todo;
 use App\Models\TodoChecklistItem;
 use App\Models\TodoTemplate;
@@ -33,6 +34,7 @@ test('database seeder creates safe demo users and complete private workspaces', 
         ->and(Habit::query()->count())->toBe(4)
         ->and(HabitCheckIn::query()->count())->toBe(12)
         ->and(PomodoroSession::query()->count())->toBe(2)
+        ->and(TimeEntry::query()->count())->toBe(4)
         ->and(Reminder::query()->count())->toBe(0)
         ->and(SavedTodoView::query()->count())->toBe(6)
         ->and(Tag::query()->count())->toBe(4)
@@ -57,6 +59,8 @@ test('database seeder creates safe demo users and complete private workspaces', 
             ->and($user->habitCheckIns()->count())->toBe(6)
             ->and($user->pomodoroSessions()->count())->toBe(1)
             ->and($user->pomodoroSessions()->first()?->todo?->title)->toBe('Review the current flow')
+            ->and($user->timeEntries()->count())->toBe(2)
+            ->and($user->timeEntries()->sum('duration_seconds'))->toBe(3600)
             ->and($user->tags()->pluck('name')->sort()->values()->all())->toBe(['urgent', 'waiting'])
             ->and($user->todos()->active()->count())->toBe(5)
             ->and($user->todos()->completed()->count())->toBe(1)
@@ -94,6 +98,7 @@ test('database seeder is idempotent for the current demo catalog', function () {
         ->and(Habit::query()->count())->toBe(4)
         ->and(HabitCheckIn::query()->count())->toBe(12)
         ->and(PomodoroSession::query()->count())->toBe(2)
+        ->and(TimeEntry::query()->count())->toBe(4)
         ->and(Reminder::query()->count())->toBe(0)
         ->and(SavedTodoView::query()->count())->toBe(6)
         ->and(Tag::query()->count())->toBe(4)
@@ -116,6 +121,7 @@ test('database seeder does not create known demo credentials in production envir
         ->and(Habit::query()->count())->toBe(0)
         ->and(HabitCheckIn::query()->count())->toBe(0)
         ->and(PomodoroSession::query()->count())->toBe(0)
+        ->and(TimeEntry::query()->count())->toBe(0)
         ->and(Reminder::query()->count())->toBe(0)
         ->and(SavedTodoView::query()->count())->toBe(0)
         ->and(Tag::query()->count())->toBe(0)

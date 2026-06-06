@@ -6,6 +6,8 @@ use App\Data\Todos\SavedTodoViewData;
 use App\Enums\HabitFrequency;
 use App\Enums\PomodoroSessionStatus;
 use App\Enums\Priority;
+use App\Enums\TimeEntrySource;
+use App\Enums\TimeEntryStatus;
 use App\Models\Goal;
 use App\Models\GoalMilestone;
 use App\Models\Habit;
@@ -14,6 +16,7 @@ use App\Models\PomodoroSession;
 use App\Models\Project;
 use App\Models\SavedTodoView;
 use App\Models\Tag;
+use App\Models\TimeEntry;
 use App\Models\Todo;
 use App\Models\TodoChecklistItem;
 use App\Models\TodoTemplate;
@@ -203,6 +206,8 @@ class TodoSeeder extends Seeder
         $this->linkTodoToGoal($reviewFlow, $commandCenterGoal, $focusMilestone);
         $this->linkTodoToGoal($overdueReport, $commandCenterGoal);
         $this->upsertPomodoroSession($reviewFlow);
+        $this->upsertTimeEntry($reviewFlow, 35, today()->toDateString(), 'Reviewed task flow and captured the next improvement.');
+        $this->upsertProjectTimeEntry($work, 25, today()->subDays(2)->toDateString(), 'Planned the next quiet work block.');
 
         $weekendGoal = $this->upsertGoal($user, 'Plan a calmer weekend', [
             'project_id' => $home->id,
@@ -497,5 +502,58 @@ class TodoSeeder extends Seeder
         ])->save();
 
         return $session;
+    }
+
+    private function upsertTimeEntry(Todo $todo, int $minutes, string $entryDate, string $notes): TimeEntry
+    {
+        $entry = TimeEntry::query()
+            ->where('user_id', $todo->user_id)
+            ->where('todo_id', $todo->id)
+            ->whereDate('entry_date', $entryDate)
+            ->where('source', TimeEntrySource::Manual->value)
+            ->first() ?? new TimeEntry;
+
+        $entry->forceFill([
+            'user_id' => $todo->user_id,
+            'todo_id' => $todo->id,
+            'project_id' => $todo->project_id,
+            'pomodoro_session_id' => null,
+            'duration_seconds' => $minutes * 60,
+            'source' => TimeEntrySource::Manual,
+            'status' => TimeEntryStatus::Completed,
+            'entry_date' => $entryDate,
+            'started_at' => null,
+            'stopped_at' => null,
+            'notes' => $notes,
+        ])->save();
+
+        return $entry;
+    }
+
+    private function upsertProjectTimeEntry(Project $project, int $minutes, string $entryDate, string $notes): TimeEntry
+    {
+        $entry = TimeEntry::query()
+            ->where('user_id', $project->user_id)
+            ->whereNull('todo_id')
+            ->where('project_id', $project->id)
+            ->whereDate('entry_date', $entryDate)
+            ->where('source', TimeEntrySource::Manual->value)
+            ->first() ?? new TimeEntry;
+
+        $entry->forceFill([
+            'user_id' => $project->user_id,
+            'todo_id' => null,
+            'project_id' => $project->id,
+            'pomodoro_session_id' => null,
+            'duration_seconds' => $minutes * 60,
+            'source' => TimeEntrySource::Manual,
+            'status' => TimeEntryStatus::Completed,
+            'entry_date' => $entryDate,
+            'started_at' => null,
+            'stopped_at' => null,
+            'notes' => $notes,
+        ])->save();
+
+        return $entry;
     }
 }

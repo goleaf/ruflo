@@ -10,6 +10,10 @@ use Illuminate\Validation\ValidationException;
 
 final class CompletePomodoroSession
 {
+    public function __construct(
+        private readonly CreatePomodoroTimeEntry $createPomodoroTimeEntry,
+    ) {}
+
     public function handle(User $user, PomodoroSession $session): PomodoroSession
     {
         Gate::forUser($user)->authorize('update', $session);
@@ -28,6 +32,10 @@ final class CompletePomodoroSession
             'completed_at' => now(),
         ])->save();
 
-        return $session->refresh()->load('todo');
+        $session = $session->refresh()->load('todo');
+
+        $this->createPomodoroTimeEntry->handle($user, $session);
+
+        return $session;
     }
 }

@@ -46,6 +46,10 @@ return [
             'title' => 'Focus mode',
             'description' => 'Work from a short owner-scoped set of urgent, overdue, due-today, and high-priority tasks.',
         ],
+        'time' => [
+            'title' => 'Time tracking',
+            'description' => 'Log manual work and run one resumable web timer for private tasks and projects.',
+        ],
     ],
 
     'fields' => [
@@ -189,6 +193,7 @@ return [
         'delete_saved_view' => 'Delete this saved view?',
         'delete_checklist_item' => 'Delete this checklist item?',
         'delete_template' => 'Delete this template? Existing tasks created from it are kept.',
+        'delete_time_entry' => 'Delete this time entry?',
     ],
 
     'checklist' => [
@@ -397,6 +402,14 @@ return [
         'pomodoro_duration' => 'Choose a focus duration of 15, 25, or 50 minutes.',
         'pomodoro_active_session' => 'Finish or abandon the current focus session before starting another one.',
         'pomodoro_active_session_required' => 'Start a focus session before changing timer state.',
+        'time_entry_duration' => 'Enter a tracked duration from 1 to 1440 minutes.',
+        'time_entry_date' => 'Enter a tracked date on or before today.',
+        'time_entry_notes' => 'Use notes up to 500 characters.',
+        'time_entry_context' => 'Choose a task or project to track time against.',
+        'time_entry_project_mismatch' => 'Choose the task project or leave the project empty.',
+        'time_entry_active_timer' => 'Stop or discard the current timer before starting another one.',
+        'time_entry_timer_required' => 'Start a timer before changing timer state.',
+        'time_entry_delete_running' => 'Stop or discard the running timer before deleting it.',
     ],
 
     'inbox' => [
@@ -462,6 +475,81 @@ return [
         'empty' => [
             'title' => 'No focus tasks.',
             'description' => 'Urgent, overdue, due-today, and high-priority active tasks will appear here.',
+        ],
+    ],
+
+    'time' => [
+        'summary' => [
+            'today' => 'Today',
+            'week' => 'This week',
+            'total' => 'Total',
+            'active' => 'Active timer',
+        ],
+        'timer' => [
+            'label' => 'Task timer',
+            'heading' => 'Live time',
+            'description' => 'Start one active timer and save it from the browser when the work block ends.',
+            'current_context' => 'Tracking against',
+            'hosting_note' => 'The browser display ticks locally; elapsed time is saved only when you use these web actions.',
+        ],
+        'manual' => [
+            'label' => 'Manual log',
+            'heading' => 'Add time',
+            'description' => 'Record completed work without relying on cron, workers, or external services.',
+        ],
+        'entries' => [
+            'label' => 'Recent work',
+            'heading' => 'Time entries',
+            'count' => ':count entries',
+        ],
+        'fields' => [
+            'task' => 'Task',
+            'project' => 'Project',
+            'no_task' => 'No task',
+            'no_project' => 'No project',
+            'minutes' => 'Minutes',
+            'entry_date' => 'Tracked date',
+            'notes' => 'Notes',
+        ],
+        'placeholders' => [
+            'notes' => 'What changed during this work block?',
+        ],
+        'actions' => [
+            'open_time' => 'Time',
+            'start_timer' => 'Start timer',
+            'stop_timer' => 'Stop and save',
+            'discard_timer' => 'Discard',
+            'log_manual' => 'Log time',
+            'delete_entry' => 'Delete time entry',
+        ],
+        'duration' => [
+            'under_minute' => '< 1 min',
+            'minutes' => ':minutes min',
+            'hours_minutes' => ':hours h :minutes min',
+        ],
+        'source' => [
+            'manual' => 'Manual',
+            'timer' => 'Timer',
+            'pomodoro' => 'Pomodoro',
+        ],
+        'status' => [
+            'running' => 'Running',
+            'completed' => 'Completed',
+            'discarded' => 'Discarded',
+        ],
+        'context' => [
+            'none' => 'No task or project',
+        ],
+        'messages' => [
+            'timer_started' => 'Timer started for ":context".',
+            'timer_stopped' => 'Saved :duration.',
+            'timer_discarded' => 'Timer discarded.',
+            'manual_created' => 'Logged :duration.',
+            'deleted' => 'Time entry deleted.',
+        ],
+        'empty' => [
+            'title' => 'No time entries yet.',
+            'description' => 'Start a timer or log completed work to build task and project totals.',
         ],
     ],
 

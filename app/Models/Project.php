@@ -47,6 +47,16 @@ class Project extends Model
         return $this->hasMany(Goal::class);
     }
 
+    /**
+     * Time entries logged against this project.
+     *
+     * @return HasMany<TimeEntry, $this>
+     */
+    public function timeEntries(): HasMany
+    {
+        return $this->hasMany(TimeEntry::class);
+    }
+
     public function isArchived(): bool
     {
         return $this->archived_at !== null;

@@ -244,6 +244,11 @@ start, pause, resume, complete, abandon, invalid duration rejection, duplicate
 active-session rejection, owner privacy, focus-boundary checks, quick-action
 session closure, and restricted-hosting timer markup.
 
+Step 049 adds `TimeTrackingTest`, which locks the protected Time route,
+manual-entry validation, one-active-timer behavior, stop/discard transitions,
+owner privacy, trackable task/project boundaries, Pomodoro-to-time-entry
+integration, and restricted-hosting timer markup.
+
 ## 2026-06-06 Recheck
 
 The Step 001 recheck confirmed the foundation still matches the current master-plan rules after Steps 002-016:

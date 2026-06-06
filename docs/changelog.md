@@ -1,5 +1,44 @@
 # Changelog
 
+## 2026-06-06 - Step 049 Time tracking
+
+### Implemented
+
+- Added owner-scoped `time_entries` for manual, timer, and Pomodoro-derived
+  tracked work linked to tasks, projects, and completed Pomodoro sessions.
+- Added `TimeEntry`, `TimeEntryPolicy`, `TimeEntryQuery`, `TimeEntryData`,
+  `TimeEntrySource`, `TimeEntryStatus`, `TimeEntryDuration`, factories, and
+  actions for manual log creation, timer start/stop/discard, deletion, and
+  Pomodoro conversion.
+- Added protected class-based Livewire/Flux page `todos.time` with manual entry
+  form, one resumable active timer, recent entries, task/project links, summary
+  totals, translated badges, and keyboard-backed timer actions.
+- Linked Time tracking from the dashboard workspace card and main task toolbar.
+- Seeded task-linked and project-only completed time entries for
+  local/testing/demo users.
+
+### Testing
+
+- Added `TimeTrackingTest` for route rendering, manual validation, timer
+  transitions, owner privacy, trackable context boundaries, Pomodoro integration,
+  and restricted-hosting markup.
+- Expanded route/domain, architecture, validation-rule, factory, seeder,
+  authorization, private-workspace, dashboard, localization, Pomodoro, and
+  restricted-hosting coverage.
+
+### Documentation
+
+- Updated task organization, authorization, request validation, validation
+  rules, factory coverage, seeding, domain readiness, todo foundation, and root
+  progress ledgers with the Step 049 time-tracking contract.
+
+### Restricted Hosting
+
+- Time tracking is fully web-triggered. Active timers persist in the database
+  and are saved only when the user stops or discards them through Livewire. No
+  cron, queue worker, supervisor, terminal, Artisan command, paid service, or
+  server-side scheduler is required during normal usage.
+
 ## 2026-06-06 - Step 048 Pomodoro focus timer
 
 ### Implemented

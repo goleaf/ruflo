@@ -298,6 +298,38 @@ from a short set of important active tasks.
   exact second-by-second progress is only advanced while the page is open in the
   browser.
 
+## Time tracking
+
+Step 049 adds `todos.time`, a protected class-based Livewire page for manual
+and timer-based tracking against private tasks and projects.
+
+- Time tracking stores owner-scoped `time_entries` with optional task, project,
+  and Pomodoro links, duration seconds, source, status, tracked date, start/stop
+  timestamps, and notes.
+- `TimeEntryQuery` is the single read/context boundary. It lists recent
+  completed entries, computes today/week/total summaries, resolves one active
+  timer, lists trackable non-archived/non-deleted tasks, and lists active
+  projects for picker controls.
+- Manual entries use `CreateManualTimeEntry` and `TimeEntryData`. They require
+  a task or project context, a tracked date on or before today, and a duration
+  from 1 to 1440 minutes through `TimeEntryDuration`.
+- Timer entries use `StartTimeEntryTimer`, `StopTimeEntryTimer`, and
+  `DiscardTimeEntryTimer`. The page allows one active timer per user; the active
+  row persists so a browser refresh resumes the visible timer state.
+- Completed Pomodoro sessions with at least one minute of elapsed work create
+  one linked `TimeEntry` through `CreatePomodoroTimeEntry`. The
+  `pomodoro_session_id` unique index keeps that integration idempotent.
+- Deleting a completed time entry uses `DeleteTimeEntry`; running timers must be
+  stopped or discarded before deletion.
+- The Flux page includes manual entry fields, timer controls, recent entries,
+  task/project links, translated badges, and keyboard-backed timer actions
+  (`T` to start/stop, `X` to discard).
+- Time tracking is synchronous and web-triggered. It requires no cron, queue
+  worker, supervisor, shell, Artisan command, paid service, background timer, or
+  server-side scheduler during normal hosted usage. Elapsed active-timer
+  seconds are saved only when the user stops or discards the timer through the
+  web UI.
+
 ## Inbox
 
 Step 044 adds a dedicated `todos.inbox` Livewire page for fast, unsorted task

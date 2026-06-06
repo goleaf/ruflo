@@ -113,6 +113,16 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
     }
 
     /**
+     * Get the user's manual and timer-based time entries.
+     *
+     * @return HasMany<TimeEntry, $this>
+     */
+    public function timeEntries(): HasMany
+    {
+        return $this->hasMany(TimeEntry::class);
+    }
+
+    /**
      * Get the user's contained task checklist rows.
      *
      * @return HasMany<TodoChecklistItem, $this>

@@ -2,6 +2,7 @@
 
 namespace App\Actions\Todos;
 
+use App\Data\Todos\BulkActionResult;
 use App\Models\Todo;
 use App\Models\User;
 use Illuminate\Support\Facades\Gate;
@@ -21,10 +22,10 @@ final class BulkUnarchiveTodos
     /**
      * @param  list<int>  $ids
      */
-    public function handle(User $user, array $ids): int
+    public function handle(User $user, array $ids): BulkActionResult
     {
         if ($ids === []) {
-            return 0;
+            return BulkActionResult::fromIds([], affected: 0);
         }
 
         $todos = $user->todos()
@@ -36,6 +37,6 @@ final class BulkUnarchiveTodos
 
         $todos->each(fn (Todo $todo) => $this->unarchiveTodo->handle($todo));
 
-        return $todos->count();
+        return BulkActionResult::fromIds($ids, affected: $todos->count());
     }
 }

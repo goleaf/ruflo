@@ -200,6 +200,11 @@ application, deletion, duplicate-name validation, normalized criteria,
 pagination reset, selection reset, stale project criteria handling, and
 cross-user not-found behavior for foreign saved-view ids.
 
+Step 039 adds `BulkSelectionActionTest`, which locks visible-page selection,
+clear-selection behavior, translated bulk result counts, skipped direct-action
+ids, and the Flux bulk-delete confirmation modal. Existing lifecycle bulk tests
+also assert selected/affected/skipped/failed counts.
+
 ## 2026-06-06 Recheck
 
 The Step 001 recheck confirmed the foundation still matches the current master-plan rules after Steps 002-016:

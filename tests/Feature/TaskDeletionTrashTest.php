@@ -107,24 +107,30 @@ test('bulk delete and restore reuse eventful single task transitions', function 
 
     Event::fake([TodoDeleted::class, TodoRestoredFromTrash::class]);
 
-    $deletedCount = app(BulkDeleteTodos::class)->handle($user, [
+    $deletedResult = app(BulkDeleteTodos::class)->handle($user, [
         $first->id,
         $second->id,
         $foreign->id,
     ]);
 
-    expect($deletedCount)->toBe(2)
+    expect($deletedResult->affected)->toBe(2)
+        ->and($deletedResult->selected)->toBe(3)
+        ->and($deletedResult->skipped)->toBe(1)
+        ->and($deletedResult->failed)->toBe(0)
         ->and($first->refresh()->trashed())->toBeTrue()
         ->and($second->refresh()->trashed())->toBeTrue()
         ->and($foreign->refresh()->trashed())->toBeFalse();
 
-    $restoredCount = app(BulkRestoreDeletedTodos::class)->handle($user, [
+    $restoredResult = app(BulkRestoreDeletedTodos::class)->handle($user, [
         $first->id,
         $second->id,
         $foreign->id,
     ]);
 
-    expect($restoredCount)->toBe(2)
+    expect($restoredResult->affected)->toBe(2)
+        ->and($restoredResult->selected)->toBe(3)
+        ->and($restoredResult->skipped)->toBe(1)
+        ->and($restoredResult->failed)->toBe(0)
         ->and($first->refresh()->trashed())->toBeFalse()
         ->and($second->refresh()->status())->toBe(TodoStatus::Completed);
 

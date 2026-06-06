@@ -155,9 +155,10 @@ it on:
   empty state. Saved views store only normalized filter/sort criteria and
   applying them still flows through the same owner-scoped query boundary.
 - **Bulk actions** — never trust a submitted set of IDs. Re-scope every
-  selected ID to the owner and authorize each before acting; a foreign ID in
-  the payload is rejected at validation or silently excluded inside direct
-  action classes, not processed. Trash bulk restore uses the trashed-owner
+  selected ID to the owner and authorize each actionable record before acting;
+  a foreign ID in the Livewire payload is rejected at validation, while direct
+  action calls re-scope and report skipped ids through `BulkActionResult`
+  instead of processing them. Trash bulk restore uses the trashed-owner
   validation path.
 - **Activity history** — visible only to users who can access the related
   record; scoped exactly like the record itself.
@@ -235,3 +236,7 @@ project states are translated.
 created, applied, and deleted only for their owner; blank and duplicate names
 are rejected; stale foreign project criteria cannot leak names or widen task
 results; and foreign saved-view ids resolve as not found.
+
+`BulkSelectionActionTest` locks the Step 039 contract: visible-page selection,
+clear selection, result counts, skipped direct-action ids, and the Flux
+bulk-delete confirmation modal all stay owner-scoped and translated.

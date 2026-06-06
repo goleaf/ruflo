@@ -9,6 +9,7 @@ use App\Actions\Todos\DeleteTodo;
 use App\Actions\Todos\ReopenTodo;
 use App\Actions\Todos\RestoreDeletedTodo;
 use App\Actions\Todos\TodoLifecycleStateMachine;
+use App\Data\Todos\BulkActionResult;
 use App\Data\Todos\SavedTodoViewData;
 use App\Data\Todos\TodoData;
 use App\Enums\TodoTransition;
@@ -36,6 +37,7 @@ test('todo foundation classes exist', function () {
         ->and(class_exists(SavedTodoViewData::class))->toBeTrue()
         ->and(class_exists(SavedTodoViewListQuery::class))->toBeTrue()
         ->and(class_exists(SavedViewName::class))->toBeTrue()
+        ->and(class_exists(BulkActionResult::class))->toBeTrue()
         ->and(class_exists(SavedTodoViewPolicy::class))->toBeTrue()
         ->and(class_exists(ProjectShow::class))->toBeTrue()
         ->and(enum_exists(TodoTransition::class))->toBeTrue()

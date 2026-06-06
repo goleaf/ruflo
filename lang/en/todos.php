@@ -154,6 +154,10 @@ return [
         'move_to' => 'Move to',
         'move' => 'Move',
         'delete' => 'Delete',
+        'confirm_delete' => 'Move to Trash',
+        'select_visible' => 'Select visible',
+        'clear_selection' => 'Clear selection',
+        'result' => 'Updated :affected of :selected selected task(s). Skipped :skipped. Failed :failed.',
     ],
 
     'confirmations' => [
@@ -240,7 +244,7 @@ return [
         'deleted' => 'Task deleted.',
         'restored_from_trash' => 'Task restored from trash.',
         'completed_cleared' => 'Completed tasks cleared.',
-        'bulk_done' => 'Updated :count task(s).',
+        'bulk_done' => 'Updated :affected of :selected selected task(s). Skipped :skipped. Failed :failed.',
         'cannot_change_completion_archived' => 'Unarchive this task before completing or reopening it.',
         'cannot_edit_archived' => 'Unarchive this task before editing it.',
         'project_created' => 'Project created.',
@@ -311,6 +315,10 @@ return [
             'description' => 'Organize your private workspace. Archiving or deleting these never deletes your tasks.',
             'projects' => 'Projects',
             'tags' => 'Tags',
+        ],
+        'bulk_delete' => [
+            'heading' => 'Move selected tasks to Trash?',
+            'description' => 'You are moving :count selected task(s) to Trash. You can restore them later.',
         ],
     ],
 

@@ -1,6 +1,6 @@
 # Task Organization
 
-Step 038 rechecks and extends the private task lifecycle into a usable productivity system:
+Step 039 rechecks and extends the private task lifecycle into a usable productivity system:
 projects, tags, priorities, due dates, search, filters, sorting, and bulk
 actions. Everything here is owner-scoped on top of the model in
 [`authorization.md`](authorization.md) and the lifecycle in
@@ -223,9 +223,12 @@ full Todo workspace shortcuts.
 **re-scope the selection to the user's own tasks inside the query**
 (`$user->todos()->…->whereKey($ids)`). Consequences:
 
-- A foreign id in the payload is silently excluded — a bulk action can never
-  touch another user's task. (Tested by mixing an intruder's id into the
-  selection.)
+- Livewire selection validates every submitted id with `OwnedTodo`, so foreign
+  ids are rejected before mutation and the current user's selected rows remain
+  unchanged.
+- The action layer still re-scopes direct action calls. Foreign, missing, or
+  non-actionable ids are skipped there and reported through `BulkActionResult`
+  as selected/affected/skipped/failed counts.
 - Bulk complete only affects **active** tasks; bulk archive only **non-archived**
   tasks — meaningless transitions are no-ops, not errors.
 - Bulk unarchive only affects archived tasks and preserves completion state.
@@ -235,6 +238,11 @@ full Todo workspace shortcuts.
   eventful single-task delete action.
 - Bulk restore from Trash only affects owned deleted tasks and preserves
   completion/archive state.
+- Step 039 adds a select-visible control for the current page, a clear-selection
+  control, a translated result callout/toast, and a Flux confirmation modal for
+  bulk delete. Bulk actions are synchronous and bounded to the visible selected
+  ids; they require no queue, cron, worker, terminal, or Artisan command during
+  normal usage.
 
 ## UI
 
@@ -255,8 +263,9 @@ full Todo workspace shortcuts.
   pages until restored.
 - A filter toolbar (search, project, tag, priority, due, sort, direction,
   reset), a saved-views strip for saving/applying/deleting named view criteria,
-  a bulk toolbar that appears on selection, and a "Manage" modal for creating/
-  renaming/archiving/restoring/deleting projects and creating/deleting tags.
+  a bulk selection row, a bulk toolbar that appears on selection, a Flux bulk
+  delete confirmation modal, and a "Manage" modal for creating/renaming/
+  archiving/restoring/deleting projects and creating/deleting tags.
 - Project badges in task lists and task detail pages link to the private
   project detail page. The detail page renders the project status, scoped
   lifecycle counts, a paginated task list, and a translated empty state.

@@ -224,6 +224,28 @@
             </div>
         @endif
 
+        @if ($this->todos->count() > 0)
+            <div class="flex flex-wrap items-center gap-2 rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2 dark:border-white/10 dark:bg-zinc-900">
+                <flux:button size="xs" variant="ghost" icon="check-circle" wire:click="selectVisible">
+                    {{ __('todos.bulk.select_visible') }}
+                </flux:button>
+
+                @if (count($selected) > 0)
+                    <flux:button size="xs" variant="ghost" icon="x-mark" wire:click="clearSelection">
+                        {{ __('todos.bulk.clear_selection') }}
+                    </flux:button>
+                @endif
+            </div>
+        @endif
+
+        @if ($bulkResult !== null)
+            <flux:callout icon="check-circle" variant="secondary" data-test="bulk-action-result">
+                <flux:callout.text>
+                    {{ __('todos.bulk.result', $bulkResult) }}
+                </flux:callout.text>
+            </flux:callout>
+        @endif
+
         {{-- Bulk action toolbar --}}
         @if (count($selected) > 0)
             <div class="flex flex-wrap items-center gap-3 rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-sm dark:border-blue-500/30 dark:bg-blue-500/10">
@@ -252,7 +274,7 @@
                     @else
                         <flux:button size="sm" variant="ghost" icon="archive-box-x-mark" wire:click="bulkUnarchive">{{ __('todos.bulk.unarchive') }}</flux:button>
                     @endif
-                    <flux:button size="sm" variant="danger" icon="trash" wire:click="bulkDelete" wire:confirm="{{ __('todos.confirmations.bulk_delete') }}">
+                    <flux:button size="sm" variant="danger" icon="trash" wire:click="$set('showBulkDeleteModal', true)">
                         {{ __('todos.bulk.delete') }}
                     </flux:button>
                 @endif
@@ -374,6 +396,25 @@
             </div>
         @endif
     </flux:card>
+
+    <flux:modal wire:model.self="showBulkDeleteModal" class="md:w-[24rem]">
+        <div class="space-y-6">
+            <div>
+                <flux:heading size="lg">{{ __('todos.modals.bulk_delete.heading') }}</flux:heading>
+                <flux:text class="mt-2">{{ __('todos.modals.bulk_delete.description', ['count' => count($selected)]) }}</flux:text>
+            </div>
+
+            <div class="flex gap-2">
+                <flux:spacer />
+                <flux:modal.close>
+                    <flux:button type="button" variant="ghost">{{ __('todos.actions.cancel') }}</flux:button>
+                </flux:modal.close>
+                <flux:button type="button" variant="danger" icon="trash" wire:click="bulkDelete">
+                    {{ __('todos.bulk.confirm_delete') }}
+                </flux:button>
+            </div>
+        </div>
+    </flux:modal>
 
     {{-- Edit modal --}}
     <flux:modal wire:model.self="showEditModal" @close="closeEdit" class="md:w-[28rem]">

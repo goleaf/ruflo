@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-06-06 - Step 039 Bulk selection and actions
+
+### Implemented
+
+- Added `BulkActionResult` so every bulk action reports selected, affected, skipped, and failed counts instead of returning only a changed count.
+- Added translated select-visible, clear-selection, result-callout, and result-toast behavior to the class-based Todos Livewire page.
+- Replaced the bulk delete browser confirm with a translated Flux confirmation modal while keeping soft-delete recovery and owner-scoped validation.
+
+### Testing
+
+- Added `BulkSelectionActionTest` for result counts, select-visible behavior, skipped owned non-actionable rows, clear selection, and the Flux bulk-delete modal.
+- Updated existing lifecycle bulk action tests to assert affected/skipped/failed counts.
+
+### Documentation
+
+- Updated `docs/task-organization.md`, `docs/authorization.md`, and `docs/todo-foundation.md` with the Step 039 bulk-action contract.
+
 ## 2026-06-06 - Step 038 Saved views
 
 ### Implemented

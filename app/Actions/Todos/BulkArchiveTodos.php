@@ -2,6 +2,7 @@
 
 namespace App\Actions\Todos;
 
+use App\Data\Todos\BulkActionResult;
 use App\Models\Todo;
 use App\Models\User;
 use Illuminate\Support\Facades\Gate;
@@ -10,7 +11,7 @@ use Illuminate\Support\Facades\Gate;
  * Archives the user's non-archived tasks among the selected ids.
  *
  * Re-scoped to the user's own tasks so foreign or already-archived ids are
- * silently excluded. Returns the number of tasks actually archived.
+ * silently excluded. Returns selected, archived, skipped, and failed counts.
  */
 final class BulkArchiveTodos
 {
@@ -21,10 +22,10 @@ final class BulkArchiveTodos
     /**
      * @param  list<int>  $ids
      */
-    public function handle(User $user, array $ids): int
+    public function handle(User $user, array $ids): BulkActionResult
     {
         if ($ids === []) {
-            return 0;
+            return BulkActionResult::fromIds([], affected: 0);
         }
 
         $todos = $user->todos()
@@ -36,6 +37,6 @@ final class BulkArchiveTodos
 
         $todos->each(fn (Todo $todo) => $this->archiveTodo->handle($todo));
 
-        return $todos->count();
+        return BulkActionResult::fromIds($ids, affected: $todos->count());
     }
 }

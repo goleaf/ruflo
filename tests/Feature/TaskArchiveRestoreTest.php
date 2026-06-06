@@ -120,24 +120,30 @@ test('bulk archive and unarchive reuse the eventful task transitions', function 
 
     Event::fake([TodoArchived::class, TodoUnarchived::class]);
 
-    $archivedCount = app(BulkArchiveTodos::class)->handle($user, [
+    $archivedResult = app(BulkArchiveTodos::class)->handle($user, [
         $active->id,
         $alreadyArchived->id,
         $foreign->id,
     ]);
 
-    expect($archivedCount)->toBe(1)
+    expect($archivedResult->affected)->toBe(1)
+        ->and($archivedResult->selected)->toBe(3)
+        ->and($archivedResult->skipped)->toBe(2)
+        ->and($archivedResult->failed)->toBe(0)
         ->and($active->refresh()->isArchived())->toBeTrue()
         ->and($alreadyArchived->refresh()->isArchived())->toBeTrue()
         ->and($foreign->refresh()->isArchived())->toBeFalse();
 
-    $unarchivedCount = app(BulkUnarchiveTodos::class)->handle($user, [
+    $unarchivedResult = app(BulkUnarchiveTodos::class)->handle($user, [
         $active->id,
         $alreadyArchived->id,
         $foreign->id,
     ]);
 
-    expect($unarchivedCount)->toBe(2)
+    expect($unarchivedResult->affected)->toBe(2)
+        ->and($unarchivedResult->selected)->toBe(3)
+        ->and($unarchivedResult->skipped)->toBe(1)
+        ->and($unarchivedResult->failed)->toBe(0)
         ->and($active->refresh()->isArchived())->toBeFalse()
         ->and($alreadyArchived->refresh()->isArchived())->toBeFalse()
         ->and($foreign->refresh()->isArchived())->toBeFalse();

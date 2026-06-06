@@ -135,14 +135,17 @@ test('bulk complete reuses the complete transition and ignores non-actionable id
 
     Event::fake([TodoCompleted::class]);
 
-    $count = app(BulkCompleteTodos::class)->handle($user, [
+    $result = app(BulkCompleteTodos::class)->handle($user, [
         $active->id,
         $completed->id,
         $archived->id,
         $foreign->id,
     ]);
 
-    expect($count)->toBe(1)
+    expect($result->affected)->toBe(1)
+        ->and($result->selected)->toBe(4)
+        ->and($result->skipped)->toBe(3)
+        ->and($result->failed)->toBe(0)
         ->and($active->refresh()->is_completed)->toBeTrue()
         ->and($completed->refresh()->is_completed)->toBeTrue()
         ->and($archived->refresh()->is_completed)->toBeFalse()

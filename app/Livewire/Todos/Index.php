@@ -28,6 +28,7 @@ use App\Actions\Todos\UnarchiveTodo;
 use App\Actions\Todos\UpdateTodo;
 use App\Data\Projects\ProjectData;
 use App\Data\Tags\TagData;
+use App\Data\Todos\BulkActionResult;
 use App\Data\Todos\SavedTodoViewData;
 use App\Enums\Priority;
 use App\Enums\TodoStatus;
@@ -121,6 +122,11 @@ class Index extends Component
 
     public string $bulkProject = '';
 
+    /** @var array{selected: int, affected: int, skipped: int, failed: int}|null */
+    public ?array $bulkResult = null;
+
+    public bool $showBulkDeleteModal = false;
+
     // --- Manage projects/tags modal ---
     public bool $showManageModal = false;
 
@@ -157,7 +163,13 @@ class Index extends Component
         if (in_array($property, ['tab', 'search', 'project', 'tag', 'priorityFilter', 'due', 'sort', 'direction'], true)) {
             $this->resetPage();
             $this->selected = [];
+            $this->bulkResult = null;
+            $this->showBulkDeleteModal = false;
             unset($this->todos);
+        }
+
+        if ($property === 'selected' || str_starts_with($property, 'selected.')) {
+            $this->bulkResult = null;
         }
     }
 
@@ -165,7 +177,7 @@ class Index extends Component
     {
         $this->reset(['search', 'project', 'tag', 'priorityFilter', 'due', 'sort', 'direction']);
         $this->resetPage();
-        $this->selected = [];
+        $this->clearSelection();
         unset($this->todos);
     }
 
@@ -394,13 +406,32 @@ class Index extends Component
 
     // --- Bulk actions (validated here and owner-scoped again inside actions) ---
 
+    public function selectVisible(): void
+    {
+        $this->selected = $this->todos
+            ->getCollection()
+            ->pluck('id')
+            ->map(fn (int $id): int => $id)
+            ->values()
+            ->all();
+
+        $this->bulkResult = null;
+    }
+
+    public function clearSelection(): void
+    {
+        $this->selected = [];
+        $this->bulkProject = '';
+        $this->bulkResult = null;
+        $this->showBulkDeleteModal = false;
+    }
+
     public function bulkComplete(BulkCompleteTodos $bulk): void
     {
         $this->validateBulkSelection();
         $this->authorize('bulkComplete', Todo::class);
 
-        $count = $bulk->handle($this->currentUser(), $this->selectedIds());
-        $this->afterBulk($count);
+        $this->afterBulk($bulk->handle($this->currentUser(), $this->selectedIds()));
     }
 
     public function bulkArchive(BulkArchiveTodos $bulk): void
@@ -408,8 +439,7 @@ class Index extends Component
         $this->validateBulkSelection();
         $this->authorize('bulkArchive', Todo::class);
 
-        $count = $bulk->handle($this->currentUser(), $this->selectedIds());
-        $this->afterBulk($count);
+        $this->afterBulk($bulk->handle($this->currentUser(), $this->selectedIds()));
     }
 
     public function bulkUnarchive(BulkUnarchiveTodos $bulk): void
@@ -417,8 +447,7 @@ class Index extends Component
         $this->validateBulkSelection();
         $this->authorize('bulkUnarchive', Todo::class);
 
-        $count = $bulk->handle($this->currentUser(), $this->selectedIds());
-        $this->afterBulk($count);
+        $this->afterBulk($bulk->handle($this->currentUser(), $this->selectedIds()));
     }
 
     public function bulkDelete(BulkDeleteTodos $bulk): void
@@ -426,8 +455,7 @@ class Index extends Component
         $this->validateBulkSelection();
         $this->authorize('bulkDelete', Todo::class);
 
-        $count = $bulk->handle($this->currentUser(), $this->selectedIds());
-        $this->afterBulk($count);
+        $this->afterBulk($bulk->handle($this->currentUser(), $this->selectedIds()));
     }
 
     public function bulkRestoreDeleted(BulkRestoreDeletedTodos $bulk): void
@@ -435,8 +463,7 @@ class Index extends Component
         $this->validateBulkSelection(onlyTrashed: true);
         $this->authorize('bulkRestoreDeleted', Todo::class);
 
-        $count = $bulk->handle($this->currentUser(), $this->selectedIds());
-        $this->afterBulk($count);
+        $this->afterBulk($bulk->handle($this->currentUser(), $this->selectedIds()));
     }
 
     public function bulkMove(BulkMoveTodos $bulk): void
@@ -444,18 +471,28 @@ class Index extends Component
         $this->validateBulkSelection();
         $this->authorize('bulkMove', Todo::class);
 
-        $count = $bulk->handle($this->currentUser(), $this->selectedIds(), $this->validatedBulkProjectId());
-        $this->afterBulk($count);
+        $this->afterBulk($bulk->handle($this->currentUser(), $this->selectedIds(), $this->validatedBulkProjectId()));
     }
 
-    private function afterBulk(int $count): void
+    private function afterBulk(BulkActionResult $result): void
     {
+        $this->bulkResult = [
+            'selected' => $result->selected,
+            'affected' => $result->affected,
+            'skipped' => $result->skipped,
+            'failed' => $result->failed,
+        ];
+
         $this->selected = [];
         $this->bulkProject = '';
+        $this->showBulkDeleteModal = false;
         $this->refreshLists();
 
-        if ($count > 0) {
-            Flux::toast(variant: 'success', text: __('todos.messages.bulk_done', ['count' => $count]));
+        if ($result->hasOutcome()) {
+            Flux::toast(
+                variant: $result->failed > 0 ? 'warning' : 'success',
+                text: __('todos.messages.bulk_done', $this->bulkResult),
+            );
         }
     }
 

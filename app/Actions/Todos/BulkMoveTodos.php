@@ -2,6 +2,7 @@
 
 namespace App\Actions\Todos;
 
+use App\Data\Todos\BulkActionResult;
 use App\Models\Todo;
 use App\Models\User;
 use Illuminate\Support\Facades\Gate;
@@ -18,10 +19,10 @@ final class BulkMoveTodos
     /**
      * @param  list<int>  $ids
      */
-    public function handle(User $user, array $ids, ?int $projectId): int
+    public function handle(User $user, array $ids, ?int $projectId): BulkActionResult
     {
         if ($ids === []) {
-            return 0;
+            return BulkActionResult::fromIds([], affected: 0);
         }
 
         $todos = $user->todos()
@@ -30,8 +31,10 @@ final class BulkMoveTodos
 
         $todos->each(fn (Todo $todo) => Gate::forUser($user)->authorize('update', $todo));
 
-        return $user->todos()
+        $affected = $user->todos()
             ->whereKey($todos->modelKeys())
             ->update(['project_id' => $projectId]);
+
+        return BulkActionResult::fromIds($ids, affected: $affected);
     }
 }

@@ -19,6 +19,7 @@ use App\Models\TodoChecklistItem;
 use App\Models\TodoDependency;
 use App\Models\TodoTemplate;
 use App\Models\User;
+use App\Notifications\DailySummaryNotification;
 use App\Policies\AutomationRulePolicy;
 use App\Policies\AutomationRuleRunPolicy;
 use App\Policies\GoalMilestonePolicy;
@@ -35,6 +36,7 @@ use App\Policies\TodoChecklistItemPolicy;
 use App\Policies\TodoDependencyPolicy;
 use App\Policies\TodoPolicy;
 use App\Policies\TodoTemplatePolicy;
+use App\Queries\Dashboard\DailyDashboardQuery;
 use App\Queries\Dashboard\DailySummaryQuery;
 use App\Queries\Todos\TodoFilters;
 use App\Queries\Todos\TodoListQuery;
@@ -141,6 +143,54 @@ test('dashboard summary counts only the authenticated users private workspace', 
     ]);
 });
 
+test('daily dashboard widget summary stays owner scoped and excludes inactive tasks', function () {
+    $user = User::factory()->create();
+    $other = User::factory()->create();
+
+    $dueToday = Todo::factory()->for($user)->dueToday()->create();
+    Todo::factory()->for($user)->overdue()->create();
+    Todo::factory()->for($user)->upcoming()->create();
+    Todo::factory()->for($user)->withoutDueDate()->create();
+    Todo::factory()->for($user)->dueOn(today()->addDays(14))->create();
+    Todo::factory()->for($user)->dueToday()->completed()->create();
+    Todo::factory()->for($user)->dueToday()->archived()->create();
+    Todo::factory()->for($user)->dueToday()->deleted()->create();
+
+    $waiting = Todo::factory()->for($user)->dueToday()->create();
+    $blocker = Todo::factory()->for($user)->create();
+    TodoDependency::factory()->forTodos($waiting, $blocker)->create();
+
+    Reminder::factory()->forTodo($dueToday)->due()->create();
+    Reminder::factory()->forTodo($waiting)->future()->create();
+    TimeEntry::factory()->for($user)->manual(90)->create(['entry_date' => today()->toDateString()]);
+    TimeEntry::factory()->for($user)->running()->create();
+    $user->notify(new DailySummaryNotification(dueCount: 2, overdueCount: 1));
+
+    Todo::factory()->for($other)->dueToday()->count(3)->create();
+    Todo::factory()->for($other)->overdue()->count(2)->create();
+    Reminder::factory()->forTodo(Todo::factory()->for($other)->create())->due()->create();
+    TimeEntry::factory()->for($other)->manual(45)->create(['entry_date' => today()->toDateString()]);
+    $other->notify(new DailySummaryNotification(dueCount: 9, overdueCount: 9));
+
+    expect(app(DailyDashboardQuery::class)->for($user))->toBe([
+        'date' => today()->toDateString(),
+        'attention_total' => 6,
+        'active_total' => 7,
+        'scheduled_total' => 5,
+        'schedule_coverage_percent' => 71,
+        'due_today' => 2,
+        'overdue' => 1,
+        'due_soon' => 1,
+        'unplanned' => 2,
+        'blocked' => 1,
+        'due_reminders' => 1,
+        'pending_reminders' => 2,
+        'unread_notifications' => 1,
+        'time_today_seconds' => 5400,
+        'active_timer_count' => 1,
+    ]);
+});
+
 test('dashboard Livewire component renders the scoped private summary', function () {
     $user = User::factory()->create();
     Todo::factory()->for($user)->overdue()->create();
@@ -154,7 +204,30 @@ test('dashboard Livewire component renders the scoped private summary', function
         ->assertSee(__('dashboard.summary.projects'))
         ->assertSee(__('dashboard.summary.goals'))
         ->assertSee(__('dashboard.summary.habits'))
+        ->assertSee(__('dashboard.daily.heading'))
+        ->assertSee(__('dashboard.daily.schedule_coverage.label'))
         ->assertSee(__('dashboard.workspace.action'));
+});
+
+test('dashboard daily widget details can be collapsed without changing counts', function () {
+    $user = User::factory()->create();
+    Todo::factory()->for($user)->dueToday()->create();
+
+    Livewire::actingAs($user)->test(DashboardIndex::class)
+        ->assertSet('showDailyDetails', true)
+        ->assertSee(__('dashboard.daily.details.planning'))
+        ->call('toggleDailyDetails')
+        ->assertSet('showDailyDetails', false)
+        ->assertSee(__('dashboard.daily.heading'))
+        ->assertDontSee(__('dashboard.daily.details.planning'));
+});
+
+test('dashboard daily widget renders an empty state for clear accounts', function () {
+    $user = User::factory()->create();
+
+    Livewire::actingAs($user)->test(DashboardIndex::class)
+        ->assertSee(__('dashboard.daily.clear_heading'))
+        ->assertSee(__('dashboard.daily.clear_description'));
 });
 
 test('todo list query never hydrates foreign project or tag labels', function () {

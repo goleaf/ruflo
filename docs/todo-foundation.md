@@ -93,6 +93,10 @@ Future Todo lists must not load unbounded records.
 - Never query from Blade templates.
 
 `App\Queries\Todos\TodoListQuery` is the initial owner-scoped query boundary.
+Step 056 adds `App\Queries\Dashboard\DailyDashboardQuery` as the daily dashboard
+counter boundary. The Livewire dashboard component renders the card from that
+query object instead of querying task, reminder, time-entry, or notification
+models directly.
 
 ## UI Rules
 
@@ -264,6 +268,11 @@ center route, owner-scoped database notification rendering, read/unread actions,
 mark-all-read scoping, safe action-link filtering, known task-link prechecks,
 target-route authorization for stale private notification links, and translated
 empty-state URL filter normalization.
+
+Step 056 expands `DashboardTest` and `TodoArchitectureTest`, which lock daily
+summary counter accuracy, multi-user privacy, archived/deleted exclusions,
+empty-state rendering, translated Flux dashboard UI, and delegation from the
+Livewire dashboard component into owner-scoped query classes.
 
 Step 052 adds `AutomationRulesTest` and `AutomationRuleNameValidationTest`,
 which lock the protected Automations route, owner-scoped rule listing, rule

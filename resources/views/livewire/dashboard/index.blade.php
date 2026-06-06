@@ -8,6 +8,129 @@
         </flux:callout>
     @endif
 
+    <flux:card class="space-y-6" data-test="dashboard-daily-summary" aria-labelledby="dashboard-daily-heading" wire:loading.class="opacity-70" wire:loading.attr="aria-busy">
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div class="max-w-2xl">
+                <flux:subheading>{{ __('dashboard.daily.label') }}</flux:subheading>
+                <flux:heading id="dashboard-daily-heading" size="xl" class="mt-1">{{ __('dashboard.daily.heading') }}</flux:heading>
+                <flux:text class="mt-2">{{ __('dashboard.daily.description') }}</flux:text>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2">
+                <flux:badge color="{{ $this->dailySummary['attention_total'] > 0 ? 'amber' : 'lime' }}" class="w-fit">
+                    {{ __('dashboard.daily.date_label', ['date' => $this->dailySummary['date']]) }}
+                </flux:badge>
+
+                <flux:button type="button" size="sm" variant="ghost" :icon="$showDailyDetails ? 'eye-slash' : 'eye'" wire:click="toggleDailyDetails" wire:loading.attr="disabled" data-test="dashboard-daily-settings">
+                    {{ $showDailyDetails ? __('dashboard.daily.settings.compact') : __('dashboard.daily.settings.details') }}
+                </flux:button>
+            </div>
+        </div>
+
+        @if (! $this->hasDailyWork)
+            <flux:callout icon="check-circle" variant="secondary" data-test="dashboard-daily-clear-state">
+                <flux:callout.heading>{{ __('dashboard.daily.clear_heading') }}</flux:callout.heading>
+                <flux:callout.text>{{ __('dashboard.daily.clear_description') }}</flux:callout.text>
+            </flux:callout>
+        @elseif ($this->dailySummary['attention_total'] > 0)
+            <flux:callout icon="exclamation-triangle" variant="secondary" data-test="dashboard-daily-attention-state">
+                <flux:callout.heading>{{ __('dashboard.daily.attention_heading', ['count' => $this->dailySummary['attention_total']]) }}</flux:callout.heading>
+                <flux:callout.text>{{ __('dashboard.daily.attention_description') }}</flux:callout.text>
+            </flux:callout>
+        @else
+            <flux:callout icon="calendar" variant="secondary" data-test="dashboard-daily-planned-state">
+                <flux:callout.heading>{{ __('dashboard.daily.planned_heading') }}</flux:callout.heading>
+                <flux:callout.text>{{ __('dashboard.daily.planned_description') }}</flux:callout.text>
+            </flux:callout>
+        @endif
+
+        <div class="grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-zinc-200 bg-zinc-200 dark:border-white/10 dark:bg-white/10 sm:grid-cols-4" aria-label="{{ __('dashboard.daily.stats_label') }}">
+            <div class="min-h-24 bg-white p-3 dark:bg-zinc-950" data-test="dashboard-daily-stat-due-today">
+                <div class="text-xs font-medium uppercase text-zinc-500 dark:text-zinc-400">{{ __('dashboard.daily.stats.due_today') }}</div>
+                <div class="mt-3 text-2xl font-semibold text-zinc-950 dark:text-white">{{ $this->dailySummary['due_today'] }}</div>
+            </div>
+
+            <div class="min-h-24 bg-white p-3 dark:bg-zinc-950" data-test="dashboard-daily-stat-overdue">
+                <div class="text-xs font-medium uppercase text-zinc-500 dark:text-zinc-400">{{ __('dashboard.daily.stats.overdue') }}</div>
+                <div class="mt-3 text-2xl font-semibold text-red-700 dark:text-red-300">{{ $this->dailySummary['overdue'] }}</div>
+            </div>
+
+            <div class="min-h-24 bg-white p-3 dark:bg-zinc-950" data-test="dashboard-daily-stat-due-soon">
+                <div class="text-xs font-medium uppercase text-zinc-500 dark:text-zinc-400">{{ __('dashboard.daily.stats.due_soon') }}</div>
+                <div class="mt-3 text-2xl font-semibold text-sky-700 dark:text-sky-300">{{ $this->dailySummary['due_soon'] }}</div>
+            </div>
+
+            <div class="min-h-24 bg-white p-3 dark:bg-zinc-950" data-test="dashboard-daily-stat-unplanned">
+                <div class="text-xs font-medium uppercase text-zinc-500 dark:text-zinc-400">{{ __('dashboard.daily.stats.unplanned') }}</div>
+                <div class="mt-3 text-2xl font-semibold text-zinc-950 dark:text-white">{{ $this->dailySummary['unplanned'] }}</div>
+            </div>
+
+            <div class="min-h-24 bg-white p-3 dark:bg-zinc-950" data-test="dashboard-daily-stat-blocked">
+                <div class="text-xs font-medium uppercase text-zinc-500 dark:text-zinc-400">{{ __('dashboard.daily.stats.blocked') }}</div>
+                <div class="mt-3 text-2xl font-semibold text-amber-700 dark:text-amber-300">{{ $this->dailySummary['blocked'] }}</div>
+            </div>
+
+            <div class="min-h-24 bg-white p-3 dark:bg-zinc-950" data-test="dashboard-daily-stat-reminders">
+                <div class="text-xs font-medium uppercase text-zinc-500 dark:text-zinc-400">{{ __('dashboard.daily.stats.due_reminders') }}</div>
+                <div class="mt-3 text-2xl font-semibold text-zinc-950 dark:text-white">{{ $this->dailySummary['due_reminders'] }}</div>
+            </div>
+
+            <div class="min-h-24 bg-white p-3 dark:bg-zinc-950" data-test="dashboard-daily-stat-notifications">
+                <div class="text-xs font-medium uppercase text-zinc-500 dark:text-zinc-400">{{ __('dashboard.daily.stats.unread_notifications') }}</div>
+                <div class="mt-3 text-2xl font-semibold text-zinc-950 dark:text-white">{{ $this->dailySummary['unread_notifications'] }}</div>
+            </div>
+
+            <div class="min-h-24 bg-white p-3 dark:bg-zinc-950" data-test="dashboard-daily-stat-time">
+                <div class="text-xs font-medium uppercase text-zinc-500 dark:text-zinc-400">{{ __('dashboard.daily.stats.time_today') }}</div>
+                <div class="mt-3 text-2xl font-semibold text-emerald-700 dark:text-emerald-300">{{ $this->formatDailySummarySeconds($this->dailySummary['time_today_seconds']) }}</div>
+            </div>
+
+            <div class="min-h-24 bg-white p-3 dark:bg-zinc-950" data-test="dashboard-daily-stat-active-timers">
+                <div class="text-xs font-medium uppercase text-zinc-500 dark:text-zinc-400">{{ __('dashboard.daily.stats.active_timers') }}</div>
+                <div class="mt-3 text-2xl font-semibold text-emerald-700 dark:text-emerald-300">{{ $this->dailySummary['active_timer_count'] }}</div>
+            </div>
+        </div>
+
+        <div class="space-y-2" role="group" aria-label="{{ $this->dailySummaryAria }}" data-test="dashboard-daily-schedule-coverage">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+                <flux:subheading>{{ __('dashboard.daily.schedule_coverage.label') }}</flux:subheading>
+                <span class="text-sm font-medium text-zinc-700 dark:text-zinc-200">
+                    {{ __('dashboard.daily.schedule_coverage.percent', ['percent' => $this->dailySummary['schedule_coverage_percent']]) }}
+                </span>
+            </div>
+            <flux:progress :value="$this->dailySummary['schedule_coverage_percent']" color="blue" aria-label="{{ $this->dailySummaryAria }}" />
+            <flux:text size="sm">{{ __('dashboard.daily.schedule_coverage.description', ['scheduled' => $this->dailySummary['scheduled_total'], 'active' => $this->dailySummary['active_total']]) }}</flux:text>
+        </div>
+
+        @if ($showDailyDetails)
+            <div class="grid gap-3 md:grid-cols-3" data-test="dashboard-daily-details">
+                <div class="space-y-2 rounded-lg border border-zinc-200 p-4 dark:border-white/10">
+                    <flux:subheading>{{ __('dashboard.daily.details.planning') }}</flux:subheading>
+                    <flux:text>{{ __('dashboard.daily.details.planning_summary', ['unplanned' => $this->dailySummary['unplanned'], 'blocked' => $this->dailySummary['blocked']]) }}</flux:text>
+                </div>
+
+                <div class="space-y-2 rounded-lg border border-zinc-200 p-4 dark:border-white/10">
+                    <flux:subheading>{{ __('dashboard.daily.details.reminders') }}</flux:subheading>
+                    <flux:text>{{ __('dashboard.daily.details.reminders_summary', ['due' => $this->dailySummary['due_reminders'], 'pending' => $this->dailySummary['pending_reminders']]) }}</flux:text>
+                </div>
+
+                <div class="space-y-2 rounded-lg border border-zinc-200 p-4 dark:border-white/10">
+                    <flux:subheading>{{ __('dashboard.daily.details.signals') }}</flux:subheading>
+                    <flux:text>{{ __('dashboard.daily.details.signals_summary', ['unread' => $this->dailySummary['unread_notifications'], 'timers' => $this->dailySummary['active_timer_count']]) }}</flux:text>
+                </div>
+            </div>
+        @endif
+
+        <div class="flex flex-wrap gap-2" aria-label="{{ __('dashboard.daily.actions_label') }}">
+            <flux:button href="{{ route('todos.today') }}" wire:navigate icon="calendar" size="sm" variant="primary" data-test="dashboard-daily-action-today">{{ __('dashboard.daily.actions.today') }}</flux:button>
+            <flux:button href="{{ route('todos.overdue') }}" wire:navigate icon="exclamation-triangle" size="sm" data-test="dashboard-daily-action-overdue">{{ __('dashboard.daily.actions.overdue') }}</flux:button>
+            <flux:button href="{{ route('todos.blocked') }}" wire:navigate icon="exclamation-triangle" size="sm" data-test="dashboard-daily-action-blocked">{{ __('dashboard.daily.actions.blocked') }}</flux:button>
+            <flux:button href="{{ route('todos.reminders') }}" wire:navigate icon="bell" size="sm" data-test="dashboard-daily-action-reminders">{{ __('dashboard.daily.actions.reminders') }}</flux:button>
+            <flux:button href="{{ route('notifications.inbox') }}" wire:navigate icon="inbox" size="sm" data-test="dashboard-daily-action-notifications">{{ __('dashboard.daily.actions.notifications') }}</flux:button>
+            <flux:button href="{{ route('todos.time') }}" wire:navigate icon="clock" size="sm" data-test="dashboard-daily-action-time">{{ __('dashboard.daily.actions.time') }}</flux:button>
+        </div>
+    </flux:card>
+
     <div class="overflow-x-auto pb-2" data-test="dashboard-summary-widgets">
         <div class="grid min-w-[78rem] grid-cols-11 gap-2">
             <x-ui.stat :label="__('dashboard.summary.active')" :value="$this->summary['active']" variant="colored" />

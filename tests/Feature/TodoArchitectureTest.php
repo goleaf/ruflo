@@ -110,6 +110,8 @@ use App\Policies\TodoDependencyPolicy;
 use App\Policies\TodoPolicy;
 use App\Policies\TodoTemplatePolicy;
 use App\Queries\Automation\AutomationRuleQuery;
+use App\Queries\Dashboard\DailyDashboardQuery;
+use App\Queries\Dashboard\DailySummaryQuery;
 use App\Queries\Goals\GoalListQuery;
 use App\Queries\Habits\HabitListQuery;
 use App\Queries\Notifications\NotificationInboxQuery;
@@ -202,6 +204,8 @@ test('todo foundation classes exist', function () {
         ->and(class_exists(ReminderProcessingResult::class))->toBeTrue()
         ->and(class_exists(GoalListQuery::class))->toBeTrue()
         ->and(class_exists(HabitListQuery::class))->toBeTrue()
+        ->and(class_exists(DailySummaryQuery::class))->toBeTrue()
+        ->and(class_exists(DailyDashboardQuery::class))->toBeTrue()
         ->and(class_exists(NotificationInboxQuery::class))->toBeTrue()
         ->and(class_exists(ReminderListQuery::class))->toBeTrue()
         ->and(class_exists(PomodoroSessionQuery::class))->toBeTrue()
@@ -500,6 +504,35 @@ test('notification center delegates notification responsibilities', function () 
         ->and($viewSource)
         ->toContain('<x-ui.page-header')
         ->toContain('notifications.pages.inbox.title')
+        ->not->toContain('@php');
+});
+
+test('dashboard page delegates daily summary responsibilities', function () {
+    $source = file_get_contents(app_path('Livewire/Dashboard/Index.php'));
+    $querySource = file_get_contents(app_path('Queries/Dashboard/DailyDashboardQuery.php'));
+    $viewSource = file_get_contents(resource_path('views/livewire/dashboard/index.blade.php'));
+
+    expect($source)
+        ->toContain('DailyDashboardQuery')
+        ->toContain('DailySummaryQuery')
+        ->toContain('ProcessDueReminders')
+        ->not->toContain('Todo::query()')
+        ->not->toContain('Reminder::query()')
+        ->not->toContain('DatabaseNotification::query()')
+        ->and($querySource)
+        ->toContain('Todo::query()')
+        ->toContain('TimeEntry::query()')
+        ->toContain('Reminder::query()')
+        ->toContain('NotificationInboxQuery')
+        ->toContain('->ownedBy($user)')
+        ->toContain('selectRaw')
+        ->toContain('unreadCountFor($user)')
+        ->and($viewSource)
+        ->toContain('<flux:card')
+        ->toContain('<flux:progress')
+        ->toContain('dashboard.daily.heading')
+        ->toContain('dashboard.daily.stats.due_today')
+        ->toContain('data-test="dashboard-daily-summary"')
         ->not->toContain('@php');
 });
 

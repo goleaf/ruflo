@@ -36,7 +36,7 @@ Without cron or workers, RuFlo cannot promise exact-time automation. Reminder, r
 
 ## Related Steps
 
-Step 007 added the protected setup status foundation. Step 008 added the protected maintenance center. Step 052 added feature-specific browser-triggered automation rule chunks. Step 053 added the reusable manual web-processing engine that feature-specific processors can reuse. Step 054 adds reminder processing as another authenticated web-triggered consumer. Step 055 adds database-backed in-app notification review and read-state controls.
+Step 007 added the protected setup status foundation. Step 008 added the protected maintenance center. Step 052 added feature-specific browser-triggered automation rule chunks. Step 053 added the reusable manual web-processing engine that feature-specific processors can reuse. Step 054 adds reminder processing as another authenticated web-triggered consumer. Step 055 adds database-backed in-app notification review and read-state controls. Step 056 adds the daily summary dashboard as an authenticated browser-rendered replacement for scheduled summary email.
 
 ## 2026-06-06 Recheck
 
@@ -92,3 +92,13 @@ the authenticated browser session. Read/unread changes, filtering, and
 pagination are synchronous web requests and require no cron, queue worker,
 supervisor, shell access, Artisan command, email provider, push provider, or
 paid service during normal usage.
+
+## 2026-06-06 Step 056 Update
+
+The daily summary dashboard is computed when an authenticated user opens
+`/dashboard`. It displays owner-scoped due-today, overdue, blocked, reminder,
+notification, and tracked-time counters through normal Livewire rendering.
+
+No scheduled email, cron, queue worker, supervisor, shell access, Artisan
+command, external notification provider, hosted reporting service, or paid API
+is required for normal daily-summary usage.

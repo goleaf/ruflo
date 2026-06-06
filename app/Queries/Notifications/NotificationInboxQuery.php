@@ -31,6 +31,11 @@ final class NotificationInboxQuery
         return $this->for($user)->whereKey($notificationId)->firstOrFail();
     }
 
+    public function unreadCountFor(User $user): int
+    {
+        return (int) $this->for($user, 'unread')->count();
+    }
+
     /**
      * @return array{all: int, unread: int, read: int}
      */

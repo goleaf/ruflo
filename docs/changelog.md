@@ -1,5 +1,37 @@
 # Changelog
 
+## 2026-06-06 - Step 056 Daily summary dashboard
+
+### Implemented
+
+- Added `DailyDashboardQuery` for owner-scoped daily dashboard counters.
+- Added a Flux daily summary card to `/dashboard` with empty, attention, and
+  planned states, responsive counters, a schedule-coverage progress summary,
+  and shortcuts to the relevant private views.
+- Included due-today tasks, overdue tasks, next-seven-day tasks, unplanned
+  tasks, blocked tasks, due/pending reminders, unread notifications, today's
+  tracked time, and active timers in the daily summary.
+- Added a compact/details widget setting stored through a Livewire session
+  property.
+
+### Testing
+
+- Added daily dashboard accuracy, multi-user privacy, archived/deleted
+  exclusion, widget-setting, and empty-state coverage.
+- Expanded dashboard architecture coverage so model reads stay in query classes.
+
+### Documentation
+
+- Added `docs/dashboard.md`.
+- Updated authorization, localization, restricted-hosting, todo foundation, and
+  root progress ledgers.
+
+### Restricted Hosting
+
+- The summary is calculated during authenticated browser requests and needs no
+  cron, queue worker, supervisor, shell access, Artisan command, email provider,
+  push provider, hosted service, or paid API during normal usage.
+
 ## 2026-06-06 - Step 055 Notification center
 
 ### Implemented

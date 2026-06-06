@@ -40,6 +40,7 @@ scope) rather than across the whole codebase.
 | Automation read boundary | `App\Queries\Automation\AutomationRuleQuery` | Owner-scoped automation rules with latest run reports. |
 | Reminder read boundary | `App\Queries\Reminders\ReminderListQuery` | Owner-scoped reminders, task options, and summary counts. |
 | Notification read boundary | `App\Queries\Notifications\NotificationInboxQuery` | Owner-scoped database notifications, read-state filters, and scoped mutation lookup. |
+| Daily dashboard read boundary | `App\Queries\Dashboard\DailyDashboardQuery` | Owner-scoped daily counts for due work, reminders, unread notifications, and tracked time. |
 | Template read boundary | `App\Queries\Todos\TodoTemplateListQuery` | Owner-scoped reusable task/project/checklist/routine templates. |
 | Inbox read boundary | `App\Queries\Todos\TodoInboxQuery` | Owner-scoped active captured tasks waiting for triage. |
 | Focus read boundary | `App\Queries\Todos\TodoFocusQuery` | Owner-scoped active urgent/overdue/due-today/high-priority focus set. |
@@ -47,7 +48,7 @@ scope) rather than across the whole codebase.
 | Per-action decisions | `App\Policies\TodoPolicy` | The only place "may this user do this?" is answered. |
 | Policy binding | `#[UsePolicy(...Policy::class)]` on current private models | Explicit, greppable mapping — not naming-convention magic. |
 | Mutations | `App\Actions\Todos\*` | Assign ownership from the authenticated user; never from request input. |
-| Dashboard summary | `App\Queries\Dashboard\DailySummaryQuery` | Counts tasks, trash, active projects, and tags through owner-scoped queries only. |
+| Dashboard summary | `App\Queries\Dashboard\DailySummaryQuery` | Counts tasks, trash, active projects, goals, habits, and tags through owner-scoped queries only. |
 
 Do not scatter authorization across components, views, or query callers.
 Reuse these.
@@ -232,6 +233,13 @@ URLs are same-host display hints only. Known task links are pre-checked against
 the current user's task scope, and destination routes still re-authorize the
 target private record.
 
+The dashboard daily summary uses the same private route and owner boundary.
+`dashboard` is a class-based Livewire page behind `auth` and `verified`. The
+daily card reads through `DailyDashboardQuery`, which composes owner-scoped
+task, reminder, time-entry, and notification queries before rendering counters.
+It never reads another user's due tasks, blockers, reminders, unread
+notifications, or tracked time.
+
 ## Error behavior (no leakage)
 
 - Forbidden private records resolve as **not found** (404-style), never
@@ -247,8 +255,9 @@ These are documented now so later steps inherit the model instead of bolting
 it on:
 
 - **Dashboard** — every current widget/counter uses
-  `DailySummaryQuery::for($user)` or `TodoListQuery::summaryFor($user)`; if
-  cached later, cache keys must be per-user so data never mixes.
+  `DailyDashboardQuery::for($user)`, `DailySummaryQuery::for($user)`, or
+  `TodoListQuery::summaryFor($user)`; if cached later, cache keys must be
+  per-user so data never mixes.
 - **Search & filters** — ownership is applied at the query level before any
   text/status/priority filtering; invalid filter input is validated and must
   never widen the scope. Tampered numeric project/tag filters return a safe

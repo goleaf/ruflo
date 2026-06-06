@@ -58,3 +58,10 @@ Notification center page text, filter labels, read-state actions, toasts, empty
 states, status badges, and fallback notification payload text live in
 `lang/en/notifications.php`. The shared navigation label lives in
 `lang/en/navigation.php`.
+
+## 2026-06-06 Step 056 Update
+
+Daily summary dashboard headings, empty/planned/attention text, counter labels,
+schedule-coverage copy, compact/details setting labels, shortcut labels,
+accessibility labels, and tracked-time display text live in
+`lang/en/dashboard.php`.

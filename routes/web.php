@@ -7,6 +7,7 @@ use App\Livewire\Habits\Create as HabitsCreate;
 use App\Livewire\Habits\Index as HabitsIndex;
 use App\Livewire\Notifications\Inbox as NotificationsInbox;
 use App\Livewire\Projects\Show as ProjectsShow;
+use App\Livewire\Reports\Overview as ReportsOverview;
 use App\Livewire\Todos\Automations as TodosAutomations;
 use App\Livewire\Todos\Blocked as TodosBlocked;
 use App\Livewire\Todos\Board as TodosBoard;
@@ -29,6 +30,7 @@ Route::view('/', 'welcome')->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::view('dashboard', 'dashboard')->name('dashboard');
+    Route::livewire('reports', ReportsOverview::class)->name('reports.overview');
 
     Route::livewire('goals/create', GoalsCreate::class)->name('goals.create');
     Route::livewire('goals/milestones/create', GoalsCreateMilestone::class)->name('goals.milestones.create');

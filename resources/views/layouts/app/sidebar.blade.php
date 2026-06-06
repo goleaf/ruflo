@@ -16,6 +16,10 @@
                         {{ __('navigation.items.dashboard') }}
                     </flux:sidebar.item>
 
+                    <flux:sidebar.item icon="chart-bar" :href="route('reports.overview')" :current="request()->routeIs('reports.*')" wire:navigate>
+                        {{ __('reports.navigation.label') }}
+                    </flux:sidebar.item>
+
                     <flux:sidebar.item icon="check-circle" :href="route('todos.index')" :current="request()->routeIs('todos.*')" wire:navigate>
                         {{ __('todos.navigation.label') }}
                     </flux:sidebar.item>

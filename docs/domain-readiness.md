@@ -21,6 +21,7 @@ The current application surface covers these URL consumers:
 
 - Public home route at `/`.
 - Authenticated dashboard route at `/dashboard`.
+- Authenticated reports route at `/reports`.
 - Authenticated goals route at `/goals`.
 - Authenticated habits route at `/habits`.
 - Authenticated notification center route at `/notifications`.
@@ -113,3 +114,9 @@ Step 057 adds the protected `todos.recurring` route at
 `https://ruflo.test/todos/recurring`. Recurrence rule links are generated with
 named routes, and task links still resolve through the existing owner-scoped
 `todos.show` route.
+
+## 2026-06-06 Step 064 Update
+
+Step 064 adds the protected `reports.overview` route at
+`https://ruflo.test/reports`. Report shortcut links use named routes for tasks,
+projects, habits, time tracking, overdue work, and the dashboard.

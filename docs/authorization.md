@@ -43,6 +43,7 @@ scope) rather than across the whole codebase.
 | Daily dashboard read boundary | `App\Queries\Dashboard\DailyDashboardQuery` | Owner-scoped daily counts for due work, reminders, unread notifications, and tracked time. |
 | Dashboard foundation read boundary | `App\Queries\Dashboard\DashboardFoundationQuery` | Owner-scoped widget counters across today, overdue, upcoming, priorities, reminders, recurrence, goals, habits, projects, and time. |
 | Project progress dashboard read boundary | `App\Queries\Dashboard\ProjectProgressDashboardQuery` | Owner-scoped active project, no-project, completion, overdue, undated, and stale cleanup counters. |
+| Reports read boundary | `App\Queries\Reports\ReportsOverviewQuery` | Owner-scoped productivity, habit, project, time, and overdue report aggregates. |
 | Recurrence read boundary | `App\Queries\Todos\TodoRecurrenceRuleQuery` | Owner-scoped recurrence rules, generated occurrences, exceptions, and active task options. |
 | Template read boundary | `App\Queries\Todos\TodoTemplateListQuery` | Owner-scoped reusable task/project/checklist/routine templates. |
 | Inbox read boundary | `App\Queries\Todos\TodoInboxQuery` | Owner-scoped active captured tasks waiting for triage. |

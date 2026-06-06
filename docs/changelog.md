@@ -1,5 +1,27 @@
 # Changelog
 
+## 2026-06-06 - Step 064 Reports overview
+
+### Added
+
+- Added the protected `/reports` Livewire page with translated Flux report
+  widgets for productivity, habits, projects, time, and overdue work.
+- Added `ReportsOverviewQuery` as the owner-scoped reports read boundary and
+  browser-rendered accessible chart summaries without a hosted charting
+  service.
+
+### Tests
+
+- Added `ReportsOverviewTest` coverage for route protection, private aggregate
+  accuracy, archived/deleted/foreign exclusions, translated rendering, project
+  report cards, and session-backed presentation toggles.
+
+### Restricted Hosting
+
+- Reports calculate during authenticated web requests and require no cron,
+  queue worker, supervisor, terminal action, Artisan command, paid analytics,
+  hosted reporting service, or background job.
+
 ## 2026-06-06 - Step 063 Project progress dashboard
 
 ### Added

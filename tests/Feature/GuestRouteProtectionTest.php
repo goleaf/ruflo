@@ -13,6 +13,7 @@ test('guests are redirected from private application pages to login', function (
         ->assertRedirect(route('login'));
 })->with([
     'dashboard' => fn () => route('dashboard'),
+    'reports' => fn () => route('reports.overview'),
     'goals' => fn () => route('goals.index'),
     'create goal' => fn () => route('goals.create'),
     'create goal milestone' => fn () => route('goals.milestones.create'),
@@ -47,6 +48,7 @@ test('verified private routes redirect unverified users to the verification noti
         ->assertRedirect(route('verification.notice'));
 })->with([
     'dashboard' => 'dashboard',
+    'reports' => 'reports.overview',
     'goals' => 'goals.index',
     'create goal' => 'goals.create',
     'create goal milestone' => 'goals.milestones.create',
@@ -106,6 +108,7 @@ test('private route middleware cannot be removed silently', function (string $ro
         ->toContain(...$expectedMiddleware);
 })->with([
     'dashboard' => ['dashboard', ['auth', 'verified']],
+    'reports' => ['reports.overview', ['auth', 'verified']],
     'goals' => ['goals.index', ['auth', 'verified']],
     'create goal' => ['goals.create', ['auth', 'verified']],
     'create goal milestone' => ['goals.milestones.create', ['auth', 'verified']],

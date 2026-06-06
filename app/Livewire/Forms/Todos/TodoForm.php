@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Rules\Todos\OwnedActiveProject;
 use App\Rules\Todos\OwnedTag;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 use Livewire\Form;
 
 /**
@@ -39,7 +40,7 @@ class TodoForm extends Form
 
         return [
             'title' => ['required', 'string', 'max:120'],
-            'priority' => ['required', 'string', 'in:'.implode(',', Priority::values())],
+            'priority' => ['required', Rule::enum(Priority::class)],
             'due_date' => ['nullable', 'date'],
             'project_id' => ['nullable', 'integer', new OwnedActiveProject($user)],
             'tag_ids' => ['array'],

@@ -156,6 +156,11 @@ Step 029 expands `TagTest`, which locks tag-name normalization, whitespace-only
 name rejection, direct-action bypass protection, scoped tag filter links, and
 cross-user tag isolation.
 
+Step 030 adds `TaskPriorityTest`, which locks translated priority labels,
+badge colors, enum weights, Laravel enum validation, direct DTO invalid-value
+rejection, default Normal priority behavior, owner-scoped priority filtering,
+and enum-owned SQL sort expressions.
+
 ## 2026-06-06 Recheck
 
 The Step 001 recheck confirmed the foundation still matches the current master-plan rules after Steps 002-016:

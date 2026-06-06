@@ -2,6 +2,7 @@
 
 namespace App\Queries\Todos;
 
+use App\Enums\Priority;
 use App\Enums\TodoStatus;
 use App\Models\Project;
 use App\Models\Todo;
@@ -223,7 +224,7 @@ final class TodoListQuery
         match ($sort) {
             'due' => $query->orderByRaw('due_date is null')->orderBy('due_date', $direction)->orderByDesc('created_at'),
             'priority' => $query
-                ->orderByRaw("case priority when 'urgent' then 3 when 'high' then 2 when 'normal' then 1 else 0 end ".$direction)
+                ->orderByRaw(Priority::sortCaseSql().' '.$direction)
                 ->orderByDesc('created_at'),
             'project' => $query
                 ->orderByRaw('project_id is null')

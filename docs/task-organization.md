@@ -51,7 +51,21 @@ actions. Everything here is owner-scoped on top of the model in
 
 `App\Enums\Priority`: Low / Normal / High / Urgent, each with a translatable
 label, a badge color, and a sort `weight()`. Stored as the enum's string value
-and cast on the model. Validated against `Priority::values()` on input.
+and cast on the model.
+
+Step 030 tightened priority handling so the enum is the single source for:
+
+- Livewire create/edit validation, using Laravel's `Rule::enum(Priority::class)`.
+- Direct DTO normalization. Missing priority still defaults to Normal, but an
+  invalid provided value raises a translated validation error instead of being
+  silently coerced.
+- Priority sorting. `Priority::sortCaseSql()` generates the bounded SQL `CASE`
+  expression from each enum case and its `weight()`, so query ordering cannot
+  drift from the displayed priority meanings.
+
+Priority filters remain owner-scoped through `TodoListQuery::filtered()`, and
+priority badges continue to use translated labels and Flux badge colors from
+the enum.
 
 ## Due dates & date buckets
 

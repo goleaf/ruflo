@@ -55,7 +55,7 @@ Use this file as a persistent task tracker. Step detail lives in `TODO_MASTER_PR
 - [x] Step 027 — Task lifecycle state machine
 - [x] Step 028 — Projects and lists
 - [x] Step 029 — Tags and labels
-- [ ] Step 030 — Priorities
+- [x] Step 030 — Priorities
 - [ ] Step 031 — Due dates and date logic
 - [ ] Step 032 — Today view
 - [ ] Step 033 — Overdue view

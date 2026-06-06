@@ -450,6 +450,31 @@
 
 - Added `docs/frontend-design-system.md` with Tailwind 4, Flux, and SCSS usage rules.
 
+## 2026-06-06 - Step 030 Priorities
+
+### Implemented
+
+- Tightened task priority validation to Laravel's enum rule for Livewire
+  create/edit forms.
+- Hardened `TodoData::fromArray()` so direct callers may omit priority and get
+  Normal, but cannot submit an invalid priority that silently falls back.
+- Centralized priority sorting through `App\Enums\Priority::sortCaseSql()` so
+  the query sort weights stay aligned with enum labels, badge colors, and
+  weights.
+
+### Testing
+
+- Added `TaskPriorityTest` for enum labels/colors/weights, invalid Livewire
+  create/edit priorities, direct DTO/action bypass behavior, owner-scoped
+  filtering, and enum-owned sort SQL.
+- Re-ran the adjacent todo organization, creation, editing, private view,
+  project detail, factory, seeder, and architecture tests.
+
+### Documentation
+
+- Updated `docs/task-organization.md` and `docs/todo-foundation.md` with the
+  tightened priority validation, sorting, and testing contract.
+
 ## 2026-06-05 - Step 4 stabilization
 
 ### Implemented

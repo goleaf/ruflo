@@ -2,19 +2,19 @@
 
 ## Current status
 
-Steps 001-029 are complete. The requested recheck from Step 001 has been completed through Step 029. The tracker is expanded to one ledger line per step from 001 through 100 so later work cannot be hidden behind a range.
+Steps 001-030 are complete. The requested recheck from Step 001 has been completed through Step 030. The tracker is expanded to one ledger line per step from 001 through 100 so later work cannot be hidden behind a range.
 
 ## Current step
 
-Step 030 — Priorities
+Step 031 — Due dates and date logic
 
 ## Last completed action
 
-Completed Step 029 by adding normalized tag-name validation, hardening direct tag creation against empty normalized names, linking rendered tag badges to owner-scoped tag filters, and expanding tag privacy/assignment/filter tests.
+Completed Step 030 by tightening task priority validation with Laravel enum rules, rejecting invalid direct DTO priority data, centralizing priority sort SQL on enum weights, and adding priority validation/filter/sort regression tests.
 
 ## Next action
 
-Begin `steps/step-030-priorities.md`, then implement the next not-yet-completed plan step without grouping it with later work.
+Begin `steps/step-031-due-dates-and-date-logic.md`, then implement the next not-yet-completed plan step without grouping it with later work.
 
 ## Step ledger
 
@@ -49,7 +49,7 @@ Begin `steps/step-030-priorities.md`, then implement the next not-yet-completed 
 | 027 — Task lifecycle state machine | Complete | Added `TodoTransition` and `TodoLifecycleStateMachine` as the centralized accepted-source-state and target-bucket contract. Routed complete, reopen, archive, unarchive, delete, restore-from-trash, and update actions through the state-machine guard before mutation. Added language-backed trash-specific invalid transition exceptions for direct action calls. | Boost docs search, lifecycle/action inventory, make:class/make:test, focused `TaskLifecycleStateMachineTest`, adjacent lifecycle/action/policy/ownership/architecture suite, Pint, translation/source scans, compressed-progress scan, diff check, browser logs, and full suite recorded in test report. | `docs/task-lifecycle.md`, `docs/todo-foundation.md`, `docs/changelog.md`, `lang/en/todos.php`, root changelog, decisions, risks, and test report updated. | Lifecycle rule drift risk logged and mitigated with the centralized state machine and regression tests. | e1ecf6b |
 | 028 — Projects and lists | Complete | Added `App\Livewire\Projects\Show` and the protected `projects.show` route. Project badges now link to private project detail pages, project detail reads/counts use owner-scoped query methods, archived projects remain readable for review while active pickers/filters still exclude them, and empty project states are translated. Existing create, rename, archive, restore, delete, no-project, and bulk move behavior was rechecked. | Boost app info/docs search/schema inspection, project/action/query/policy/UI/test inventory, make:class/make:test, focused `ProjectDetailTest`, projects route middleware check, adjacent project/organization/privacy/architecture/factory/seeder suite, plus scans and full-suite checks recorded in test report. | `docs/task-organization.md`, `docs/authorization.md`, `docs/todo-foundation.md`, `docs/changelog.md`, `lang/en/todos.php`, root changelog, decisions, risks, and test report updated. | Project detail route leak risk logged and mitigated with owner-scoped lookup, locked id, route protection, and regression tests. | 9d10797 |
 | 029 — Tags and labels | Complete | Added `App\Rules\Tags\TagName`, wired it into tag creation, and hardened `CreateTag` so whitespace-only names cannot persist after normalization. Rendered tag badges now link to the existing `todos.index` tag filter from task list, task detail, and project detail pages. Existing scoped tag creation, duplicate handling, assignment/removal, deletion, filtering, factories, and seeders were rechecked. | Boost app info/docs search/schema inspection, tag model/action/query/policy/UI/test inventory, make:rule, focused `TagTest`, adjacent tag/organization/create/edit/privacy/validation/policy/factory/seeder suite, plus scans and full-suite checks recorded in test report. | `docs/task-organization.md`, `docs/validation-rules.md`, `docs/todo-foundation.md`, `docs/changelog.md`, `lang/en/todos.php`, root changelog, decisions, risks, and test report updated. | Whitespace-only normalized tag-name risk logged and mitigated with a reusable rule, action-level guard, translation key, and regression tests. | f8f5d9c |
-| 030 — Priorities | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 030 — Priorities | Complete | Tightened Livewire create/edit priority validation with Laravel backed-enum rules, made direct DTO parsing reject invalid provided values instead of silently falling back to Normal, centralized priority sort SQL on enum weights, and rechecked existing badges, filters, factories, and seeders. | Boost app info/docs/schema checks, focused `TaskPriorityTest`, and adjacent todo organization/creation/editing/private-view/project-detail/factory/seeder/architecture suite passed; final scans and full-suite checks recorded in test report. | `docs/task-organization.md`, `docs/todo-foundation.md`, `docs/changelog.md`, root changelog, decisions, risks, and test report updated. | Invalid direct priority fallback risk logged and mitigated. | Pending |
 | 031 — Due dates and date logic | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
 | 032 — Today view | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
 | 033 — Overdue view | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |

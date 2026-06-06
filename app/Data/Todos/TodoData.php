@@ -3,6 +3,7 @@
 namespace App\Data\Todos;
 
 use App\Enums\Priority;
+use Illuminate\Validation\ValidationException;
 
 /**
  * Validated, normalized input for creating or editing a task.
@@ -42,10 +43,35 @@ final readonly class TodoData
 
         return new self(
             title: trim($validated['title']),
-            priority: Priority::tryFrom($validated['priority'] ?? '') ?? Priority::Normal,
+            priority: self::priorityFrom($validated['priority'] ?? null),
             dueDate: ($dueDate === null || $dueDate === '') ? null : $dueDate,
             projectId: ($projectId === null || $projectId === '') ? null : (int) $projectId,
             tagIds: array_values(array_map('intval', $validated['tag_ids'] ?? [])),
         );
+    }
+
+    /**
+     * @throws ValidationException
+     */
+    private static function priorityFrom(mixed $priority): Priority
+    {
+        if ($priority instanceof Priority) {
+            return $priority;
+        }
+
+        if ($priority === null || $priority === '') {
+            return Priority::Normal;
+        }
+
+        if (! is_scalar($priority)) {
+            throw ValidationException::withMessages([
+                'priority' => __('todos.validation.priority'),
+            ]);
+        }
+
+        return Priority::tryFrom((string) $priority)
+            ?? throw ValidationException::withMessages([
+                'priority' => __('todos.validation.priority'),
+            ]);
     }
 }

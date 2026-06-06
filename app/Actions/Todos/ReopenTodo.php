@@ -9,7 +9,7 @@ use App\Models\Todo;
 /**
  * Reopens a completed task back to active work.
  *
- * Reopening preserves all editable details. Archived tasks must be restored
+ * Reopening preserves all editable details. Archived tasks must be unarchived
  * before reopening. Reopening an already-active task is a no-op so duplicate
  * clicks do not emit duplicate lifecycle events.
  */

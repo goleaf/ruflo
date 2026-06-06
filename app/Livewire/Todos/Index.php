@@ -14,7 +14,7 @@ use App\Actions\Todos\BulkArchiveTodos;
 use App\Actions\Todos\BulkCompleteTodos;
 use App\Actions\Todos\BulkDeleteTodos;
 use App\Actions\Todos\BulkMoveTodos;
-use App\Actions\Todos\BulkRestoreTodos;
+use App\Actions\Todos\BulkUnarchiveTodos;
 use App\Actions\Todos\ClearCompletedTodos;
 use App\Actions\Todos\CompleteTodo;
 use App\Actions\Todos\CreateTodo;
@@ -264,15 +264,15 @@ class Index extends Component
         Flux::toast(variant: 'success', text: __('todos.messages.archived'));
     }
 
-    public function restoreTodo(int $todoId, TodoListQuery $query, UnarchiveTodo $unarchive): void
+    public function unarchiveTodo(int $todoId, TodoListQuery $query, UnarchiveTodo $unarchive): void
     {
         $todo = $query->findVisibleFor($this->currentUser(), $todoId);
-        $this->authorize('restore', $todo);
+        $this->authorize('unarchive', $todo);
 
         $unarchive->handle($todo);
         $this->refreshLists();
 
-        Flux::toast(variant: 'success', text: __('todos.messages.restored'));
+        Flux::toast(variant: 'success', text: __('todos.messages.unarchived'));
     }
 
     public function deleteTodo(int $todoId, TodoListQuery $query, DeleteTodo $delete): void
@@ -318,10 +318,10 @@ class Index extends Component
         $this->afterBulk($count);
     }
 
-    public function bulkRestore(BulkRestoreTodos $bulk): void
+    public function bulkUnarchive(BulkUnarchiveTodos $bulk): void
     {
         $this->validateBulkSelection();
-        $this->authorize('bulkRestore', Todo::class);
+        $this->authorize('bulkUnarchive', Todo::class);
 
         $count = $bulk->handle($this->currentUser(), $this->selectedIds());
         $this->afterBulk($count);

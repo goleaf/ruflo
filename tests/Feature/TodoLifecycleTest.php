@@ -85,7 +85,7 @@ it('archives an active task without deleting or completing it', function () {
     Event::assertDispatched(TodoArchived::class);
 });
 
-it('restores an archived task back to its prior completion state', function () {
+it('unarchives an archived task back to its prior completion state', function () {
     $user = User::factory()->create();
     $wasActive = Todo::factory()->for($user)->archived()->create();
     $wasCompleted = Todo::factory()->for($user)->completed()->archived()->create();
@@ -93,8 +93,8 @@ it('restores an archived task back to its prior completion state', function () {
     Event::fake([TodoUnarchived::class]);
 
     Livewire::actingAs($user)->test(Index::class)
-        ->call('restoreTodo', $wasActive->id)
-        ->call('restoreTodo', $wasCompleted->id);
+        ->call('unarchiveTodo', $wasActive->id)
+        ->call('unarchiveTodo', $wasCompleted->id);
 
     expect($wasActive->refresh()->status())->toBe(TodoStatus::Active)
         ->and($wasCompleted->refresh()->status())->toBe(TodoStatus::Completed);
@@ -232,7 +232,7 @@ it('forbids acting on another users task for every lifecycle action', function (
     'reopenTodo',
     'startEdit',
     'archiveTodo',
-    'restoreTodo',
+    'unarchiveTodo',
     'deleteTodo',
 ]);
 

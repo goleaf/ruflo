@@ -187,7 +187,7 @@
                 @if ($tab !== 'archived')
                     <flux:button size="sm" variant="ghost" icon="archive-box" wire:click="bulkArchive">{{ __('todos.bulk.archive') }}</flux:button>
                 @else
-                    <flux:button size="sm" variant="ghost" icon="archive-box-x-mark" wire:click="bulkRestore">{{ __('todos.bulk.restore') }}</flux:button>
+                    <flux:button size="sm" variant="ghost" icon="archive-box-x-mark" wire:click="bulkUnarchive">{{ __('todos.bulk.unarchive') }}</flux:button>
                 @endif
                 <flux:button size="sm" variant="danger" icon="trash" wire:click="bulkDelete" wire:confirm="{{ __('todos.confirmations.bulk_delete') }}">
                     {{ __('todos.bulk.delete') }}
@@ -263,7 +263,7 @@
                                 <flux:menu.item icon="pencil-square" wire:click="startEdit({{ $todo->id }})">{{ __('todos.actions.edit') }}</flux:menu.item>
                                 <flux:menu.item icon="archive-box" wire:click="archiveTodo({{ $todo->id }})">{{ __('todos.actions.archive') }}</flux:menu.item>
                             @else
-                                <flux:menu.item icon="archive-box-x-mark" wire:click="restoreTodo({{ $todo->id }})">{{ __('todos.actions.restore') }}</flux:menu.item>
+                                <flux:menu.item icon="archive-box-x-mark" wire:click="unarchiveTodo({{ $todo->id }})">{{ __('todos.actions.unarchive') }}</flux:menu.item>
                             @endunless
 
                             <flux:menu.separator />

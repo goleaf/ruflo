@@ -6,11 +6,11 @@ use App\Events\TodoUnarchived;
 use App\Models\Todo;
 
 /**
- * Restores a task from the archive.
+ * Unarchives a task from the archive.
  *
  * Completion state is intentionally preserved: a task archived while completed
  * returns to the completed bucket, and one archived while active returns to
- * active. Idempotent — restoring a non-archived task is a no-op.
+ * active. Idempotent — unarchiving a non-archived task is a no-op.
  */
 final class UnarchiveTodo
 {

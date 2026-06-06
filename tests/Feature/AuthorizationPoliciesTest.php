@@ -26,7 +26,7 @@ test('todo policy covers lifecycle and bulk abilities', function () {
     $ownerGate = Gate::forUser($owner);
     $intruderGate = Gate::forUser($intruder);
 
-    foreach (['view', 'update', 'complete', 'reopen', 'archive', 'delete', 'restore'] as $ability) {
+    foreach (['view', 'update', 'complete', 'reopen', 'archive', 'unarchive', 'delete'] as $ability) {
         expect($ownerGate->allows($ability, $todo))->toBeTrue();
 
         $response = $intruderGate->inspect($ability, $todo);
@@ -35,7 +35,7 @@ test('todo policy covers lifecycle and bulk abilities', function () {
             ->and($response->status())->toBe(404);
     }
 
-    foreach (['viewAny', 'create', 'clearCompleted', 'bulkComplete', 'bulkArchive', 'bulkRestore', 'bulkDelete', 'bulkMove'] as $ability) {
+    foreach (['viewAny', 'create', 'clearCompleted', 'bulkComplete', 'bulkArchive', 'bulkUnarchive', 'bulkDelete', 'bulkMove'] as $ability) {
         expect($ownerGate->allows($ability, Todo::class))->toBeTrue();
     }
 
@@ -109,11 +109,11 @@ test('todo Livewire actions use policy abilities before mutation', function () {
         ->toContain("\$this->authorize('complete', \$todo);")
         ->toContain("\$this->authorize('reopen', \$todo);")
         ->toContain("\$this->authorize('archive', \$todo);")
-        ->toContain("\$this->authorize('restore', \$todo);")
+        ->toContain("\$this->authorize('unarchive', \$todo);")
         ->toContain("\$this->authorize('delete', \$todo);")
         ->toContain("\$this->authorize('bulkComplete', Todo::class);")
         ->toContain("\$this->authorize('bulkArchive', Todo::class);")
-        ->toContain("\$this->authorize('bulkRestore', Todo::class);")
+        ->toContain("\$this->authorize('bulkUnarchive', Todo::class);")
         ->toContain("\$this->authorize('bulkDelete', Todo::class);")
         ->toContain("\$this->authorize('bulkMove', Todo::class);")
         ->toContain("\$this->authorize('create', Project::class);")

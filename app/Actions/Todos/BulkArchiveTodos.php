@@ -14,6 +14,10 @@ use Illuminate\Support\Facades\Gate;
  */
 final class BulkArchiveTodos
 {
+    public function __construct(
+        private readonly ArchiveTodo $archiveTodo,
+    ) {}
+
     /**
      * @param  list<int>  $ids
      */
@@ -26,13 +30,12 @@ final class BulkArchiveTodos
         $todos = $user->todos()
             ->whereNull('archived_at')
             ->whereKey($ids)
-            ->get(['id', 'user_id']);
+            ->get(['id', 'user_id', 'archived_at']);
 
         $todos->each(fn (Todo $todo) => Gate::forUser($user)->authorize('archive', $todo));
 
-        return $user->todos()
-            ->whereNull('archived_at')
-            ->whereKey($todos->modelKeys())
-            ->update(['archived_at' => now()]);
+        $todos->each(fn (Todo $todo) => $this->archiveTodo->handle($todo));
+
+        return $todos->count();
     }
 }

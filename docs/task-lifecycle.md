@@ -20,7 +20,7 @@ field. {@see App\Models\Todo::status()} maps them to a display bucket.
 `App\Enums\TodoStatus` is the enum for the first three (user-facing) buckets.
 Archived takes precedence over completion: an archived task always reads as
 "Archived" and keeps its underlying completion flag untouched so it can return
-to the right bucket on restore.
+to the right bucket when unarchived.
 
 ## Allowed transitions
 
@@ -33,7 +33,7 @@ to the right bucket on restore.
 
    Active ─┐                        ┌─▶ Active      (was active)
            ├─ archive ─▶ Archived ──┤
- Completed ┘             (restore)  └─▶ Completed   (was completed)
+ Completed ┘           (unarchive)  └─▶ Completed   (was completed)
 
    Active / Completed / Archived ──delete──▶ Trashed   (soft, recoverable)
 ```
@@ -48,9 +48,10 @@ Explicit rules:
   no-op and does not emit a duplicate reopen event.
 - **Active/Completed → Archived** — `ArchiveTodo`. Sets `archived_at`; does not
   change completion; idempotent.
-- **Archived → prior bucket** — `UnarchiveTodo` ("restore"). Clears
-  `archived_at`; completion is preserved, so the task returns to Completed if
-  it was completed before archiving, otherwise Active. Idempotent.
+- **Archived → prior bucket** — `UnarchiveTodo`. Clears `archived_at`;
+  completion is preserved, so the task returns to Completed if it was completed
+  before archiving, otherwise Active. Idempotent. This is distinct from future
+  soft-delete restore behavior.
 - **Any non-deleted → Trashed** — `DeleteTodo`. Soft delete. Recoverable at the
   data layer; `forceDelete` is disabled by policy, and a trash-restore UI is
   intentionally deferred.
@@ -65,12 +66,12 @@ These are blocked in the action layer (`App\Exceptions\InvalidTodoTransition`)
 and surfaced to the user as a calm, translatable warning toast — never a 500 or
 a leak:
 
-- **Complete/reopen an archived task** — must be restored first. The UI also
+- **Complete/reopen an archived task** — must be unarchived first. The UI also
   hides the checkbox for archived rows; the backend rejects it regardless.
-- **Edit an archived task** — must be restored first. The UI does not offer the
+- **Edit an archived task** — must be unarchived first. The UI does not offer the
   edit action on archived rows; the backend rejects it regardless.
 
-Idempotent no-ops (archiving an archived task, restoring a non-archived task)
+Idempotent no-ops (archiving an archived task, unarchiving a non-archived task)
 return silently rather than erroring.
 
 ## Where each concern lives
@@ -81,7 +82,7 @@ return silently rather than erroring.
 | Mutations | `App\Actions\Todos\*` (one action per transition) |
 | Invalid-transition guard | `App\Exceptions\InvalidTodoTransition` |
 | Owner-scoped reads & buckets | `App\Queries\Todos\TodoListQuery` (`forStatus`, `summaryFor`) |
-| Authorization | `App\Policies\TodoPolicy` (`complete`, `reopen`, `archive`, `restore`, `delete`, `update`, …) |
+| Authorization | `App\Policies\TodoPolicy` (`complete`, `reopen`, `archive`, `unarchive`, `delete`, `update`, …) |
 | UI state & feedback | `App\Livewire\Todos\Index` + `resources/views/livewire/todos/index.blade.php` |
 | Status badge | `resources/views/components/ui/status-badge.blade.php` |
 
@@ -103,9 +104,13 @@ completion and reopening actions/events. The row checkbox still gives the same
 fast UX, but it calls the explicit transition for the task's current state and
 uses state-specific translated accessibility labels.
 
+Step 025 keeps archive reversal explicit as `UnarchiveTodo`,
+`TodoUnarchived`, and `unarchiveTodo`/`bulkUnarchive` UI methods. This avoids
+confusing "bring back from archive" with future soft-delete restore behavior.
+
 Notification/reminder rules to honor when those features arrive: completed and
 archived tasks should not emit active reminders; deleted tasks emit none;
-restoring or reopening may re-enable them per the rules documented in the
+unarchiving or reopening may re-enable them per the rules documented in the
 reminders step.
 
 ## Validation
@@ -123,8 +128,9 @@ reminders step.
 Empty state per tab (active / completed / archived), inline validation errors,
 success/warning toasts for every action, `wire:confirm` on destructive actions
 (delete, clear completed), state-aware row actions (complete only on active
-rows, reopen only on completed rows, no complete/edit on archived rows, restore
-only on archived rows), and a status badge per row. All user-facing text is
+rows, reopen only on completed rows, no complete/edit on archived rows,
+unarchive only on archived rows), and a status badge per row. All
+user-facing text is
 translatable via `lang/en/todos.php`.
 
 ## Intentionally not built yet

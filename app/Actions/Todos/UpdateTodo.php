@@ -11,8 +11,8 @@ use App\Models\User;
 /**
  * Updates a task's editable details: title, priority, due date, project, tags.
  *
- * Editing never completes, archives, restores, or deletes the task. Archived
- * tasks must be restored before editing. Project and tag references are
+ * Editing never completes, archives, unarchives, or deletes the task. Archived
+ * tasks must be unarchived before editing. Project and tag references are
  * re-verified against the owner so a forged request can't cross-link data.
  */
 final class UpdateTodo

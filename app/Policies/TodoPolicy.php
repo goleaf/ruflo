@@ -82,7 +82,7 @@ final class TodoPolicy
         return true;
     }
 
-    public function bulkRestore(User $user): bool
+    public function bulkUnarchive(User $user): bool
     {
         return true;
     }
@@ -106,9 +106,9 @@ final class TodoPolicy
     }
 
     /**
-     * Determine whether the user can restore (un-archive) the model.
+     * Determine whether the user can unarchive the model.
      */
-    public function restore(User $user, Todo $todo): Response
+    public function unarchive(User $user, Todo $todo): Response
     {
         return $this->ownerOnly($user, $todo);
     }

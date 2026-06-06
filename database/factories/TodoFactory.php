@@ -129,7 +129,7 @@ class TodoFactory extends Factory
 
     /**
      * Indicate that the todo is archived. Completion state is preserved so an
-     * archived-while-completed task restores back to completed.
+     * archived-while-completed task unarchives back to completed.
      */
     public function archived(): static
     {

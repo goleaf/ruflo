@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026-06-06 - Step 025 Task archive and restore
+
+### Implemented
+
+- Kept task archive reversal explicit with `UnarchiveTodo`, `TodoUnarchived`, `unarchiveTodo`, and `bulkUnarchive`.
+- Replaced the old task archive-reversal bulk action with `BulkUnarchiveTodos` so archive reversal is not confused with future trash restore behavior.
+- Changed bulk archive and unarchive flows to reuse the single-task transition actions so events and idempotency rules stay consistent.
+- Preserved completion state across archive/unarchive and kept archived task completion/edit transitions rejected.
+
+### Testing
+
+- Added `TaskArchiveRestoreTest` for direct actions, Livewire transitions, event dispatch, idempotency, completion-state preservation, foreign-id denial, bulk archive/unarchive, scoped lookup status, and UI label wiring.
+- Updated lifecycle, organization, ownership, authorization, factory, seeder, dashboard, query-scoping, and completion/reopening suites for the explicit unarchive contract.
+
+### Documentation
+
+- Updated `docs/task-lifecycle.md`, `docs/authorization.md`, `docs/task-organization.md`, and `docs/todo-foundation.md` with the Step 025 archive/unarchive contract.
+
 ## 2026-06-06 - Step 024 Task completion and reopening
 
 ### Implemented
@@ -25,7 +43,7 @@
 
 - Trimmed edited task titles at the `UpdateTodo` write boundary, matching the creation action.
 - Kept edit mutations limited to editable details: title, priority, due date, project, and tags.
-- Preserved lifecycle separation so editing cannot complete, archive, restore, or delete a task.
+- Preserved lifecycle separation so editing cannot complete, archive, unarchive, or delete a task.
 - Added edit-modal validation error placement beside priority, due date, project, and tampered tag fields.
 - Updated `TodoUpdated` documentation for future activity-history readiness.
 
@@ -365,7 +383,7 @@
 
 - Added project rename support in the management modal with owner-scoped lookup,
   authorization, validation attributes, and tests.
-- Added bulk restore and bulk move actions. Both re-scope selected IDs to the
+- Added bulk unarchive and bulk move actions. Both re-scope selected IDs to the
   current user; bulk move validates the target project belongs to the user and
   is active.
 - Added due-date "with/without" filters, project-name sorting, safer validation
@@ -408,7 +426,7 @@
 
 ### Implemented
 
-- Defined an explicit task state machine: active ⇄ completed, active/completed → archived → (restore to prior bucket), and any non-deleted → trashed (soft delete). States are derived from `is_completed`, `archived_at`, and `deleted_at`; archived takes precedence over completion.
+- Defined an explicit task state machine: active ⇄ completed, active/completed → archived → (unarchive to prior bucket), and any non-deleted → trashed (soft delete). States are derived from `is_completed`, `archived_at`, and `deleted_at`; archived takes precedence over completion.
 - Added `archived_at` to `todos` with a `(user_id, archived_at)` index; archive is distinct from both completion and deletion.
 - Added `App\Enums\TodoStatus` (Active/Completed/Archived) with translatable labels and badge colors, and model helpers/scopes (`status()`, `isActive()`, `isArchived()`, `scopeActive/Completed/Archived`).
 - Added one action per transition: `UpdateTodo`, `ArchiveTodo`, `UnarchiveTodo`, later refined to explicit `CompleteTodo` and `ReopenTodo`; hardened completed cleanup to respect archive state. `archived_at` is set directly (system-controlled, never mass-assignable).
@@ -418,12 +436,12 @@
 
 ### UI
 
-- Rebuilt the task list around a lifecycle segmented control (Flux Free has no tabs component) with live per-bucket counts, a create form on the Active tab, state-aware row actions in a dropdown (edit/archive on non-archived, restore on archived, delete always with `wire:confirm`), an edit modal, a reusable `x-ui.status-badge`, and per-tab empty states.
+- Rebuilt the task list around a lifecycle segmented control (Flux Free has no tabs component) with live per-bucket counts, a create form on the Active tab, state-aware row actions in a dropdown (edit/archive on non-archived, unarchive on archived, delete always with `wire:confirm`), an edit modal, a reusable `x-ui.status-badge`, and per-tab empty states.
 - All new copy added to `lang/en/todos.php`; nothing user-facing is hardcoded.
 
 ### Testing
 
-- Added `TodoLifecycleTest` (18 tests): status derivation, per-bucket listing and summary, archive/restore (completion preserved), archived-completion rejection, edit + edit validation, archived-edit refusal, soft delete, clear-completed isolation from archive, invalid-tab fallback, and cross-user denial across every lifecycle action (data-driven over complete/reopen/edit/archive/restore/delete).
+- Added `TodoLifecycleTest` (18 tests): status derivation, per-bucket listing and summary, archive/unarchive (completion preserved), archived-completion rejection, edit + edit validation, archived-edit refusal, soft delete, clear-completed isolation from archive, invalid-tab fallback, and cross-user denial across every lifecycle action (data-driven over complete/reopen/edit/archive/unarchive/delete).
 - Full suite: 82 passed (was 64).
 
 ### Documentation
@@ -453,7 +471,7 @@
 
 ### Testing
 
-- Added `TodoOwnershipTest`: policy resolution, owner-allow / non-owner-deny for view/update/complete/delete/restore, not-found (404) leakage behavior, `forceDelete` disabled, mass-assignment refusal, owner-scoped query + counters, and class-level abilities.
+- Added `TodoOwnershipTest`: policy resolution, owner-allow / non-owner-deny for view/update/complete/delete/unarchive, not-found (404) leakage behavior, `forceDelete` disabled, mass-assignment refusal, owner-scoped query + counters, and class-level abilities.
 - Full suite: 62 passed (was 51).
 
 ### Documentation
@@ -462,7 +480,7 @@
 
 ### Intentionally not implemented
 
-- Task lifecycle screens, edit/archive/restore actions, dashboard, search, filters, bulk actions, reminders, collaboration, roles, and any `Workspace` model (the `User` remains the boundary for now).
+- Task lifecycle screens, edit/archive/unarchive actions, dashboard, search, filters, bulk actions, reminders, collaboration, roles, and any `Workspace` model (the `User` remains the boundary for now).
 
 ## 2026-06-05 - Step 1 Todo foundation
 

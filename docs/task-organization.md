@@ -90,7 +90,7 @@ page and clears the bulk selection.
 
 ## Bulk actions
 
-`BulkCompleteTodos`, `BulkArchiveTodos`, `BulkRestoreTodos`, `BulkMoveTodos`,
+`BulkCompleteTodos`, `BulkArchiveTodos`, `BulkUnarchiveTodos`, `BulkMoveTodos`,
 and `BulkDeleteTodos` each take the user plus a list of selected ids and
 **re-scope the selection to the user's own tasks inside the query**
 (`$user->todos()->…->whereKey($ids)`). Consequences:
@@ -100,7 +100,7 @@ and `BulkDeleteTodos` each take the user plus a list of selected ids and
   selection.)
 - Bulk complete only affects **active** tasks; bulk archive only **non-archived**
   tasks — meaningless transitions are no-ops, not errors.
-- Bulk restore only affects archived tasks and preserves completion state.
+- Bulk unarchive only affects archived tasks and preserves completion state.
 - Bulk move updates only owned tasks and only accepts an owned, active target
   project; an empty target moves tasks back to "No project".
 - Bulk delete is soft (recoverable) and confirmed in the UI.

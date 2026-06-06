@@ -54,7 +54,10 @@ Required rules:
 
 Current Livewire Todo creation uses `App\Livewire\Forms\Todos\TodoForm`. Future HTTP endpoints should use Form Request classes; future Livewire forms should use Livewire Form objects.
 
-Validation must cover create, update, completion, reopening, due dates, filtering, sorting, bulk actions, archiving, restoring, deleting, and collaboration actions when those features are introduced. Validation should normalize input before it reaches action classes.
+Validation must cover create, update, completion, reopening, due dates,
+filtering, sorting, bulk actions, archiving, unarchiving, deleting, restoring
+deleted data, and collaboration actions when those features are introduced.
+Validation should normalize input before it reaches action classes.
 
 Step 021 hardens the core creation boundary: `CreateTodo` trims the task title
 again before persistence, assigns ownership through `$user->todos()`, sets only
@@ -122,7 +125,8 @@ Every Todo feature must include tests for:
 - dashboard counts,
 - bulk actions.
 
-The core invariant is: one user must never view, change, delete, restore, or infer another user's private Todo data.
+The core invariant is: one user must never view, change, archive, unarchive,
+delete, restore deleted data, or infer another user's private Todo data.
 
 Step 1 adds tests for owner-scoped viewing, creation, validation, completion, soft deletion, clearing completed todos, and cross-user mutation attempts. It also adds architecture tests to keep Livewire thin and translation-based.
 

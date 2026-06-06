@@ -307,13 +307,13 @@ it('bulk archive archives selected tasks owned by the user', function () {
     expect($own->fresh()->isArchived())->toBeTrue();
 });
 
-it('bulk restore restores selected archived tasks owned by the user', function () {
+it('bulk unarchive unarchives selected archived tasks owned by the user', function () {
     $owner = User::factory()->create();
     $own = Todo::factory()->for($owner)->archived()->create();
 
     Livewire::actingAs($owner)->test(Index::class)
         ->set('selected', [$own->id])
-        ->call('bulkRestore')
+        ->call('bulkUnarchive')
         ->assertHasNoErrors();
 
     expect($own->fresh()->isArchived())->toBeFalse();
@@ -392,7 +392,7 @@ it('bulk actions reject selected tasks owned by another user before mutating tas
 })->with([
     'bulkComplete',
     'bulkArchive',
-    'bulkRestore',
+    'bulkUnarchive',
     'bulkDelete',
 ]);
 

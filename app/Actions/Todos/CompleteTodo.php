@@ -10,7 +10,7 @@ use App\Models\Todo;
  * Completes an active task.
  *
  * Completion is reversible and is never deletion. Archived tasks must be
- * restored before completion. Completing an already-completed task is a no-op
+ * unarchived before completion. Completing an already-completed task is a no-op
  * so duplicate clicks do not emit duplicate lifecycle events.
  */
 final class CompleteTodo

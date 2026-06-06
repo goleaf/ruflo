@@ -14,16 +14,16 @@ final class InvalidTodoTransition extends RuntimeException
 {
     public static function cannotCompleteArchived(): self
     {
-        return new self('Archived tasks must be restored before they can be completed.');
+        return new self('Archived tasks must be unarchived before they can be completed.');
     }
 
     public static function cannotReopenArchived(): self
     {
-        return new self('Archived tasks must be restored before they can be reopened.');
+        return new self('Archived tasks must be unarchived before they can be reopened.');
     }
 
     public static function cannotEditArchived(): self
     {
-        return new self('Archived tasks must be restored before they can be edited.');
+        return new self('Archived tasks must be unarchived before they can be edited.');
     }
 }

@@ -8,7 +8,7 @@ If a change cannot satisfy these rules, the change is wrong, not the rules.
 ## Core invariant
 
 > One user must never view, search, count, create-for, edit, complete, reopen,
-> archive, restore, delete, or otherwise infer another user's private todo
+> archive, unarchive, delete, or otherwise infer another user's private todo
 > data — unless a future collaboration feature grants it through an explicit,
 > authorized, tested permission.
 
@@ -80,7 +80,7 @@ The Livewire component authorizes **before** delegating to an action:
 - `viewAny` / `create` / `clearCompleted` / `bulk*` — class-level abilities,
   allowed for any authenticated user (they only ever touch that user's own
   workspace).
-- `view` / `update` / `complete` / `reopen` / `archive` / `delete` / `restore`
+- `view` / `update` / `complete` / `reopen` / `archive` / `unarchive` / `delete`
   — per-record abilities, owner-only, returning `denyAsNotFound()` so forbidden
   access is indistinguishable from a missing record.
 - `complete` and `reopen` are separate policy abilities. Step 024 also gives
@@ -195,3 +195,9 @@ and keep the detail component on locked IDs plus owner-scoped queries.
 use separate action classes, events, policy checks, translated labels, and
 owner-scoped Livewire methods; archived tasks are rejected; idempotent calls do
 not duplicate activity; bulk completion reuses the same complete transition.
+
+`TaskArchiveRestoreTest` locks the Step 025 contract: archive and unarchive use
+explicit action classes, events, policy checks, translated labels, and
+owner-scoped Livewire methods; completion state is preserved; idempotent calls
+do not duplicate activity; bulk archive/unarchive reuses the same single-task
+transitions.

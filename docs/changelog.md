@@ -14,7 +14,10 @@
 - Added a protected Generate occurrences action on `/todos/recurring` with a
   Flux web-mode note, run report, and generated-task count badges.
 - Generated future tasks inherit owner scope, project, goal, milestone, habit,
-  tags, priority, due date, and pending reminder offset from the source task.
+  tags, checklist item titles, priority, due date, and pending reminder offset
+  from the source task. Checklist rows are reset to pending on each occurrence.
+- Soft-deleted generated occurrences are treated as existing rows so deleting
+  one occurrence acts as an intentional skip instead of being recreated later.
 - Added `TodoFactory::generatedOccurrence()` and demo seeding through the same
   web-safe generator used by the UI.
 
@@ -28,8 +31,10 @@
 ### Tests
 
 - Added `RecurringOccurrenceGenerationTest` for idempotent generation,
-  reminder-copy integration, chunk resume, Livewire triggering, owner privacy,
-  and generated occurrence factory coverage.
+  checklist and reminder-copy integration, chunk resume, Livewire triggering,
+  owner privacy, per-occurrence complete/edit behavior, soft-deleted occurrence
+  skips, archived/deleted source series, and generated occurrence factory
+  coverage.
 
 ### Restricted Hosting
 

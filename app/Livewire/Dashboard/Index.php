@@ -9,6 +9,7 @@ use App\Queries\Dashboard\DailySummaryQuery;
 use App\Queries\Dashboard\DashboardFoundationQuery;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Session;
 use Livewire\Attributes\Title;
@@ -17,6 +18,22 @@ use Livewire\Component;
 #[Title('dashboard.title')]
 class Index extends Component
 {
+    /**
+     * @var list<string>
+     */
+    private const array FOUNDATION_WIDGET_KEYS = [
+        'today',
+        'overdue',
+        'upcoming',
+        'priorities',
+        'reminders',
+        'recurrence',
+        'goals',
+        'habits',
+        'projects',
+        'time',
+    ];
+
     /**
      * @var array{matched: int, processed: int, skipped: int, failed: int, remaining: int}|null
      */
@@ -28,8 +45,25 @@ class Index extends Component
     #[Session(key: 'dashboard-foundation-details-open')]
     public bool $showFoundationDetails = true;
 
+    #[Session(key: 'dashboard-foundation-customizer-open')]
+    public bool $showFoundationCustomizer = false;
+
+    /**
+     * @var list<string>
+     */
+    #[Session(key: 'dashboard-foundation-widget-order')]
+    public array $foundationWidgetOrder = [];
+
+    /**
+     * @var list<string>
+     */
+    #[Session(key: 'dashboard-foundation-hidden-widgets')]
+    public array $hiddenFoundationWidgets = [];
+
     public function mount(ProcessDueReminders $processDueReminders): void
     {
+        $this->normalizeFoundationWidgetPreferences();
+
         $result = $processDueReminders->handle($this->currentUser());
 
         if ($result->changedCount() > 0 || $result->failedCount > 0 || $result->remainingCount > 0) {
@@ -56,6 +90,69 @@ class Index extends Component
     public function toggleFoundationDetails(): void
     {
         $this->showFoundationDetails = ! $this->showFoundationDetails;
+    }
+
+    public function toggleFoundationCustomizer(): void
+    {
+        $this->showFoundationCustomizer = ! $this->showFoundationCustomizer;
+    }
+
+    public function toggleFoundationWidget(string $key): void
+    {
+        $key = $this->validatedFoundationWidgetKey($key, 'foundationWidgetVisibility');
+
+        $this->resetValidation('foundationWidgetVisibility');
+
+        $hiddenWidgets = $this->normalizedHiddenFoundationWidgets();
+
+        if (in_array($key, $hiddenWidgets, true)) {
+            $hiddenWidgets = array_values(array_filter(
+                $hiddenWidgets,
+                fn (string $hiddenWidget): bool => $hiddenWidget !== $key,
+            ));
+        } else {
+            $hiddenWidgets[] = $key;
+        }
+
+        $this->hiddenFoundationWidgets = $hiddenWidgets;
+        $this->normalizeFoundationWidgetPreferences();
+    }
+
+    public function moveFoundationWidget(string $key, string $direction): void
+    {
+        $key = $this->validatedFoundationWidgetKey($key, 'foundationWidgetOrder');
+        $direction = $this->validatedFoundationWidgetDirection($direction);
+
+        $this->normalizeFoundationWidgetPreferences();
+        $this->resetValidation('foundationWidgetOrder');
+
+        $order = $this->foundationWidgetOrder;
+        $currentIndex = array_search($key, $order, true);
+
+        if ($currentIndex === false) {
+            return;
+        }
+
+        $targetIndex = $direction === 'up'
+            ? $currentIndex - 1
+            : $currentIndex + 1;
+
+        if (! array_key_exists($targetIndex, $order)) {
+            return;
+        }
+
+        [$order[$currentIndex], $order[$targetIndex]] = [$order[$targetIndex], $order[$currentIndex]];
+
+        $this->foundationWidgetOrder = array_values($order);
+    }
+
+    public function resetFoundationWidgets(): void
+    {
+        $this->foundationWidgetOrder = self::FOUNDATION_WIDGET_KEYS;
+        $this->hiddenFoundationWidgets = [];
+
+        $this->resetValidation('foundationWidgetOrder');
+        $this->resetValidation('foundationWidgetVisibility');
     }
 
     /**
@@ -90,6 +187,50 @@ class Index extends Component
      */
     #[Computed]
     public function foundationWidgets(): array
+    {
+        $hiddenWidgets = $this->normalizedHiddenFoundationWidgets();
+
+        return array_values(array_filter(
+            $this->orderedFoundationWidgets($this->baseFoundationWidgets()),
+            fn (array $widget): bool => ! in_array($widget['key'], $hiddenWidgets, true),
+        ));
+    }
+
+    /**
+     * @return list<array{key: string, label: string, description: string, visible: bool, position: int, can_move_up: bool, can_move_down: bool}>
+     */
+    #[Computed]
+    public function foundationWidgetSettings(): array
+    {
+        $hiddenWidgets = $this->normalizedHiddenFoundationWidgets();
+        $widgets = $this->orderedFoundationWidgets($this->baseFoundationWidgets());
+        $lastIndex = count($widgets) - 1;
+
+        return array_map(
+            fn (array $widget, int $index): array => [
+                'key' => $widget['key'],
+                'label' => $widget['label'],
+                'description' => $widget['description'],
+                'visible' => ! in_array($widget['key'], $hiddenWidgets, true),
+                'position' => $index + 1,
+                'can_move_up' => $index > 0,
+                'can_move_down' => $index < $lastIndex,
+            ],
+            $widgets,
+            array_keys($widgets),
+        );
+    }
+
+    #[Computed]
+    public function hasVisibleFoundationWidgets(): bool
+    {
+        return $this->foundationWidgets !== [];
+    }
+
+    /**
+     * @return list<array{key: string, label: string, description: string, value: string, badge: string, color: string, href: string, action: string, chart_value: int, metrics: list<array{key: string, label: string, value: string}>}>
+     */
+    private function baseFoundationWidgets(): array
     {
         $foundation = $this->foundation;
         $importantPriorityCount = $foundation['priority_urgent'] + $foundation['priority_high'];
@@ -329,5 +470,89 @@ class Index extends Component
         abort_unless($user instanceof User, 403);
 
         return $user;
+    }
+
+    /**
+     * @param  list<array{key: string, label: string, description: string, value: string, badge: string, color: string, href: string, action: string, chart_value: int, metrics: list<array{key: string, label: string, value: string}>}>  $widgets
+     * @return list<array{key: string, label: string, description: string, value: string, badge: string, color: string, href: string, action: string, chart_value: int, metrics: list<array{key: string, label: string, value: string}>}>
+     */
+    private function orderedFoundationWidgets(array $widgets): array
+    {
+        $widgetsByKey = [];
+
+        foreach ($widgets as $widget) {
+            $widgetsByKey[$widget['key']] = $widget;
+        }
+
+        return array_values(array_map(
+            fn (string $key): array => $widgetsByKey[$key],
+            $this->normalizedFoundationWidgetOrder(),
+        ));
+    }
+
+    private function validatedFoundationWidgetKey(string $key, string $errorBagKey): string
+    {
+        if (! in_array($key, self::FOUNDATION_WIDGET_KEYS, true)) {
+            throw ValidationException::withMessages([
+                $errorBagKey => __('dashboard.foundation.customize.validation.invalid_widget'),
+            ]);
+        }
+
+        return $key;
+    }
+
+    private function validatedFoundationWidgetDirection(string $direction): string
+    {
+        if (! in_array($direction, ['up', 'down'], true)) {
+            throw ValidationException::withMessages([
+                'foundationWidgetOrder' => __('dashboard.foundation.customize.validation.invalid_direction'),
+            ]);
+        }
+
+        return $direction;
+    }
+
+    private function normalizeFoundationWidgetPreferences(): void
+    {
+        $this->foundationWidgetOrder = $this->normalizedFoundationWidgetOrder();
+        $this->hiddenFoundationWidgets = $this->normalizedHiddenFoundationWidgets();
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function normalizedFoundationWidgetOrder(): array
+    {
+        $order = [];
+
+        foreach ($this->foundationWidgetOrder as $key) {
+            if (is_string($key) && in_array($key, self::FOUNDATION_WIDGET_KEYS, true) && ! in_array($key, $order, true)) {
+                $order[] = $key;
+            }
+        }
+
+        foreach (self::FOUNDATION_WIDGET_KEYS as $key) {
+            if (! in_array($key, $order, true)) {
+                $order[] = $key;
+            }
+        }
+
+        return $order;
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function normalizedHiddenFoundationWidgets(): array
+    {
+        $hiddenWidgets = [];
+
+        foreach ($this->hiddenFoundationWidgets as $key) {
+            if (is_string($key) && in_array($key, self::FOUNDATION_WIDGET_KEYS, true) && ! in_array($key, $hiddenWidgets, true)) {
+                $hiddenWidgets[] = $key;
+            }
+        }
+
+        return $hiddenWidgets;
     }
 }

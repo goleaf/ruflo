@@ -259,6 +259,10 @@ The dashboard foundation widgets use `DashboardFoundationQuery` for the same
 route and owner boundary. Widget counters for priorities, recurrence, goals,
 habits, projects, and time are aggregated after user scoping, and widget
 links route to already protected owner-scoped pages.
+Dashboard widget customization stores only allowed widget keys in the user's
+session. Show/hide/reorder actions validate submitted keys and directions
+against the server-owned dashboard allow-list before changing presentation, and
+they never change the query scope or aggregate source data.
 
 Recurring task rules use the same private route and owner boundary.
 `todos.recurring` is a class-based Livewire page behind `auth` and `verified`.

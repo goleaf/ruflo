@@ -80,3 +80,34 @@ or paid API is required for normal use.
 No new model, factory, or seeder was needed for this step. Existing todo,
 reminder, recurrence, goal, habit, project, and time seed data already exercises
 the dashboard widgets locally.
+
+## Step 062 Dashboard Customization
+
+Users can now customize the foundation widget grid without adding database
+state. The dashboard stores two small Livewire session arrays: widget order and
+hidden widget keys. The values are normalized against the server-owned widget
+allow-list on mount and on every Livewire action, so stale or tampered keys do
+not widen dashboard data or trigger arbitrary links.
+
+The Flux settings panel lets users:
+
+- show or hide each foundation widget,
+- move widgets up or down in the render order,
+- reset the widget layout back to the default order and visibility,
+- hide every foundation widget and see an empty state with a reset action.
+
+The same owner-scoped `DashboardFoundationQuery` remains the read boundary for
+all counters. Customization changes only presentation order and visibility; it
+does not change which private records are counted. The browser-rendered chart
+uses the visible widget order and disappears when all widgets are hidden.
+
+No Form Request or custom validation rule was added because the customization
+input is not a request-driven controller action and the business rule is local
+to the fixed dashboard widget key list. Livewire actions validate widget keys
+and move directions on the server before changing session-backed preferences,
+and the validation messages are translated in `lang/en/dashboard.php`.
+
+No model, migration, factory, seeder, queue, cron job, worker, supervisor,
+Artisan command, paid API, or hosted charting service is required for this
+step. Existing dashboard seed data continues to show realistic widget states at
+`https://ruflo.test/dashboard`.

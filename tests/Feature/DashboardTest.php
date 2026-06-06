@@ -265,6 +265,125 @@ test('dashboard foundation details can be toggled without mutating dashboard dat
         ->assertSee(__('dashboard.foundation.widgets.today.label'));
 });
 
+test('dashboard foundation widgets can be customized without mutating private aggregate data', function () {
+    $user = User::factory()->create();
+    Todo::factory()->for($user)->dueToday()->create();
+
+    Livewire::actingAs($user)
+        ->test(DashboardIndex::class)
+        ->assertSet('foundationWidgetOrder', [
+            'today',
+            'overdue',
+            'upcoming',
+            'priorities',
+            'reminders',
+            'recurrence',
+            'goals',
+            'habits',
+            'projects',
+            'time',
+        ])
+        ->call('toggleFoundationCustomizer')
+        ->assertSet('showFoundationCustomizer', true)
+        ->assertSee('data-test="dashboard-foundation-customizer"', false)
+        ->assertSee(__('dashboard.foundation.customize.label'))
+        ->call('moveFoundationWidget', 'overdue', 'up')
+        ->assertSet('foundationWidgetOrder.0', 'overdue')
+        ->assertSet('foundationWidgetOrder.1', 'today')
+        ->assertSeeInOrder([
+            __('dashboard.foundation.widgets.overdue.label'),
+            __('dashboard.foundation.widgets.today.label'),
+        ])
+        ->call('toggleFoundationWidget', 'today')
+        ->assertSet('hiddenFoundationWidgets.0', 'today')
+        ->assertDontSee('data-test="dashboard-foundation-widget-today"', false)
+        ->assertSee('data-test="dashboard-foundation-setting-visible-today"', false)
+        ->call('resetFoundationWidgets')
+        ->assertSet('hiddenFoundationWidgets', [])
+        ->assertSet('foundationWidgetOrder.0', 'today')
+        ->assertSee('data-test="dashboard-foundation-widget-today"', false);
+
+    expect(app(DashboardFoundationQuery::class)->for($user)['today'])->toBe(1);
+});
+
+test('dashboard foundation customization can hide every widget and recover with reset', function () {
+    $user = User::factory()->create();
+
+    $component = Livewire::actingAs($user)
+        ->test(DashboardIndex::class)
+        ->call('toggleFoundationCustomizer');
+
+    foreach ([
+        'today',
+        'overdue',
+        'upcoming',
+        'priorities',
+        'reminders',
+        'recurrence',
+        'goals',
+        'habits',
+        'projects',
+        'time',
+    ] as $widgetKey) {
+        $component->call('toggleFoundationWidget', $widgetKey);
+    }
+
+    $component
+        ->assertSet('hiddenFoundationWidgets', [
+            'today',
+            'overdue',
+            'upcoming',
+            'priorities',
+            'reminders',
+            'recurrence',
+            'goals',
+            'habits',
+            'projects',
+            'time',
+        ])
+        ->assertSee('data-test="dashboard-foundation-empty-customization"', false)
+        ->assertDontSee('data-test="dashboard-foundation-chart"', false)
+        ->call('resetFoundationWidgets')
+        ->assertSet('hiddenFoundationWidgets', [])
+        ->assertSee('data-test="dashboard-foundation-widget-today"', false)
+        ->assertSee('data-test="dashboard-foundation-chart"', false);
+});
+
+test('dashboard foundation customization sanitizes polluted session preferences before moving', function () {
+    $user = User::factory()->create();
+
+    Livewire::actingAs($user)
+        ->test(DashboardIndex::class)
+        ->set('foundationWidgetOrder', ['foreign-widget', 'time', 'time'])
+        ->set('hiddenFoundationWidgets', ['foreign-widget', 'today', 'today'])
+        ->call('moveFoundationWidget', 'time', 'down')
+        ->assertHasNoErrors()
+        ->assertSet('foundationWidgetOrder', [
+            'today',
+            'time',
+            'overdue',
+            'upcoming',
+            'priorities',
+            'reminders',
+            'recurrence',
+            'goals',
+            'habits',
+            'projects',
+        ])
+        ->assertSet('hiddenFoundationWidgets', ['today']);
+});
+
+test('dashboard foundation customization rejects unexpected widget input', function () {
+    $user = User::factory()->create();
+
+    Livewire::actingAs($user)
+        ->test(DashboardIndex::class)
+        ->call('toggleFoundationWidget', 'foreign-widget')
+        ->assertHasErrors('foundationWidgetVisibility')
+        ->call('moveFoundationWidget', 'today', 'sideways')
+        ->assertHasErrors('foundationWidgetOrder');
+});
+
 test('daily dashboard summary counts only the authenticated users private actionable records', function () {
     $user = User::factory()->create();
     $other = User::factory()->create();

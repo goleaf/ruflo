@@ -130,6 +130,23 @@ return [
             'compact' => 'Compact',
             'details' => 'Details',
         ],
+        'customize' => [
+            'close' => 'Close settings',
+            'description' => 'Choose which private widgets appear and move important signals closer to the top.',
+            'empty_description' => 'Open settings or reset the dashboard widgets to show private counters again.',
+            'empty_heading' => 'All foundation widgets are hidden',
+            'label' => 'Widget settings',
+            'list_label' => 'Dashboard widget visibility and order',
+            'move_down' => 'Move :label down',
+            'move_up' => 'Move :label up',
+            'open' => 'Customize',
+            'position' => 'Position :position',
+            'reset' => 'Reset widgets',
+            'validation' => [
+                'invalid_direction' => 'The requested dashboard widget move is not available.',
+                'invalid_widget' => 'The requested dashboard widget is not available.',
+            ],
+        ],
         'privacy' => [
             'heading' => 'Owner-scoped counters',
             'description' => 'Each widget is calculated from the authenticated account before the dashboard renders, so foreign tasks, reminders, goals, habits, projects, recurrence rules, and time entries are not counted.',

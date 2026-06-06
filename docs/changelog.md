@@ -1,5 +1,25 @@
 # Changelog
 
+## 2026-06-06 - Step 062 Dashboard customization
+
+### Added
+
+- Added session-backed foundation widget visibility and ordering preferences.
+- Added a translated Flux dashboard widget settings panel with show/hide,
+  move up/down, reset, and all-hidden empty states.
+
+### Tests
+
+- Expanded `DashboardTest` to cover widget customization, reset behavior,
+  all-hidden empty states, polluted session preference normalization, tampered
+  widget keys/directions, and unchanged owner-scoped aggregate data.
+
+### Restricted Hosting
+
+- Dashboard customization is browser-triggered Livewire state stored in the
+  user session. It requires no database migration, cron, worker, supervisor,
+  terminal action, Artisan command, paid API, or hosted charting service.
+
 ## 2026-06-06 - Step 061 Dashboard foundation
 
 ### Added

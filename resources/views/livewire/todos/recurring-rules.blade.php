@@ -1,6 +1,10 @@
 <x-ui.page-container>
     <x-ui.page-header :title="__('todos.pages.recurring.title')" :description="__('todos.pages.recurring.description')">
         <div class="flex flex-wrap gap-2">
+            <flux:button type="button" variant="primary" icon="arrow-path" wire:click="generateOccurrences" wire:loading.attr="disabled" wire:target="generateOccurrences">
+                {{ __('todos.recurrence.generation.actions.process') }}
+            </flux:button>
+
             <flux:button variant="ghost" icon="calendar" :href="route('todos.calendar')" wire:navigate>
                 {{ __('todos.calendar.open_calendar') }}
             </flux:button>
@@ -10,6 +14,18 @@
             </flux:button>
         </div>
     </x-ui.page-header>
+
+    <flux:callout icon="arrow-path" variant="secondary" data-test="recurrence-generation-web-mode-note">
+        <flux:callout.heading>{{ __('todos.recurrence.generation.web_mode.heading') }}</flux:callout.heading>
+        <flux:callout.text>{{ __('todos.recurrence.generation.web_mode.description') }}</flux:callout.text>
+    </flux:callout>
+
+    @if ($lastGenerationReport !== null)
+        <flux:callout icon="check-circle" variant="secondary" data-test="recurrence-generation-run-report">
+            <flux:callout.heading>{{ __('todos.recurrence.generation.report_heading') }}</flux:callout.heading>
+            <flux:callout.text>{{ __('todos.recurrence.generation.report', $lastGenerationReport) }}</flux:callout.text>
+        </flux:callout>
+    @endif
 
     <flux:card class="space-y-5" data-test="recurrence-rule-form">
         <div>
@@ -151,6 +167,9 @@
                             </flux:badge>
                             <flux:badge size="sm" :color="$rule->statusColor()">
                                 {{ $rule->statusLabel() }}
+                            </flux:badge>
+                            <flux:badge size="sm" color="zinc" icon="rectangle-stack">
+                                {{ trans_choice('todos.recurrence.generation.generated_badge', (int) $rule->occurrences_count, ['count' => (int) $rule->occurrences_count]) }}
                             </flux:badge>
                         </div>
 

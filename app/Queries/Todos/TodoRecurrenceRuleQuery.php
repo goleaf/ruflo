@@ -17,6 +17,7 @@ final class TodoRecurrenceRuleQuery
     {
         return TodoRecurrenceRule::query()
             ->ownedBy($user)
+            ->withCount('occurrences')
             ->with(['todo' => fn ($query) => $query->where('todos.user_id', $user->id)])
             ->orderByDesc('is_enabled')
             ->orderBy('starts_on')
@@ -33,6 +34,7 @@ final class TodoRecurrenceRuleQuery
         return TodoRecurrenceRule::query()
             ->ownedBy($user)
             ->where('is_enabled', true)
+            ->withCount('occurrences')
             ->with(['todo' => fn ($query) => $query->where('todos.user_id', $user->id)])
             ->orderBy('starts_on')
             ->orderBy('id')

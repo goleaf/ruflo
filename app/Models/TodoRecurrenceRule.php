@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable(['frequency', 'interval', 'starts_on', 'weekdays', 'month_day', 'end_type', 'ends_on', 'max_occurrences', 'is_enabled'])]
 #[UsePolicy(TodoRecurrenceRulePolicy::class)]
@@ -27,6 +28,18 @@ class TodoRecurrenceRule extends Model
     public function todo(): BelongsTo
     {
         return $this->belongsTo(Todo::class)->withTrashed();
+    }
+
+    /**
+     * Generated task occurrences for this rule.
+     *
+     * @return HasMany<Todo, $this>
+     */
+    public function occurrences(): HasMany
+    {
+        return $this->hasMany(Todo::class, 'recurrence_rule_id')
+            ->orderBy('recurrence_occurs_on')
+            ->orderBy('id');
     }
 
     public function summary(): string

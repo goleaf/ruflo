@@ -559,6 +559,9 @@ return [
             'is_enabled' => 'Rule enabled',
             'is_enabled_description' => 'Paused rules stay visible and can be resumed later.',
             'last_generated_until' => 'Generated through',
+            'generated_count' => 'Generated tasks',
+            'occurs_on' => 'Occurs on',
+            'source_task' => 'Source task',
         ],
         'placeholders' => [
             'task' => 'Choose an active task',
@@ -623,6 +626,23 @@ return [
             'clear' => 'Clear rule',
             'pause' => 'Pause',
             'enable' => 'Enable',
+        ],
+        'generation' => [
+            'report_heading' => 'Recurring occurrence generation',
+            'report' => 'Matched :matched rule(s), processed :processed, created :created task(s), skipped :skipped, failed :failed, remaining :remaining. Generated through :window.',
+            'detail' => '{0} No new tasks were needed through :date.|{1} Created :count task through :date.|[2,*] Created :count tasks through :date.',
+            'generated_badge' => '{0} No generated tasks|{1} :count generated task|[2,*] :count generated tasks',
+            'occurrence_title' => ':task (:date)',
+            'actions' => [
+                'process' => 'Generate occurrences',
+            ],
+            'messages' => [
+                'generated' => '{0} No new recurring tasks were needed.|{1} Generated :count recurring task.|[2,*] Generated :count recurring tasks.',
+            ],
+            'web_mode' => [
+                'heading' => 'Web-triggered generation',
+                'description' => 'Recurring tasks are generated only when you open this page or press this button. Each run processes a bounded owner-scoped chunk and never needs cron, queues, workers, or paid services.',
+            ],
         ],
         'confirmations' => [
             'delete' => 'Delete this recurrence rule? Existing tasks are kept.',

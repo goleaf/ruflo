@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Actions\Todos\GenerateRecurringOccurrences;
 use App\Enums\RecurrenceEndType;
 use App\Enums\RecurrenceFrequency;
 use App\Enums\RecurrenceWeekday;
@@ -12,6 +13,10 @@ use Illuminate\Database\Seeder;
 
 class TodoRecurrenceRuleSeeder extends Seeder
 {
+    public function __construct(
+        private readonly GenerateRecurringOccurrences $generateRecurringOccurrences,
+    ) {}
+
     /**
      * Run the database seeds.
      */
@@ -85,6 +90,8 @@ class TodoRecurrenceRuleSeeder extends Seeder
                         'is_enabled' => false,
                     ]);
                 }
+
+                $this->generateRecurringOccurrences->handle($user, today()->addWeeks(2));
             });
     }
 
@@ -103,7 +110,7 @@ class TodoRecurrenceRuleSeeder extends Seeder
             'todo_id' => $todo->id,
             ...$attributes,
             'starts_on' => max(today()->toDateString(), $todo->due_date?->toDateString() ?? today()->toDateString()),
-            'last_generated_until' => null,
+            'last_generated_until' => $rule->last_generated_until?->toDateString(),
         ])->save();
     }
 }

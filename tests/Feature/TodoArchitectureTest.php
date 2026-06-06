@@ -443,6 +443,7 @@ test('todo recurring page delegates recurrence responsibilities', function () {
         ->toContain('SaveTodoRecurrenceRule')
         ->toContain('DeleteTodoRecurrenceRule')
         ->toContain('ToggleTodoRecurrenceRule')
+        ->toContain('GenerateRecurringOccurrences')
         ->toContain('RecurrenceRuleData')
         ->toContain('RecurrenceRule')
         ->toContain('OwnedActiveTodo')

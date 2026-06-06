@@ -3,8 +3,10 @@
 namespace App\Livewire\Todos;
 
 use App\Actions\Todos\DeleteTodoRecurrenceRule;
+use App\Actions\Todos\GenerateRecurringOccurrences;
 use App\Actions\Todos\SaveTodoRecurrenceRule;
 use App\Actions\Todos\ToggleTodoRecurrenceRule;
+use App\Data\Todos\RecurrenceGenerationResult;
 use App\Data\Todos\RecurrenceRuleData;
 use App\Enums\RecurrenceEndType;
 use App\Enums\RecurrenceFrequency;
@@ -64,6 +66,12 @@ class RecurringRules extends Component
     public ?int $editingRuleId = null;
 
     public string $editingTaskTitle = '';
+
+    /**
+     * @var array{matched: int, processed: int, created: int, skipped: int, failed: int, remaining: int, window: string}|null
+     */
+    #[Locked]
+    public ?array $lastGenerationReport = null;
 
     public function mount(): void
     {
@@ -154,6 +162,17 @@ class RecurringRules extends Component
         $this->refreshRecurringState();
 
         Flux::toast(variant: 'success', text: __('todos.recurrence.messages.deleted'));
+    }
+
+    public function generateOccurrences(GenerateRecurringOccurrences $generateOccurrences): void
+    {
+        $result = $generateOccurrences->handle($this->currentUser());
+        $this->lastGenerationReport = $this->generationReportFrom($result);
+        $this->refreshRecurringState();
+
+        Flux::toast(variant: 'success', text: trans_choice('todos.recurrence.generation.messages.generated', $result->createdCount, [
+            'count' => $result->createdCount,
+        ]));
     }
 
     public function updatedFrequency(): void
@@ -357,6 +376,22 @@ class RecurringRules extends Component
     private function refreshRecurringState(): void
     {
         unset($this->recurrenceRules, $this->taskOptions);
+    }
+
+    /**
+     * @return array{matched: int, processed: int, created: int, skipped: int, failed: int, remaining: int, window: string}
+     */
+    private function generationReportFrom(RecurrenceGenerationResult $result): array
+    {
+        return [
+            'matched' => $result->matchedCount,
+            'processed' => $result->processedRuleCount,
+            'created' => $result->createdCount,
+            'skipped' => $result->skippedRuleCount,
+            'failed' => $result->failedCount,
+            'remaining' => $result->remainingCount,
+            'window' => $result->windowEnd->format('Y-m-d'),
+        ];
     }
 
     private function copyValidationErrors(ValidationException $exception): void

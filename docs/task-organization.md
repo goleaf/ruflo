@@ -1,12 +1,13 @@
 # Task Organization
 
-Through Step 057, the private task lifecycle is extended into a usable productivity system:
+Through Step 058, the private task lifecycle is extended into a usable productivity system:
 projects, tags, priorities, due dates, search, filters, sorting, and bulk
 actions, calendar/board/focus views, contained checklists, templates, a quick
 capture Inbox, time tracking, task dependencies, cleanup smart views, and
 browser-triggered automation and reminder workflows backed by the reusable
 manual web-processing engine, plus a private in-app notification center for
-database notification review and owner-scoped recurring task rules. Everything here is
+database notification review and owner-scoped recurring task rules with
+web-triggered generated occurrences. Everything here is
 owner-scoped on top of the model in
 [`authorization.md`](authorization.md) and the lifecycle in
 [`task-lifecycle.md`](task-lifecycle.md).
@@ -27,6 +28,7 @@ owner-scoped on top of the model in
 | **Reminder** | `reminders` table; one reminder per user/task with status and processing timestamps | `reminders.user_id`, private, linked to an owned task |
 | **Notification** | Laravel `notifications` table; database notification payload and read state | scoped by the authenticated user as notifiable type/id |
 | **Recurrence rule** | `todo_recurrence_rules` table; one rule per user/task | `todo_recurrence_rules.user_id`, private, linked to an owned task |
+| **Generated recurrence occurrence** | `todos` recurrence metadata columns on generated task rows | `todos.user_id`, private, linked back to the owner rule and source task |
 
 ## Recurring task rules
 
@@ -43,10 +45,20 @@ detail page. Both surfaces delegate writes to `SaveTodoRecurrenceRule`,
 `OwnedActiveTodo` normalize schedule payloads and reject foreign or inactive
 task ids before actions run.
 
-Step 057 intentionally does not generate task occurrences. The
-`last_generated_until` column is reserved for the next web-triggered generation
-step so duplicate prevention and resume state can be implemented without cron,
-queues, workers, terminal access, or paid calendar services.
+Step 058 generates future task occurrences on demand through
+`GenerateRecurringOccurrences` and `GenerateRecurringOccurrencesProcess`, both
+behind the reusable `RunManualWebProcess` engine. Generated tasks are ordinary
+private todo rows with recurrence metadata, copied organization context, copied
+tags, and copied pending reminder offset when the source task has one. The
+source task remains the first occurrence; generated rows start after
+`starts_on`.
+
+Duplicate prevention is enforced both in code and by the
+`todos_unique_recurrence_occurrence` database key. `last_generated_until`
+records the processed window so clicking Generate occurrences again resumes
+from the next unprocessed window instead of duplicating work. The current window
+is intentionally bounded for restricted hosting; exact-time background
+generation remains outside the browser-only contract.
 
 ## Notifications
 
@@ -765,7 +777,8 @@ when no sort/filter overrides it.
 ## Later steps
 
 Step 054 separates "when it's due" (`due_date`) from "when to be reminded"
-(`remind_at`) and keeps delivery browser-triggered. Step 057 adds recurrence
-definitions only; later occurrence, exception, and preference steps should
-reuse the owner scope, database notification payloads where useful, and manual
-web-processing contract established here.
+(`remind_at`) and keeps delivery browser-triggered. Step 058 adds recurring
+occurrence generation through the manual web-processing contract. Later
+exception, occurrence-edit, collaboration, and preference steps should reuse the
+owner scope, recurrence metadata, duplicate-prevention key, and browser-triggered
+processing boundary established here.

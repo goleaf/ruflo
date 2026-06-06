@@ -32,6 +32,11 @@ final class TodoRecurrenceRulePolicy
         return true;
     }
 
+    public function process(User $user): bool
+    {
+        return true;
+    }
+
     /**
      * Determine whether the user can update the model.
      */

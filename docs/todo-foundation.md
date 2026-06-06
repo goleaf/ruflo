@@ -284,6 +284,12 @@ owner-scoped recurrence rule creation/editing/toggling/deletion, task-detail
 rule management, custom recurrence validation, active-task ownership checks,
 idempotent demo seeding, and locked inactive-task mutation behavior.
 
+Step 058 adds `RecurringOccurrenceGenerationTest`, which locks owner-scoped
+recurrence generation, duplicate prevention, bounded manual web-processing
+chunks, retry/resume behavior, generated task metadata, copied tags, copied
+pending reminder offsets, Livewire run reports, and generated occurrence
+factory coverage.
+
 Step 052 adds `AutomationRulesTest` and `AutomationRuleNameValidationTest`,
 which lock the protected Automations route, owner-scoped rule listing, rule
 creation validation, translated rule-name messages, dry-run reports, disabled

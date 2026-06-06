@@ -56,6 +56,7 @@ class Todo extends Model
             'inbox_captured_at' => 'immutable_datetime',
             'priority' => Priority::class,
             'due_date' => 'immutable_date',
+            'recurrence_occurs_on' => 'immutable_date',
         ];
     }
 
@@ -162,6 +163,38 @@ class Todo extends Model
     }
 
     /**
+     * The recurrence rule that generated this occurrence, if this task is generated.
+     *
+     * @return BelongsTo<TodoRecurrenceRule, $this>
+     */
+    public function generatedRecurrenceRule(): BelongsTo
+    {
+        return $this->belongsTo(TodoRecurrenceRule::class, 'recurrence_rule_id');
+    }
+
+    /**
+     * The source task for this generated occurrence.
+     *
+     * @return BelongsTo<Todo, $this>
+     */
+    public function recurrenceSource(): BelongsTo
+    {
+        return $this->belongsTo(Todo::class, 'recurrence_source_todo_id')->withTrashed();
+    }
+
+    /**
+     * Generated future task occurrences for this source task.
+     *
+     * @return HasMany<Todo, $this>
+     */
+    public function recurrenceOccurrences(): HasMany
+    {
+        return $this->hasMany(Todo::class, 'recurrence_source_todo_id')
+            ->orderBy('recurrence_occurs_on')
+            ->orderBy('id');
+    }
+
+    /**
      * Tasks this task is waiting on.
      *
      * @return HasMany<TodoDependency, $this>
@@ -227,6 +260,11 @@ class Todo extends Model
     public function isBlocked(): bool
     {
         return $this->isActive() && $this->openBlockerCount() > 0;
+    }
+
+    public function isGeneratedOccurrence(): bool
+    {
+        return $this->recurrence_rule_id !== null && $this->recurrence_occurs_on !== null;
     }
 
     /**

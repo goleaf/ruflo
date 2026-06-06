@@ -9,7 +9,9 @@ use App\Models\Habit;
 use App\Models\Project;
 use App\Models\Tag;
 use App\Models\Todo;
+use App\Models\TodoRecurrenceRule;
 use App\Models\User;
+use Carbon\CarbonImmutable;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -251,5 +253,29 @@ class TodoFactory extends Factory
 
             $todo->tags()->syncWithoutDetaching($tagIds);
         });
+    }
+
+    public function generatedOccurrence(TodoRecurrenceRule $rule, DateTimeInterface|string|null $date = null): static
+    {
+        $occursOn = $date instanceof DateTimeInterface
+            ? $date->format('Y-m-d')
+            : ($date ?? today()->addDay()->toDateString());
+
+        return $this
+            ->for($rule, 'generatedRecurrenceRule')
+            ->for($rule->todo, 'recurrenceSource')
+            ->state(fn (array $attributes) => [
+                'user_id' => $rule->user_id,
+                'title' => __('todos.recurrence.generation.occurrence_title', [
+                    'task' => $rule->todo?->title ?? fake()->sentence(3),
+                    'date' => CarbonImmutable::parse($occursOn)->isoFormat('MMM D, YYYY'),
+                ]),
+                'priority' => $rule->todo?->priority ?? Priority::Normal,
+                'due_date' => $occursOn,
+                'recurrence_rule_id' => $rule->id,
+                'recurrence_source_todo_id' => $rule->todo_id,
+                'recurrence_occurs_on' => $occursOn,
+                'recurrence_sequence' => 1,
+            ]);
     }
 }

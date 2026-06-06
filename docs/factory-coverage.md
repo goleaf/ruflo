@@ -238,6 +238,11 @@ Recurrence rules are private resources and use the same `BelongsToUser` concern
 as todos, projects, tags, saved views, checklist rows, dependencies, reminders,
 and time entries.
 
+`TodoFactory::generatedOccurrence()` covers generated recurring task rows. The
+state attaches a task to its generating rule and source task, sets
+`recurrence_occurs_on`, assigns the owner from the rule, and keeps generated
+occurrences as normal private todo rows.
+
 ## Todo Template Factory
 
 `TodoTemplateFactory` covers:

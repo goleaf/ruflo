@@ -79,10 +79,11 @@ committed models do not exist yet.
   `/todos/recurring` and task detail recurrence cards have immediate demo data.
 
 Step 041's calendar view reuses that catalog: the seeded due-today, overdue,
-upcoming, and no-due-date tasks give the local `/todos/calendar` page immediate
-month and unscheduled examples. Step 054 adds real reminder rows. Step 057 adds
-real recurrence rule rows, but the calendar still waits for Step 058 before it
-shows generated future occurrences.
+upcoming, no-due-date, and generated recurrence tasks give the local
+`/todos/calendar` page immediate month and unscheduled examples. Step 054 adds
+real reminder rows. Step 057 adds recurrence rule rows, and Step 058 generates
+short-window demo occurrences through the same web-safe generation action used
+by the browser UI.
 
 Step 045's focus mode also reuses the current catalog. `Review the current
 flow` is high priority and due today, while `Send the overdue report` is urgent
@@ -166,8 +167,10 @@ due, future, and skipped reminder examples without sending notifications or
 creating duplicate reminder rows.
 
 Recurrence rules are upserted per user/task. Re-running the seeder refreshes
-the same daily, weekly, and monthly demo definitions without generating task
-occurrences or creating duplicate rule rows.
+the same daily, weekly, and monthly demo definitions and runs the Step 058
+web-safe occurrence generator through a short demo window. Generated tasks are
+duplicate-safe through the recurrence occurrence key and remain private to each
+safe demo user.
 
 Step 055 adds idempotent database notification seed rows for each safe demo
 user. Each demo workspace gets one unread task reminder-style notification and

@@ -1,5 +1,42 @@
 # Changelog
 
+## 2026-06-06 - Step 058 Recurring occurrence generation
+
+### Added
+
+- Added recurrence occurrence metadata to `todos`:
+  `recurrence_rule_id`, `recurrence_source_todo_id`,
+  `recurrence_occurs_on`, and `recurrence_sequence`.
+- Added duplicate prevention through the
+  `todos_unique_recurrence_occurrence` database key.
+- Added `GenerateRecurringOccurrences`,
+  `GenerateRecurringOccurrencesProcess`, and `RecurrenceGenerationResult`.
+- Added a protected Generate occurrences action on `/todos/recurring` with a
+  Flux web-mode note, run report, and generated-task count badges.
+- Generated future tasks inherit owner scope, project, goal, milestone, habit,
+  tags, priority, due date, and pending reminder offset from the source task.
+- Added `TodoFactory::generatedOccurrence()` and demo seeding through the same
+  web-safe generator used by the UI.
+
+### Changed
+
+- `TodoRecurrenceRuleQuery` now loads generated occurrence counts for the
+  recurrence page.
+- `TodoRecurrenceRulePolicy` now exposes a class-level `process` ability for
+  authenticated owner-scoped generation runs.
+
+### Tests
+
+- Added `RecurringOccurrenceGenerationTest` for idempotent generation,
+  reminder-copy integration, chunk resume, Livewire triggering, owner privacy,
+  and generated occurrence factory coverage.
+
+### Restricted Hosting
+
+- Generation is web-triggered and bounded to the configured manual-processing
+  profile. It requires no cron, queue worker, supervisor, terminal access,
+  Artisan command, paid service, hosted calendar service, or email provider.
+
 ## 2026-06-06 - Step 057 Recurring task rules
 
 ### Implemented

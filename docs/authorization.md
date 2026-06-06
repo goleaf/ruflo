@@ -457,3 +457,8 @@ contract: recurrence rules are listed and mutated only for their owner,
 foreign/inactive task ids fail safely, schedule payloads are normalized through
 custom rules, task detail controls update the same user/task rule without
 duplicates, and inactive tasks keep recurrence context locked from mutation.
+
+`RecurringOccurrenceGenerationTest` locks the Step 058 contract: recurrence
+generation starts from owner-scoped enabled rules, processes bounded manual web
+chunks, creates duplicate-safe private task rows, copies source task tags and
+pending reminder offsets, and never generates tasks for another user's series.

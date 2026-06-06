@@ -302,7 +302,7 @@ final class TodoListQuery
             'active' => (int) $summary->active_count,
             'completed' => (int) $summary->completed_count,
             'archived' => (int) $summary->archived_count,
-            'trash' => $project->isOwnedBy($user) ? (int) $summary->trash_count : 0,
+            'trash' => (int) $summary->trash_count,
             'overdue' => (int) $summary->overdue_count,
             'blocked' => $this->blockedFor($user)->count(),
         ];
@@ -329,7 +329,7 @@ final class TodoListQuery
             'active' => (int) $summary->active_count,
             'completed' => (int) $summary->completed_count,
             'archived' => (int) $summary->archived_count,
-            'trash' => (int) $summary->trash_count,
+            'trash' => $project->isOwnedBy($user) ? (int) $summary->trash_count : 0,
         ];
     }
 

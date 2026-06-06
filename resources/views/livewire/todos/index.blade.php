@@ -95,9 +95,15 @@
                 @endforeach
             </div>
 
-            <flux:button size="sm" variant="ghost" icon="adjustments-horizontal" wire:click="$set('showManageModal', true)">
-                {{ __('todos.actions.manage') }}
-            </flux:button>
+            <div class="flex flex-wrap gap-2">
+                <flux:button size="sm" variant="ghost" icon="squares-2x2" :href="route('todos.board')" wire:navigate>
+                    {{ __('todos.board.open_board') }}
+                </flux:button>
+
+                <flux:button size="sm" variant="ghost" icon="adjustments-horizontal" wire:click="$set('showManageModal', true)">
+                    {{ __('todos.actions.manage') }}
+                </flux:button>
+            </div>
         </div>
 
         <div class="flex flex-col gap-3 rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-3 dark:border-white/10 dark:bg-zinc-900">

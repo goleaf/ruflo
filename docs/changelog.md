@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-06-06 - Step 040 Kanban board
+
+### Implemented
+
+- Added a protected class-based Livewire task board at `todos.board` with Active, Completed, and Archived columns.
+- Added `TodoBoardQuery`, `MoveTodoOnBoard`, and `BoardStatus` so board reads, lifecycle moves, project moves, and target-column validation stay owner-scoped.
+- Added translated Flux board columns, card controls, column counts, project reassignment, loading-disabled fallback buttons, and a route link from the main Todos workspace.
+
+### Testing
+
+- Added `KanbanBoardTest` for route protection, owner-only board rendering, lifecycle column movement, project movement validation, invalid target status handling, direct action rejection of Trash targets, and foreign-id not-found behavior.
+- Updated route/domain, architecture, custom-rule, and route-protection coverage for `todos.board`.
+
+### Documentation
+
+- Updated task organization, authorization, validation, domain, and todo foundation docs with the Step 040 board contract.
+
 ## 2026-06-06 - Step 039 Bulk selection and actions
 
 ### Implemented

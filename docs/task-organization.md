@@ -1,6 +1,6 @@
 # Task Organization
 
-Step 039 rechecks and extends the private task lifecycle into a usable productivity system:
+Step 040 rechecks and extends the private task lifecycle into a usable productivity system:
 projects, tags, priorities, due dates, search, filters, sorting, and bulk
 actions. Everything here is owner-scoped on top of the model in
 [`authorization.md`](authorization.md) and the lifecycle in
@@ -216,6 +216,36 @@ The Upcoming page:
 The dashboard workspace card links to Upcoming beside Today, Overdue, and the
 full Todo workspace shortcuts.
 
+## Kanban board
+
+Step 040 adds `todos.board`, a protected class-based Livewire page for the
+same private task data. The board has Active, Completed, and Archived columns.
+Trash is intentionally excluded because restoring deleted work already has a
+separate recovery flow.
+
+Board reads use `TodoBoardQuery`, which scopes to the current user, eager-loads
+current-user project/tag badges, and limits each column to 25 cards. Column
+counts come from the same owner-scoped summary used by the list.
+
+Board movement uses `MoveTodoOnBoard` and the existing lifecycle actions:
+
+- moving to Completed completes active tasks and unarchives archived tasks
+  before completing when needed;
+- moving to Active reopens completed tasks and unarchives archived tasks before
+  reopening when needed;
+- moving to Archived archives active or completed tasks while preserving
+  completion state;
+- moving projects accepts only the current user's active projects or "No
+  project";
+- invalid columns are rejected by `BoardStatus`, and invalid project targets
+  reuse `OwnedActiveProject`.
+
+The board uses reliable fallback buttons for status movement instead of
+drag/drop. There is no position column yet, so drag ordering would create a
+second, unpersisted ordering system. When manual ordering is added later, it
+should introduce a per-user position field and tests before enabling drag/drop
+ordering.
+
 ## Bulk actions
 
 `BulkCompleteTodos`, `BulkArchiveTodos`, `BulkUnarchiveTodos`, `BulkMoveTodos`,
@@ -264,8 +294,9 @@ full Todo workspace shortcuts.
 - A filter toolbar (search, project, tag, priority, due, sort, direction,
   reset), a saved-views strip for saving/applying/deleting named view criteria,
   a bulk selection row, a bulk toolbar that appears on selection, a Flux bulk
-  delete confirmation modal, and a "Manage" modal for creating/renaming/
-  archiving/restoring/deleting projects and creating/deleting tags.
+  delete confirmation modal, a Kanban board shortcut, and a "Manage" modal for
+  creating/renaming/archiving/restoring/deleting projects and creating/deleting
+  tags.
 - Project badges in task lists and task detail pages link to the private
   project detail page. The detail page renders the project status, scoped
   lifecycle counts, a paginated task list, and a translated empty state.
@@ -281,6 +312,8 @@ full Todo workspace shortcuts.
   when rendering badges.
 - `TodoListQuery::forProjectDetail()` and `projectSummaryFor()` keep project
   detail reads and counts owner-scoped and paginated.
+- `TodoBoardQuery` keeps board columns owner-scoped, eager-loaded, and capped
+  at 25 cards per column.
 - The summary (active/completed/archived/trash/overdue) is one aggregate query.
 - Composite indexes back the common filters: `(user_id, project_id)`,
   `(user_id, due_date)`, `(user_id, priority)`, `(user_id, archived_at)`,

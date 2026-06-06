@@ -2,19 +2,19 @@
 
 ## Current status
 
-Steps 001-039 are complete. The requested recheck from Step 001 has been completed through Step 039. The tracker is expanded to one ledger line per step from 001 through 100 so later work cannot be hidden behind a range.
+Steps 001-040 are complete. The requested recheck from Step 001 has been completed through Step 040. The tracker is expanded to one ledger line per step from 001 through 100 so later work cannot be hidden behind a range.
 
 ## Current step
 
-Step 040 — Kanban board
+Step 041 — Calendar view
 
 ## Last completed action
 
-Completed Step 039 by adding structured bulk action result counts, select-visible and clear-selection controls, translated result callouts/toasts, a Flux bulk-delete confirmation modal, and bulk selection/action regression tests.
+Completed Step 040 by adding a protected Livewire Kanban board, owner-scoped board query, lifecycle/project move action, board status validation rule, translated Flux card controls, and board route/privacy tests.
 
 ## Next action
 
-Begin `steps/step-040-kanban-board.md`, then implement the next not-yet-completed plan step without grouping it with later work.
+Begin `steps/step-041-calendar-view.md`, then implement the next not-yet-completed plan step without grouping it with later work.
 
 ## Step ledger
 
@@ -59,7 +59,7 @@ Begin `steps/step-040-kanban-board.md`, then implement the next not-yet-complete
 | 037 — Sorting | Complete | Added stable secondary ordering to every allow-listed todo sort path, kept unsafe sort/direction URL state on safe fallbacks, rendered translated sort/order chips, and preserved owner-scoped pagination for sorted private task lists. | Boost app info/docs/schema checks, focused `TaskSortingTest`, failed-then-fixed Flux icon render check, adjacent todo/filter/privacy suite, static scans, route/browser checks, and full suite passed; evidence recorded in test report. | `docs/task-organization.md`, `docs/todo-foundation.md`, `docs/changelog.md`, root changelog, decisions, risks, checklist, and test report updated. | Flux sort-chip icon availability risk logged and mitigated. | 2d65490 |
 | 038 — Saved views | Complete | Added user-owned saved task views that persist normalized tab/search/project/tag/priority/due/sort/direction criteria, plus class-based Livewire save/apply/delete controls on the Todos page. Stale criteria still flows through the existing private filter sanitizer. | Boost app/schema/docs checks, migration, focused saved-view tests, validation-rule guard fix, related 97-test suite, static scans, route check, local seed/DB query, browser logs, and full suite passed with 345 tests/1593 assertions. | `docs/task-organization.md`, `docs/todo-foundation.md`, `docs/authorization.md`, `docs/validation-rules.md`, `docs/factory-coverage.md`, `docs/seeding-strategy.md`, changelogs, checklist, decisions, risks, and test report updated. | Stale saved project/tag ids risk logged and mitigated through normalized criteria plus owner-scoped query fallback. | 108045e |
 | 039 — Bulk selection and actions | Complete | Added `BulkActionResult` selected/affected/skipped/failed counts for every bulk action, select-visible and clear-selection controls, translated result callout/toast, and a Flux modal for bulk delete confirmation. Existing owner-scoped validation and action re-scoping remain intact. | Boost app/schema/docs checks, `BulkSelectionActionTest`, failed-then-fixed soft-delete assertion, related 88-test suite, static scans, route/browser checks, and full suite passed with 349 tests/1633 assertions. | `docs/task-organization.md`, `docs/todo-foundation.md`, `docs/authorization.md`, changelogs, checklist, decisions, risks, and test report updated. | Direct bulk action foreign/non-actionable id risk logged and mitigated with Livewire validation, action re-scoping, item authorization, and visible skipped counts. | 9c6a9cb |
-| 040 — Kanban board | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 040 — Kanban board | Complete | Added protected `todos.board` class-based Livewire page with Active, Completed, and Archived Flux columns; `TodoBoardQuery` for owner-scoped cards; `MoveTodoOnBoard` for safe lifecycle/project moves; `BoardStatus` validation; and list-to-board navigation. Drag ordering is deferred until persisted ordering exists. | Boost app/schema/docs checks, `KanbanBoardTest`, failed-then-fixed project validator shape, direct Trash-target action guard, static scans, route/URL/browser checks, related 136-test board suite, and full suite passed with 358 tests/1696 assertions. | `docs/task-organization.md`, `docs/todo-foundation.md`, `docs/authorization.md`, `docs/validation-rules.md`, `docs/domain-readiness.md`, changelogs, checklist, decisions, risks, and test report updated. | Drag/drop ordering persistence risk logged and mitigated by using reliable Livewire fallback buttons. | Pending stable commit |
 | 041 — Calendar view | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
 | 042 — Subtasks and checklists | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
 | 043 — Task templates | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |

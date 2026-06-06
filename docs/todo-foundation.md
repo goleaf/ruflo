@@ -205,6 +205,10 @@ clear-selection behavior, translated bulk result counts, skipped direct-action
 ids, and the Flux bulk-delete confirmation modal. Existing lifecycle bulk tests
 also assert selected/affected/skipped/failed counts.
 
+Step 040 adds `KanbanBoardTest`, which locks the protected task board route,
+owner-only card rendering, lifecycle column movement, project movement
+validation, invalid target columns, and foreign-id not-found behavior.
+
 ## 2026-06-06 Recheck
 
 The Step 001 recheck confirmed the foundation still matches the current master-plan rules after Steps 002-016:

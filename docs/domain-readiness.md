@@ -21,6 +21,7 @@ The current application surface covers these URL consumers:
 
 - Public home route at `/`.
 - Authenticated dashboard route at `/dashboard`.
+- Authenticated task board route at `/todos/board`.
 - Authenticated todo route at `/todos`.
 - Authenticated Today route at `/todos/today`.
 - Authenticated Overdue route at `/todos/overdue`.

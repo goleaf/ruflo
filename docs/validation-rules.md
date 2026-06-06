@@ -7,6 +7,7 @@ RuFlo uses reusable Laravel rule objects for business validation that appears in
 The current committed app has tag-name and todo workspace ownership rules:
 
 - `App\Rules\Tags\TagName`
+- `App\Rules\Todos\BoardStatus`
 - `App\Rules\Todos\DueDate`
 - `App\Rules\Todos\OwnedActiveProject`
 - `App\Rules\Todos\OwnedTag`
@@ -16,6 +17,10 @@ The current committed app has tag-name and todo workspace ownership rules:
 `TagName` validates that a submitted tag name still has visible content after
 normalization (`squish()` + lower-case). It prevents whitespace-only labels
 from being persisted if a form input contains only spaces.
+
+`BoardStatus` validates Kanban target columns. It accepts only Active,
+Completed, and Archived so the board cannot move cards into Trash or an unknown
+state through a forged Livewire call.
 
 `DueDate` validates optional task due dates. Empty values are allowed so
 `nullable` form fields can clear a date, but provided values must be canonical
@@ -72,3 +77,9 @@ Step 038 added `App\Rules\Todos\SavedViewName` and wired it into the saved-view
 Livewire action. `SavedTodoViewData` also normalizes saved filter criteria so
 unsafe tab, project, tag, priority, due, sort, and direction values cannot
 persist as executable query state.
+
+## 2026-06-06 Step 040 Recheck
+
+Step 040 added `App\Rules\Todos\BoardStatus` and wired it into the board
+movement Livewire action. Project movement reuses `OwnedActiveProject`, so
+target projects must belong to the current user and remain active.

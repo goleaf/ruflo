@@ -14,6 +14,7 @@ test('guests are redirected from private application pages to login', function (
 })->with([
     'dashboard' => fn () => route('dashboard'),
     'todos' => fn () => route('todos.index'),
+    'todo board' => fn () => route('todos.board'),
     'settings redirect' => '/settings',
     'profile settings' => fn () => route('profile.edit'),
     'appearance settings' => fn () => route('appearance.edit'),
@@ -31,6 +32,7 @@ test('verified private routes redirect unverified users to the verification noti
 })->with([
     'dashboard' => 'dashboard',
     'todos' => 'todos.index',
+    'todo board' => 'todos.board',
     'appearance settings' => 'appearance.edit',
     'security settings' => 'security.edit',
     'setup status' => 'setup.status',
@@ -73,6 +75,7 @@ test('private route middleware cannot be removed silently', function (string $ro
 })->with([
     'dashboard' => ['dashboard', ['auth', 'verified']],
     'todos' => ['todos.index', ['auth', 'verified']],
+    'todo board' => ['todos.board', ['auth', 'verified']],
     'profile settings' => ['profile.edit', ['auth']],
     'appearance settings' => ['appearance.edit', ['auth', 'verified']],
     'security settings' => ['security.edit', ['auth', 'verified', 'password.confirm']],

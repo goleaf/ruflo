@@ -33,6 +33,7 @@ scope) rather than across the whole codebase.
 | --- | --- | --- |
 | Ownership scoping | `App\Models\Concerns\BelongsToUser` (`scopeOwnedBy`, `isOwnedBy`) | The only way to scope a query or check ownership. |
 | Read boundary | `App\Queries\Todos\TodoListQuery` | The only place todos are read for the UI. Always owner-scoped. |
+| Board read boundary | `App\Queries\Todos\TodoBoardQuery` | Owner-scoped Kanban columns for active, completed, and archived tasks. |
 | Saved view read boundary | `App\Queries\Todos\SavedTodoViewListQuery` | Owner-scoped saved task-view listing and lookup. |
 | Per-action decisions | `App\Policies\TodoPolicy` | The only place "may this user do this?" is answered. |
 | Policy binding | `#[UsePolicy(...Policy::class)]` on current private models | Explicit, greppable mapping — not naming-convention magic. |
@@ -154,6 +155,10 @@ it on:
   never widen the scope. Tampered numeric project/tag filters return a safe
   empty state. Saved views store only normalized filter/sort criteria and
   applying them still flows through the same owner-scoped query boundary.
+- **Kanban board** — board cards are read through `TodoBoardQuery`; card moves
+  resolve the task through `TodoListQuery::findVisibleFor()`, validate target
+  columns with `BoardStatus`, validate target projects with `OwnedActiveProject`,
+  and delegate lifecycle changes to existing authorized actions.
 - **Bulk actions** — never trust a submitted set of IDs. Re-scope every
   selected ID to the owner and authorize each actionable record before acting;
   a foreign ID in the Livewire payload is rejected at validation, while direct
@@ -240,3 +245,8 @@ results; and foreign saved-view ids resolve as not found.
 `BulkSelectionActionTest` locks the Step 039 contract: visible-page selection,
 clear selection, result counts, skipped direct-action ids, and the Flux
 bulk-delete confirmation modal all stay owner-scoped and translated.
+
+`KanbanBoardTest` locks the Step 040 contract: the board route is protected,
+foreign cards never render, lifecycle moves preserve existing transition rules,
+project moves accept only owned active projects, invalid columns fail
+validation, and foreign task ids resolve as not found.

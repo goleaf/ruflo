@@ -26,6 +26,10 @@ return [
             'title' => 'Upcoming',
             'description' => 'Plan active tasks with future due dates in your private workspace.',
         ],
+        'board' => [
+            'title' => 'Task board',
+            'description' => 'Move private tasks between lifecycle columns and active projects.',
+        ],
     ],
 
     'fields' => [
@@ -255,6 +259,8 @@ return [
         'saved_view_created' => 'Saved view ":name".',
         'saved_view_applied' => 'Applied saved view ":name".',
         'saved_view_deleted' => 'Saved view deleted.',
+        'board_status_moved' => 'Task moved on the board.',
+        'board_project_moved' => 'Task project updated from the board.',
     ],
 
     'today' => [
@@ -301,6 +307,7 @@ return [
         'tag_name' => 'Enter a tag name with at least one letter or number.',
         'saved_view_name' => 'Enter a saved view name with visible text.',
         'saved_view_name_unique' => 'Use a saved view name you have not already used.',
+        'board_status' => 'Choose a valid board column.',
         'priority' => 'Choose a valid priority.',
         'due_date' => 'Enter a valid due date.',
     ],
@@ -331,6 +338,35 @@ return [
         ],
         'actions' => [
             'filter_tasks' => 'Filter tasks',
+        ],
+    ],
+
+    'board' => [
+        'open_board' => 'Board',
+        'open_list' => 'List view',
+        'column' => 'Column',
+        'column_limit' => 'Showing :shown of :total tasks.',
+        'target_status' => 'Board column',
+        'project_label' => 'Project',
+        'move_project' => 'Move project',
+        'move_to' => [
+            'active' => 'Move to active',
+            'completed' => 'Move to completed',
+            'archived' => 'Move to archived',
+        ],
+        'empty' => [
+            'active' => [
+                'title' => 'No active cards.',
+                'description' => 'Active tasks will appear here.',
+            ],
+            'completed' => [
+                'title' => 'No completed cards.',
+                'description' => 'Completed tasks will appear here.',
+            ],
+            'archived' => [
+                'title' => 'No archived cards.',
+                'description' => 'Archived tasks will appear here.',
+            ],
         ],
     ],
 ];

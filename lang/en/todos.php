@@ -26,6 +26,10 @@ return [
             'title' => 'Upcoming',
             'description' => 'Plan active tasks with future due dates in your private workspace.',
         ],
+        'calendar' => [
+            'title' => 'Calendar',
+            'description' => 'Review active due dates by month while reminders and recurring work remain web-only and self-hosted.',
+        ],
         'board' => [
             'title' => 'Task board',
             'description' => 'Move private tasks between lifecycle columns and active projects.',
@@ -308,6 +312,7 @@ return [
         'saved_view_name' => 'Enter a saved view name with visible text.',
         'saved_view_name_unique' => 'Use a saved view name you have not already used.',
         'board_status' => 'Choose a valid board column.',
+        'calendar_month' => 'Enter a valid calendar month.',
         'priority' => 'Choose a valid priority.',
         'due_date' => 'Enter a valid due date.',
     ],
@@ -367,6 +372,46 @@ return [
                 'title' => 'No archived cards.',
                 'description' => 'Archived tasks will appear here.',
             ],
+        ],
+    ],
+
+    'calendar' => [
+        'open_calendar' => 'Calendar',
+        'open_list' => 'List view',
+        'month' => 'Month',
+        'change_month' => 'Change month',
+        'previous_month' => 'Previous',
+        'next_month' => 'Next',
+        'current_month' => 'This month',
+        'selected_month' => 'Selected month',
+        'range' => ':start through :end',
+        'today_badge' => 'Today',
+        'empty_day' => 'No active due tasks.',
+        'outside_month' => 'Outside month',
+        'more_tasks' => '+:count more',
+        'stats' => [
+            'month' => 'This month',
+            'today' => 'Today',
+            'overdue' => 'Overdue',
+            'upcoming' => 'Upcoming',
+            'no_due_date' => 'No date',
+        ],
+        'invalid_month' => [
+            'heading' => 'Month reset',
+            'text' => 'The requested month was not valid, so the calendar returned to the current month.',
+        ],
+        'no_due_date' => [
+            'heading' => 'Unscheduled tasks',
+            'empty_title' => 'No unscheduled tasks.',
+            'empty_description' => 'Active tasks without due dates will appear here.',
+        ],
+        'reminders' => [
+            'heading' => 'Reminders',
+            'description' => 'Reminder scheduling will appear here after the web-mode reminder step adds owned schedule data.',
+        ],
+        'recurrence' => [
+            'heading' => 'Recurring tasks',
+            'description' => 'Recurring task rules will appear here after the recurring-task steps add rules, occurrences, and exceptions.',
         ],
     ],
 ];

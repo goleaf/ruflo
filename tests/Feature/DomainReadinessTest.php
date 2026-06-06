@@ -24,6 +24,7 @@ test('generated named routes use the configured https root', function () {
         ->and(route('todos.overdue'))->toBe('https://ruflo.test/todos/overdue')
         ->and(route('todos.upcoming'))->toBe('https://ruflo.test/todos/upcoming')
         ->and(route('todos.board'))->toBe('https://ruflo.test/todos/board')
+        ->and(route('todos.calendar'))->toBe('https://ruflo.test/todos/calendar')
         ->and(route('todos.show', 123))->toBe('https://ruflo.test/todos/123')
         ->and(route('setup.status'))->toBe('https://ruflo.test/settings/setup')
         ->and(route('maintenance.center'))->toBe('https://ruflo.test/settings/maintenance');

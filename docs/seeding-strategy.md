@@ -29,6 +29,12 @@ The tracked `Reminder` model is currently a placeholder with no ownership, sched
 - three saved views per user: `Today focus`, `Urgent work`, and
   `Waiting on others`.
 
+Step 041's calendar view reuses that catalog: the seeded due-today, overdue,
+upcoming, and no-due-date tasks give the local `/todos/calendar` page immediate
+month and unscheduled examples without adding new model rows or changing the
+stable seeder counts. Reminder and recurrence rows remain deferred until those
+schemas exist.
+
 ## Idempotency
 
 Seeders are idempotent for the current demo catalog. Re-running them updates existing demo records instead of creating duplicate users, tags, projects, saved views, or seeded task titles.

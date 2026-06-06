@@ -8,6 +8,7 @@ The current committed app has tag-name and todo workspace ownership rules:
 
 - `App\Rules\Tags\TagName`
 - `App\Rules\Todos\BoardStatus`
+- `App\Rules\Todos\CalendarMonth`
 - `App\Rules\Todos\DueDate`
 - `App\Rules\Todos\OwnedActiveProject`
 - `App\Rules\Todos\OwnedTag`
@@ -21,6 +22,10 @@ from being persisted if a form input contains only spaces.
 `BoardStatus` validates Kanban target columns. It accepts only Active,
 Completed, and Archived so the board cannot move cards into Trash or an unknown
 state through a forged Livewire call.
+
+`CalendarMonth` validates URL-backed calendar month state. It accepts only
+canonical `YYYY-MM` strings parsed in the configured app timezone, so malformed
+month input cannot reach the calendar query.
 
 `DueDate` validates optional task due dates. Empty values are allowed so
 `nullable` form fields can clear a date, but provided values must be canonical
@@ -83,3 +88,10 @@ persist as executable query state.
 Step 040 added `App\Rules\Todos\BoardStatus` and wired it into the board
 movement Livewire action. Project movement reuses `OwnedActiveProject`, so
 target projects must belong to the current user and remain active.
+
+## 2026-06-06 Step 041 Recheck
+
+Step 041 added `App\Rules\Todos\CalendarMonth` and wired it into the calendar
+month form and URL-state fallback. Invalid `month` values reset safely to the
+current month and invalid submitted month values fail with
+`todos.validation.calendar_month`.

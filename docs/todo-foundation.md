@@ -209,6 +209,11 @@ Step 040 adds `KanbanBoardTest`, which locks the protected task board route,
 owner-only card rendering, lifecycle column movement, project movement
 validation, invalid target columns, and foreign-id not-found behavior.
 
+Step 041 adds `CalendarViewTest`, which locks the protected task calendar
+route, owner-scoped month rendering, active-only due-date grid, no-due-date
+section, invalid month validation, Livewire month navigation, and
+reminder/recurrence placeholder behavior.
+
 ## 2026-06-06 Recheck
 
 The Step 001 recheck confirmed the foundation still matches the current master-plan rules after Steps 002-016:

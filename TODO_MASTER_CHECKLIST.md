@@ -66,7 +66,7 @@ Use this file as a persistent task tracker. Step detail lives in `TODO_MASTER_PR
 - [x] Step 038 — Saved views
 - [x] Step 039 — Bulk selection and actions
 - [x] Step 040 — Kanban board
-- [ ] Step 041 — Calendar view
+- [x] Step 041 — Calendar view
 - [ ] Step 042 — Subtasks and checklists
 - [ ] Step 043 — Task templates
 - [ ] Step 044 — Quick capture inbox

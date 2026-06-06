@@ -17,12 +17,15 @@ use App\Enums\TodoTransition;
 use App\Livewire\Forms\Todos\TodoForm;
 use App\Livewire\Projects\Show as ProjectShow;
 use App\Livewire\Todos\Board as TodoBoard;
+use App\Livewire\Todos\Calendar as TodoCalendar;
 use App\Policies\SavedTodoViewPolicy;
 use App\Policies\TodoPolicy;
 use App\Queries\Todos\SavedTodoViewListQuery;
 use App\Queries\Todos\TodoBoardQuery;
+use App\Queries\Todos\TodoCalendarQuery;
 use App\Queries\Todos\TodoListQuery;
 use App\Rules\Todos\BoardStatus;
+use App\Rules\Todos\CalendarMonth;
 use App\Rules\Todos\SavedViewName;
 
 test('todo foundation classes exist', function () {
@@ -42,11 +45,14 @@ test('todo foundation classes exist', function () {
         ->and(class_exists(SavedTodoViewData::class))->toBeTrue()
         ->and(class_exists(SavedTodoViewListQuery::class))->toBeTrue()
         ->and(class_exists(TodoBoardQuery::class))->toBeTrue()
+        ->and(class_exists(TodoCalendarQuery::class))->toBeTrue()
         ->and(class_exists(BoardStatus::class))->toBeTrue()
+        ->and(class_exists(CalendarMonth::class))->toBeTrue()
         ->and(class_exists(SavedViewName::class))->toBeTrue()
         ->and(class_exists(BulkActionResult::class))->toBeTrue()
         ->and(class_exists(SavedTodoViewPolicy::class))->toBeTrue()
         ->and(class_exists(TodoBoard::class))->toBeTrue()
+        ->and(class_exists(TodoCalendar::class))->toBeTrue()
         ->and(class_exists(ProjectShow::class))->toBeTrue()
         ->and(enum_exists(TodoTransition::class))->toBeTrue()
         ->and(class_exists(ClearCompletedTodos::class))->toBeTrue();
@@ -73,6 +79,17 @@ test('todo board page delegates movement responsibilities', function () {
         ->toContain('MoveTodoOnBoard')
         ->toContain('BoardStatus')
         ->toContain('OwnedActiveProject')
+        ->toContain('$this->authorize')
+        ->not->toContain('Todo::query()')
+        ->not->toContain('->save()');
+});
+
+test('todo calendar page delegates date responsibilities', function () {
+    $source = file_get_contents(app_path('Livewire/Todos/Calendar.php'));
+
+    expect($source)
+        ->toContain('TodoCalendarQuery')
+        ->toContain('CalendarMonth')
         ->toContain('$this->authorize')
         ->not->toContain('Todo::query()')
         ->not->toContain('->save()');

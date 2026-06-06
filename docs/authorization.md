@@ -250,3 +250,8 @@ bulk-delete confirmation modal all stay owner-scoped and translated.
 foreign cards never render, lifecycle moves preserve existing transition rules,
 project moves accept only owned active projects, invalid columns fail
 validation, and foreign task ids resolve as not found.
+
+`CalendarViewTest` locks the Step 041 contract: the calendar route is
+protected, month reads are owner-scoped, completed/archived/trashed/foreign
+tasks do not render in the month grid, invalid month input cannot widen scope,
+and reminder/recurrence placeholders do not expose placeholder reminder rows.

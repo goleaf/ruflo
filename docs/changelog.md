@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-06-06 - Step 041 Calendar view
+
+### Implemented
+
+- Added a protected class-based Livewire task calendar at `todos.calendar` with URL-backed month navigation.
+- Added `TodoCalendarQuery` and `CalendarMonth` so month reads, no-due-date tasks, and submitted month values stay owner-scoped and strictly validated.
+- Added translated Flux calendar controls, active due-date month grid, no-due-date task section, and reminder/recurrence placeholder callouts for later web-only scheduling steps.
+
+### Testing
+
+- Added `CalendarViewTest` for route protection, owner-only month rendering, completed/archived/trashed/foreign exclusions, invalid month fallback, Livewire month navigation, and canonical month validation.
+- Updated route/domain, architecture, custom-rule, route-protection, and localization coverage for `todos.calendar`.
+
+### Documentation
+
+- Updated task organization, authorization, validation, domain, and todo foundation docs with the Step 041 calendar contract and reminder/recurrence limitation.
+
 ## 2026-06-06 - Step 040 Kanban board
 
 ### Implemented

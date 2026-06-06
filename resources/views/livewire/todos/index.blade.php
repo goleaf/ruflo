@@ -96,6 +96,10 @@
             </div>
 
             <div class="flex flex-wrap gap-2">
+                <flux:button size="sm" variant="ghost" icon="calendar" :href="route('todos.calendar')" wire:navigate>
+                    {{ __('todos.calendar.open_calendar') }}
+                </flux:button>
+
                 <flux:button size="sm" variant="ghost" icon="squares-2x2" :href="route('todos.board')" wire:navigate>
                     {{ __('todos.board.open_board') }}
                 </flux:button>

@@ -61,3 +61,4 @@ Record changes after every step.
 - Completed Step 038 by adding private saved task views with normalized criteria, owner-scoped actions/query/policy/model support, a translated Flux saved-view strip, factory/seeder coverage, and saved-view privacy/regression tests.
 - Completed Step 039 by adding structured bulk action result counts, select-visible and clear-selection controls, translated result callouts/toasts, a Flux bulk-delete confirmation modal, and bulk selection/action regression tests.
 - Completed Step 040 by adding a protected Livewire Kanban board, owner-scoped board query, lifecycle/project move action, board status validation rule, translated Flux card controls, and board route/privacy tests.
+- Completed Step 041 by adding a protected Livewire Calendar view, owner-scoped calendar query, strict month validation rule, translated month controls, active due-date grid, no-due-date section, and reminder/recurrence placeholder lanes.

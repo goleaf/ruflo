@@ -216,6 +216,31 @@ The Upcoming page:
 The dashboard workspace card links to Upcoming beside Today, Overdue, and the
 full Todo workspace shortcuts.
 
+## Calendar view
+
+Step 041 adds `todos.calendar`, a protected class-based Livewire page for a
+month-style view of the same private task data. The calendar is self-hosted and
+does not require cron, queues, workers, terminal commands, or external calendar
+services.
+
+Calendar reads use `TodoCalendarQuery`, which scopes to the current user,
+eager-loads current-user project and tag relations, and shows active tasks with
+due dates inside the selected month. Completed, archived, trashed, and foreign
+tasks are excluded from the month grid. Active tasks without a due date appear
+in a separate unscheduled section so "No due date" is still visible without
+mixing it into a date cell.
+
+Month navigation is URL-backed through the `month=YYYY-MM` query parameter and
+validated by `CalendarMonth`. Invalid month input cannot widen a query; bad
+query strings reset to the current month and show a translated notice. Date
+comparisons continue to use the app timezone documented above.
+
+Reminder and recurring-task panels are present as translated, restricted-hosting
+safe placeholders. The current reminder table has no owner or schedule columns,
+and recurrence models do not exist yet, so the calendar does not query or fake
+those domains. The dedicated reminder and recurrence steps must add owned
+schedule/rule data before those lanes render real entries.
+
 ## Kanban board
 
 Step 040 adds `todos.board`, a protected class-based Livewire page for the

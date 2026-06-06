@@ -12,25 +12,23 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
- * The single owner-scoped read boundary for todos.
+ * The single read boundary for private todos plus active shared project todos.
  *
  * Every todo list, lookup, filter, sort, and counter must originate here so
- * that no query can observe another user's private data. Ownership is applied
- * through {@see Todo::scopeOwnedBy()}; lifecycle bucketing and organization
- * filters are applied through the model's scopes.
+ * that no query can observe another user's private data. Private ownership and
+ * active project membership are applied before lifecycle buckets, filters, and
+ * sorting.
  */
 final class TodoListQuery
 {
     /**
-     * Base owner-scoped query for the user's visible (non-deleted) todos.
+     * Base read-scoped query for the user's visible (non-deleted) todos.
      *
      * @return Builder<Todo>
      */
     public function visibleFor(User $user): Builder
     {
-        return Todo::query()
-            ->select(['id', 'user_id', 'project_id', 'title', 'priority', 'due_date', 'is_completed', 'archived_at', 'deleted_at', 'created_at', 'updated_at'])
-            ->ownedBy($user)
+        return $this->accessibleSelect($user)
             ->latest();
     }
 
@@ -41,7 +39,11 @@ final class TodoListQuery
      */
     public function forStatus(User $user, TodoStatus $status): Builder
     {
-        return $this->applyStatus($this->visibleFor($user), $status);
+        $query = $this->accessibleSelect($user, includeDeletedOwnerRows: $status === TodoStatus::Trash);
+
+        $this->applyStatus($query, $status);
+
+        return $query;
     }
 
     /**
@@ -54,9 +56,7 @@ final class TodoListQuery
     public function filtered(User $user, TodoFilters $filters): Builder
     {
         $query = $this->withWorkspaceRelations(
-            Todo::query()
-                ->select(['id', 'user_id', 'project_id', 'title', 'priority', 'due_date', 'is_completed', 'archived_at', 'deleted_at', 'created_at', 'updated_at'])
-                ->ownedBy($user),
+            $this->accessibleSelect($user, includeDeletedOwnerRows: $filters->status === TodoStatus::Trash),
             $user,
         );
 
@@ -76,7 +76,7 @@ final class TodoListQuery
         if ($filters->withoutProject) {
             $query->withoutProject();
         } elseif ($filters->projectId !== null) {
-            if ($this->ownedActiveProjectExists($user, $filters->projectId)) {
+            if ($this->activeAccessibleProjectExists($user, $filters->projectId)) {
                 $query->forProject($filters->projectId);
             } else {
                 $this->rejectInvalidFilter($query);
@@ -99,7 +99,7 @@ final class TodoListQuery
             'today' => $query->dueToday(),
             'overdue' => $query->overdue(),
             'upcoming' => $query->upcoming(),
-            'blocked' => $this->whereBlocked($query, $user),
+            'blocked' => $this->whereBlocked($query),
             'with' => $query->whereNotNull('due_date'),
             'without' => $query->whereNull('due_date'),
             default => null,
@@ -137,10 +137,7 @@ final class TodoListQuery
     public function todayFor(User $user): Builder
     {
         return $this->withWorkspaceRelations(
-            Todo::query()
-                ->select(['id', 'user_id', 'project_id', 'title', 'priority', 'due_date', 'is_completed', 'archived_at', 'deleted_at', 'created_at', 'updated_at'])
-                ->ownedBy($user)
-                ->dueToday(),
+            $this->accessibleSelect($user)->dueToday(),
             $user,
         )
             ->orderByRaw(Priority::sortCaseSql().' desc')
@@ -163,10 +160,7 @@ final class TodoListQuery
     public function overdueFor(User $user): Builder
     {
         return $this->withWorkspaceRelations(
-            Todo::query()
-                ->select(['id', 'user_id', 'project_id', 'title', 'priority', 'due_date', 'is_completed', 'archived_at', 'deleted_at', 'created_at', 'updated_at'])
-                ->ownedBy($user)
-                ->overdue(),
+            $this->accessibleSelect($user)->overdue(),
             $user,
         )
             ->orderBy('due_date')
@@ -190,10 +184,7 @@ final class TodoListQuery
     public function upcomingFor(User $user): Builder
     {
         return $this->withWorkspaceRelations(
-            Todo::query()
-                ->select(['id', 'user_id', 'project_id', 'title', 'priority', 'due_date', 'is_completed', 'archived_at', 'deleted_at', 'created_at', 'updated_at'])
-                ->ownedBy($user)
-                ->upcoming(),
+            $this->accessibleSelect($user)->upcoming(),
             $user,
         )
             ->orderBy('due_date')
@@ -217,14 +208,11 @@ final class TodoListQuery
     public function blockedFor(User $user): Builder
     {
         $query = $this->withWorkspaceRelations(
-            Todo::query()
-                ->select(['id', 'user_id', 'project_id', 'title', 'priority', 'due_date', 'is_completed', 'archived_at', 'deleted_at', 'created_at', 'updated_at'])
-                ->ownedBy($user)
-                ->active(),
+            $this->accessibleSelect($user)->active(),
             $user,
         );
 
-        $this->whereBlocked($query, $user);
+        $this->whereBlocked($query);
 
         return $query
             ->orderByRaw('due_date is null')
@@ -290,11 +278,11 @@ final class TodoListQuery
     {
         $summary = Todo::query()
             ->withTrashed()
-            ->ownedBy($user)
+            ->where(fn (Builder $query): Builder => $this->whereAccessibleTasks($query, $user, includeDeletedOwnerRows: true))
             ->selectRaw('sum(case when deleted_at is null and archived_at is null and is_completed = 0 then 1 else 0 end) as active_count')
             ->selectRaw('sum(case when deleted_at is null and archived_at is null and is_completed = 1 then 1 else 0 end) as completed_count')
             ->selectRaw('sum(case when deleted_at is null and archived_at is not null then 1 else 0 end) as archived_count')
-            ->selectRaw('sum(case when deleted_at is not null then 1 else 0 end) as trash_count')
+            ->selectRaw('sum(case when user_id = ? and deleted_at is not null then 1 else 0 end) as trash_count', [$user->id])
             ->selectRaw('sum(case when deleted_at is null and archived_at is null and is_completed = 0 and due_date is not null and due_date < ? then 1 else 0 end) as overdue_count', [today()->toDateString()])
             ->first();
 
@@ -305,6 +293,77 @@ final class TodoListQuery
             'trash' => (int) $summary->trash_count,
             'overdue' => (int) $summary->overdue_count,
             'blocked' => $this->blockedFor($user)->count(),
+        ];
+    }
+
+    /**
+     * Task-derived dashboard counters across owned tasks and active shared
+     * project tasks. Non-task domains such as reminders, time, and
+     * notifications remain scoped to the authenticated user elsewhere.
+     *
+     * @return array{
+     *     active: int,
+     *     scheduled: int,
+     *     today: int,
+     *     overdue: int,
+     *     due_soon: int,
+     *     unplanned: int,
+     *     priority_urgent: int,
+     *     priority_high: int,
+     *     priority_normal: int,
+     *     priority_low: int,
+     *     projects_with_active_tasks: int,
+     *     recurrence_generated: int
+     * }
+     */
+    public function dashboardTaskCountsFor(User $user): array
+    {
+        $today = today()->toDateString();
+        $soonEndsOn = today()->addDays(7)->toDateString();
+
+        $tasks = $this->accessibleAggregate($user)
+            ->active()
+            ->selectRaw('count(*) as active_count')
+            ->selectRaw('sum(case when due_date is not null then 1 else 0 end) as scheduled_count')
+            ->selectRaw('sum(case when date(due_date) = ? then 1 else 0 end) as today_count', [$today])
+            ->selectRaw('sum(case when due_date is not null and date(due_date) < ? then 1 else 0 end) as overdue_count', [$today])
+            ->selectRaw('sum(case when date(due_date) > ? and date(due_date) <= ? then 1 else 0 end) as due_soon_count', [$today, $soonEndsOn])
+            ->selectRaw('sum(case when due_date is null then 1 else 0 end) as unplanned_count')
+            ->selectRaw('sum(case when priority = ? then 1 else 0 end) as urgent_count', [Priority::Urgent->value])
+            ->selectRaw('sum(case when priority = ? then 1 else 0 end) as high_count', [Priority::High->value])
+            ->selectRaw('sum(case when priority = ? then 1 else 0 end) as normal_count', [Priority::Normal->value])
+            ->selectRaw('sum(case when priority = ? then 1 else 0 end) as low_count', [Priority::Low->value])
+            ->first();
+
+        return [
+            'active' => (int) ($tasks->active_count ?? 0),
+            'scheduled' => (int) ($tasks->scheduled_count ?? 0),
+            'today' => (int) ($tasks->today_count ?? 0),
+            'overdue' => (int) ($tasks->overdue_count ?? 0),
+            'due_soon' => (int) ($tasks->due_soon_count ?? 0),
+            'unplanned' => (int) ($tasks->unplanned_count ?? 0),
+            'priority_urgent' => (int) ($tasks->urgent_count ?? 0),
+            'priority_high' => (int) ($tasks->high_count ?? 0),
+            'priority_normal' => (int) ($tasks->normal_count ?? 0),
+            'priority_low' => (int) ($tasks->low_count ?? 0),
+            'projects_with_active_tasks' => $this->accessibleAggregate($user)
+                ->active()
+                ->whereNotNull('project_id')
+                ->whereExists(function ($projects): void {
+                    $projects
+                        ->selectRaw('1')
+                        ->from('projects')
+                        ->whereColumn('projects.id', 'todos.project_id')
+                        ->whereColumn('projects.user_id', 'todos.user_id')
+                        ->whereNull('projects.archived_at');
+                })
+                ->distinct('project_id')
+                ->count('project_id'),
+            'recurrence_generated' => $this->accessibleAggregate($user)
+                ->active()
+                ->whereNotNull('recurrence_rule_id')
+                ->whereNotNull('recurrence_occurs_on')
+                ->count(),
         ];
     }
 
@@ -404,7 +463,23 @@ final class TodoListQuery
      */
     private function withWorkspaceRelations(Builder $query, User $user): Builder
     {
-        return $this->withWorkspaceRelationsForOwnerId($query, $user->id);
+        return $query->with([
+            'project' => fn (BelongsTo $project): BelongsTo => $project->where(function (Builder $projectQuery) use ($user): void {
+                $projectQuery
+                    ->where('projects.user_id', $user->id)
+                    ->orWhereHas('memberships', fn (Builder $memberships): Builder => $memberships
+                        ->active()
+                        ->where('user_id', $user->id));
+            }),
+            'tags' => fn (BelongsToMany $tags): BelongsToMany => $tags->where('tags.user_id', $user->id),
+            'dependencies.blocker' => fn ($blocker) => $blocker->whereColumn('todos.user_id', 'todo_dependencies.user_id'),
+        ])->withCount([
+            'dependencies as open_dependencies_count' => fn (Builder $dependencies): Builder => $dependencies
+                ->whereColumn('todo_dependencies.user_id', 'todos.user_id')
+                ->whereHas('blocker', fn (Builder $blocker): Builder => $blocker
+                    ->whereColumn('todos.user_id', 'todo_dependencies.user_id')
+                    ->where('todos.is_completed', false)),
+        ]);
     }
 
     /**
@@ -462,21 +537,27 @@ final class TodoListQuery
      * @param  Builder<Todo>  $query
      * @return Builder<Todo>
      */
-    private function whereBlocked(Builder $query, User $user): Builder
+    private function whereBlocked(Builder $query): Builder
     {
         return $query->whereHas('dependencies', fn (Builder $dependencies): Builder => $dependencies
-            ->where('todo_dependencies.user_id', $user->id)
+            ->whereColumn('todo_dependencies.user_id', 'todos.user_id')
             ->whereHas('blocker', fn (Builder $blocker): Builder => $blocker
-                ->where('todos.user_id', $user->id)
+                ->whereColumn('todos.user_id', 'todo_dependencies.user_id')
                 ->where('todos.is_completed', false)));
     }
 
-    private function ownedActiveProjectExists(User $user, int $projectId): bool
+    private function activeAccessibleProjectExists(User $user, int $projectId): bool
     {
         return Project::query()
-            ->ownedBy($user)
-            ->active()
             ->whereKey($projectId)
+            ->active()
+            ->where(function (Builder $query) use ($user): void {
+                $query
+                    ->ownedBy($user)
+                    ->orWhereHas('memberships', fn (Builder $memberships): Builder => $memberships
+                        ->active()
+                        ->where('user_id', $user->id));
+            })
             ->exists();
     }
 
@@ -495,5 +576,76 @@ final class TodoListQuery
     private function rejectInvalidFilter(Builder $query): void
     {
         $query->whereKey([]);
+    }
+
+    /**
+     * Base task query for owner rows plus rows from active shared projects.
+     *
+     * Shared rows are never allowed to include trash, no-project tasks, removed
+     * memberships, archived shared projects, or malformed project ownership.
+     *
+     * @return Builder<Todo>
+     */
+    private function accessibleSelect(User $user, bool $includeDeletedOwnerRows = false): Builder
+    {
+        return Todo::query()
+            ->select(['id', 'user_id', 'project_id', 'title', 'priority', 'due_date', 'is_completed', 'archived_at', 'deleted_at', 'created_at', 'updated_at'])
+            ->where(fn (Builder $query): Builder => $this->whereAccessibleTasks($query, $user, $includeDeletedOwnerRows));
+    }
+
+    /**
+     * @return Builder<Todo>
+     */
+    private function accessibleAggregate(User $user): Builder
+    {
+        return Todo::query()
+            ->where(fn (Builder $query): Builder => $this->whereAccessibleTasks($query, $user));
+    }
+
+    /**
+     * @param  Builder<Todo>  $query
+     * @return Builder<Todo>
+     */
+    private function whereAccessibleTasks(Builder $query, User $user, bool $includeDeletedOwnerRows = false): Builder
+    {
+        return $query
+            ->where(function (Builder $owned) use ($user, $includeDeletedOwnerRows): Builder {
+                $owned
+                    ->where('todos.user_id', $user->id)
+                    ->where(function (Builder $projectIntegrity): void {
+                        $projectIntegrity
+                            ->whereNull('todos.project_id')
+                            ->orWhereExists(function ($projects): void {
+                                $projects
+                                    ->selectRaw('1')
+                                    ->from('projects')
+                                    ->whereColumn('projects.id', 'todos.project_id')
+                                    ->whereColumn('projects.user_id', 'todos.user_id');
+                            });
+                    });
+
+                if (! $includeDeletedOwnerRows) {
+                    $owned->whereNull('todos.deleted_at');
+                }
+
+                return $owned;
+            })
+            ->orWhere(function (Builder $shared) use ($user): Builder {
+                return $shared
+                    ->whereNull('todos.deleted_at')
+                    ->whereNotNull('todos.project_id')
+                    ->whereExists(function ($memberships) use ($user): void {
+                        $memberships
+                            ->selectRaw('1')
+                            ->from('project_memberships')
+                            ->join('projects', 'projects.id', '=', 'project_memberships.project_id')
+                            ->where('project_memberships.user_id', $user->id)
+                            ->whereNull('project_memberships.removed_at')
+                            ->whereNull('projects.archived_at')
+                            ->whereColumn('project_memberships.project_id', 'todos.project_id')
+                            ->whereColumn('projects.id', 'todos.project_id')
+                            ->whereColumn('projects.user_id', 'todos.user_id');
+                    });
+            });
     }
 }

@@ -180,6 +180,7 @@ return [
         'rename' => 'Rename',
         'clear_completed' => 'Clear completed',
         'clear_filters' => 'Reset',
+        'read_only' => 'Read-only',
     ],
 
     'saved_views' => [

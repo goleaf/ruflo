@@ -200,7 +200,7 @@
             <flux:select wire:model.live="project" :label="__('todos.filters.project')">
                 <flux:select.option value="">{{ __('todos.filters.all_projects') }}</flux:select.option>
                 <flux:select.option value="none">{{ __('todos.fields.no_project') }}</flux:select.option>
-                @foreach ($this->projects as $project)
+                @foreach ($this->filterProjects as $project)
                     <flux:select.option value="{{ $project->id }}">{{ $project->name }}</flux:select.option>
                 @endforeach
             </flux:select>
@@ -268,7 +268,7 @@
             </div>
         @endif
 
-        @if ($this->todos->count() > 0)
+        @if ($this->todos->count() > 0 && $this->hasBulkSelectableTodos())
             <div class="flex flex-wrap items-center gap-2 rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2 dark:border-white/10 dark:bg-zinc-900">
                 <flux:button size="xs" variant="ghost" icon="check-circle" wire:click="selectVisible">
                     {{ __('todos.bulk.select_visible') }}
@@ -332,15 +332,19 @@
                     wire:key="todo-{{ $todo->id }}"
                     class="flex min-h-14 items-start gap-3 rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2.5 dark:border-white/10 dark:bg-zinc-900"
                 >
-                    <input
-                        type="checkbox"
-                        wire:model.live="selected"
-                        value="{{ $todo->id }}"
-                        class="mt-1 rounded border-zinc-300 text-blue-600"
-                        aria-label="{{ __('todos.bulk.select_one') }}"
-                    />
+                    @if ($this->canSelectForBulk($todo))
+                        <input
+                            type="checkbox"
+                            wire:model.live="selected"
+                            value="{{ $todo->id }}"
+                            class="mt-1 rounded border-zinc-300 text-blue-600"
+                            aria-label="{{ __('todos.bulk.select_one') }}"
+                        />
+                    @else
+                        <span class="mt-1 size-4" aria-hidden="true"></span>
+                    @endif
 
-                    @if (! $todo->isArchived() && ! $todo->trashed())
+                    @if (! $todo->isArchived() && ! $todo->trashed() && $this->canToggleCompletion($todo))
                         <flux:checkbox
                             :checked="$todo->is_completed"
                             wire:click="{{ $todo->is_completed ? 'reopenTodo' : 'completeTodo' }}({{ $todo->id }})"
@@ -349,6 +353,8 @@
                         />
                     @elseif ($todo->trashed())
                         <flux:icon.trash variant="micro" class="mt-1 text-red-400" />
+                    @elseif (! $todo->isArchived())
+                        <flux:icon.eye variant="micro" class="mt-1 text-zinc-400" />
                     @else
                         <flux:icon.archive-box variant="micro" class="mt-1 text-zinc-400" />
                     @endif
@@ -383,6 +389,12 @@
                                 </flux:badge>
                             @endif
 
+                            @if ($this->isSharedTodo($todo))
+                                <flux:badge size="sm" color="blue" icon="users">
+                                    {{ __('todos.collaboration.scope.shared') }}
+                                </flux:badge>
+                            @endif
+
                             @if ($todo->openBlockerCount() > 0)
                                 <flux:badge size="sm" color="amber" icon="exclamation-triangle">
                                     {{ __('todos.dependencies.blocked_badge', ['count' => $todo->openBlockerCount()]) }}
@@ -403,28 +415,37 @@
                         </div>
                     </div>
 
-                    <flux:dropdown position="bottom" align="end">
-                        <flux:button variant="ghost" size="sm" square icon="ellipsis-horizontal" :aria-label="__('todos.actions.more')" />
+                    @if ($this->hasRowActions($todo))
+                        <flux:dropdown position="bottom" align="end">
+                            <flux:button variant="ghost" size="sm" square icon="ellipsis-horizontal" :aria-label="__('todos.actions.more')" />
 
-                        <flux:menu>
-                            @if ($todo->trashed())
-                                <flux:menu.item icon="arrow-uturn-left" wire:click="restoreDeletedTodo({{ $todo->id }})">{{ __('todos.actions.restore_from_trash') }}</flux:menu.item>
-                            @elseif (! $todo->isArchived())
-                                <flux:menu.item icon="pencil-square" wire:click="startEdit({{ $todo->id }})">{{ __('todos.actions.edit') }}</flux:menu.item>
-                                <flux:menu.item icon="archive-box" wire:click="archiveTodo({{ $todo->id }})">{{ __('todos.actions.archive') }}</flux:menu.item>
-                            @else
-                                <flux:menu.item icon="archive-box-x-mark" wire:click="unarchiveTodo({{ $todo->id }})">{{ __('todos.actions.unarchive') }}</flux:menu.item>
-                            @endif
+                            <flux:menu>
+                                @if ($todo->trashed() && $this->canManageTodo($todo))
+                                    <flux:menu.item icon="arrow-uturn-left" wire:click="restoreDeletedTodo({{ $todo->id }})">{{ __('todos.actions.restore_from_trash') }}</flux:menu.item>
+                                @elseif (! $todo->isArchived())
+                                    @if ($this->canUpdateTodo($todo))
+                                        <flux:menu.item icon="pencil-square" wire:click="startEdit({{ $todo->id }})">{{ __('todos.actions.edit') }}</flux:menu.item>
+                                    @endif
 
-                            @unless ($todo->trashed())
-                                <flux:menu.separator />
+                                    @if ($this->canManageTodo($todo))
+                                        <flux:menu.item icon="archive-box" wire:click="archiveTodo({{ $todo->id }})">{{ __('todos.actions.archive') }}</flux:menu.item>
+                                    @endif
+                                @elseif ($this->canManageTodo($todo))
+                                    <flux:menu.item icon="archive-box-x-mark" wire:click="unarchiveTodo({{ $todo->id }})">{{ __('todos.actions.unarchive') }}</flux:menu.item>
+                                @endif
 
-                                <flux:menu.item icon="trash" variant="danger" wire:click="deleteTodo({{ $todo->id }})" wire:confirm="{{ __('todos.confirmations.delete') }}">
-                                    {{ __('todos.actions.delete') }}
-                                </flux:menu.item>
-                            @endunless
-                        </flux:menu>
-                    </flux:dropdown>
+                                @if (! $todo->trashed() && $this->canManageTodo($todo))
+                                    <flux:menu.separator />
+
+                                    <flux:menu.item icon="trash" variant="danger" wire:click="deleteTodo({{ $todo->id }})" wire:confirm="{{ __('todos.confirmations.delete') }}">
+                                        {{ __('todos.actions.delete') }}
+                                    </flux:menu.item>
+                                @endif
+                            </flux:menu>
+                        </flux:dropdown>
+                    @else
+                        <flux:badge size="sm" color="zinc" icon="eye">{{ __('todos.actions.read_only') }}</flux:badge>
+                    @endif
                 </div>
             @empty
                 <x-ui.empty-state

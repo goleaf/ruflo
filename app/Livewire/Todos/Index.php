@@ -410,6 +410,7 @@ class Index extends Component
     {
         $this->selected = $this->todos
             ->getCollection()
+            ->filter(fn (Todo $todo): bool => $this->canSelectForBulk($todo))
             ->pluck('id')
             ->map(fn (int $id): int => $id)
             ->values()
@@ -637,6 +638,15 @@ class Index extends Component
      * @return Collection<int, Project>
      */
     #[Computed]
+    public function filterProjects(): Collection
+    {
+        return app(ProjectListQuery::class)->activeAccessibleFor($this->currentUser());
+    }
+
+    /**
+     * @return Collection<int, Project>
+     */
+    #[Computed]
     public function allProjects(): Collection
     {
         return app(ProjectListQuery::class)->visibleFor($this->currentUser())->get();
@@ -666,6 +676,54 @@ class Index extends Component
     public function priorityOptions(): array
     {
         return Priority::cases();
+    }
+
+    public function canSelectForBulk(Todo $todo): bool
+    {
+        return $todo->isOwnedBy($this->currentUser());
+    }
+
+    public function isSharedTodo(Todo $todo): bool
+    {
+        return ! $todo->isOwnedBy($this->currentUser());
+    }
+
+    public function hasBulkSelectableTodos(): bool
+    {
+        return $this->todos
+            ->getCollection()
+            ->contains(fn (Todo $todo): bool => $this->canSelectForBulk($todo));
+    }
+
+    public function canToggleCompletion(Todo $todo): bool
+    {
+        $ability = $todo->is_completed ? 'reopen' : 'complete';
+
+        return $this->currentUser()->can($ability, $todo);
+    }
+
+    public function canUpdateTodo(Todo $todo): bool
+    {
+        return $this->currentUser()->can('update', $todo);
+    }
+
+    public function canManageTodo(Todo $todo): bool
+    {
+        if ($todo->trashed()) {
+            return $this->currentUser()->can('restore', $todo);
+        }
+
+        $ability = $todo->isArchived() ? 'unarchive' : 'archive';
+
+        return $this->currentUser()->can($ability, $todo)
+            || $this->currentUser()->can('delete', $todo);
+    }
+
+    public function hasRowActions(Todo $todo): bool
+    {
+        return $this->canUpdateTodo($todo)
+            || $this->canManageTodo($todo)
+            || (! $todo->trashed() && $this->currentUser()->can('delete', $todo));
     }
 
     public function emptyStateTitle(): string
@@ -815,7 +873,7 @@ class Index extends Component
             return (string) __('todos.filters.unavailable_filter');
         }
 
-        return (string) ($this->projects->firstWhere('id', (int) $this->project)?->name ?? __('todos.filters.unavailable_filter'));
+        return (string) ($this->filterProjects->firstWhere('id', (int) $this->project)?->name ?? __('todos.filters.unavailable_filter'));
     }
 
     private function tagFilterLabel(): string
@@ -984,7 +1042,7 @@ class Index extends Component
 
     private function refreshLists(): void
     {
-        unset($this->todos, $this->summary, $this->projects, $this->allProjects, $this->tags, $this->savedViews);
+        unset($this->todos, $this->summary, $this->projects, $this->filterProjects, $this->allProjects, $this->tags, $this->savedViews);
     }
 
     private function currentUser(): User

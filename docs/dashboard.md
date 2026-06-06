@@ -11,17 +11,19 @@ private counters that load when the authenticated user opens `/dashboard`.
 `App\Queries\Dashboard\DailyDashboardQuery` is the read boundary for the daily
 card. It reads:
 
-- owner-scoped active task date buckets for due today, overdue, next seven days,
-  unplanned tasks, active total, scheduled total, and schedule coverage,
-- owner-scoped blocked task counts through `TodoListQuery::blockedFor($user)`,
+- private owned plus active shared project task date buckets for due today,
+  overdue, next seven days, unplanned tasks, active total, scheduled total, and
+  schedule coverage,
+- private owned plus active shared project blocked task counts through
+  `TodoListQuery::blockedFor($user)`,
 - owner-scoped reminder counts for due and pending reminders,
 - owner-scoped completed time-entry totals for today and active timer counts,
 - unread database notification counts through `NotificationInboxQuery`.
 
 The Livewire dashboard component does not query task, reminder, time-entry, or
 notification models directly. All counters are scoped to the authenticated
-user before rendering. Completed, archived, deleted, and foreign tasks are
-excluded from actionable daily task counters.
+user before rendering. Completed, archived, deleted, removed-membership, and
+foreign tasks are excluded from actionable daily task counters.
 
 ## UI Contract
 
@@ -69,7 +71,10 @@ widgets. It aggregates active task date buckets and priorities, due/pending
 reminders, enabled/paused/generated recurrence state, open goals and
 milestones, active habits and check-ins, active projects, project task coverage,
 completed time, weekly time, and active timers only after scoping to the
-authenticated user.
+authenticated user. Task-derived counters and active project counts include
+active shared project scope through `TodoListQuery` and `ProjectListQuery`;
+reminders, recurrence rules, goals, habits, time entries, and notifications
+remain private to the authenticated user.
 
 The Livewire dashboard stores a compact/details widget preference in session,
 renders Flux cards and badges in a responsive grid, and includes a

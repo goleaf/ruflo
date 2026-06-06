@@ -4,6 +4,7 @@ Record changes after every step.
 
 ## Unreleased
 
+- Completed Step 071 by widening task search, safe project filters, Today/Overdue/Upcoming/blocked lists, and task-derived dashboard counters to active shared project tasks, while keeping trash, tags, owner-only assignment, and bulk mutations private with translated read-only shared viewer states and focused shared-scope tests.
 - Completed Step 070 by adding owner/manager project member role editing and removal, a scoped active-membership lookup, dedicated role-update action/request/rule validation, translated Flux modal/buttons, immediate access revocation, docs, and focused member-management privacy tests.
 - Completed Step 069 by adding link-only project invitations with encrypted tokens, signed `https://ruflo.test` accept links, no email sending, cancellation, expiration, accepted/used state, a generic authenticated accept page, Flux create/copy/cancel UI, validation rules, factory/seeder states, docs, and focused privacy tests.
 - Completed Step 068 by adding explicit project memberships with manager/editor/viewer roles, central project-access resolution, project/task policy expansion, owner-plus-member project detail UI, local/testing/demo membership seeding, collaboration docs, and focused role/privacy tests.

@@ -1,5 +1,29 @@
 # Changelog
 
+## 2026-06-06 - Step 071 Shared dashboard search filter scope
+
+### Added
+
+- Extended task-list search, safe project filters, Today, Overdue, Upcoming,
+  blocked counts, and task-derived dashboard counters to include active shared
+  project tasks.
+- Added active accessible project filter helpers so shared members can filter
+  by projects they can read without exposing owner-only assignment controls.
+- Added read-only task-list and smart-list UI states for shared viewers while
+  preserving editor completion/editing permissions through `TodoPolicy`.
+
+### Tests
+
+- Added `SharedDashboardSearchFilterScopeTest` coverage for active shared
+  filters, dashboard counters, removed membership exclusion, viewer read-only
+  behavior, and editor completion without member-management scope.
+
+### Restricted Hosting
+
+- Shared read scopes are resolved during normal authenticated web requests.
+  No cron, queue worker, supervisor, terminal action, Artisan command during
+  normal usage, hosted service, email provider, or paid dependency is required.
+
 ## 2026-06-06 - Step 070 Member management
 
 ### Added

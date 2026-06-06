@@ -34,6 +34,13 @@ cross-owner project links from widening task access.
 Project detail pages read shared project tasks through the project owner scope
 and hide owner-only filter shortcuts for shared members.
 
+Step 071 extends task-list, search, project-filter, Today, Overdue, Upcoming,
+blocked, and task-derived dashboard counters to the same private owned plus
+active shared project scope. Removed memberships, archived shared projects,
+shared trash rows, no-project tasks, and malformed cross-owner project links
+fail closed. Owner-only assignment pickers, tag labels, deleted task access,
+and bulk mutations remain private.
+
 ## UI
 
 The project detail page shows:
@@ -100,6 +107,19 @@ member details.
 Every submitted membership id is re-queried through
 `ProjectMembershipQuery::findActiveForProject()` before authorization and
 mutation, so stale, removed, and foreign membership rows fail closed.
+
+## Shared Dashboard, Search, and Filter Scope
+
+Step 071 makes active shared project tasks visible in the main task list,
+search results, safe project filters, Today, Overdue, Upcoming, blocked task
+counts, and task-derived dashboard widgets. Viewers can read shared tasks but
+do not receive completion, edit, archive, delete, restore, or bulk controls.
+Editors can complete and edit shared project tasks according to `TodoPolicy`
+without gaining member-management access.
+
+Dashboard reminders, notifications, time, goals, habits, recurrence rules,
+tags, trash, and owner-only project assignment controls remain private to the
+authenticated user.
 
 ## Seeding
 

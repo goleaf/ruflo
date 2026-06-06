@@ -57,6 +57,24 @@ final class ProjectListQuery
         return $this->visibleFor($user)->active()->get();
     }
 
+    /**
+     * Active projects the user can read in filter and dashboard scopes.
+     *
+     * @return Collection<int, Project>
+     */
+    public function activeAccessibleFor(User $user): Collection
+    {
+        return $this->accessibleFor($user)->active()->get();
+    }
+
+    public function activeAccessibleExists(User $user, int $projectId): bool
+    {
+        return $this->accessibleFor($user)
+            ->active()
+            ->whereKey($projectId)
+            ->exists();
+    }
+
     public function findVisibleFor(User $user, int $projectId): Project
     {
         return Project::query()->ownedBy($user)->findOrFail($projectId);

@@ -6,15 +6,16 @@ use App\Models\Goal;
 use App\Models\GoalMilestone;
 use App\Models\Habit;
 use App\Models\HabitCheckIn;
-use App\Models\Project;
 use App\Models\Tag;
 use App\Models\User;
+use App\Queries\Projects\ProjectListQuery;
 use App\Queries\Todos\TodoListQuery;
 
 final class DailySummaryQuery
 {
     public function __construct(
         private readonly TodoListQuery $todos,
+        private readonly ProjectListQuery $projects,
     ) {}
 
     /**
@@ -28,7 +29,7 @@ final class DailySummaryQuery
 
         return [
             ...$todoSummary,
-            'projects' => Project::query()->ownedBy($user)->active()->count(),
+            'projects' => $this->projects->activeAccessibleFor($user)->count(),
             'tags' => Tag::query()->ownedBy($user)->count(),
             'goals' => Goal::query()->ownedBy($user)->active()->count(),
             'milestones' => GoalMilestone::query()->ownedBy($user)->count(),

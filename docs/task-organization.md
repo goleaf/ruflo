@@ -1,6 +1,6 @@
 # Task Organization
 
-Through Step 058, the private task lifecycle is extended into a usable productivity system:
+Through Step 071, the private task lifecycle is extended into a usable productivity system:
 projects, tags, priorities, due dates, search, filters, sorting, and bulk
 actions, calendar/board/focus views, contained checklists, templates, a quick
 capture Inbox, time tracking, task dependencies, cleanup smart views, and
@@ -121,10 +121,11 @@ upcoming, and archived tasks so `/todos/{id}` shows progress immediately on
   by `App\Livewire\Projects\Show`. Archived projects remain readable there so
   existing tasks can be reviewed, but archived projects are still excluded from
   assignment and filter pickers.
-- Step 068 keeps the project owner on `projects.user_id` and grants shared
-  access only through active `project_memberships` rows. Owner-only project
-  pickers and dashboard filters remain owner-scoped until the dedicated shared
-  dashboard/search/filter step widens them.
+- Step 071 keeps owner-only assignment pickers private but widens read-only
+  task search, project filters, smart due-date lists, and task dashboard
+  counters to include active shared project tasks. Removed memberships,
+  archived shared projects, trash, and no-project tasks never enter the shared
+  scope.
 - Project detail pages can be opened by the owner and active manager, editor,
   or viewer memberships. Shared members see the project owner's tasks and labels
   for that project, and removed members lose old-link access immediately.
@@ -203,9 +204,9 @@ the matching model helpers, and feed the summary's `overdue` counter.
 ## Search, filters, sorting
 
 All of this is centralized in `App\Queries\Todos\TodoListQuery::filtered()`,
-which takes a validated `TodoFilters` value object and always starts from the
-owner scope. No filtering happens in the view or the component beyond building
-the (sanitized) filter object.
+which takes a validated `TodoFilters` value object and starts from the private
+owned plus active shared project read scope. No filtering happens in the view
+or the component beyond building the (sanitized) filter object.
 
 - **Search** — case-insensitive `LIKE` on title, with LIKE wildcards (`%`, `_`)
   escaped via an `ESCAPE` clause so a search for `50%` matches the literal text
@@ -217,15 +218,17 @@ the (sanitized) filter object.
   so saved views can be suggested from the same search control. Search composes
   with pagination and reset behavior.
 - **Filters** — lifecycle tab (active/completed/archived), project (or "none"),
-  tag, priority, and due bucket. Every filter value is sanitized in the
+  tag, priority, and due bucket. The project picker includes active owned
+  projects plus active projects shared through an active membership. Every
+  filter value is sanitized in the
   component's `buildFilters()` before it reaches the query: unknown sort values
   fall back to safe defaults, and invalid lifecycle/priority/due values are
   carried as invalid filter state so they can never widen scope.
   Numeric project/tag filters are re-checked inside `TodoListQuery::filtered()`;
-  foreign, archived, or missing ids return an empty result rather than applying
-  another user's id or falling back to an unfiltered list. Step 035 also treats
-  non-numeric project/tag URL values as invalid filters so they reach that same
-  empty-result path instead of being silently ignored.
+  foreign, archived, removed-membership, or missing ids return an empty result
+  rather than applying another user's id or falling back to an unfiltered list.
+  Step 035 also treats non-numeric project/tag URL values as invalid filters so
+  they reach that same empty-result path instead of being silently ignored.
   Step 036 extends that empty-result behavior to invalid lifecycle, priority,
   and active-tab due-bucket values. Valid filters compose across project, tag,
   priority, due bucket, search, sorting, and pagination; invalid filter state is
@@ -256,18 +259,25 @@ page and clears the bulk selection. Active filters render as translated Flux
 badges with one clear action so users can see when a search or filter is
 constraining the list.
 
+Bulk selection and bulk actions remain owner-only. Shared tasks can render in
+the list for active members, but the row checkbox is hidden unless the task is
+owned by the authenticated user.
+
 ## Today view
 
 Step 032 adds a dedicated `todos.today` Livewire page for active tasks due
 today. It is protected by the same `auth` and `verified` middleware as the main
-todo workspace and uses `TodoListQuery::todayFor()` so reads stay owner-scoped,
-active-only, and eager-loaded for project/tag badges.
+todo workspace and uses `TodoListQuery::todayFor()` so reads stay bounded,
+active-only, and eager-loaded for project/tag badges. Step 071 extends the read
+scope to private owned tasks plus active shared project tasks; shared viewers
+see a read-only indicator instead of a complete button.
 
 The Today page:
 
-- displays only active current-user tasks where `due_date` is today in the app
-  timezone,
-- excludes overdue, upcoming, completed, archived, trashed, and foreign tasks,
+- displays only active current-user tasks plus active shared project tasks
+  where `due_date` is today in the app timezone,
+- excludes overdue, upcoming, completed, archived, trashed, removed-membership,
+  and foreign tasks,
 - links each task to its private detail page,
 - includes project/tag badges that reuse existing owner-scoped links,
 - offers a complete action limited through `TodoListQuery::findTodayFor()`,
@@ -281,14 +291,17 @@ keeping the full task workspace one click away.
 Step 033 adds a dedicated `todos.overdue` Livewire page for active tasks with a
 due date before today. It is protected by the same `auth` and `verified`
 middleware as the main todo workspace and uses `TodoListQuery::overdueFor()`
-so reads stay owner-scoped, active-only, and eager-loaded for project/tag
-badges.
+so reads stay bounded, active-only, and eager-loaded for project/tag badges.
+Step 071 extends the read scope to private owned tasks plus active shared
+project tasks; shared viewers see a read-only indicator instead of a complete
+button.
 
 The Overdue page:
 
-- displays only current-user active tasks where `due_date` is before today in
-  the app timezone,
-- excludes today, upcoming, completed, archived, trashed, and foreign tasks,
+- displays only current-user active tasks plus active shared project tasks
+  where `due_date` is before today in the app timezone,
+- excludes today, upcoming, completed, archived, trashed, removed-membership,
+  and foreign tasks,
 - links each task to its private detail page,
 - includes project/tag badges that reuse existing owner-scoped links,
 - offers a complete action limited through `TodoListQuery::findOverdueFor()`,
@@ -303,15 +316,17 @@ workspace shortcuts.
 Step 034 adds a dedicated `todos.upcoming` Livewire page for active tasks with
 a due date after today. It is protected by the same `auth` and `verified`
 middleware as the main todo workspace and uses `TodoListQuery::upcomingFor()`
-so reads stay owner-scoped, active-only, and eager-loaded for project/tag
-badges.
+so reads stay bounded, active-only, and eager-loaded for project/tag badges.
+Step 071 extends the read scope to private owned tasks plus active shared
+project tasks; shared viewers see a read-only indicator instead of a complete
+button.
 
 The Upcoming page:
 
-- displays only current-user active tasks where `due_date` is after today in
-  the app timezone,
+- displays only current-user active tasks plus active shared project tasks
+  where `due_date` is after today in the app timezone,
 - excludes overdue, today, no-due-date, completed, archived, trashed, and
-  foreign tasks,
+  removed-membership and foreign tasks,
 - links each task to its private detail page,
 - includes project/tag badges that reuse existing owner-scoped links,
 - offers a complete action limited through `TodoListQuery::findUpcomingFor()`,

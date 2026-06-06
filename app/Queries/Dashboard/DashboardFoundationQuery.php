@@ -2,22 +2,26 @@
 
 namespace App\Queries\Dashboard;
 
-use App\Enums\Priority;
 use App\Enums\ReminderStatus;
 use App\Enums\TimeEntryStatus;
 use App\Models\Goal;
 use App\Models\GoalMilestone;
 use App\Models\Habit;
 use App\Models\HabitCheckIn;
-use App\Models\Project;
 use App\Models\Reminder;
 use App\Models\TimeEntry;
-use App\Models\Todo;
 use App\Models\TodoRecurrenceRule;
 use App\Models\User;
+use App\Queries\Projects\ProjectListQuery;
+use App\Queries\Todos\TodoListQuery;
 
 final class DashboardFoundationQuery
 {
+    public function __construct(
+        private readonly TodoListQuery $todos,
+        private readonly ProjectListQuery $projects,
+    ) {}
+
     /**
      * Owner-scoped dashboard foundation counters.
      *
@@ -52,17 +56,7 @@ final class DashboardFoundationQuery
         $weekStartsOn = today()->startOfWeek()->toDateString();
         $soonEndsOn = today()->addDays(7)->toDateString();
 
-        $tasks = Todo::query()
-            ->ownedBy($user)
-            ->active()
-            ->selectRaw('sum(case when date(due_date) = ? then 1 else 0 end) as today_count', [$today])
-            ->selectRaw('sum(case when due_date is not null and date(due_date) < ? then 1 else 0 end) as overdue_count', [$today])
-            ->selectRaw('sum(case when date(due_date) > ? and date(due_date) <= ? then 1 else 0 end) as upcoming_count', [$today, $soonEndsOn])
-            ->selectRaw('sum(case when priority = ? then 1 else 0 end) as urgent_count', [Priority::Urgent->value])
-            ->selectRaw('sum(case when priority = ? then 1 else 0 end) as high_count', [Priority::High->value])
-            ->selectRaw('sum(case when priority = ? then 1 else 0 end) as normal_count', [Priority::Normal->value])
-            ->selectRaw('sum(case when priority = ? then 1 else 0 end) as low_count', [Priority::Low->value])
-            ->first();
+        $tasks = $this->todos->dashboardTaskCountsFor($user);
 
         $reminders = Reminder::query()
             ->ownedBy($user)
@@ -105,23 +99,18 @@ final class DashboardFoundationQuery
             ->first();
 
         return [
-            'today' => (int) ($tasks->today_count ?? 0),
-            'overdue' => (int) ($tasks->overdue_count ?? 0),
-            'upcoming' => (int) ($tasks->upcoming_count ?? 0),
-            'priority_urgent' => (int) ($tasks->urgent_count ?? 0),
-            'priority_high' => (int) ($tasks->high_count ?? 0),
-            'priority_normal' => (int) ($tasks->normal_count ?? 0),
-            'priority_low' => (int) ($tasks->low_count ?? 0),
+            'today' => $tasks['today'],
+            'overdue' => $tasks['overdue'],
+            'upcoming' => $tasks['due_soon'],
+            'priority_urgent' => $tasks['priority_urgent'],
+            'priority_high' => $tasks['priority_high'],
+            'priority_normal' => $tasks['priority_normal'],
+            'priority_low' => $tasks['priority_low'],
             'reminders_due' => (int) ($reminders->due_count ?? 0),
             'reminders_pending' => (int) ($reminders->pending_count ?? 0),
             'recurrence_enabled' => (int) ($recurrenceRules->enabled_count ?? 0),
             'recurrence_paused' => (int) ($recurrenceRules->paused_count ?? 0),
-            'recurrence_generated' => Todo::query()
-                ->ownedBy($user)
-                ->active()
-                ->whereNotNull('recurrence_rule_id')
-                ->whereNotNull('recurrence_occurs_on')
-                ->count(),
+            'recurrence_generated' => $tasks['recurrence_generated'],
             'goals_open' => (int) ($goals->open_count ?? 0),
             'goals_due_soon' => (int) ($goals->due_soon_count ?? 0),
             'milestones_open' => GoalMilestone::query()
@@ -140,19 +129,8 @@ final class DashboardFoundationQuery
                     ->active())
                 ->whereDate('occurred_on', $today)
                 ->count(),
-            'projects_active' => Project::query()
-                ->ownedBy($user)
-                ->active()
-                ->count(),
-            'projects_with_active_tasks' => Todo::query()
-                ->ownedBy($user)
-                ->active()
-                ->whereNotNull('project_id')
-                ->whereHas('project', fn ($project) => $project
-                    ->where('projects.user_id', $user->id)
-                    ->active())
-                ->distinct('project_id')
-                ->count('project_id'),
+            'projects_active' => $this->projects->activeAccessibleFor($user)->count(),
+            'projects_with_active_tasks' => $tasks['projects_with_active_tasks'],
             'time_today_seconds' => (int) ($time->today_seconds ?? 0),
             'time_week_seconds' => (int) ($time->week_seconds ?? 0),
             'active_timers' => (int) ($time->active_timer_count ?? 0),

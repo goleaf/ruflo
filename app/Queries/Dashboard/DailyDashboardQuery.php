@@ -6,7 +6,6 @@ use App\Enums\ReminderStatus;
 use App\Enums\TimeEntryStatus;
 use App\Models\Reminder;
 use App\Models\TimeEntry;
-use App\Models\Todo;
 use App\Models\User;
 use App\Queries\Notifications\NotificationInboxQuery;
 use App\Queries\Todos\TodoListQuery;
@@ -42,18 +41,7 @@ final class DailyDashboardQuery
     public function for(User $user): array
     {
         $today = today()->toDateString();
-        $soonEndsOn = today()->addDays(7)->toDateString();
-
-        $tasks = Todo::query()
-            ->ownedBy($user)
-            ->active()
-            ->selectRaw('count(*) as active_count')
-            ->selectRaw('sum(case when due_date is not null then 1 else 0 end) as scheduled_count')
-            ->selectRaw('sum(case when date(due_date) = ? then 1 else 0 end) as due_today_count', [$today])
-            ->selectRaw('sum(case when due_date is not null and date(due_date) < ? then 1 else 0 end) as overdue_count', [$today])
-            ->selectRaw('sum(case when date(due_date) > ? and date(due_date) <= ? then 1 else 0 end) as due_soon_count', [$today, $soonEndsOn])
-            ->selectRaw('sum(case when due_date is null then 1 else 0 end) as unplanned_count')
-            ->first();
+        $tasks = $this->todos->dashboardTaskCountsFor($user);
 
         $reminders = Reminder::query()
             ->ownedBy($user)
@@ -67,13 +55,13 @@ final class DailyDashboardQuery
             ->selectRaw('sum(case when status = ? then 1 else 0 end) as active_timer_count', [TimeEntryStatus::Running->value])
             ->first();
 
-        $activeTotal = (int) ($tasks->active_count ?? 0);
-        $scheduledTotal = (int) ($tasks->scheduled_count ?? 0);
+        $activeTotal = $tasks['active'];
+        $scheduledTotal = $tasks['scheduled'];
         $scheduleCoveragePercent = $activeTotal === 0
             ? 100
             : (int) round(($scheduledTotal / $activeTotal) * 100);
-        $dueToday = (int) ($tasks->due_today_count ?? 0);
-        $overdue = (int) ($tasks->overdue_count ?? 0);
+        $dueToday = $tasks['today'];
+        $overdue = $tasks['overdue'];
         $blocked = $this->todos->blockedFor($user)->count();
         $dueReminders = (int) ($reminders->due_count ?? 0);
         $unreadNotifications = $this->notifications->unreadCountFor($user);
@@ -92,8 +80,8 @@ final class DailyDashboardQuery
             'schedule_coverage_percent' => $scheduleCoveragePercent,
             'due_today' => $dueToday,
             'overdue' => $overdue,
-            'due_soon' => (int) ($tasks->due_soon_count ?? 0),
-            'unplanned' => (int) ($tasks->unplanned_count ?? 0),
+            'due_soon' => $tasks['due_soon'],
+            'unplanned' => $tasks['unplanned'],
             'blocked' => $blocked,
             'due_reminders' => $dueReminders,
             'pending_reminders' => (int) ($reminders->pending_count ?? 0),

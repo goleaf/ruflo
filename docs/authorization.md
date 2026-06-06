@@ -31,8 +31,8 @@ through policy and query boundaries.
 | Concern | Location | Rule |
 | --- | --- | --- |
 | Ownership scoping | `App\Models\Concerns\BelongsToUser` (`scopeOwnedBy`, `isOwnedBy`) | The only way to scope a query or check ownership. |
-| Read boundary | `App\Queries\Todos\TodoListQuery` | The only place todos are read for the UI. Always owner-scoped. |
-| Project read boundary | `App\Queries\Projects\ProjectListQuery` | Owner-only project pickers use `visibleFor`; shared project pages use `accessibleFor` and `findAccessibleFor`. |
+| Read boundary | `App\Queries\Todos\TodoListQuery` | The only place todos are read for the UI. Task list, smart lists, search/filter results, and task dashboard counters include private owned tasks plus active shared project tasks; trash remains owner-only. |
+| Project read boundary | `App\Queries\Projects\ProjectListQuery` | Owner-only project pickers use `visibleFor`; shared project pages use `accessibleFor` and `findAccessibleFor`; shared filters/dashboard counts use `activeAccessibleFor`. |
 | Project membership read boundary | `App\Queries\Projects\ProjectMembershipQuery` | Active membership listing and lookup for already authorized project access. |
 | Project invitation read boundary | `App\Queries\Projects\ProjectInvitationQuery` | Member managers list project invite lifecycle rows and accept signed links through token hashes without exposing project data first. |
 | Project access resolver | `App\Support\Projects\ProjectAccess` | Central role lookup for owner, manager, editor, and viewer permissions. |
@@ -43,8 +43,8 @@ through policy and query boundaries.
 | Automation read boundary | `App\Queries\Automation\AutomationRuleQuery` | Owner-scoped automation rules with latest run reports. |
 | Reminder read boundary | `App\Queries\Reminders\ReminderListQuery` | Owner-scoped reminders, task options, and summary counts. |
 | Notification read boundary | `App\Queries\Notifications\NotificationInboxQuery` | Owner-scoped database notifications, read-state filters, and scoped mutation lookup. |
-| Daily dashboard read boundary | `App\Queries\Dashboard\DailyDashboardQuery` | Owner-scoped daily counts for due work, reminders, unread notifications, and tracked time. |
-| Dashboard foundation read boundary | `App\Queries\Dashboard\DashboardFoundationQuery` | Owner-scoped widget counters across today, overdue, upcoming, priorities, reminders, recurrence, goals, habits, projects, and time. |
+| Daily dashboard read boundary | `App\Queries\Dashboard\DailyDashboardQuery` | Daily task counts come from `TodoListQuery` and include private owned tasks plus active shared project tasks; reminders, unread notifications, and tracked time remain owner-scoped. |
+| Dashboard foundation read boundary | `App\Queries\Dashboard\DashboardFoundationQuery` | Task/project widgets include active shared project task scope through `TodoListQuery`/`ProjectListQuery`; reminders, recurrence, goals, habits, and time remain owner-scoped. |
 | Project progress dashboard read boundary | `App\Queries\Dashboard\ProjectProgressDashboardQuery` | Owner-scoped active project, no-project, completion, overdue, undated, and stale cleanup counters. |
 | Reports read boundary | `App\Queries\Reports\ReportsOverviewQuery` | Owner-scoped productivity, habit, project, time, and overdue report aggregates. |
 | Activity read boundary | `App\Queries\Activity\ActivityFeedQuery` | Owner-scoped activity timeline, summary counts, and safe task-link prechecks. |
@@ -57,7 +57,7 @@ through policy and query boundaries.
 | Per-action decisions | `App\Policies\TodoPolicy` | The only place "may this user do this?" is answered. |
 | Policy binding | `#[UsePolicy(...Policy::class)]` on current private models | Explicit, greppable mapping — not naming-convention magic. |
 | Mutations | `App\Actions\Todos\*` | Assign ownership from the authenticated user; never from request input. |
-| Dashboard summary | `App\Queries\Dashboard\DailySummaryQuery` | Counts tasks, trash, active projects, goals, habits, and tags through owner-scoped queries only. |
+| Dashboard summary | `App\Queries\Dashboard\DailySummaryQuery` | Counts private plus active shared project tasks and active accessible projects; trash, goals, habits, and tags remain owner-scoped. |
 
 Do not scatter authorization across components, views, or query callers.
 Reuse these.
@@ -77,17 +77,22 @@ Ownership is assigned by backend logic only:
 ## Query scoping
 
 Every read of todo data must start from `TodoListQuery` (or apply `ownedBy`
-directly). Consequences that are mandatory, not optional:
+directly for owner-only subsystems). Consequences that are mandatory, not
+optional:
 
-- Lists, single-record lookups, trash lookups, and counters are all
-  owner-scoped.
+- Lists, smart lists, search/filter results, summaries, and task-derived
+  dashboard counters include private owned tasks plus tasks in active shared
+  projects where the task owner is also the project owner.
+- Trash lookups, deleted-row counts, owner labels, tag filters, and bulk
+  mutation targets remain owner-only.
 - Client-supplied IDs are untrusted. `findVisibleFor()` and `findTrashedFor()`
   resolve them through owner-scoped queries, so another user's ID returns **not
   found** — the record's existence never leaks.
-- Aggregates (the remaining/completed summary) are computed inside the scope,
-  so counters can never include another user's tasks.
-- URL filter IDs are re-checked against the owner before they become query
-  predicates. A foreign, archived, or missing project/tag filter resolves to an
+- Aggregates (the remaining/completed summary and dashboard task counters) are
+  computed inside the read scope, so counters can never include unrelated tasks
+  or removed memberships.
+- URL filter IDs are re-checked before they become query predicates. A foreign,
+  archived, removed-membership, or missing project/tag filter resolves to an
   empty result instead of being ignored or applied as another user's ID.
 - Related project and tag labels are constrained to the same owner before
   eager loading. Normal actions already prevent foreign links, but malformed
@@ -161,7 +166,9 @@ The Livewire component authorizes **before** delegating to an action:
 - Shared project tasks use `TodoPolicy` and `TodoListQuery`: owners keep all
   task abilities, managers can edit and manage shared project tasks, editors
   can edit shared project tasks, and viewers can read only. Shared access is
-  granted only when the task belongs to the shared project owner.
+  granted only when the task belongs to the shared project owner. Shared
+  viewers do not receive completion, edit, archive, delete, restore, or bulk
+  controls from task-list and smart-list surfaces.
 - Reminders use `ReminderPolicy`: `viewAny`, `create`, and `process` are
   available to authenticated users for their own workspace; `view`, `update`,
   and `delete` are owner-only and hide foreign ids as not found. Restore and

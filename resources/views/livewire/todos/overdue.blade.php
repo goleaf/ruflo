@@ -27,14 +27,18 @@
         <div class="space-y-2">
             @forelse ($this->todos as $todo)
                 <div wire:key="overdue-todo-{{ $todo->id }}" class="flex min-h-14 items-start gap-3 rounded-lg border border-red-200 bg-red-50 px-3 py-2.5 dark:border-red-500/30 dark:bg-red-500/10">
-                    <flux:button
-                        size="sm"
-                        variant="ghost"
-                        square
-                        icon="check"
-                        wire:click="completeTodo({{ $todo->id }})"
-                        :aria-label="__('todos.actions.complete')"
-                    />
+                    @can('complete', $todo)
+                        <flux:button
+                            size="sm"
+                            variant="ghost"
+                            square
+                            icon="check"
+                            wire:click="completeTodo({{ $todo->id }})"
+                            :aria-label="__('todos.actions.complete')"
+                        />
+                    @else
+                        <flux:icon.eye variant="micro" class="mt-1 text-zinc-400" />
+                    @endcan
 
                     <div class="min-w-0 flex-1 space-y-1">
                         <a href="{{ route('todos.show', $todo) }}" wire:navigate class="text-sm font-medium break-words text-zinc-950 dark:text-white">
@@ -47,6 +51,12 @@
                             @endif
 
                             <flux:badge size="sm" color="red" icon="calendar">{{ $todo->due_date->isoFormat('MMM D') }}</flux:badge>
+
+                            @if ((int) $todo->user_id !== (int) auth()->id())
+                                <flux:badge size="sm" color="blue" icon="users">
+                                    {{ __('todos.collaboration.scope.shared') }}
+                                </flux:badge>
+                            @endif
 
                             @if ($todo->project)
                                 <a href="{{ route('projects.show', $todo->project) }}" wire:navigate>

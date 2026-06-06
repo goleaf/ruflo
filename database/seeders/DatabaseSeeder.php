@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             $this->call([
                 DemoUserSeeder::class,
                 TodoSeeder::class,
+                ProjectMembershipSeeder::class,
                 ExecutiveWorkspaceSeeder::class,
                 TodoRecurrenceRuleSeeder::class,
                 ActivityRecordSeeder::class,

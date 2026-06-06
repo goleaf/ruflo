@@ -2,7 +2,9 @@
 
 namespace App\Actions\Todos;
 
+use App\Models\Project;
 use App\Models\User;
+use App\Support\Projects\ProjectAccess;
 
 /**
  * Ownership-safe resolution of a task's project and tags.
@@ -15,7 +17,7 @@ use App\Models\User;
 trait ResolvesTodoOrganization
 {
     /**
-     * Return the project id only if it belongs to the user; otherwise null.
+     * Return the project id only if the user owns it or can edit the shared project.
      */
     protected function resolveProjectId(User $user, ?int $projectId): ?int
     {
@@ -23,7 +25,17 @@ trait ResolvesTodoOrganization
             return null;
         }
 
-        return $user->projects()->whereKey($projectId)->value('id');
+        $project = Project::query()
+            ->select(['id', 'user_id'])
+            ->find($projectId);
+
+        if (! $project instanceof Project) {
+            return null;
+        }
+
+        $role = app(ProjectAccess::class)->roleFor($user, $project);
+
+        return $role?->canEditTasks() === true ? $project->id : null;
     }
 
     /**

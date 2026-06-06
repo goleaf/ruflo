@@ -9,6 +9,7 @@ Step 012 covers the committed model set:
 - `HabitCheckIn`
 - `PomodoroSession`
 - `Project`
+- `ProjectMembership`
 - `Reminder`
 - `SavedTodoView`
 - `Tag`
@@ -25,9 +26,10 @@ The tracked `Reminder` model is now seeded with owner-scoped local/testing/demo
 records. The tracked `TodoRecurrenceRule` model is seeded with owner-scoped
 local/testing/demo rule definitions and generated occurrences. The tracked
 `TodoRecurrenceException` model is seeded with local/testing/demo skipped,
-edited, and moved occurrence examples. Future models for comments, attachments,
-invites, settings, and collaboration are not seeded yet because those committed
-models do not exist yet.
+edited, and moved occurrence examples. The tracked `ProjectMembership` model is
+seeded with local/testing/demo project sharing between the configured demo
+users. Future models for comments, attachments, invites, and settings are not
+seeded yet because those committed models do not exist yet.
 
 ## Seeders
 
@@ -35,9 +37,10 @@ models do not exist yet.
 
 1. `DemoUserSeeder`
 2. `TodoSeeder`
-3. `ExecutiveWorkspaceSeeder`
-4. `TodoRecurrenceRuleSeeder`
-5. `ActivityRecordSeeder`
+3. `ProjectMembershipSeeder`
+4. `ExecutiveWorkspaceSeeder`
+5. `TodoRecurrenceRuleSeeder`
+6. `ActivityRecordSeeder`
 
 `DemoUserSeeder` creates the configured demo users only when the app is running in a safe environment: `local`, `testing`, or `demo`, and when the demo login panel is enabled. The first configured demo user is seeded as an admin for protected local maintenance access; the second configured demo user is seeded as a normal account for denial and isolation checks.
 
@@ -100,6 +103,12 @@ configured demo users when task rows are available. It writes records directly,
 keeps the seeder idempotent by skipping users that already have activity, and
 does not require event listeners, queues, cron, or external services.
 
+`ProjectMembershipSeeder` creates local/testing/demo collaboration examples only
+after the configured demo users and their seeded projects exist. Avery shares
+Work with Morgan as editor and Home with Morgan as viewer; Morgan shares Work
+with Avery as manager. The seeder updates active rows by project and member and
+does not create owner membership rows.
+
 Step 045's focus mode also reuses the current catalog. `Review the current
 flow` is high priority and due today, while `Send the overdue report` is urgent
 and overdue, so `/todos/focus` has realistic current work immediately after
@@ -147,8 +156,11 @@ the seeder is run again.
 
 Templates are upserted per user/name and keep private data isolated. The
 `Project kickoff` template is marked shared so the UI can show the visibility
-state, but it is still owner-only until the collaboration/member steps add real
-role rules.
+state, but project memberships do not grant template access yet.
+
+Project memberships are upserted per project/member and keep their role current
+on reseed. Removed memberships can be restored by the demo seeder if they match
+the configured demo sharing catalog.
 
 Inbox demo tasks are upserted per user/title and keep their captured timestamp
 fresh on reseed. They remain normal owner-scoped todos and do not grant any

@@ -2,16 +2,19 @@
 
 namespace App\Rules\Todos;
 
+use App\Enums\ProjectRole;
 use App\Models\Project;
 use App\Models\User;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Translation\PotentiallyTranslatedString;
 
 class OwnedActiveProject implements ValidationRule
 {
     public function __construct(
         private readonly User $user,
+        private readonly bool $allowSharedEditable = false,
     ) {}
 
     /**
@@ -25,13 +28,24 @@ class OwnedActiveProject implements ValidationRule
             return;
         }
 
-        $exists = Project::query()
+        $query = Project::query()
             ->whereKey((int) $value)
-            ->whereBelongsTo($this->user)
-            ->active()
-            ->exists();
+            ->active();
 
-        if (! $exists) {
+        if ($this->allowSharedEditable) {
+            $query->where(function (Builder $query): void {
+                $query
+                    ->whereBelongsTo($this->user)
+                    ->orWhereHas('memberships', fn (Builder $memberships): Builder => $memberships
+                        ->active()
+                        ->where('user_id', $this->user->id)
+                        ->whereIn('role', [ProjectRole::Manager->value, ProjectRole::Editor->value]));
+            });
+        } else {
+            $query->whereBelongsTo($this->user);
+        }
+
+        if (! $query->exists()) {
             $fail('todos.validation.owned_active_project')->translate();
         }
     }

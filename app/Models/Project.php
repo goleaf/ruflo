@@ -38,6 +38,26 @@ class Project extends Model
     }
 
     /**
+     * Active and removed shared-access rows for this project.
+     *
+     * @return HasMany<ProjectMembership, $this>
+     */
+    public function memberships(): HasMany
+    {
+        return $this->hasMany(ProjectMembership::class);
+    }
+
+    /**
+     * Active shared-access rows for this project.
+     *
+     * @return HasMany<ProjectMembership, $this>
+     */
+    public function activeMemberships(): HasMany
+    {
+        return $this->memberships()->active();
+    }
+
+    /**
      * Goals attached to this project.
      *
      * @return HasMany<Goal, $this>

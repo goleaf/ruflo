@@ -4,6 +4,7 @@ use App\Enums\AutomationRuleKind;
 use App\Enums\AutomationRunStatus;
 use App\Enums\PomodoroSessionStatus;
 use App\Enums\Priority;
+use App\Enums\ProjectRole;
 use App\Enums\RecurrenceEndType;
 use App\Enums\RecurrenceExceptionType;
 use App\Enums\RecurrenceFrequency;
@@ -21,6 +22,7 @@ use App\Models\Habit;
 use App\Models\HabitCheckIn;
 use App\Models\PomodoroSession;
 use App\Models\Project;
+use App\Models\ProjectMembership;
 use App\Models\Reminder;
 use App\Models\SavedTodoView;
 use App\Models\Tag;
@@ -37,6 +39,8 @@ use Illuminate\Support\Facades\Hash;
 test('tracked models can be created from their default factories', function () {
     $user = User::factory()->create();
     $project = Project::factory()->for($user)->create();
+    $projectMember = User::factory()->create();
+    $projectMembership = ProjectMembership::factory()->forProject($project)->forMember($projectMember)->editor()->create();
     $goal = Goal::factory()->forProject($project)->create();
     $milestone = GoalMilestone::factory()->forGoal($goal)->completed()->position(1)->create();
     $habit = Habit::factory()->forGoal($goal)->daily()->create();
@@ -59,6 +63,10 @@ test('tracked models can be created from their default factories', function () {
 
     expect($user->exists)->toBeTrue()
         ->and($project->isOwnedBy($user))->toBeTrue()
+        ->and($projectMembership->project->is($project))->toBeTrue()
+        ->and($projectMembership->user->is($projectMember))->toBeTrue()
+        ->and($projectMembership->role)->toBe(ProjectRole::Editor)
+        ->and($projectMembership->isActive())->toBeTrue()
         ->and($goal->isOwnedBy($user))->toBeTrue()
         ->and($goal->project_id)->toBe($project->id)
         ->and($milestone->isOwnedBy($user))->toBeTrue()

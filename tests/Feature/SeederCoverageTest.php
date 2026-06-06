@@ -8,6 +8,7 @@ use App\Models\Habit;
 use App\Models\HabitCheckIn;
 use App\Models\PomodoroSession;
 use App\Models\Project;
+use App\Models\ProjectMembership;
 use App\Models\Reminder;
 use App\Models\SavedTodoView;
 use App\Models\Tag;
@@ -38,6 +39,7 @@ test('database seeder creates safe demo users and complete private workspaces', 
         ->and($users->firstWhere('email', 'second@example.com')->is_admin)->toBeFalse()
         ->and(Hash::check('password', $users->firstWhere('email', 'test@example.com')->password))->toBeTrue()
         ->and(Project::query()->count())->toBeGreaterThanOrEqual(36)
+        ->and(ProjectMembership::query()->count())->toBe(3)
         ->and(AutomationRule::query()->count())->toBeGreaterThanOrEqual(20)
         ->and(AutomationRuleRun::query()->count())->toBeGreaterThanOrEqual(32)
         ->and(Goal::query()->count())->toBeGreaterThanOrEqual(32)
@@ -151,6 +153,7 @@ test('database seeder does not create known demo credentials in production envir
 
     expect(User::query()->count())->toBe(0)
         ->and(Project::query()->count())->toBe(0)
+        ->and(ProjectMembership::query()->count())->toBe(0)
         ->and(AutomationRule::query()->count())->toBe(0)
         ->and(AutomationRuleRun::query()->count())->toBe(0)
         ->and(Goal::query()->count())->toBe(0)
@@ -179,6 +182,7 @@ function databaseSeederCounts(): array
     return [
         'users' => User::query()->count(),
         'projects' => Project::query()->count(),
+        'project_memberships' => ProjectMembership::query()->count(),
         'automation_rules' => AutomationRule::query()->count(),
         'automation_runs' => AutomationRuleRun::query()->count(),
         'goals' => Goal::query()->count(),

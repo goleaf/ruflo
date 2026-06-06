@@ -476,7 +476,7 @@ return [
     ],
 
     'validation' => [
-        'owned_active_project' => 'Choose one of your active projects.',
+        'owned_active_project' => 'Choose an active project you can edit.',
         'owned_tag' => 'Choose one of your tags.',
         'owned_todo' => 'Choose one of your tasks.',
         'owned_deleted_todo' => 'Choose one of your deleted tasks.',
@@ -1008,12 +1008,37 @@ return [
     'projects' => [
         'show' => [
             'title' => 'Project details',
-            'description' => 'Review this private project and the tasks assigned to it.',
+            'description' => 'Review this project, its access, and the tasks assigned to it.',
             'tasks_heading' => 'Project tasks',
             'task_count' => ':count task(s)',
         ],
         'actions' => [
             'filter_tasks' => 'Filter tasks',
+        ],
+    ],
+
+    'collaboration' => [
+        'scope' => [
+            'private' => 'Private',
+            'shared' => 'Shared',
+        ],
+        'roles' => [
+            'owner' => 'Owner',
+            'manager' => 'Manager',
+            'editor' => 'Editor',
+            'viewer' => 'Viewer',
+        ],
+        'members' => [
+            'label' => 'Access',
+            'heading' => 'Project members',
+            'description' => 'Active members can open this project according to their role. Removed members immediately lose old-link access.',
+            'count' => '{1} :count member|[2,*] :count members',
+            'empty' => 'Only the owner can access this private project.',
+        ],
+        'validation' => [
+            'owner_not_member' => 'The project owner already has owner access.',
+            'owner_not_removable' => 'The project owner cannot be removed.',
+            'owner_role_reserved' => 'The owner role is reserved for the project owner.',
         ],
     ],
 

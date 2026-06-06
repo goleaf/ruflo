@@ -9,23 +9,22 @@ If a change cannot satisfy these rules, the change is wrong, not the rules.
 
 > One user must never view, search, count, create-for, edit, complete, reopen,
 > archive, unarchive, delete, restore from trash, or otherwise infer another user's private todo
-> data — unless a future collaboration feature grants it through an explicit,
-> authorized, tested permission.
+> data unless an explicit, authorized, tested project membership grants that
+> access.
 
 Private by default. Shared only by explicit permission. Every shared access
 re-checked. Every shared access testable.
 
 ## The workspace boundary
 
-There is no separate `Workspace` model yet. **The owning `User` is the
+There is no separate `Workspace` model yet. **The owning `User` is still the
 workspace.** Ownership is represented by a `user_id` foreign key on each
 todo-related resource.
 
-This is deliberate: it keeps the current product single-user-private while
-leaving a clean seam. When shared workspaces arrive, the ownership boundary
-moves from "the owner user" to "an authorized workspace member", and the
-checks below change in exactly one place each (the policy and the ownership
-scope) rather than across the whole codebase.
+Step 068 adds a project-level membership overlay for shared projects. The
+project owner remains authoritative, owner-only pickers stay owner-scoped, and
+active `project_memberships` rows grant manager, editor, or viewer access only
+through policy and query boundaries.
 
 ## Where the rules live (single sources of truth)
 
@@ -33,6 +32,9 @@ scope) rather than across the whole codebase.
 | --- | --- | --- |
 | Ownership scoping | `App\Models\Concerns\BelongsToUser` (`scopeOwnedBy`, `isOwnedBy`) | The only way to scope a query or check ownership. |
 | Read boundary | `App\Queries\Todos\TodoListQuery` | The only place todos are read for the UI. Always owner-scoped. |
+| Project read boundary | `App\Queries\Projects\ProjectListQuery` | Owner-only project pickers use `visibleFor`; shared project pages use `accessibleFor` and `findAccessibleFor`. |
+| Project membership read boundary | `App\Queries\Projects\ProjectMembershipQuery` | Active membership listing and lookup for already authorized project access. |
+| Project access resolver | `App\Support\Projects\ProjectAccess` | Central role lookup for owner, manager, editor, and viewer permissions. |
 | Board read boundary | `App\Queries\Todos\TodoBoardQuery` | Owner-scoped Kanban columns for active, completed, and archived tasks. |
 | Checklist read boundary | `App\Queries\Todos\TodoChecklistItemListQuery` | Owner-scoped checklist rows for one already scoped parent task. |
 | Dependency read boundary | `App\Queries\Todos\TodoDependencyQuery` | Owner-scoped dependency rows and blocker candidates for already scoped tasks. |
@@ -136,8 +138,20 @@ The Livewire component authorizes **before** delegating to an action:
 - Templates use `TodoTemplatePolicy`: `viewAny` and `create` are available to
   authenticated users for their own workspace; `view`, `update`, `delete`, and
   `instantiate` are owner-only and hide foreign ids as not found. Shared
-  visibility is currently a label stored for future collaboration; it does not
-  grant access to another user before memberships and roles exist.
+  visibility is currently a label stored for future collaboration; project
+  memberships do not grant template access yet.
+- Projects use `ProjectPolicy`: owners can view, update, archive, restore,
+  delete, and manage members. Managers can view, update, and manage members.
+  Editors and viewers can view only. All denied project access hides record
+  existence as not found.
+- Project memberships use `ProjectMembershipPolicy`: members are visible only
+  through an accessible project, and updates/deletes are reserved for users who
+  can manage the project members. The project owner is derived from
+  `projects.user_id` and cannot be added as or removed as a membership row.
+- Shared project tasks use `TodoPolicy` and `TodoListQuery`: owners keep all
+  task abilities, managers can edit and manage shared project tasks, editors
+  can edit shared project tasks, and viewers can read only. Shared access is
+  granted only when the task belongs to the shared project owner.
 - Reminders use `ReminderPolicy`: `viewAny`, `create`, and `process` are
   available to authenticated users for their own workspace; `view`, `update`,
   and `delete` are owner-only and hide foreign ids as not found. Restore and
@@ -370,12 +384,13 @@ it on:
 - **Notifications/reminders** — Step 054 stores due reminder notifications in
   the database for the owning user only. A notification is a message, not a
   permission, so opening its link re-checks authorization.
-- **Collaboration** — when added, the policy and `BelongsToUser` boundary
-  expand to "authorized member" in one place each; do not hardcode
-  "exactly one user" assumptions elsewhere.
-- **Roles** — viewer/editor/manager/owner roles do not exist yet. Until the
-  collaboration/member steps introduce a membership model, policy tests cover
-  owner, non-owner, and the existing admin-only maintenance gate.
+- **Collaboration** — project sharing is explicit through active
+  `project_memberships`. Do not hardcode "exactly one user" assumptions in new
+  project or project-task features; call `ProjectAccess` or the relevant policy.
+- **Roles** — project roles are owner, manager, editor, and viewer. Owner is
+  derived from `projects.user_id`; manager/editor/viewer are membership rows.
+  Invite acceptance and role-editing UI are intentionally reserved for Steps
+  069 and 070.
 
 ## Testing requirements
 

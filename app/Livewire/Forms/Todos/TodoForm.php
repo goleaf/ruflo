@@ -43,7 +43,7 @@ class TodoForm extends Form
             'title' => ['required', 'string', 'max:120'],
             'priority' => ['required', Rule::enum(Priority::class)],
             'due_date' => ['nullable', 'string', new DueDate],
-            'project_id' => ['nullable', 'integer', new OwnedActiveProject($user)],
+            'project_id' => ['nullable', 'integer', new OwnedActiveProject($user, allowSharedEditable: true)],
             'tag_ids' => ['array'],
             'tag_ids.*' => ['integer', new OwnedTag($user)],
         ];

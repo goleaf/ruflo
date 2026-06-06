@@ -1,5 +1,31 @@
 # Changelog
 
+## 2026-06-06 - Step 068 Collaboration foundation
+
+### Added
+
+- Added explicit project memberships with manager, editor, and viewer roles
+  while keeping the project owner derived from `projects.user_id`.
+- Added shared project and shared task access through `ProjectAccess`,
+  `ProjectPolicy`, `ProjectMembershipPolicy`, and `TodoPolicy`.
+- Added owner-plus-member project detail rendering with translated scope, role,
+  owner, and active member summaries.
+- Added local/testing/demo project membership seeding between configured demo
+  users.
+
+### Tests
+
+- Added `ProjectCollaborationFoundationTest` coverage for role permissions,
+  shared project detail rendering, editor task updates, revoked access, action
+  validation, and idempotent demo sharing.
+
+### Restricted Hosting
+
+- Collaboration foundation reads and writes run during normal authenticated web
+  requests. No cron, queue worker, supervisor, terminal action, Artisan command
+  during normal usage, email provider, hosted service, or paid service is
+  required.
+
 ## 2026-06-06 - Step 067 Task timeline UI
 
 ### Added

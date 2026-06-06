@@ -12,6 +12,7 @@ Step 011 covers the tracked application models:
 - `App\Models\HabitCheckIn`
 - `App\Models\PomodoroSession`
 - `App\Models\Project`
+- `App\Models\ProjectMembership`
 - `App\Models\Reminder`
 - `App\Models\SavedTodoView`
 - `App\Models\Tag`
@@ -90,6 +91,18 @@ dependencies, checklist rows, time entries, and Pomodoro sessions.
 - default user-owned tags,
 - named and color states,
 - `urgent()` and `waiting()` demo states.
+
+`ProjectMembershipFactory` covers:
+
+- default active viewer memberships,
+- `forProject()` to attach the membership to an existing owner project,
+- `forMember()` to attach the shared user,
+- manager, editor, and viewer role states,
+- removed memberships through `removed()`.
+
+Project memberships are not owner rows. The project owner remains
+`projects.user_id`; memberships grant explicit manager, editor, or viewer access
+to another user.
 
 ## Goal And Milestone Factories
 
@@ -284,8 +297,8 @@ concern as recurrence rules and generated todo occurrences.
 - 10-item checklist edge coverage through `heavyChecklist()`,
 - max-length template names through `longName()`.
 
-Shared template visibility is seed/test data for the later collaboration steps;
-templates remain owner-scoped until member roles exist.
+Shared template visibility is seed/test data for later template-sharing work;
+templates remain owner-scoped even though project memberships now exist.
 
 ## Verification
 

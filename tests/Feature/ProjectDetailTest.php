@@ -142,7 +142,7 @@ test('project detail route and component keep private view guardrails', function
         ->and($source)
         ->toContain('#[Locked]')
         ->toContain('public int $projectId')
-        ->toContain('findVisibleFor($this->currentUser()')
+        ->toContain('findAccessibleFor($this->currentUser()')
         ->not->toContain('Project::find')
         ->not->toContain('Project::query()');
 });

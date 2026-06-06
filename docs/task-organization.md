@@ -121,6 +121,13 @@ upcoming, and archived tasks so `/todos/{id}` shows progress immediately on
   by `App\Livewire\Projects\Show`. Archived projects remain readable there so
   existing tasks can be reviewed, but archived projects are still excluded from
   assignment and filter pickers.
+- Step 068 keeps the project owner on `projects.user_id` and grants shared
+  access only through active `project_memberships` rows. Owner-only project
+  pickers and dashboard filters remain owner-scoped until the dedicated shared
+  dashboard/search/filter step widens them.
+- Project detail pages can be opened by the owner and active manager, editor,
+  or viewer memberships. Shared members see the project owner's tasks and labels
+  for that project, and removed members lose old-link access immediately.
 - `project_id` is **not** mass-assignable. `CreateTodo`/`UpdateTodo` set it
   directly only after re-scoping it to the user (`ResolvesTodoOrganization`),
   so a forged request can never attach a task to another user's project.
@@ -626,8 +633,10 @@ Step 043 adds reusable task templates at `todos.templates`.
   checklist rows through `CreateTodoChecklistItem`.
 - Template deletion removes only the reusable template; tasks already created
   from it stay intact.
-- Shared visibility is stored and rendered, but no collaboration access is
-  granted yet because workspace memberships and roles do not exist.
+- Shared visibility is stored and rendered, but project memberships do not grant
+  template access yet. Step 068 project roles apply to shared projects and their
+  tasks only; template sharing remains owner-scoped until a dedicated template
+  collaboration step widens that policy.
 - Template workflows are synchronous Livewire actions. They require no cron,
   queue worker, supervisor, terminal, or Artisan command during normal usage.
 

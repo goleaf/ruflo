@@ -2,8 +2,11 @@
 
 namespace App\Policies;
 
+use App\Enums\ProjectRole;
+use App\Models\Project;
 use App\Models\Todo;
 use App\Models\User;
+use App\Support\Projects\ProjectAccess;
 use Illuminate\Auth\Access\Response;
 
 final class TodoPolicy
@@ -21,7 +24,9 @@ final class TodoPolicy
      */
     public function view(User $user, Todo $todo): Response
     {
-        return $this->ownerOnly($user, $todo);
+        return $this->canView($user, $todo)
+            ? Response::allow()
+            : Response::denyAsNotFound();
     }
 
     /**
@@ -37,7 +42,9 @@ final class TodoPolicy
      */
     public function update(User $user, Todo $todo): Response
     {
-        return $this->ownerOnly($user, $todo);
+        return $this->canEdit($user, $todo)
+            ? Response::allow()
+            : Response::denyAsNotFound();
     }
 
     /**
@@ -45,7 +52,9 @@ final class TodoPolicy
      */
     public function complete(User $user, Todo $todo): Response
     {
-        return $this->ownerOnly($user, $todo);
+        return $this->canEdit($user, $todo)
+            ? Response::allow()
+            : Response::denyAsNotFound();
     }
 
     /**
@@ -53,7 +62,9 @@ final class TodoPolicy
      */
     public function reopen(User $user, Todo $todo): Response
     {
-        return $this->ownerOnly($user, $todo);
+        return $this->canEdit($user, $todo)
+            ? Response::allow()
+            : Response::denyAsNotFound();
     }
 
     /**
@@ -61,7 +72,9 @@ final class TodoPolicy
      */
     public function archive(User $user, Todo $todo): Response
     {
-        return $this->ownerOnly($user, $todo);
+        return $this->canManage($user, $todo)
+            ? Response::allow()
+            : Response::denyAsNotFound();
     }
 
     /**
@@ -107,7 +120,9 @@ final class TodoPolicy
      */
     public function delete(User $user, Todo $todo): Response
     {
-        return $this->ownerOnly($user, $todo);
+        return $this->canManage($user, $todo)
+            ? Response::allow()
+            : Response::denyAsNotFound();
     }
 
     /**
@@ -115,7 +130,9 @@ final class TodoPolicy
      */
     public function unarchive(User $user, Todo $todo): Response
     {
-        return $this->ownerOnly($user, $todo);
+        return $this->canManage($user, $todo)
+            ? Response::allow()
+            : Response::denyAsNotFound();
     }
 
     /**
@@ -123,7 +140,9 @@ final class TodoPolicy
      */
     public function restore(User $user, Todo $todo): Response
     {
-        return $this->ownerOnly($user, $todo);
+        return $this->canManage($user, $todo)
+            ? Response::allow()
+            : Response::denyAsNotFound();
     }
 
     /**
@@ -134,10 +153,55 @@ final class TodoPolicy
         return false;
     }
 
-    private function ownerOnly(User $user, Todo $todo): Response
+    private function canView(User $user, Todo $todo): bool
     {
-        return $todo->isOwnedBy($user)
-            ? Response::allow()
-            : Response::denyAsNotFound();
+        if ($todo->isOwnedBy($user)) {
+            return true;
+        }
+
+        if ($todo->project_id === null) {
+            return false;
+        }
+
+        return $this->roleForTodoProject($user, $todo) !== null;
+    }
+
+    private function canEdit(User $user, Todo $todo): bool
+    {
+        if ($todo->isOwnedBy($user)) {
+            return true;
+        }
+
+        if ($todo->project_id === null) {
+            return false;
+        }
+
+        return $this->roleForTodoProject($user, $todo)?->canEditTasks() ?? false;
+    }
+
+    private function canManage(User $user, Todo $todo): bool
+    {
+        if ($todo->isOwnedBy($user)) {
+            return true;
+        }
+
+        if ($todo->project_id === null) {
+            return false;
+        }
+
+        return $this->roleForTodoProject($user, $todo)?->canManageTasks() ?? false;
+    }
+
+    private function roleForTodoProject(User $user, Todo $todo): ?ProjectRole
+    {
+        $project = $todo->relationLoaded('project')
+            ? $todo->project
+            : $todo->project()->select(['id', 'user_id'])->first();
+
+        if (! $project instanceof Project || (int) $project->user_id !== (int) $todo->user_id) {
+            return null;
+        }
+
+        return app(ProjectAccess::class)->roleFor($user, $project);
     }
 }

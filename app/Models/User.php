@@ -43,6 +43,16 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
     }
 
     /**
+     * Get project memberships granted to the user.
+     *
+     * @return HasMany<ProjectMembership, $this>
+     */
+    public function projectMemberships(): HasMany
+    {
+        return $this->hasMany(ProjectMembership::class);
+    }
+
+    /**
      * Get the user's tags.
      *
      * @return HasMany<Tag, $this>

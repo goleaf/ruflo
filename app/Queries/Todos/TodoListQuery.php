@@ -123,9 +123,9 @@ final class TodoListQuery
         return $this->withWorkspaceRelations(
             Todo::query()
                 ->select(['id', 'user_id', 'project_id', 'title', 'priority', 'due_date', 'is_completed', 'archived_at', 'deleted_at', 'created_at', 'updated_at'])
-                ->ownedBy($user)
+                ->where('user_id', $project->user_id)
                 ->where('project_id', $project->id),
-            $user,
+            $this->workspaceOwnerFor($project),
         )->latest();
     }
 
@@ -248,10 +248,24 @@ final class TodoListQuery
      */
     public function findVisibleFor(User $user, int $todoId): Todo
     {
-        return $this->withWorkspaceRelations(
-            Todo::query()->ownedBy($user),
-            $user,
-        )->findOrFail($todoId);
+        $todo = Todo::query()
+            ->where(function (Builder $query) use ($user): void {
+                $query
+                    ->ownedBy($user)
+                    ->orWhereExists(function ($memberships) use ($user): void {
+                        $memberships
+                            ->selectRaw('1')
+                            ->from('project_memberships')
+                            ->join('projects', 'projects.id', '=', 'project_memberships.project_id')
+                            ->where('project_memberships.user_id', $user->id)
+                            ->whereNull('project_memberships.removed_at')
+                            ->whereColumn('project_memberships.project_id', 'todos.project_id')
+                            ->whereColumn('projects.user_id', 'todos.user_id');
+                    });
+            })
+            ->findOrFail($todoId);
+
+        return $this->loadWorkspaceRelationsFor($todo);
     }
 
     /**
@@ -288,7 +302,7 @@ final class TodoListQuery
             'active' => (int) $summary->active_count,
             'completed' => (int) $summary->completed_count,
             'archived' => (int) $summary->archived_count,
-            'trash' => (int) $summary->trash_count,
+            'trash' => $project->isOwnedBy($user) ? (int) $summary->trash_count : 0,
             'overdue' => (int) $summary->overdue_count,
             'blocked' => $this->blockedFor($user)->count(),
         ];
@@ -303,7 +317,7 @@ final class TodoListQuery
     {
         $summary = Todo::query()
             ->withTrashed()
-            ->ownedBy($user)
+            ->where('user_id', $project->user_id)
             ->where('project_id', $project->id)
             ->selectRaw('sum(case when deleted_at is null and archived_at is null and is_completed = 0 then 1 else 0 end) as active_count')
             ->selectRaw('sum(case when deleted_at is null and archived_at is null and is_completed = 1 then 1 else 0 end) as completed_count')
@@ -390,16 +404,58 @@ final class TodoListQuery
      */
     private function withWorkspaceRelations(Builder $query, User $user): Builder
     {
+        return $this->withWorkspaceRelationsForOwnerId($query, $user->id);
+    }
+
+    /**
+     * Constrain related labels to the workspace owner for owner and shared
+     * project reads. Shared members should see the project owner's labels for
+     * that project, never labels from their own private workspace.
+     *
+     * @param  Builder<Todo>  $query
+     * @return Builder<Todo>
+     */
+    private function withWorkspaceRelationsForOwnerId(Builder $query, int $ownerId): Builder
+    {
         return $query->with([
-            'project' => fn (BelongsTo $project): BelongsTo => $project->where('projects.user_id', $user->id),
-            'tags' => fn (BelongsToMany $tags): BelongsToMany => $tags->where('tags.user_id', $user->id),
-            'dependencies.blocker' => fn ($blocker) => $blocker->where('todos.user_id', $user->id),
+            'project' => fn (BelongsTo $project): BelongsTo => $project->where('projects.user_id', $ownerId),
+            'tags' => fn (BelongsToMany $tags): BelongsToMany => $tags->where('tags.user_id', $ownerId),
+            'dependencies.blocker' => fn ($blocker) => $blocker->where('todos.user_id', $ownerId),
         ])->withCount([
             'dependencies as open_dependencies_count' => fn (Builder $dependencies): Builder => $dependencies
                 ->whereHas('blocker', fn (Builder $blocker): Builder => $blocker
-                    ->where('todos.user_id', $user->id)
+                    ->where('todos.user_id', $ownerId)
                     ->where('todos.is_completed', false)),
         ]);
+    }
+
+    private function loadWorkspaceRelationsFor(Todo $todo): Todo
+    {
+        $ownerId = (int) $todo->user_id;
+
+        $todo->load([
+            'project' => fn (BelongsTo $project): BelongsTo => $project->where('projects.user_id', $ownerId),
+            'tags' => fn (BelongsToMany $tags): BelongsToMany => $tags->where('tags.user_id', $ownerId),
+            'dependencies.blocker' => fn ($blocker) => $blocker->where('todos.user_id', $ownerId),
+        ]);
+
+        $todo->loadCount([
+            'dependencies as open_dependencies_count' => fn (Builder $dependencies): Builder => $dependencies
+                ->whereHas('blocker', fn (Builder $blocker): Builder => $blocker
+                    ->where('todos.user_id', $ownerId)
+                    ->where('todos.is_completed', false)),
+        ]);
+
+        return $todo;
+    }
+
+    private function workspaceOwnerFor(Project $project): User
+    {
+        if ($project->relationLoaded('user') && $project->user instanceof User) {
+            return $project->user;
+        }
+
+        return User::query()->findOrFail($project->user_id);
     }
 
     /**

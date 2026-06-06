@@ -3,6 +3,7 @@
 namespace App\Queries\Projects;
 
 use App\Models\Project;
+use App\Models\ProjectMembership;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -22,6 +23,31 @@ final class ProjectListQuery
     }
 
     /**
+     * Projects the user can open: owned projects plus projects shared through
+     * an active membership. Project management pickers intentionally keep using
+     * `visibleFor()` until the member-management step widens those surfaces.
+     *
+     * @return Builder<Project>
+     */
+    public function accessibleFor(User $user): Builder
+    {
+        return Project::query()
+            ->with('user:id,name,email')
+            ->where(function (Builder $query) use ($user): void {
+                $query
+                    ->ownedBy($user)
+                    ->orWhereIn(
+                        'id',
+                        ProjectMembership::query()
+                            ->active()
+                            ->where('user_id', $user->id)
+                            ->select('project_id'),
+                    );
+            })
+            ->orderBy('name');
+    }
+
+    /**
      * Active (non-archived) projects, for pickers and filters.
      *
      * @return Collection<int, Project>
@@ -34,5 +60,12 @@ final class ProjectListQuery
     public function findVisibleFor(User $user, int $projectId): Project
     {
         return Project::query()->ownedBy($user)->findOrFail($projectId);
+    }
+
+    public function findAccessibleFor(User $user, int $projectId): Project
+    {
+        return $this->accessibleFor($user)
+            ->with('user:id,name,email')
+            ->findOrFail($projectId);
     }
 }

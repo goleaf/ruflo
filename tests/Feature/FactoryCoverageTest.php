@@ -4,6 +4,9 @@ use App\Enums\AutomationRuleKind;
 use App\Enums\AutomationRunStatus;
 use App\Enums\PomodoroSessionStatus;
 use App\Enums\Priority;
+use App\Enums\RecurrenceEndType;
+use App\Enums\RecurrenceFrequency;
+use App\Enums\RecurrenceWeekday;
 use App\Enums\ReminderStatus;
 use App\Enums\TaskTemplateKind;
 use App\Enums\TimeEntrySource;
@@ -24,6 +27,7 @@ use App\Models\TimeEntry;
 use App\Models\Todo;
 use App\Models\TodoChecklistItem;
 use App\Models\TodoDependency;
+use App\Models\TodoRecurrenceRule;
 use App\Models\TodoTemplate;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
@@ -45,6 +49,7 @@ test('tracked models can be created from their default factories', function () {
     $template = TodoTemplate::factory()->for($user)->routine()->create();
     $savedView = SavedTodoView::factory()->for($user)->create();
     $reminder = Reminder::factory()->forTodo($todo)->due()->create();
+    $recurrenceRule = TodoRecurrenceRule::factory()->forTodo($todo)->weekly()->afterOccurrences(6)->create();
     $automationRule = AutomationRule::factory()->for($user)->promoteOverdueTasks()->create();
     $automationRuleRun = AutomationRuleRun::factory()->forRule($automationRule)->dryRun()->create();
 
@@ -89,6 +94,12 @@ test('tracked models can be created from their default factories', function () {
         ->and($reminder->todo->is($todo))->toBeTrue()
         ->and($reminder->status)->toBe(ReminderStatus::Pending)
         ->and($reminder->isDue())->toBeTrue()
+        ->and($recurrenceRule->isOwnedBy($user))->toBeTrue()
+        ->and($recurrenceRule->todo->is($todo))->toBeTrue()
+        ->and($recurrenceRule->frequency)->toBe(RecurrenceFrequency::Weekly)
+        ->and($recurrenceRule->weekdays)->toBe([RecurrenceWeekday::Monday->value, RecurrenceWeekday::Wednesday->value])
+        ->and($recurrenceRule->end_type)->toBe(RecurrenceEndType::AfterOccurrences)
+        ->and($recurrenceRule->max_occurrences)->toBe(6)
         ->and($automationRule->isOwnedBy($user))->toBeTrue()
         ->and($automationRule->kind)->toBe(AutomationRuleKind::PromoteOverdueTasks)
         ->and($automationRule->settings)->toBe(AutomationRuleKind::PromoteOverdueTasks->defaultSettings())
@@ -96,6 +107,23 @@ test('tracked models can be created from their default factories', function () {
         ->and($automationRuleRun->rule->is($automationRule))->toBeTrue()
         ->and($automationRuleRun->status)->toBe(AutomationRunStatus::Completed)
         ->and($automationRuleRun->dry_run)->toBeTrue();
+});
+
+test('todo recurrence rule factory covers cadence ending and paused states', function () {
+    $todo = Todo::factory()->dueToday()->create();
+    $daily = TodoRecurrenceRule::factory()->forTodo($todo)->create();
+    $weekly = TodoRecurrenceRule::factory()->forTodo(Todo::factory()->for($todo->user)->create())->weekly([RecurrenceWeekday::Friday])->paused()->create();
+    $monthly = TodoRecurrenceRule::factory()->forTodo(Todo::factory()->for($todo->user)->create())->monthly(15)->endingOn('2026-12-31')->create();
+
+    expect($daily->frequency)->toBe(RecurrenceFrequency::Daily)
+        ->and($daily->is_enabled)->toBeTrue()
+        ->and($weekly->frequency)->toBe(RecurrenceFrequency::Weekly)
+        ->and($weekly->weekdays)->toBe([RecurrenceWeekday::Friday->value])
+        ->and($weekly->is_enabled)->toBeFalse()
+        ->and($monthly->frequency)->toBe(RecurrenceFrequency::Monthly)
+        ->and($monthly->month_day)->toBe(15)
+        ->and($monthly->end_type)->toBe(RecurrenceEndType::OnDate)
+        ->and($monthly->ends_on->toDateString())->toBe('2026-12-31');
 });
 
 test('automation rule factories cover enabled disabled kind and run states', function () {

@@ -34,6 +34,7 @@ use App\Actions\Todos\DeleteSavedTodoView;
 use App\Actions\Todos\DeleteTimeEntry;
 use App\Actions\Todos\DeleteTodo;
 use App\Actions\Todos\DeleteTodoChecklistItem;
+use App\Actions\Todos\DeleteTodoRecurrenceRule;
 use App\Actions\Todos\DeleteTodoTemplate;
 use App\Actions\Todos\DiscardTimeEntryTimer;
 use App\Actions\Todos\MoveTodoChecklistItem;
@@ -44,11 +45,13 @@ use App\Actions\Todos\ReopenTodo;
 use App\Actions\Todos\RescheduleFocusedTodo;
 use App\Actions\Todos\RestoreDeletedTodo;
 use App\Actions\Todos\ResumePomodoroSession;
+use App\Actions\Todos\SaveTodoRecurrenceRule;
 use App\Actions\Todos\StartPomodoroSession;
 use App\Actions\Todos\StartTimeEntryTimer;
 use App\Actions\Todos\StopTimeEntryTimer;
 use App\Actions\Todos\TodoLifecycleStateMachine;
 use App\Actions\Todos\ToggleTodoChecklistItem;
+use App\Actions\Todos\ToggleTodoRecurrenceRule;
 use App\Actions\Todos\TriageInboxTodo;
 use App\Actions\Todos\UpdateTodoChecklistItem;
 use App\Actions\Todos\UpdateTodoTemplate;
@@ -62,6 +65,7 @@ use App\Data\Processing\ManualWebProcessResult;
 use App\Data\Reminders\ReminderData;
 use App\Data\Reminders\ReminderProcessingResult;
 use App\Data\Todos\BulkActionResult;
+use App\Data\Todos\RecurrenceRuleData;
 use App\Data\Todos\SavedTodoViewData;
 use App\Data\Todos\TimeEntryData;
 use App\Data\Todos\TodoCleanupFilters;
@@ -70,6 +74,9 @@ use App\Data\Todos\TodoTemplateData;
 use App\Enums\AutomationRuleKind;
 use App\Enums\AutomationRunStatus;
 use App\Enums\PomodoroSessionStatus;
+use App\Enums\RecurrenceEndType;
+use App\Enums\RecurrenceFrequency;
+use App\Enums\RecurrenceWeekday;
 use App\Enums\ReminderStatus;
 use App\Enums\TaskTemplateKind;
 use App\Enums\TimeEntrySource;
@@ -91,6 +98,7 @@ use App\Livewire\Todos\Calendar as TodoCalendar;
 use App\Livewire\Todos\Cleanup as TodoCleanup;
 use App\Livewire\Todos\Focus as TodoFocus;
 use App\Livewire\Todos\Inbox as TodoInbox;
+use App\Livewire\Todos\RecurringRules as TodoRecurringRules;
 use App\Livewire\Todos\Reminders as TodoReminders;
 use App\Livewire\Todos\Show as TodoShow;
 use App\Livewire\Todos\Templates as TodoTemplates;
@@ -108,6 +116,7 @@ use App\Policies\TimeEntryPolicy;
 use App\Policies\TodoChecklistItemPolicy;
 use App\Policies\TodoDependencyPolicy;
 use App\Policies\TodoPolicy;
+use App\Policies\TodoRecurrenceRulePolicy;
 use App\Policies\TodoTemplatePolicy;
 use App\Queries\Automation\AutomationRuleQuery;
 use App\Queries\Dashboard\DailyDashboardQuery;
@@ -127,6 +136,7 @@ use App\Queries\Todos\TodoDependencyQuery;
 use App\Queries\Todos\TodoFocusQuery;
 use App\Queries\Todos\TodoInboxQuery;
 use App\Queries\Todos\TodoListQuery;
+use App\Queries\Todos\TodoRecurrenceRuleQuery;
 use App\Queries\Todos\TodoTemplateListQuery;
 use App\Rules\Automation\AutomationRuleName;
 use App\Rules\Goals\GoalTitle;
@@ -139,7 +149,9 @@ use App\Rules\Todos\BoardStatus;
 use App\Rules\Todos\CalendarMonth;
 use App\Rules\Todos\ChecklistItemTitle;
 use App\Rules\Todos\InboxCaptureTitle;
+use App\Rules\Todos\OwnedActiveTodo;
 use App\Rules\Todos\PomodoroDuration;
+use App\Rules\Todos\RecurrenceRule;
 use App\Rules\Todos\SavedViewName;
 use App\Rules\Todos\TemplateChecklistItems;
 use App\Rules\Todos\TemplateName;
@@ -170,6 +182,17 @@ test('todo foundation classes exist', function () {
         ->and(class_exists(RescheduleFocusedTodo::class))->toBeTrue()
         ->and(class_exists(AddTodoDependency::class))->toBeTrue()
         ->and(class_exists(RemoveTodoDependency::class))->toBeTrue()
+        ->and(class_exists(SaveTodoRecurrenceRule::class))->toBeTrue()
+        ->and(class_exists(DeleteTodoRecurrenceRule::class))->toBeTrue()
+        ->and(class_exists(ToggleTodoRecurrenceRule::class))->toBeTrue()
+        ->and(class_exists(RecurrenceRuleData::class))->toBeTrue()
+        ->and(class_exists(TodoRecurrenceRuleQuery::class))->toBeTrue()
+        ->and(class_exists(TodoRecurrenceRulePolicy::class))->toBeTrue()
+        ->and(class_exists(RecurrenceRule::class))->toBeTrue()
+        ->and(class_exists(OwnedActiveTodo::class))->toBeTrue()
+        ->and(enum_exists(RecurrenceFrequency::class))->toBeTrue()
+        ->and(enum_exists(RecurrenceEndType::class))->toBeTrue()
+        ->and(enum_exists(RecurrenceWeekday::class))->toBeTrue()
         ->and(class_exists(StartPomodoroSession::class))->toBeTrue()
         ->and(class_exists(PausePomodoroSession::class))->toBeTrue()
         ->and(class_exists(ResumePomodoroSession::class))->toBeTrue()
@@ -258,6 +281,7 @@ test('todo foundation classes exist', function () {
         ->and(class_exists(HabitsCreate::class))->toBeTrue()
         ->and(class_exists(HabitsIndex::class))->toBeTrue()
         ->and(class_exists(TodoTemplates::class))->toBeTrue()
+        ->and(class_exists(TodoRecurringRules::class))->toBeTrue()
         ->and(class_exists(TodoInbox::class))->toBeTrue()
         ->and(class_exists(TodoTime::class))->toBeTrue()
         ->and(class_exists(TodoReminders::class))->toBeTrue()
@@ -382,7 +406,7 @@ test('todo calendar page delegates date responsibilities', function () {
         ->not->toContain('->save()');
 });
 
-test('todo detail page delegates checklist responsibilities', function () {
+test('todo detail page delegates checklist dependency and recurrence responsibilities', function () {
     $source = file_get_contents(app_path('Livewire/Todos/Show.php'));
 
     expect($source)
@@ -396,12 +420,41 @@ test('todo detail page delegates checklist responsibilities', function () {
         ->toContain('AddTodoDependency')
         ->toContain('RemoveTodoDependency')
         ->toContain('AcyclicTodoDependency')
+        ->toContain('TodoRecurrenceRuleQuery')
+        ->toContain('SaveTodoRecurrenceRule')
+        ->toContain('DeleteTodoRecurrenceRule')
+        ->toContain('RecurrenceRuleData')
+        ->toContain('RecurrenceRule')
         ->toContain('ChecklistItemTitle')
         ->toContain('$this->authorize')
         ->not->toContain('Todo::query()')
         ->not->toContain('TodoDependency::query()')
         ->not->toContain('TodoChecklistItem::query()')
+        ->not->toContain('TodoRecurrenceRule::query()')
         ->not->toContain('->save()');
+});
+
+test('todo recurring page delegates recurrence responsibilities', function () {
+    $source = file_get_contents(app_path('Livewire/Todos/RecurringRules.php'));
+    $viewSource = file_get_contents(resource_path('views/livewire/todos/recurring-rules.blade.php'));
+
+    expect($source)
+        ->toContain('TodoRecurrenceRuleQuery')
+        ->toContain('SaveTodoRecurrenceRule')
+        ->toContain('DeleteTodoRecurrenceRule')
+        ->toContain('ToggleTodoRecurrenceRule')
+        ->toContain('RecurrenceRuleData')
+        ->toContain('RecurrenceRule')
+        ->toContain('OwnedActiveTodo')
+        ->toContain('$this->authorize')
+        ->not->toContain('Todo::query()')
+        ->not->toContain('TodoRecurrenceRule::query()')
+        ->not->toContain('->save()')
+        ->and($viewSource)
+        ->toContain('<x-ui.page-header')
+        ->toContain('<flux:card')
+        ->toContain('todos.pages.recurring.title')
+        ->not->toContain('@php');
 });
 
 test('todo blocked page delegates dependency responsibilities', function () {

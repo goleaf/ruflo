@@ -1,12 +1,12 @@
 # Task Organization
 
-Through Step 055, the private task lifecycle is extended into a usable productivity system:
+Through Step 057, the private task lifecycle is extended into a usable productivity system:
 projects, tags, priorities, due dates, search, filters, sorting, and bulk
 actions, calendar/board/focus views, contained checklists, templates, a quick
 capture Inbox, time tracking, task dependencies, cleanup smart views, and
 browser-triggered automation and reminder workflows backed by the reusable
 manual web-processing engine, plus a private in-app notification center for
-database notification review. Everything here is
+database notification review and owner-scoped recurring task rules. Everything here is
 owner-scoped on top of the model in
 [`authorization.md`](authorization.md) and the lifecycle in
 [`task-lifecycle.md`](task-lifecycle.md).
@@ -26,6 +26,27 @@ owner-scoped on top of the model in
 | **Automation rule** | `automation_rules` and `automation_rule_runs` tables | `automation_rules.user_id` and `automation_rule_runs.user_id`, private |
 | **Reminder** | `reminders` table; one reminder per user/task with status and processing timestamps | `reminders.user_id`, private, linked to an owned task |
 | **Notification** | Laravel `notifications` table; database notification payload and read state | scoped by the authenticated user as notifiable type/id |
+| **Recurrence rule** | `todo_recurrence_rules` table; one rule per user/task | `todo_recurrence_rules.user_id`, private, linked to an owned task |
+
+## Recurring task rules
+
+Step 057 adds recurrence rule definitions for active private tasks. Rules
+support daily, weekly, and monthly cadences, bounded intervals, optional end
+dates or occurrence counts, and an enabled/paused state. Each user/task pair is
+unique so editing a task's rule updates the existing series definition instead
+of creating duplicate definitions.
+
+Rules are managed from the protected `/todos/recurring` page and from the task
+detail page. Both surfaces delegate writes to `SaveTodoRecurrenceRule`,
+`ToggleTodoRecurrenceRule`, and `DeleteTodoRecurrenceRule`; reads use
+`TodoRecurrenceRuleQuery`. `RecurrenceRuleData`, `RecurrenceRule`, and
+`OwnedActiveTodo` normalize schedule payloads and reject foreign or inactive
+task ids before actions run.
+
+Step 057 intentionally does not generate task occurrences. The
+`last_generated_until` column is reserved for the next web-triggered generation
+step so duplicate prevention and resume state can be implemented without cron,
+queues, workers, terminal access, or paid calendar services.
 
 ## Notifications
 
@@ -141,6 +162,8 @@ Step 031 tightened due-date handling:
 
 - Livewire create/edit forms use the reusable `DueDate` validation rule so only
   canonical `Y-m-d` date strings are accepted.
+- Due-date fields now render through the local Flux Pro `flux:date-picker`
+  where the backing state is a date-only value.
 - `TodoData::fromArray()` normalizes empty due dates to `null` and rejects
   invalid provided dates with a translated validation error instead of relying
   on broad PHP date parsing.
@@ -171,7 +194,9 @@ the (sanitized) filter object.
   Step 035 keeps this local and self-hosted instead of adding a paid or hosted
   search service. The URL-backed Livewire search term is squished, limited to
   120 characters before querying, debounced in the UI, and shown as a translated
-  active filter chip. Search composes with pagination and reset behavior.
+  active filter chip. The main task workspace uses local Flux Pro autocomplete
+  so saved views can be suggested from the same search control. Search composes
+  with pagination and reset behavior.
 - **Filters** — lifecycle tab (active/completed/archived), project (or "none"),
   tag, priority, and due bucket. Every filter value is sanitized in the
   component's `buildFilters()` before it reaches the query: unknown sort values
@@ -447,6 +472,10 @@ owner-scoped task reminders.
   `TodoListQuery`, authorized, and then rechecked by the action.
 - `ReminderAt` validates browser `datetime-local` values and rejects malformed
   or past reminder times with translated messages.
+- The task picker uses a combobox select. The reminder timestamp remains a
+  single `datetime-local` field until the component state is split into separate
+  date and time properties or a Pro datetime picker exists in the installed
+  runtime.
 - `ProcessDueReminders` uses the Step 053 manual web-processing engine through
   `ProcessDueRemindersProcess`. Dashboard opens, reminder-page opens, and the
   Process due button each process a bounded owner-scoped chunk.
@@ -502,9 +531,9 @@ validated by `CalendarMonth`. Invalid month input cannot widen a query; bad
 query strings reset to the current month and show a translated notice. Date
 comparisons continue to use the app timezone documented above.
 
-Reminder controls now live on `/todos/reminders`. The calendar keeps recurring
-task lanes as translated, restricted-hosting safe placeholders until recurrence
-models exist; it does not fake recurrence entries.
+Reminder controls now live on `/todos/reminders`. Recurrence rule management
+now lives on `/todos/recurring`; the calendar still does not fake future
+occurrences until the generation step creates real owner-scoped task rows.
 
 ## Kanban board
 
@@ -516,6 +545,8 @@ separate recovery flow.
 Board reads use `TodoBoardQuery`, which scopes to the current user, eager-loads
 current-user project/tag badges, and limits each column to 25 cards. Column
 counts come from the same owner-scoped summary used by the list.
+The board view uses the local Flux Pro `flux:kanban` wrappers while keeping
+Livewire fallback movement controls for keyboard and mobile reliability.
 
 Board movement uses `MoveTodoOnBoard` and the existing lifecycle actions:
 
@@ -641,11 +672,12 @@ Step 047 adds private habits and habit check-ins as real, owner-scoped records:
 
 ## UI
 
-- Reusable `x-ui.stat` (summary counters) and `x-ui.status-badge` components;
-  the lifecycle segmented control (Flux Free has no `tabs`) now covers Active,
-  Completed, Archived, and Trash.
+- Reusable `x-ui.stat` (summary counters) and `x-ui.status-badge` components.
+- Local Flux Pro components now cover lifecycle tabs, goal/habit/notification
+  tabs, date pickers, combobox selects, autocomplete, tag pillboxes, command
+  palette navigation, and Kanban wrappers.
 - The create form renders validation feedback beside the Flux title, priority,
-  due date, project, and tag controls so failed input stays visible and
+  Pro date-picker, project combobox, and tag pillbox controls so failed input stays visible and
   recoverable.
 - The edit modal uses the same validation boundary and renders errors beside
   every editable field; invalid priority, due date, project, or tag input keeps
@@ -656,7 +688,7 @@ Step 047 adds private habits and habit check-ins as real, owner-scoped records:
   status, priority, due-date, project, and tag badges after resolving the task
   through the owner-scoped query boundary. Trash rows do not link to detail
   pages until restored.
-- A filter toolbar (search, project, tag, priority, due, sort, direction,
+- A filter toolbar (Pro autocomplete search, project/tag/priority/due/sort/direction comboboxes,
   reset), a saved-views strip for saving/applying/deleting named view criteria,
   a bulk selection row, a bulk toolbar that appears on selection, a Flux bulk
   delete confirmation modal, Kanban, cleanup, and automation shortcuts, and a
@@ -726,14 +758,14 @@ Step 047 adds private habits and habit check-ins as real, owner-scoped records:
 ## Intentionally not implemented
 
 Manual drag ordering, sub-projects, tag colors editing UI, automatic recurring
-tasks, collaboration, a full notification center, and recurrence series.
+occurrence generation, collaboration, and recurrence exceptions/series edits.
 Manual ordering, when added, should store a per-user position and only apply
 when no sort/filter overrides it.
 
 ## Later steps
 
 Step 054 separates "when it's due" (`due_date`) from "when to be reminded"
-(`remind_at`) and keeps delivery browser-triggered. Later notification,
-summary, preference, and recurrence steps should reuse the reminder owner scope,
-database notification payloads, and manual web-processing contract established
-here.
+(`remind_at`) and keeps delivery browser-triggered. Step 057 adds recurrence
+definitions only; later occurrence, exception, and preference steps should
+reuse the owner scope, database notification payloads where useful, and manual
+web-processing contract established here.

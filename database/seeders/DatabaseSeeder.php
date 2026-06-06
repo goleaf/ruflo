@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
                 DemoUserSeeder::class,
                 TodoSeeder::class,
                 ExecutiveWorkspaceSeeder::class,
+                TodoRecurrenceRuleSeeder::class,
             ]);
         });
     }

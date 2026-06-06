@@ -98,6 +98,11 @@ counter boundary. The Livewire dashboard component renders the card from that
 query object instead of querying task, reminder, time-entry, or notification
 models directly.
 
+Step 057 adds `App\Queries\Todos\TodoRecurrenceRuleQuery` as the recurring
+task rule read boundary. The task detail and `/todos/recurring` Livewire
+components use it for owner-scoped rule lists, rule lookup, and active task
+options instead of querying recurrence models directly.
+
 ## UI Rules
 
 The app uses the Laravel Livewire starter kit shell with Flux UI and Tailwind CSS v4.
@@ -273,6 +278,11 @@ Step 056 expands `DashboardTest` and `TodoArchitectureTest`, which lock daily
 summary counter accuracy, multi-user privacy, archived/deleted exclusions,
 empty-state rendering, translated Flux dashboard UI, and delegation from the
 Livewire dashboard component into owner-scoped query classes.
+
+Step 057 adds `RecurringTaskRuleTest` and `RecurringTaskRulesTest`, which lock
+owner-scoped recurrence rule creation/editing/toggling/deletion, task-detail
+rule management, custom recurrence validation, active-task ownership checks,
+idempotent demo seeding, and locked inactive-task mutation behavior.
 
 Step 052 adds `AutomationRulesTest` and `AutomationRuleNameValidationTest`,
 which lock the protected Automations route, owner-scoped rule listing, rule

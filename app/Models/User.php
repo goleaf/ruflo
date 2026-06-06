@@ -183,6 +183,16 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
     }
 
     /**
+     * Get the user's task recurrence rules.
+     *
+     * @return HasMany<TodoRecurrenceRule, $this>
+     */
+    public function todoRecurrenceRules(): HasMany
+    {
+        return $this->hasMany(TodoRecurrenceRule::class);
+    }
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>

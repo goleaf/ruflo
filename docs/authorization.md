@@ -41,6 +41,7 @@ scope) rather than across the whole codebase.
 | Reminder read boundary | `App\Queries\Reminders\ReminderListQuery` | Owner-scoped reminders, task options, and summary counts. |
 | Notification read boundary | `App\Queries\Notifications\NotificationInboxQuery` | Owner-scoped database notifications, read-state filters, and scoped mutation lookup. |
 | Daily dashboard read boundary | `App\Queries\Dashboard\DailyDashboardQuery` | Owner-scoped daily counts for due work, reminders, unread notifications, and tracked time. |
+| Recurrence read boundary | `App\Queries\Todos\TodoRecurrenceRuleQuery` | Owner-scoped recurrence rules and active task options. |
 | Template read boundary | `App\Queries\Todos\TodoTemplateListQuery` | Owner-scoped reusable task/project/checklist/routine templates. |
 | Inbox read boundary | `App\Queries\Todos\TodoInboxQuery` | Owner-scoped active captured tasks waiting for triage. |
 | Focus read boundary | `App\Queries\Todos\TodoFocusQuery` | Owner-scoped active urgent/overdue/due-today/high-priority focus set. |
@@ -127,6 +128,11 @@ The Livewire component authorizes **before** delegating to an action:
   available to authenticated users for their own workspace; `view`, `update`,
   and `delete` are owner-only and hide foreign ids as not found. Restore and
   force delete remain unavailable.
+- Recurrence rules use `TodoRecurrenceRulePolicy`: `viewAny` and `create` are
+  available to authenticated users for their own workspace; per-row `view`,
+  `update`, and `delete` are owner-only and hide foreign ids as not found.
+  Save, toggle, and delete actions also re-check that the related task belongs
+  to the current user and is active before changing rule state.
 
 Backend authorization is the real security. Frontend hiding of buttons is UX
 only and is never sufficient.
@@ -239,6 +245,14 @@ daily card reads through `DailyDashboardQuery`, which composes owner-scoped
 task, reminder, time-entry, and notification queries before rendering counters.
 It never reads another user's due tasks, blockers, reminders, unread
 notifications, or tracked time.
+
+Recurring task rules use the same private route and owner boundary.
+`todos.recurring` is a class-based Livewire page behind `auth` and `verified`.
+Rules are listed through `TodoRecurrenceRuleQuery`, task selection validates
+with `OwnedActiveTodo`, and save/toggle/delete actions authorize both the rule
+and related task before mutation. Task detail recurrence controls use the same
+actions and show locked context for completed, archived, or deleted tasks
+instead of mutating inactive work.
 
 ## Error behavior (no leakage)
 
@@ -437,3 +451,9 @@ responsible for starting from an authorized owner boundary.
 rendering, scheduling validation, due reminder processing, chunk resume,
 database notifications, disabled preferences, dashboard-triggered processing,
 and multi-user isolation.
+
+`RecurringTaskRuleTest` and `RecurringTaskRulesTest` lock the Step 057
+contract: recurrence rules are listed and mutated only for their owner,
+foreign/inactive task ids fail safely, schedule payloads are normalized through
+custom rules, task detail controls update the same user/task rule without
+duplicates, and inactive tasks keep recurrence context locked from mutation.

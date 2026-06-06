@@ -4,6 +4,7 @@ Record changes after every step.
 
 ## Unreleased
 
+- Published the local `flux/flux-pro` Blade stubs into `resources/views/flux`, upgraded task/dashboard/goal/habit/notification Blade surfaces to Pro date picker, combobox, autocomplete, pillbox, tabs, command, and Kanban components where the current state shape supports them, and updated the UI docs/prompt pack to prefer local Flux Pro components before custom controls.
 - Copied root progress files from `progress-templates/`.
 - Verified existing Step 001, Step 002, Step 003, and Step 004 implementation commits and updated master progress to continue from Step 005.
 - Recorded the root prompt-pack path adjustment because `docs/todo-master-plan/MASTER_PROMPT.md` is absent in this checkout.
@@ -79,3 +80,4 @@ Record changes after every step.
 - Stabilized Step 054 by moving the large local browser reminder notification Alpine payload behind a compact helper call, then moving that helper into the bundled app asset after browser logs showed inline helper initialization was unreliable during Livewire navigation.
 - Completed Step 055 by adding the protected in-app notification center, owner-scoped database notification query, read/unread actions, mark-all-read owner scoping, safe action-link filtering with task-link prechecks, seeded demo notifications, navigation, translations, docs, and notification privacy tests.
 - Completed Step 056 by adding an owner-scoped browser-rendered daily summary dashboard with aggregate counters, Flux empty/planned/attention states, schedule coverage, compact/details widget settings, translations, docs, and dashboard privacy tests.
+- Completed Step 057 by adding owner-scoped recurring task rule definitions, protected `/todos/recurring` and task-detail recurrence controls, recurrence validation/actions/policies/queries, factories, demo seed data, translations, docs, and recurrence privacy tests.

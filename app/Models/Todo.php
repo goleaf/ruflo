@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -148,6 +149,16 @@ class Todo extends Model
     public function reminders(): HasMany
     {
         return $this->hasMany(Reminder::class);
+    }
+
+    /**
+     * The repeat rule attached to this task, if any.
+     *
+     * @return HasOne<TodoRecurrenceRule, $this>
+     */
+    public function recurrenceRule(): HasOne
+    {
+        return $this->hasOne(TodoRecurrenceRule::class);
     }
 
     /**

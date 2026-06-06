@@ -16,12 +16,14 @@ Step 012 covers the committed model set:
 - `Todo`
 - `TodoChecklistItem`
 - `TodoDependency`
+- `TodoRecurrenceRule`
 - `TodoTemplate`
 
 The tracked `Reminder` model is now seeded with owner-scoped local/testing/demo
-records. Future models for recurrence, comments, attachments, activity,
-invites, settings, and collaboration are not seeded yet because those committed
-models do not exist yet.
+records. The tracked `TodoRecurrenceRule` model is seeded with owner-scoped
+local/testing/demo rule definitions. Future models for comments, attachments,
+activity, invites, settings, and collaboration are not seeded yet because those
+committed models do not exist yet.
 
 ## Seeders
 
@@ -29,6 +31,7 @@ models do not exist yet.
 
 1. `DemoUserSeeder`
 2. `TodoSeeder`
+3. `TodoRecurrenceRuleSeeder`
 
 `DemoUserSeeder` creates the configured demo users only when the app is running in a safe environment: `local`, `testing`, or `demo`, and when the demo login panel is enabled. The first configured demo user is seeded as an admin for protected local maintenance access; the second configured demo user is seeded as a normal account for denial and isolation checks.
 
@@ -71,11 +74,15 @@ models do not exist yet.
 - three reminders per user: one due pending reminder, one future pending
   reminder, and one skipped archived-task reminder, so `/todos/reminders` has
   immediate pending/skip audit examples after seeding.
+- three recurrence rules per user: an enabled daily rule, an enabled weekly
+  rule ending on a date, and a paused monthly rule ending after a count, so
+  `/todos/recurring` and task detail recurrence cards have immediate demo data.
 
 Step 041's calendar view reuses that catalog: the seeded due-today, overdue,
 upcoming, and no-due-date tasks give the local `/todos/calendar` page immediate
-month and unscheduled examples. Step 054 adds real reminder rows; recurrence
-rows remain deferred until those schemas exist.
+month and unscheduled examples. Step 054 adds real reminder rows. Step 057 adds
+real recurrence rule rows, but the calendar still waits for Step 058 before it
+shows generated future occurrences.
 
 Step 045's focus mode also reuses the current catalog. `Review the current
 flow` is high priority and due today, while `Send the overdue report` is urgent
@@ -157,6 +164,10 @@ the enabled state and settings without creating duplicate rules or run logs.
 Reminders are upserted per user/task. Re-running the seeder refreshes the same
 due, future, and skipped reminder examples without sending notifications or
 creating duplicate reminder rows.
+
+Recurrence rules are upserted per user/task. Re-running the seeder refreshes
+the same daily, weekly, and monthly demo definitions without generating task
+occurrences or creating duplicate rule rows.
 
 Step 055 adds idempotent database notification seed rows for each safe demo
 user. Each demo workspace gets one unread task reminder-style notification and

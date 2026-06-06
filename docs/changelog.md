@@ -1,5 +1,41 @@
 # Changelog
 
+## 2026-06-06 - Step 057 Recurring task rules
+
+### Implemented
+
+- Added owner-scoped `todo_recurrence_rules` with daily, weekly, and monthly
+  cadence definitions, end conditions, enabled/paused state, and generation
+  metadata reserved for the next step.
+- Added recurrence enums, `RecurrenceRuleData`, custom validation rules,
+  policies, queries, and action classes for saving, toggling, and deleting
+  private recurrence rules.
+- Added the protected `/todos/recurring` Livewire/Flux page and a recurrence
+  card on task detail pages.
+- Added recurrence factories and idempotent demo seeding for safe demo users.
+
+### Testing
+
+- Added recurrence rule feature tests for validation, owner privacy, task
+  detail mutation, duplicate prevention, inactive-task locking, and seeder
+  idempotency.
+- Expanded architecture, route protection, domain, factory, private-workspace,
+  and seeder coverage for the recurrence model and route.
+
+### Documentation
+
+- Added `docs/recurring-tasks.md`.
+- Updated task organization, authorization, validation, request-validation,
+  restricted-hosting, domain, localization, factory, seeding, todo foundation,
+  changelog, and root progress ledgers.
+
+### Restricted Hosting
+
+- Step 057 stores and edits rule definitions only. It requires no cron, queue
+  worker, supervisor, shell access, Artisan command, paid API, hosted calendar
+  service, or email provider during normal usage. Occurrence generation remains
+  a later web-triggered step.
+
 ## 2026-06-06 - Step 056 Daily summary dashboard
 
 ### Implemented

@@ -18,10 +18,12 @@ The current committed app has tag-name and todo workspace ownership rules:
 - `App\Rules\Todos\ChecklistItemTitle`
 - `App\Rules\Todos\DueDate`
 - `App\Rules\Todos\InboxCaptureTitle`
+- `App\Rules\Todos\OwnedActiveTodo`
 - `App\Rules\Todos\OwnedActiveProject`
 - `App\Rules\Todos\OwnedTag`
 - `App\Rules\Todos\OwnedTodo`
 - `App\Rules\Todos\PomodoroDuration`
+- `App\Rules\Todos\RecurrenceRule`
 - `App\Rules\Todos\SavedViewName`
 - `App\Rules\Todos\TemplateChecklistItems`
 - `App\Rules\Todos\TemplateName`
@@ -74,6 +76,11 @@ captured text at 120 characters. `CaptureInboxTodo` and `TriageInboxTodo`
 repeat the guard so direct action calls cannot persist blank or overlong inbox
 titles when Livewire validation is bypassed.
 
+`OwnedActiveTodo` validates that a selected task id belongs to the
+authenticated user and is currently active. It is used by recurrence rule
+creation so foreign, completed, archived, trashed, or missing tasks all fail
+with the same translated message.
+
 `OwnedActiveProject` validates that a project id belongs to the authenticated user and is not archived. It is used for task project assignment and bulk move targets.
 
 `OwnedTag` validates that a tag id belongs to the authenticated user. It is used for task tag assignment.
@@ -88,6 +95,12 @@ unexpected timer durations.
 `SavedViewName` validates that a saved task-view name contains visible text
 after whitespace normalization. Per-user uniqueness is enforced at the
 Livewire validation boundary and by the database unique index.
+
+`RecurrenceRule` validates a complete recurrence payload by delegating to
+`RecurrenceRuleData`. It rejects unsupported frequencies, invalid intervals,
+past starts, weekly rules with no weekdays, monthly rules without a valid day,
+end dates before the start date, end dates outside the two-year bounded window,
+and occurrence counts outside the 1 to 365 range.
 
 `TemplateName` validates template names, generated task titles, and project
 template names for visible text after whitespace normalization.
@@ -111,7 +124,7 @@ as `lang/en/automation.php` and `lang/en/reminders.php`.
 
 ## Future Domains
 
-Invite token, recurrence, file upload, import/export, settings, and role validation rules should be added with their feature steps when the corresponding stable models and request surfaces exist. Do not create placeholder rules for future domains without a concrete caller and test.
+Invite token, file upload, import/export, settings, and role validation rules should be added with their feature steps when the corresponding stable models and request surfaces exist. Do not create placeholder rules for future domains without a concrete caller and test.
 
 ## 2026-06-06 Recheck
 
@@ -124,7 +137,15 @@ Confirmed and updated:
 - Every current custom rule implements Laravel's `ValidationRule` contract and fails with a translated message.
 - Removed the unused `ReminderAtIsActionable` placeholder rule because it had an empty `validate()` body and no concrete caller.
 - Added architecture coverage so future custom rules cannot be silently committed as empty placeholders.
-- Future reminder, invite, recurrence, upload, import/export, settings, and role rules remain deferred until their feature steps add real request surfaces and tests.
+- Future invite, upload, import/export, settings, and role rules remain deferred until their feature steps add real request surfaces and tests.
+
+## 2026-06-06 Step 057 Update
+
+Step 057 adds `App\Rules\Todos\OwnedActiveTodo` and
+`App\Rules\Todos\RecurrenceRule` for recurring task rule management.
+`OwnedActiveTodo` keeps task selection owner-scoped and active-only, while
+`RecurrenceRule` validates the cross-field schedule payload used by both the
+task detail recurrence card and the `/todos/recurring` page.
 
 ## 2026-06-06 Step 029 Recheck
 

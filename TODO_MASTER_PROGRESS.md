@@ -2,19 +2,19 @@
 
 ## Current status
 
-Individual ledger rows for Steps 001 through 056 are complete. The requested recheck from Step 001 has been completed through Step 056. The tracker is expanded to one ledger line per step from 001 through 100 so later work cannot be hidden behind a range.
+Individual ledger rows for Steps 001 through 057 are complete. The requested recheck from Step 001 has been completed through Step 057. The tracker is expanded to one ledger line per step from 001 through 100 so later work cannot be hidden behind a range.
 
 ## Current step
 
-Step 057 — Recurring task rules
+Step 058 — Recurring occurrence generation
 
 ## Last completed action
 
-Completed Step 056 by adding an owner-scoped browser-rendered daily summary dashboard, aggregate daily counters, a Flux card with empty/planned/attention states, schedule coverage, a compact/details setting, translations, docs, and dashboard privacy tests.
+Completed Step 057 by adding owner-scoped recurring task rule definitions, a protected class-based `/todos/recurring` Livewire/Flux page, task-detail recurrence controls, recurrence validation/actions/policies/queries, factories, demo seed data, translations, docs, and recurrence privacy tests.
 
 ## Next action
 
-Begin `steps/step-057-recurring-task-rules.md`, then implement the next not-yet-completed plan step without grouping it with later work.
+Begin `steps/step-058-recurring-occurrence-generation.md`, then implement the next not-yet-completed plan step without grouping it with later work.
 
 ## Step ledger
 
@@ -76,7 +76,7 @@ Begin `steps/step-057-recurring-task-rules.md`, then implement the next not-yet-
 | 054 — Reminder system web-mode | Complete | Added owned task reminders with pending/processed/skipped states, strict reminder-time validation, user reminder preferences, database-only due notifications, compiler-safe local browser notification controls, protected `/todos/reminders`, and dashboard/page/manual browser processing through the Step 053 engine. | Boost docs/schema/URL/database checks, local migrate/seed checks, focused reminder/date suite passed with 14 tests and 123 assertions, adjacent suite passed with 181 tests and 1545 assertions, Pint, asset build after native datepicker changes, diff check, and full suite passed with 540 tests and 3798 assertions. Step 055 browser-log verification then moved the local browser notification helper into the bundled app asset for Livewire-navigation reliability. | Added `docs/reminders.md` and updated restricted hosting, task organization, authorization, factory coverage, seeding, domain readiness, localization, changelogs, checklist, decisions, risks, and test report. | Exact-time reminder delivery remains limited by browser-triggered restricted-hosting runtime; recorded in risks. Inline local-notification Blade compiler risk mitigated by moving the large Alpine payload into an app-bundled helper with a compact Blade call. | d074663, 40ee997 |
 | 055 — Notification center | Complete | Added protected `/notifications`, `NotificationInboxQuery`, read/unread/mark-all-read controls, safe action-link filtering, known task-link prechecks, seeded demo read/unread notifications, navigation, translations, and a read-state filter index. | Boost docs/URL/database checks, local migrate/seed checks, focused notification/route/domain/localization/architecture/seeder suite passed with 112 tests and 831 assertions, reminder asset regression suite passed with 15 tests and 134 assertions, Pint/build passed, and full suite passed with 551 tests and 3896 assertions. | Added `docs/notifications.md` and updated domain readiness, localization, authorization, restricted hosting, task organization, todo foundation, seeding strategy, changelogs, checklist, decisions, risks, and test report. | Stale notification links can point at inaccessible private records; mitigated by external/protocol/scheme filtering, known task-link prechecks, and target-route authorization. | 43261d7, 8b385f0 |
 | 056 — Daily summary dashboard | Complete | Added `DailyDashboardQuery`, owner-scoped aggregate daily counters, unread notification count reuse, a class-based dashboard computed summary, a persisted compact/details widget setting, Flux empty/planned/attention states, responsive counters, schedule coverage, and web-only shortcuts. | Boost app/docs/schema/URL checks, PHP syntax checks, focused dashboard/private-workspace/localization/architecture suite passed with 55 tests and 722 assertions, Pint passed, Vite build passed, diff/source scans passed, and full suite passed with 562 tests and 4000 assertions. | Added `docs/dashboard.md` and updated authorization, localization, restricted hosting, todo foundation, changelogs, checklist, decisions, risks, and test report. | Browser-rendered summaries recalculate on authenticated dashboard visits, not by exact-time background schedule; logged as restricted-hosting limitation. | eb34ea2 |
-| 057 — Recurring task rules | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 057 — Recurring task rules | Complete | Added owner-scoped recurrence rule definitions with one rule per user/task, daily/weekly/monthly cadence support, bounded starts/endings, enabled/paused state, protected `/todos/recurring` management, and task-detail recurrence controls. | Boost docs/URL/database checks, local migrate/seed verification, focused Step 057 recurrence/domain/route/localization/architecture/factory/seeder suite passed with 141 tests and 1018 assertions, Pint passed, Vite build passed, route JSON and no-Volt/no-`@php` scans passed. | Added `docs/recurring-tasks.md` and updated task organization, authorization, validation rules, request validation, restricted hosting, domain readiness, localization, factory coverage, seeding strategy, todo foundation, changelogs, checklist, decisions, risks, and test report. | Recurrence rules intentionally do not generate occurrences until Step 058; recent browser logs show a separate Flux JavaScript error on `/todos/62` documented for follow-up. | Pending stable commit |
 | 058 — Recurring occurrence generation | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
 | 059 — Recurring exceptions | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
 | 060 — Recurring edit occurrence versus series | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |

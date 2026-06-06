@@ -16,6 +16,7 @@ use App\Livewire\Todos\Focus as TodosFocus;
 use App\Livewire\Todos\Inbox as TodosInbox;
 use App\Livewire\Todos\Index as TodosIndex;
 use App\Livewire\Todos\Overdue as TodosOverdue;
+use App\Livewire\Todos\RecurringRules as TodosRecurringRules;
 use App\Livewire\Todos\Reminders as TodosReminders;
 use App\Livewire\Todos\Show as TodosShow;
 use App\Livewire\Todos\Templates as TodosTemplates;
@@ -43,6 +44,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::livewire('todos/cleanup', TodosCleanup::class)->name('todos.cleanup');
     Route::livewire('todos/automations', TodosAutomations::class)->name('todos.automations');
     Route::livewire('todos/reminders', TodosReminders::class)->name('todos.reminders');
+    Route::livewire('todos/recurring', TodosRecurringRules::class)->name('todos.recurring');
     Route::livewire('todos/board', TodosBoard::class)->name('todos.board');
     Route::livewire('todos/calendar', TodosCalendar::class)->name('todos.calendar');
     Route::livewire('todos/templates', TodosTemplates::class)->name('todos.templates');

@@ -34,6 +34,7 @@ The current application surface covers these URL consumers:
 - Authenticated cleanup smart views route at `/todos/cleanup`.
 - Authenticated browser-triggered automation rules route at `/todos/automations`.
 - Authenticated browser-triggered reminders route at `/todos/reminders`.
+- Authenticated recurring task rules route at `/todos/recurring`.
 - Authenticated todo route at `/todos`.
 - Authenticated Today route at `/todos/today`.
 - Authenticated Overdue route at `/todos/overdue`.
@@ -105,3 +106,10 @@ relative links or same-host `https://ruflo.test` links after rejecting external,
 protocol-relative, and unsupported-scheme notification payload URLs. Known task
 links are pre-checked against the current user's private task scope before an
 Open action is rendered.
+
+## 2026-06-06 Step 057 Update
+
+Step 057 adds the protected `todos.recurring` route at
+`https://ruflo.test/todos/recurring`. Recurrence rule links are generated with
+named routes, and task links still resolve through the existing owner-scoped
+`todos.show` route.

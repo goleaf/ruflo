@@ -17,6 +17,7 @@ use App\Models\TimeEntry;
 use App\Models\Todo;
 use App\Models\TodoChecklistItem;
 use App\Models\TodoDependency;
+use App\Models\TodoRecurrenceRule;
 use App\Models\TodoTemplate;
 use App\Models\User;
 use App\Notifications\DailySummaryNotification;
@@ -35,6 +36,7 @@ use App\Policies\TimeEntryPolicy;
 use App\Policies\TodoChecklistItemPolicy;
 use App\Policies\TodoDependencyPolicy;
 use App\Policies\TodoPolicy;
+use App\Policies\TodoRecurrenceRulePolicy;
 use App\Policies\TodoTemplatePolicy;
 use App\Queries\Dashboard\DailyDashboardQuery;
 use App\Queries\Dashboard\DailySummaryQuery;
@@ -46,7 +48,7 @@ use Illuminate\Support\Facades\Gate;
 use Livewire\Livewire;
 
 test('private workspace resources share the owning user boundary', function () {
-    $privateModels = [Todo::class, Project::class, Goal::class, GoalMilestone::class, Habit::class, HabitCheckIn::class, PomodoroSession::class, TimeEntry::class, Tag::class, SavedTodoView::class, TodoChecklistItem::class, TodoDependency::class, TodoTemplate::class, AutomationRule::class, AutomationRuleRun::class, Reminder::class];
+    $privateModels = [Todo::class, Project::class, Goal::class, GoalMilestone::class, Habit::class, HabitCheckIn::class, PomodoroSession::class, TimeEntry::class, Tag::class, SavedTodoView::class, TodoChecklistItem::class, TodoDependency::class, TodoRecurrenceRule::class, TodoTemplate::class, AutomationRule::class, AutomationRuleRun::class, Reminder::class];
 
     foreach ($privateModels as $modelClass) {
         /** @var Model $model */
@@ -69,6 +71,7 @@ test('private workspace models resolve explicit policies', function () {
         ->and(Gate::getPolicyFor(Tag::class))->toBeInstanceOf(TagPolicy::class)
         ->and(Gate::getPolicyFor(TodoChecklistItem::class))->toBeInstanceOf(TodoChecklistItemPolicy::class)
         ->and(Gate::getPolicyFor(TodoDependency::class))->toBeInstanceOf(TodoDependencyPolicy::class)
+        ->and(Gate::getPolicyFor(TodoRecurrenceRule::class))->toBeInstanceOf(TodoRecurrenceRulePolicy::class)
         ->and(Gate::getPolicyFor(TodoTemplate::class))->toBeInstanceOf(TodoTemplatePolicy::class)
         ->and(Gate::getPolicyFor(SavedTodoView::class))->toBeInstanceOf(SavedTodoViewPolicy::class)
         ->and(Gate::getPolicyFor(AutomationRule::class))->toBeInstanceOf(AutomationRulePolicy::class)
@@ -98,6 +101,7 @@ test('foreign private records are denied as not found', function (string $modelC
     'saved todo view' => SavedTodoView::class,
     'todo checklist item' => TodoChecklistItem::class,
     'todo dependency' => TodoDependency::class,
+    'todo recurrence rule' => TodoRecurrenceRule::class,
     'todo template' => TodoTemplate::class,
     'automation rule' => AutomationRule::class,
     'automation rule run' => AutomationRuleRun::class,

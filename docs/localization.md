@@ -65,3 +65,10 @@ Daily summary dashboard headings, empty/planned/attention text, counter labels,
 schedule-coverage copy, compact/details setting labels, shortcut labels,
 accessibility labels, and tracked-time display text live in
 `lang/en/dashboard.php`.
+
+## 2026-06-06 Step 057 Update
+
+Recurring task page titles, recurrence form labels, cadence and end-type
+options, weekday labels, summaries, locked/empty states, confirmations, toasts,
+and validation messages live in `lang/en/todos.php` under `pages.recurring`,
+`recurrence`, `confirmations`, and `validation`.

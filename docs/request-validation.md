@@ -103,6 +103,13 @@ reminder timestamp with `ReminderAt`; `SyncTodoReminder` and
 `ProcessDueRemindersProcess` repeat owner, active-task, preference, and
 actionable-task guards before writing reminder state or database notifications.
 
+Step 057 recurring task rules remain Livewire-only. No HTTP Form Request is
+introduced because `/todos/recurring` and `/todos/{todo}` are class-based
+Livewire pages, not controller endpoints. The components validate task
+selection with `OwnedActiveTodo`, validate schedule shape with `RecurrenceRule`,
+normalize input through `RecurrenceRuleData`, and action classes repeat owner
+and active-task guards before saving, pausing, enabling, or deleting rules.
+
 ## Custom Business Rules
 
 Reusable business validation rules are documented in `docs/validation-rules.md`.

@@ -18,6 +18,7 @@ Step 011 covers the tracked application models:
 - `App\Models\Todo`
 - `App\Models\TodoChecklistItem`
 - `App\Models\TodoDependency`
+- `App\Models\TodoRecurrenceRule`
 - `App\Models\TodoTemplate`
 
 `App\Models\Reminder` now has owned task links, scheduled reminder timestamps,
@@ -220,6 +221,22 @@ todos, projects, tags, and saved views.
 
 Dependency rows are private resources and use the same `BelongsToUser` concern
 as todos, projects, tags, saved views, checklist rows, and time entries.
+
+## Todo Recurrence Rule Factory
+
+`TodoRecurrenceRuleFactory` covers:
+
+- default enabled daily rules,
+- `forTodo()` to attach a rule to an owned task while preserving the owner
+  boundary,
+- weekly and monthly cadence states,
+- ending-on-date and after-occurrences end states,
+- paused rules,
+- generated-through metadata for later occurrence-generation tests.
+
+Recurrence rules are private resources and use the same `BelongsToUser` concern
+as todos, projects, tags, saved views, checklist rows, dependencies, reminders,
+and time entries.
 
 ## Todo Template Factory
 

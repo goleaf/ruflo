@@ -84,6 +84,177 @@
         </div>
     </flux:card>
 
+    <flux:card class="space-y-5" data-test="task-recurrence">
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div class="space-y-1">
+                <flux:subheading>{{ __('todos.recurrence.label') }}</flux:subheading>
+                <flux:heading size="lg">{{ __('todos.recurrence.heading') }}</flux:heading>
+                <flux:text class="text-sm text-zinc-500 dark:text-zinc-400">{{ __('todos.recurrence.description') }}</flux:text>
+            </div>
+
+            @if ($this->recurrenceRule)
+                <div class="flex flex-wrap gap-2 sm:justify-end">
+                    <flux:badge size="sm" :color="$this->recurrenceRule->frequency->color()" icon="arrow-path">
+                        {{ $this->recurrenceRule->frequency->label() }}
+                    </flux:badge>
+
+                    <flux:badge size="sm" :color="$this->recurrenceRule->statusColor()" icon="bolt">
+                        {{ $this->recurrenceRule->statusLabel() }}
+                    </flux:badge>
+                </div>
+            @else
+                <flux:badge size="sm" color="zinc" icon="arrow-path">
+                    {{ __('todos.recurrence.status.not_set') }}
+                </flux:badge>
+            @endif
+        </div>
+
+        @if ($this->recurrenceRule)
+            <flux:callout icon="calendar-days" variant="secondary" data-test="recurrence-summary">
+                <flux:callout.heading>{{ __('todos.recurrence.summary_heading') }}</flux:callout.heading>
+                <flux:callout.text>{{ $this->recurrenceRule->summary() }}</flux:callout.text>
+            </flux:callout>
+        @else
+            <x-ui.empty-state
+                :title="__('todos.recurrence.empty.title')"
+                :description="__('todos.recurrence.empty.description')"
+                data-test="recurrence-empty"
+            />
+        @endif
+
+        @if (! $this->canManageRecurrence())
+            <flux:callout icon="archive-box" variant="secondary" data-test="recurrence-locked">
+                <flux:callout.heading>{{ __('todos.recurrence.locked.heading') }}</flux:callout.heading>
+                <flux:callout.text>{{ __('todos.recurrence.locked.description') }}</flux:callout.text>
+            </flux:callout>
+        @endif
+
+        <form wire:submit="saveRecurrenceRule" class="space-y-4">
+            <div class="grid gap-4 lg:grid-cols-3">
+                <flux:select variant="combobox" wire:model.live="recurrenceFrequency" :label="__('todos.recurrence.fields.frequency')" :disabled="! $this->canManageRecurrence()">
+                    @foreach ($this->recurrenceFrequencyOptions as $frequencyOption)
+                        <flux:select.option value="{{ $frequencyOption->value }}">{{ $frequencyOption->label() }}</flux:select.option>
+                    @endforeach
+                </flux:select>
+
+                <flux:input
+                    type="number"
+                    min="1"
+                    max="30"
+                    wire:model="recurrenceInterval"
+                    :label="__('todos.recurrence.fields.interval')"
+                    :disabled="! $this->canManageRecurrence()"
+                />
+
+                <flux:input
+                    type="date"
+                    wire:model="recurrenceStartsOn"
+                    :label="__('todos.recurrence.fields.starts_on')"
+                    :disabled="! $this->canManageRecurrence()"
+                />
+            </div>
+
+            <flux:error name="recurrenceFrequency" />
+            <flux:error name="recurrenceInterval" />
+            <flux:error name="recurrenceStartsOn" />
+
+            @if ($recurrenceFrequency === 'weekly')
+                <flux:checkbox.group wire:model="recurrenceWeekdays" :label="__('todos.recurrence.fields.weekdays')" variant="cards" class="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+                    @foreach ($this->recurrenceWeekdayOptions as $weekdayOption)
+                        <flux:checkbox
+                            wire:key="recurrence-weekday-{{ $weekdayOption->value }}"
+                            value="{{ $weekdayOption->value }}"
+                            :label="$weekdayOption->label()"
+                            :disabled="! $this->canManageRecurrence()"
+                        />
+                    @endforeach
+
+                    <flux:error name="recurrenceWeekdays" />
+                </flux:checkbox.group>
+            @endif
+
+            @if ($recurrenceFrequency === 'monthly')
+                <flux:input
+                    type="number"
+                    min="1"
+                    max="31"
+                    wire:model="recurrenceMonthDay"
+                    :label="__('todos.recurrence.fields.month_day')"
+                    :disabled="! $this->canManageRecurrence()"
+                />
+
+                <flux:error name="recurrenceMonthDay" />
+            @endif
+
+            <div class="grid gap-4 lg:grid-cols-3">
+                <flux:select variant="combobox" wire:model.live="recurrenceEndType" :label="__('todos.recurrence.fields.end_type')" :disabled="! $this->canManageRecurrence()">
+                    @foreach ($this->recurrenceEndTypeOptions as $endTypeOption)
+                        <flux:select.option value="{{ $endTypeOption->value }}">{{ $endTypeOption->label() }}</flux:select.option>
+                    @endforeach
+                </flux:select>
+
+                @if ($recurrenceEndType === 'on_date')
+                    <flux:input
+                        type="date"
+                        wire:model="recurrenceEndsOn"
+                        :label="__('todos.recurrence.fields.ends_on')"
+                        :disabled="! $this->canManageRecurrence()"
+                    />
+                @endif
+
+                @if ($recurrenceEndType === 'after_occurrences')
+                    <flux:input
+                        type="number"
+                        min="1"
+                        max="365"
+                        wire:model="recurrenceMaxOccurrences"
+                        :label="__('todos.recurrence.fields.max_occurrences')"
+                        :disabled="! $this->canManageRecurrence()"
+                    />
+                @endif
+            </div>
+
+            <flux:error name="recurrenceEndType" />
+            <flux:error name="recurrenceEndsOn" />
+            <flux:error name="recurrenceMaxOccurrences" />
+            <flux:error name="recurrenceRule" />
+
+            <label class="flex items-start gap-3 rounded-lg border border-zinc-200 p-3 text-sm dark:border-white/10">
+                <flux:checkbox wire:model="recurrenceEnabled" :disabled="! $this->canManageRecurrence()" />
+                <span class="space-y-1">
+                    <span class="block font-medium text-zinc-950 dark:text-white">{{ __('todos.recurrence.fields.enabled') }}</span>
+                    <span class="block text-zinc-500 dark:text-zinc-400">{{ __('todos.recurrence.fields.enabled_help') }}</span>
+                </span>
+            </label>
+
+            <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-end">
+                @if ($this->recurrenceRule)
+                    <flux:button
+                        type="button"
+                        variant="danger"
+                        icon="trash"
+                        wire:click="clearRecurrenceRule"
+                        wire:confirm="{{ __('todos.confirmations.clear_recurrence') }}"
+                        wire:loading.attr="disabled"
+                        :disabled="! $this->canManageRecurrence()"
+                    >
+                        {{ __('todos.recurrence.actions.clear') }}
+                    </flux:button>
+                @endif
+
+                <flux:button
+                    type="submit"
+                    variant="primary"
+                    icon="arrow-path"
+                    wire:loading.attr="disabled"
+                    :disabled="! $this->canManageRecurrence()"
+                >
+                    {{ $this->recurrenceRule ? __('todos.recurrence.actions.update') : __('todos.recurrence.actions.save') }}
+                </flux:button>
+            </div>
+        </form>
+    </flux:card>
+
     <flux:card class="space-y-5" data-test="task-dependencies">
         <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div class="space-y-1">

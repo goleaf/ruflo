@@ -1,5 +1,32 @@
 # Changelog
 
+## 2026-06-06 - Step 042 Subtasks and checklists
+
+### Implemented
+
+- Added owner-scoped `todo_checklist_items` with title, completion state,
+  completed timestamp, and ordered position.
+- Added checklist model, policy, factory, query, validation rule, mutation
+  actions, and `TodoChecklistChanged` event.
+- Added translated Flux checklist controls to the protected task detail page:
+  progress, add, inline edit, checkbox toggle, move up/down, delete, empty
+  state, and archived-task locked state.
+- Updated demo seeding with realistic checklist rows on active, overdue,
+  upcoming, and archived tasks.
+
+### Testing
+
+- Added `TaskChecklistTest` for owner-scoped rendering, progress, Livewire
+  mutations, direct action validation, foreign-id denial, archived-task locked
+  behavior, and invalid movement direction handling.
+- Expanded factory, seeder, policy, private-workspace, architecture, validation
+  rule, localization, and task-detail coverage for checklist rows.
+
+### Documentation
+
+- Updated task organization, task lifecycle, authorization, factory coverage,
+  seeding, and todo foundation docs with the Step 042 checklist contract.
+
 ## 2026-06-06 - Step 041 Calendar view
 
 ### Implemented

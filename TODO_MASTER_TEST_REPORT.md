@@ -614,3 +614,24 @@ Record test/build/check results here.
 | 2026-06-06 | `mcp__laravel_boost.get_absolute_url path=/todos/calendar` | Passed | Boost resolved the calendar URL as `https://ruflo.test/todos/calendar`. |
 | 2026-06-06 | `mcp__laravel_boost.browser_logs entries=20` | Passed | Only an old Vite reconnect message from 2026-06-05 was present; no current calendar UI browser/runtime error was found. |
 | 2026-06-06 | `php artisan test --compact` | Passed | Full suite passed with 368 tests and 1767 assertions after Step 041 Calendar view. |
+| 2026-06-06 | `mcp__laravel_boost.application_info` | Passed | Confirmed Step 042 runtime context: Laravel 13.14.0, Livewire 4.3.1, Flux 2.14.1, Tailwind 4.3.0, Pest 4.7.2, PHP CLI 8.4, SQLite. |
+| 2026-06-06 | `mcp__laravel_boost.database_schema summary/todos/projects/todo_checklist_items` | Passed | Reconfirmed current task ownership/lifecycle schema before Step 042 and confirmed the new `todo_checklist_items` owner/task/order/completion schema after migration. |
+| 2026-06-06 | `mcp__laravel_boost.search_docs` | Passed | Reviewed Laravel foreign keys/relationships/policies, Livewire action validation/testing, Flux checkbox/progress/button/card controls, and Pest Livewire assertions before Step 042 changes. |
+| 2026-06-06 | `php artisan make:model TodoChecklistItem --migration --factory --policy --no-interaction` | Passed | Created the checklist item model, migration, factory, and policy scaffolds. |
+| 2026-06-06 | `php artisan make:class Actions/Todos/*TodoChecklistItem --no-interaction` | Passed | Created the create, update, toggle, move, and delete checklist action scaffolds. |
+| 2026-06-06 | `php artisan make:class Queries/Todos/TodoChecklistItemListQuery --no-interaction` | Passed | Created the owner-scoped checklist query scaffold. |
+| 2026-06-06 | `php artisan make:rule Todos/ChecklistItemTitle --no-interaction` | Passed | Created the reusable checklist title validation rule. |
+| 2026-06-06 | `php artisan make:class Events/TodoChecklistChanged --no-interaction` | Passed | Created the checklist change event for future activity-history listeners. |
+| 2026-06-06 | `php artisan make:test --pest TaskChecklistTest --no-interaction` | Passed | Created Step 042 checklist regression coverage. |
+| 2026-06-06 | `php artisan migrate --no-interaction` | Passed | Applied the `todo_checklist_items` migration locally. |
+| 2026-06-06 | `php artisan test --compact tests/Feature/TaskChecklistTest.php` | Passed | 6 tests, 27 assertions for checklist rendering, progress, Livewire mutations, direct validation, foreign-id denial, archived-task lock, and invalid move direction. |
+| 2026-06-06 | `php artisan test --compact tests/Feature/TaskChecklistTest.php tests/Feature/FactoryCoverageTest.php tests/Feature/SeederCoverageTest.php tests/Feature/AuthorizationPoliciesTest.php tests/Feature/PrivateWorkspaceModelTest.php tests/Feature/TodoArchitectureTest.php tests/Feature/ValidationRulesArchitectureTest.php tests/Feature/LocalizationCoverageTest.php tests/Feature/TaskPrivateViewsTest.php` | Passed | 56 tests, 488 assertions across checklist behavior, factories, seeders, policies, private workspace, architecture, validation rules, localization, and private task details. |
+| 2026-06-06 | `vendor/bin/pint --dirty --format agent` | Passed | Pint fixed import ordering in the checklist factory and todo architecture test, then passed clean on the next focused test run. |
+| 2026-06-06 | `php artisan db:seed --no-interaction` | Passed | Refreshed local Herd demo data so existing users have seeded checklist rows on task detail pages. |
+| 2026-06-06 | `mcp__laravel_boost.database_query seeded checklist counts` | Passed | Confirmed each existing local user has 9 checklist items and 3 completed checklist items after seeding. |
+| 2026-06-06 | `mcp__laravel_boost.get_absolute_url path=/todos and /todos/1` | Passed | Boost resolved the task workspace and seeded detail page as `https://ruflo.test/todos` and `https://ruflo.test/todos/1`. |
+| 2026-06-06 | `rg Volt/no-hardcoded-checklist-copy/no-Blade-php/compressed-progress scans` | Passed | No Volt references, hardcoded checklist UI copy outside English language files, `@php` in the checklist detail view, or grouped future-step placeholders were found. |
+| 2026-06-06 | `php artisan route:list --no-interaction -vv --path=todos` | Passed | Confirmed todo routes remain behind auth and verified middleware after Step 042 detail-page checklist changes. |
+| 2026-06-06 | `git diff --check` | Passed | No whitespace errors after Step 042 changes. |
+| 2026-06-06 | `mcp__laravel_boost.browser_logs entries=20` | Passed | Only an old Vite reconnect message from 2026-06-05 was present; no current checklist UI browser/runtime error was found. |
+| 2026-06-06 | `php artisan test --compact` | Passed | Full suite passed with 379 tests and 1861 assertions after Step 042 Subtasks and checklists. |

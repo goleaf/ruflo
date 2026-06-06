@@ -12,6 +12,7 @@ test('custom validation rules are implemented and use translated failure message
             'Tags/TagName.php',
             'Todos/BoardStatus.php',
             'Todos/CalendarMonth.php',
+            'Todos/ChecklistItemTitle.php',
             'Todos/DueDate.php',
             'Todos/OwnedActiveProject.php',
             'Todos/OwnedTag.php',

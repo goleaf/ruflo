@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -74,6 +75,18 @@ class Todo extends Model
     public function tags(): BelongsToMany
     {
         return $this->belongsToMany(Tag::class);
+    }
+
+    /**
+     * Contained checklist rows for this task, ordered for display.
+     *
+     * @return HasMany<TodoChecklistItem, $this>
+     */
+    public function checklistItems(): HasMany
+    {
+        return $this->hasMany(TodoChecklistItem::class)
+            ->orderBy('position')
+            ->orderBy('id');
     }
 
     /**

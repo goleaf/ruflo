@@ -7,6 +7,7 @@ use App\Models\Reminder;
 use App\Models\SavedTodoView;
 use App\Models\Tag;
 use App\Models\Todo;
+use App\Models\TodoChecklistItem;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 
@@ -15,6 +16,7 @@ test('tracked models can be created from their default factories', function () {
     $project = Project::factory()->for($user)->create();
     $tag = Tag::factory()->for($user)->create();
     $todo = Todo::factory()->for($user)->forProject($project)->withTags($tag)->create();
+    $checklistItem = TodoChecklistItem::factory()->forTodo($todo)->completed()->position(1)->create();
     $savedView = SavedTodoView::factory()->for($user)->create();
     $reminder = Reminder::factory()->create();
 
@@ -24,6 +26,10 @@ test('tracked models can be created from their default factories', function () {
         ->and($todo->isOwnedBy($user))->toBeTrue()
         ->and($todo->project_id)->toBe($project->id)
         ->and($todo->tags()->pluck('tags.id')->all())->toBe([$tag->id])
+        ->and($checklistItem->isOwnedBy($user))->toBeTrue()
+        ->and($checklistItem->todo->is($todo))->toBeTrue()
+        ->and($checklistItem->is_completed)->toBeTrue()
+        ->and($checklistItem->position)->toBe(1)
         ->and($savedView->isOwnedBy($user))->toBeTrue()
         ->and($savedView->criteria['sort'])->toBe('created')
         ->and($reminder->exists)->toBeTrue();
@@ -149,4 +155,22 @@ test('todo relationship helpers keep project and tag data inside the same owner 
         ->and($todo->tags()->pluck('tags.id')->all())->toBe([$ownerTag->id])
         ->and($tagTodo->user_id)->toBe($owner->id)
         ->and($tagTodo->tags()->pluck('tags.id')->all())->toBe([$ownerTag->id]);
+});
+
+test('todo checklist item factory covers ownership completion and ordering states', function () {
+    $user = User::factory()->create();
+    $todo = Todo::factory()->for($user)->create();
+    $pending = TodoChecklistItem::factory()->forTodo($todo)->pending()->position(2)->create(['title' => 'Pending item']);
+    $completed = TodoChecklistItem::factory()->forTodo($todo)->completed()->position(1)->create(['title' => 'Completed item']);
+    $longTitle = TodoChecklistItem::factory()->forTodo($todo)->longTitle()->create();
+
+    expect($pending->isOwnedBy($user))->toBeTrue()
+        ->and($pending->todo->is($todo))->toBeTrue()
+        ->and($pending->is_completed)->toBeFalse()
+        ->and($pending->completed_at)->toBeNull()
+        ->and($pending->position)->toBe(2)
+        ->and($completed->is_completed)->toBeTrue()
+        ->and($completed->completed_at)->not->toBeNull()
+        ->and($completed->position)->toBe(1)
+        ->and(strlen($longTitle->title))->toBe(120);
 });

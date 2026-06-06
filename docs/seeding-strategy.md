@@ -7,6 +7,7 @@ Step 012 covers the committed model set:
 - `SavedTodoView`
 - `Tag`
 - `Todo`
+- `TodoChecklistItem`
 
 The tracked `Reminder` model is currently a placeholder with no ownership, schedule, lifecycle, or message columns, so it is not seeded yet. Seeder coverage asserts the placeholder table stays empty until the reminder domain exists. Future models for recurrence, comments, attachments, activity, invites, settings, and collaboration are not seeded yet because those committed models do not exist yet.
 
@@ -26,6 +27,8 @@ The tracked `Reminder` model is currently a placeholder with no ownership, sched
 - `urgent` and `waiting` tags,
 - active, due-today, overdue, upcoming, completed, archived,
   archived-completed, and trashed tasks.
+- contained checklist rows on due-today, overdue, upcoming, and archived tasks
+  so task detail pages show progress and locked archived checklist behavior.
 - three saved views per user: `Today focus`, `Urgent work`, and
   `Waiting on others`.
 
@@ -38,6 +41,9 @@ schemas exist.
 ## Idempotency
 
 Seeders are idempotent for the current demo catalog. Re-running them updates existing demo records instead of creating duplicate users, tags, projects, saved views, or seeded task titles.
+
+Checklist rows are upserted per seeded task/title and keep positions stable when
+the seeder is run again.
 
 Placeholder reminder rows are intentionally excluded from the current catalog because they would not be owned by a user or connected to a task.
 

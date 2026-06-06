@@ -63,6 +63,16 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
     }
 
     /**
+     * Get the user's contained task checklist rows.
+     *
+     * @return HasMany<TodoChecklistItem, $this>
+     */
+    public function todoChecklistItems(): HasMany
+    {
+        return $this->hasMany(TodoChecklistItem::class);
+    }
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>

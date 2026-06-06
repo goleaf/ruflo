@@ -175,6 +175,39 @@ return [
         'delete_project' => 'Delete this project? Its tasks are kept and moved to "No project".',
         'delete_tag' => 'Delete this tag? It is removed from any tasks using it.',
         'delete_saved_view' => 'Delete this saved view?',
+        'delete_checklist_item' => 'Delete this checklist item?',
+    ],
+
+    'checklist' => [
+        'label' => 'Subtasks',
+        'heading' => 'Checklist',
+        'description' => 'Break this task into ordered, contained checklist items.',
+        'progress_label' => 'Checklist progress',
+        'progress' => ':completed of :total complete',
+        'completed_at' => 'Completed :date',
+        'fields' => [
+            'item_title' => 'Checklist item',
+            'item_placeholder' => 'Add a subtask or checklist item',
+        ],
+        'actions' => [
+            'add' => 'Add item',
+            'save' => 'Save item',
+            'cancel' => 'Cancel',
+            'edit' => 'Edit item',
+            'delete' => 'Delete item',
+            'move_up' => 'Move up',
+            'move_down' => 'Move down',
+            'mark_complete' => 'Mark item complete',
+            'mark_incomplete' => 'Mark item incomplete',
+        ],
+        'empty' => [
+            'title' => 'No checklist items.',
+            'description' => 'Add the first contained subtask for this task.',
+        ],
+        'locked' => [
+            'heading' => 'Checklist locked',
+            'description' => 'Archived tasks keep their checklist for review. Unarchive the task before changing checklist items.',
+        ],
     ],
 
     'empty' => [
@@ -265,6 +298,13 @@ return [
         'saved_view_deleted' => 'Saved view deleted.',
         'board_status_moved' => 'Task moved on the board.',
         'board_project_moved' => 'Task project updated from the board.',
+        'checklist_item_created' => 'Checklist item added.',
+        'checklist_item_updated' => 'Checklist item updated.',
+        'checklist_item_completed' => 'Checklist item completed.',
+        'checklist_item_reopened' => 'Checklist item reopened.',
+        'checklist_item_deleted' => 'Checklist item deleted.',
+        'checklist_item_moved' => 'Checklist item moved.',
+        'cannot_change_checklist_archived' => 'Unarchive this task before changing its checklist.',
     ],
 
     'today' => [
@@ -313,6 +353,8 @@ return [
         'saved_view_name_unique' => 'Use a saved view name you have not already used.',
         'board_status' => 'Choose a valid board column.',
         'calendar_month' => 'Enter a valid calendar month.',
+        'checklist_item_title' => 'Enter a checklist item with visible text.',
+        'checklist_item_direction' => 'Choose a valid checklist movement.',
         'priority' => 'Choose a valid priority.',
         'due_date' => 'Enter a valid due date.',
     ],

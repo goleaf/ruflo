@@ -214,6 +214,11 @@ route, owner-scoped month rendering, active-only due-date grid, no-due-date
 section, invalid month validation, Livewire month navigation, and
 reminder/recurrence placeholder behavior.
 
+Step 042 adds `TaskChecklistTest`, which locks owner-scoped checklist rendering
+on task detail pages, checklist progress, Livewire create/edit/toggle/move/delete
+flows, direct action validation, archived-task locked behavior, and invalid
+movement rejection.
+
 ## 2026-06-06 Recheck
 
 The Step 001 recheck confirmed the foundation still matches the current master-plan rules after Steps 002-016:

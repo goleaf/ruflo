@@ -77,4 +77,178 @@
             </div>
         </div>
     </flux:card>
+
+    <flux:card class="space-y-5" data-test="task-checklist">
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div class="space-y-1">
+                <flux:subheading>{{ __('todos.checklist.label') }}</flux:subheading>
+                <flux:heading size="lg">{{ __('todos.checklist.heading') }}</flux:heading>
+                <flux:text class="text-sm text-zinc-500 dark:text-zinc-400">{{ __('todos.checklist.description') }}</flux:text>
+            </div>
+
+            <flux:badge size="sm" color="green" icon="check-circle" data-test="checklist-progress-badge">
+                {{ __('todos.checklist.progress', ['completed' => $this->checklistProgress['completed'], 'total' => $this->checklistProgress['total']]) }}
+            </flux:badge>
+        </div>
+
+        <flux:field>
+            <flux:label>
+                {{ __('todos.checklist.progress_label') }}
+                <x-slot name="trailing">
+                    <span class="tabular-nums">{{ $this->checklistProgress['percent'] }}%</span>
+                </x-slot>
+            </flux:label>
+            <flux:progress :value="$this->checklistProgress['percent']" color="green" />
+        </flux:field>
+
+        @if (! $this->canManageChecklist())
+            <flux:callout icon="archive-box" variant="secondary" data-test="checklist-locked">
+                <flux:callout.heading>{{ __('todos.checklist.locked.heading') }}</flux:callout.heading>
+                <flux:callout.text>{{ __('todos.checklist.locked.description') }}</flux:callout.text>
+            </flux:callout>
+        @endif
+
+        <form wire:submit="createChecklistItem" class="space-y-2">
+            <flux:field>
+                <flux:label>{{ __('todos.checklist.fields.item_title') }}</flux:label>
+
+                <div class="grid gap-2 sm:grid-cols-[1fr_auto]">
+                    <flux:input
+                        wire:model="newChecklistItemTitle"
+                        :placeholder="__('todos.checklist.fields.item_placeholder')"
+                        maxlength="120"
+                        autocomplete="off"
+                        :disabled="! $this->canManageChecklist()"
+                    />
+
+                    <flux:button
+                        type="submit"
+                        variant="primary"
+                        icon="plus"
+                        wire:loading.attr="disabled"
+                        :disabled="! $this->canManageChecklist()"
+                    >
+                        {{ __('todos.checklist.actions.add') }}
+                    </flux:button>
+                </div>
+
+                <flux:error name="newChecklistItemTitle" />
+            </flux:field>
+        </form>
+
+        <div class="space-y-2">
+            @forelse ($this->checklistItems as $item)
+                <div wire:key="checklist-item-{{ $item->id }}" class="rounded-lg border border-zinc-200 p-3 dark:border-white/10">
+                    @if ($this->editingChecklistItemId === $item->id)
+                        <form wire:submit="saveChecklistItem" class="space-y-2">
+                            <div class="grid gap-2 sm:grid-cols-[1fr_auto_auto]">
+                                <flux:input
+                                    wire:model="editingChecklistItemTitle"
+                                    :label="__('todos.checklist.fields.item_title')"
+                                    maxlength="120"
+                                    autocomplete="off"
+                                />
+
+                                <flux:button type="submit" variant="primary" icon="check" class="sm:mt-6" wire:loading.attr="disabled">
+                                    {{ __('todos.checklist.actions.save') }}
+                                </flux:button>
+
+                                <flux:button type="button" variant="ghost" icon="x-mark" class="sm:mt-6" wire:click="cancelChecklistEdit">
+                                    {{ __('todos.checklist.actions.cancel') }}
+                                </flux:button>
+                            </div>
+
+                            <flux:error name="editingChecklistItemTitle" />
+                        </form>
+                    @else
+                        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                            <div class="flex min-w-0 items-start gap-3">
+                                <flux:checkbox
+                                    :checked="$item->is_completed"
+                                    wire:click="toggleChecklistItem({{ $item->id }})"
+                                    :disabled="! $this->canManageChecklist()"
+                                    :aria-label="$item->is_completed ? __('todos.checklist.actions.mark_incomplete') : __('todos.checklist.actions.mark_complete')"
+                                />
+
+                                <div class="min-w-0 space-y-1">
+                                    <div @class([
+                                        'break-words text-sm font-medium',
+                                        'text-zinc-950 dark:text-white' => ! $item->is_completed,
+                                        'text-zinc-500 line-through dark:text-zinc-400' => $item->is_completed,
+                                    ])>
+                                        {{ $item->title }}
+                                    </div>
+
+                                    @if ($item->completed_at)
+                                        <flux:text class="text-xs text-zinc-500 dark:text-zinc-400">
+                                            {{ __('todos.checklist.completed_at', ['date' => $item->completed_at->isoFormat('MMM D, YYYY h:mm A')]) }}
+                                        </flux:text>
+                                    @endif
+                                </div>
+                            </div>
+
+                            <div class="flex flex-wrap items-center gap-1 sm:justify-end">
+                                <flux:button
+                                    type="button"
+                                    size="xs"
+                                    variant="ghost"
+                                    icon="chevron-up"
+                                    square
+                                    tooltip="{{ __('todos.checklist.actions.move_up') }}"
+                                    wire:click="moveChecklistItem({{ $item->id }}, 'up')"
+                                    wire:loading.attr="disabled"
+                                    :disabled="$loop->first || ! $this->canManageChecklist()"
+                                    :aria-label="__('todos.checklist.actions.move_up')"
+                                />
+
+                                <flux:button
+                                    type="button"
+                                    size="xs"
+                                    variant="ghost"
+                                    icon="chevron-down"
+                                    square
+                                    tooltip="{{ __('todos.checklist.actions.move_down') }}"
+                                    wire:click="moveChecklistItem({{ $item->id }}, 'down')"
+                                    wire:loading.attr="disabled"
+                                    :disabled="$loop->last || ! $this->canManageChecklist()"
+                                    :aria-label="__('todos.checklist.actions.move_down')"
+                                />
+
+                                <flux:button
+                                    type="button"
+                                    size="xs"
+                                    variant="ghost"
+                                    icon="pencil-square"
+                                    square
+                                    tooltip="{{ __('todos.checklist.actions.edit') }}"
+                                    wire:click="startEditChecklistItem({{ $item->id }})"
+                                    :disabled="! $this->canManageChecklist()"
+                                    :aria-label="__('todos.checklist.actions.edit')"
+                                />
+
+                                <flux:button
+                                    type="button"
+                                    size="xs"
+                                    variant="danger"
+                                    icon="trash"
+                                    square
+                                    tooltip="{{ __('todos.checklist.actions.delete') }}"
+                                    wire:click="deleteChecklistItem({{ $item->id }})"
+                                    wire:confirm="{{ __('todos.confirmations.delete_checklist_item') }}"
+                                    :disabled="! $this->canManageChecklist()"
+                                    :aria-label="__('todos.checklist.actions.delete')"
+                                />
+                            </div>
+                        </div>
+                    @endif
+                </div>
+            @empty
+                <x-ui.empty-state
+                    :title="__('todos.checklist.empty.title')"
+                    :description="__('todos.checklist.empty.description')"
+                    data-test="checklist-empty"
+                />
+            @endforelse
+        </div>
+    </flux:card>
 </section>

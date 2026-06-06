@@ -2,19 +2,19 @@
 
 ## Current status
 
-Steps 001-041 are complete. The requested recheck from Step 001 has been completed through Step 041. The tracker is expanded to one ledger line per step from 001 through 100 so later work cannot be hidden behind a range.
+Steps 001-042 are complete. The requested recheck from Step 001 has been completed through Step 042. The tracker is expanded to one ledger line per step from 001 through 100 so later work cannot be hidden behind a range.
 
 ## Current step
 
-Step 042 — Subtasks and checklists
+Step 043 — Task templates
 
 ## Last completed action
 
-Completed Step 041 by adding a protected Livewire Calendar view, owner-scoped calendar query, strict month validation rule, translated month controls, active due-date grid, no-due-date section, and reminder/recurrence placeholder lanes.
+Completed Step 042 by adding owner-scoped contained checklist items with progress, ordering, translated Flux detail-page controls, validation, factories, seeders, and checklist privacy tests.
 
 ## Next action
 
-Begin `steps/step-042-subtasks-and-checklists.md`, then implement the next not-yet-completed plan step without grouping it with later work.
+Begin `steps/step-043-task-templates.md`, then implement the next not-yet-completed plan step without grouping it with later work.
 
 ## Step ledger
 
@@ -61,7 +61,7 @@ Begin `steps/step-042-subtasks-and-checklists.md`, then implement the next not-y
 | 039 — Bulk selection and actions | Complete | Added `BulkActionResult` selected/affected/skipped/failed counts for every bulk action, select-visible and clear-selection controls, translated result callout/toast, and a Flux modal for bulk delete confirmation. Existing owner-scoped validation and action re-scoping remain intact. | Boost app/schema/docs checks, `BulkSelectionActionTest`, failed-then-fixed soft-delete assertion, related 88-test suite, static scans, route/browser checks, and full suite passed with 349 tests/1633 assertions. | `docs/task-organization.md`, `docs/todo-foundation.md`, `docs/authorization.md`, changelogs, checklist, decisions, risks, and test report updated. | Direct bulk action foreign/non-actionable id risk logged and mitigated with Livewire validation, action re-scoping, item authorization, and visible skipped counts. | 9c6a9cb |
 | 040 — Kanban board | Complete | Added protected `todos.board` class-based Livewire page with Active, Completed, and Archived Flux columns; `TodoBoardQuery` for owner-scoped cards; `MoveTodoOnBoard` for safe lifecycle/project moves; `BoardStatus` validation; and list-to-board navigation. Drag ordering is deferred until persisted ordering exists. | Boost app/schema/docs checks, `KanbanBoardTest`, failed-then-fixed project validator shape, direct Trash-target action guard, static scans, route/URL/browser checks, related 136-test board suite, and full suite passed with 358 tests/1696 assertions. | `docs/task-organization.md`, `docs/todo-foundation.md`, `docs/authorization.md`, `docs/validation-rules.md`, `docs/domain-readiness.md`, changelogs, checklist, decisions, risks, and test report updated. | Drag/drop ordering persistence risk logged and mitigated by using reliable Livewire fallback buttons. | ce8d8a9 |
 | 041 — Calendar view | Complete | Added protected `todos.calendar` class-based Livewire page with URL-backed month navigation, `TodoCalendarQuery` for owner-scoped active due-date grid data, `CalendarMonth` validation, no-due-date task section, and translated reminder/recurrence placeholders. | Boost app/schema/docs checks, Artisan scaffolds, failed-then-fixed Carbon namespace, `CalendarViewTest`, related 134-test calendar suite, static scans, route/URL/browser checks, and full suite passed with 368 tests/1767 assertions. | `docs/task-organization.md`, `docs/todo-foundation.md`, `docs/authorization.md`, `docs/validation-rules.md`, `docs/domain-readiness.md`, `docs/seeding-strategy.md`, changelogs, checklist, decisions, risks, and test report updated. | Reminder/recurrence placeholder limitation logged; per-user timezone remains deferred to Step 083. | 3e6388b |
-| 042 — Subtasks and checklists | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 042 — Subtasks and checklists | Complete | Added contained owner-scoped checklist items with ordered positions, completion progress, add/edit/toggle/move/delete actions, translated task-detail Flux UI, demo seed data, and checklist change events for future activity history. | Boost app/schema/docs checks, Artisan scaffolds, migration, `TaskChecklistTest`, related 56-test suite, static scans, route/URL/browser checks, local seed/database verification, and full suite passed with 379 tests/1861 assertions. | `docs/task-organization.md`, `docs/task-lifecycle.md`, `docs/authorization.md`, `docs/validation-rules.md`, `docs/factory-coverage.md`, `docs/seeding-strategy.md`, `docs/todo-foundation.md`, `docs/changelog.md`, changelogs, checklist, decisions, risks, and test report updated. | Checklist item direct-delete recovery limitation logged and mitigated by treating checklist rows as contained details while parent task trash preserves rows. | Pending stable commit |
 | 043 — Task templates | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
 | 044 — Quick capture inbox | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
 | 045 — Focus mode | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |

@@ -9,6 +9,7 @@ The current committed app has tag-name and todo workspace ownership rules:
 - `App\Rules\Tags\TagName`
 - `App\Rules\Todos\BoardStatus`
 - `App\Rules\Todos\CalendarMonth`
+- `App\Rules\Todos\ChecklistItemTitle`
 - `App\Rules\Todos\DueDate`
 - `App\Rules\Todos\OwnedActiveProject`
 - `App\Rules\Todos\OwnedTag`
@@ -26,6 +27,10 @@ state through a forged Livewire call.
 `CalendarMonth` validates URL-backed calendar month state. It accepts only
 canonical `YYYY-MM` strings parsed in the configured app timezone, so malformed
 month input cannot reach the calendar query.
+
+`ChecklistItemTitle` validates contained checklist item titles. It rejects
+non-string or whitespace-only values after `squish()` normalization; the action
+layer also rejects empty or overlong direct calls before writing.
 
 `DueDate` validates optional task due dates. Empty values are allowed so
 `nullable` form fields can clear a date, but provided values must be canonical
@@ -95,3 +100,10 @@ Step 041 added `App\Rules\Todos\CalendarMonth` and wired it into the calendar
 month form and URL-state fallback. Invalid `month` values reset safely to the
 current month and invalid submitted month values fail with
 `todos.validation.calendar_month`.
+
+## 2026-06-06 Step 042 Recheck
+
+Step 042 added `App\Rules\Todos\ChecklistItemTitle` and wired it into the task
+detail checklist add/edit flows. `CreateTodoChecklistItem` and
+`UpdateTodoChecklistItem` repeat the backend guard so direct action calls cannot
+persist blank or overlong checklist titles if Livewire validation is bypassed.

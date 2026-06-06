@@ -1,8 +1,8 @@
 # Task Organization
 
-Step 040 rechecks and extends the private task lifecycle into a usable productivity system:
+Through Step 042, the private task lifecycle is extended into a usable productivity system:
 projects, tags, priorities, due dates, search, filters, sorting, and bulk
-actions. Everything here is owner-scoped on top of the model in
+actions, calendar/board views, and contained checklists. Everything here is owner-scoped on top of the model in
 [`authorization.md`](authorization.md) and the lifecycle in
 [`task-lifecycle.md`](task-lifecycle.md).
 
@@ -15,6 +15,44 @@ actions. Everything here is owner-scoped on top of the model in
 | **Priority** | `todos.priority` (enum string) | n/a — `App\Enums\Priority` (low/normal/high/urgent) |
 | **Due date** | `todos.due_date` (date) | n/a |
 | **Saved view** | `saved_todo_views` table; normalized criteria JSON | `saved_todo_views.user_id`, private |
+| **Checklist item** | `todo_checklist_items` table; `todo_id`, ordered `position`, completion fields | `todo_checklist_items.user_id`, private, contained by parent task |
+
+## Subtasks and checklists
+
+Step 042 adds contained checklist rows on task detail pages. They are subtasks
+for planning and progress, but they are not full tasks: they do not have their
+own project, tags, due date, priority, archive state, trash state, reminders,
+or recurrence rules.
+
+Checklist reads use `TodoChecklistItemListQuery`, scoped by both the current
+user and the already owner-resolved parent task. Checklist mutations use
+`CreateTodoChecklistItem`, `UpdateTodoChecklistItem`, `ToggleTodoChecklistItem`,
+`MoveTodoChecklistItem`, and `DeleteTodoChecklistItem`. The Livewire detail page
+resolves every submitted checklist item id through that query before
+authorizing and delegating to an action.
+
+Behavior:
+
+- Items are ordered by `position` and can be moved up or down with Livewire
+  buttons. Deleting an item resequences the remaining rows.
+- Progress is computed from the current task's checklist rows and rendered as a
+  Flux progress bar plus a translated count.
+- Active and completed parent tasks can change checklist items. Archived tasks
+  keep their checklist visible for review but show a locked state; they must be
+  unarchived before checklist edits. Trashed tasks are not reachable through the
+  normal detail page.
+- Parent task archive/trash preserves checklist rows. A future permanent
+  `forceDelete` of the parent would cascade-delete rows at the database level,
+  but permanent task deletion remains disabled.
+- Checklist item titles are squished, limited to 120 characters, validated by
+  `ChecklistItemTitle`, and also rejected at the action boundary if validation
+  is bypassed.
+- `TodoChecklistChanged` is dispatched for checklist changes so the later
+  activity-history step can listen without changing checklist actions.
+
+Seeded demo workspaces include realistic checklist rows on due, overdue,
+upcoming, and archived tasks so `/todos/{id}` shows progress immediately on
+`https://ruflo.test/`.
 
 ## Projects
 

@@ -8,6 +8,7 @@ use App\Models\Project;
 use App\Models\SavedTodoView;
 use App\Models\Tag;
 use App\Models\Todo;
+use App\Models\TodoChecklistItem;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -38,22 +39,35 @@ class TodoSeeder extends Seeder
         $urgent = $this->upsertTag($user, 'urgent', 'red');
         $waiting = $this->upsertTag($user, 'waiting', 'amber');
 
-        $this->upsertTodo($user, 'Review the current flow', [
+        $reviewFlow = $this->upsertTodo($user, 'Review the current flow', [
             'project_id' => $work->id,
             'priority' => Priority::High,
             'due_date' => today()->toDateString(),
         ], $urgent);
+        $this->upsertChecklist($reviewFlow, [
+            ['title' => 'Confirm the owner-scoped route', 'completed' => true],
+            ['title' => 'Check the empty state copy'],
+            ['title' => 'Record the next UI note'],
+        ]);
 
-        $this->upsertTodo($user, 'Send the overdue report', [
+        $overdueReport = $this->upsertTodo($user, 'Send the overdue report', [
             'project_id' => $work->id,
             'priority' => Priority::Urgent,
             'due_date' => today()->subDay()->toDateString(),
         ], $urgent, $waiting);
+        $this->upsertChecklist($overdueReport, [
+            ['title' => 'Pull the latest metrics'],
+            ['title' => 'Send the short summary'],
+        ]);
 
-        $this->upsertTodo($user, 'Plan the weekend', [
+        $weekend = $this->upsertTodo($user, 'Plan the weekend', [
             'project_id' => $home->id,
             'priority' => Priority::Normal,
             'due_date' => today()->addDays(3)->toDateString(),
+        ]);
+        $this->upsertChecklist($weekend, [
+            ['title' => 'Pick one outdoor plan'],
+            ['title' => 'Reserve a quiet block'],
         ]);
 
         $this->upsertTodo($user, 'Capture a loose idea', [
@@ -66,10 +80,14 @@ class TodoSeeder extends Seeder
             'priority' => Priority::Normal,
         ]);
 
-        $this->upsertTodo($user, 'Last month\'s checklist', [
+        $archivedChecklist = $this->upsertTodo($user, 'Last month\'s checklist', [
             'project_id' => $home->id,
             'priority' => Priority::Normal,
             'archived_at' => now(),
+        ]);
+        $this->upsertChecklist($archivedChecklist, [
+            ['title' => 'Review completed notes', 'completed' => true],
+            ['title' => 'Keep archived context visible', 'completed' => true],
         ]);
 
         $this->upsertTodo($user, 'Archived completed launch notes', [
@@ -163,6 +181,30 @@ class TodoSeeder extends Seeder
         $todo->tags()->sync(collect($tags)->pluck('id')->all());
 
         return $todo;
+    }
+
+    /**
+     * @param  list<array{title: string, completed?: bool}>  $items
+     */
+    private function upsertChecklist(Todo $todo, array $items): void
+    {
+        foreach ($items as $index => $itemData) {
+            $completed = $itemData['completed'] ?? false;
+
+            $item = TodoChecklistItem::query()
+                ->where('todo_id', $todo->id)
+                ->where('title', $itemData['title'])
+                ->first() ?? new TodoChecklistItem;
+
+            $item->forceFill([
+                'user_id' => $todo->user_id,
+                'todo_id' => $todo->id,
+                'title' => $itemData['title'],
+                'is_completed' => $completed,
+                'completed_at' => $completed ? ($item->completed_at ?? now()) : null,
+                'position' => $index + 1,
+            ])->save();
+        }
     }
 
     /**

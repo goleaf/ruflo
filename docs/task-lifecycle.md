@@ -142,6 +142,32 @@ unarchiving or reopening may re-enable them per the rules documented in the
 reminders step. Restoring from Trash may also re-enable reminders according to
 those future reminder rules.
 
+## Contained checklist lifecycle
+
+Step 042 adds checklist rows through `todo_checklist_items`. Checklist rows are
+contained by a parent task and inherit the parent task's visibility and
+mutability rules. They are not full child tasks and do not have independent
+archive, trash, priority, due date, project, tag, reminder, or recurrence
+state.
+
+Allowed checklist changes:
+
+- Active and completed parent tasks can add, edit, complete/reopen, reorder,
+  and delete checklist rows.
+- Archived parent tasks keep checklist rows visible for review, but checklist
+  changes are rejected until the task is unarchived.
+- Trashed parent tasks are not reachable through the normal detail page, and
+  direct checklist actions are rejected by the same `Update` lifecycle guard.
+
+Deleting a checklist item hard-deletes that contained row and resequences the
+remaining checklist positions. Deleting or archiving the parent task does not
+delete checklist rows; the parent can be restored with its checklist intact.
+Only a future permanent parent force-delete would remove the rows through the
+database cascade, and force-delete remains disabled by policy.
+
+Checklist changes dispatch `TodoChecklistChanged` for the later
+activity-history step.
+
 ## Validation
 
 - Title: `required|string|max:120`, normalized (trimmed) before persistence.
@@ -164,11 +190,10 @@ translatable via `lang/en/todos.php`.
 
 ## Intentionally not built yet
 
-Permanent delete controls, saved views, kanban/calendar views, subtasks,
-templates, reminders, recurring tasks, collaboration, comments, attachments,
-imports/exports, and automation processors remain scheduled for their own
-future steps. Permanent deletion needs a stricter product and authorization
-design before it should exist.
+Permanent delete controls, templates, reminders, recurring tasks,
+collaboration, comments, attachments, imports/exports, and automation
+processors remain scheduled for their own future steps. Permanent deletion
+needs a stricter product and authorization design before it should exist.
 
 ## What Step 027 should build next
 

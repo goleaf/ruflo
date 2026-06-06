@@ -34,6 +34,7 @@ scope) rather than across the whole codebase.
 | Ownership scoping | `App\Models\Concerns\BelongsToUser` (`scopeOwnedBy`, `isOwnedBy`) | The only way to scope a query or check ownership. |
 | Read boundary | `App\Queries\Todos\TodoListQuery` | The only place todos are read for the UI. Always owner-scoped. |
 | Board read boundary | `App\Queries\Todos\TodoBoardQuery` | Owner-scoped Kanban columns for active, completed, and archived tasks. |
+| Checklist read boundary | `App\Queries\Todos\TodoChecklistItemListQuery` | Owner-scoped checklist rows for one already scoped parent task. |
 | Saved view read boundary | `App\Queries\Todos\SavedTodoViewListQuery` | Owner-scoped saved task-view listing and lookup. |
 | Per-action decisions | `App\Policies\TodoPolicy` | The only place "may this user do this?" is answered. |
 | Policy binding | `#[UsePolicy(...Policy::class)]` on current private models | Explicit, greppable mapping — not naming-convention magic. |
@@ -97,6 +98,11 @@ The Livewire component authorizes **before** delegating to an action:
 - Saved task views use `SavedTodoViewPolicy`: `viewAny` and `create` are
   available to authenticated users for their own workspace, while `view`,
   `update`, and `delete` are owner-only and hide foreign ids as not found.
+- Checklist rows use `TodoChecklistItemPolicy`: `viewAny` and `create` are
+  available to authenticated users, while per-row `view`, `update`, and
+  `delete` are owner-only and hide foreign ids as not found. Checklist actions
+  also authorize the parent task update before mutating, so a malformed row
+  cannot use one user's `user_id` to change another user's task.
 
 Backend authorization is the real security. Frontend hiding of buttons is UX
 only and is never sufficient.
@@ -159,6 +165,11 @@ it on:
   resolve the task through `TodoListQuery::findVisibleFor()`, validate target
   columns with `BoardStatus`, validate target projects with `OwnedActiveProject`,
   and delegate lifecycle changes to existing authorized actions.
+- **Checklists** — task detail pages resolve the parent through
+  `TodoListQuery::findVisibleFor()` and resolve each checklist row through
+  `TodoChecklistItemListQuery::findFor($user, $todo, $itemId)`. That means a
+  submitted checklist id must belong to both the current user and the current
+  task before it can be toggled, edited, moved, or deleted.
 - **Bulk actions** — never trust a submitted set of IDs. Re-scope every
   selected ID to the owner and authorize each actionable record before acting;
   a foreign ID in the Livewire payload is rejected at validation, while direct
@@ -255,3 +266,9 @@ validation, and foreign task ids resolve as not found.
 protected, month reads are owner-scoped, completed/archived/trashed/foreign
 tasks do not render in the month grid, invalid month input cannot widen scope,
 and reminder/recurrence placeholders do not expose placeholder reminder rows.
+
+`TaskChecklistTest` locks the Step 042 contract: task detail pages render only
+the current task's checklist rows, progress is owner-scoped, Livewire checklist
+actions re-resolve submitted item ids against the current task, action-layer
+validation rejects invalid direct calls, archived parent tasks keep checklists
+visible but locked, and invalid movement directions cannot mutate ordering.

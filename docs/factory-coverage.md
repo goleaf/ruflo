@@ -8,6 +8,7 @@ Step 011 covers the tracked application models:
 - `App\Models\SavedTodoView`
 - `App\Models\Tag`
 - `App\Models\Todo`
+- `App\Models\TodoChecklistItem`
 
 `App\Models\Reminder` is currently a placeholder model with only an `id` and timestamps. Its default factory creates a valid record, but named reminder states are intentionally deferred until the reminder feature steps add owned reminder fields, lifecycle columns, and processing status.
 
@@ -68,6 +69,20 @@ shared/global visibility and remain owner-scoped through `user_id`.
 - tag ownership helpers through `forTag()` and `withTags()`.
 
 The tag helpers avoid cross-user attachment by attaching only tags that share the todo owner.
+
+## Todo Checklist Item Factory
+
+`TodoChecklistItemFactory` covers:
+
+- default contained checklist rows whose generated parent task shares the same
+  owner,
+- `forTodo()` for explicit parent task attachment,
+- pending and completed states with matching `completed_at` behavior,
+- explicit `position()` ordering,
+- max-length title coverage through `longTitle()`.
+
+Checklist rows are private resources and use the same `BelongsToUser` concern as
+todos, projects, tags, and saved views.
 
 ## Verification
 

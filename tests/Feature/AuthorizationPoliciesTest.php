@@ -5,11 +5,13 @@ use App\Models\Reminder;
 use App\Models\SavedTodoView;
 use App\Models\Tag;
 use App\Models\Todo;
+use App\Models\TodoChecklistItem;
 use App\Models\User;
 use App\Policies\ProjectPolicy;
 use App\Policies\ReminderPolicy;
 use App\Policies\SavedTodoViewPolicy;
 use App\Policies\TagPolicy;
+use App\Policies\TodoChecklistItemPolicy;
 use App\Policies\TodoPolicy;
 use Illuminate\Support\Facades\Gate;
 
@@ -17,6 +19,7 @@ test('tracked private resources resolve explicit policies', function () {
     expect(Gate::getPolicyFor(Todo::class))->toBeInstanceOf(TodoPolicy::class)
         ->and(Gate::getPolicyFor(Project::class))->toBeInstanceOf(ProjectPolicy::class)
         ->and(Gate::getPolicyFor(Tag::class))->toBeInstanceOf(TagPolicy::class)
+        ->and(Gate::getPolicyFor(TodoChecklistItem::class))->toBeInstanceOf(TodoChecklistItemPolicy::class)
         ->and(Gate::getPolicyFor(SavedTodoView::class))->toBeInstanceOf(SavedTodoViewPolicy::class)
         ->and(Gate::getPolicyFor(Reminder::class))->toBeInstanceOf(ReminderPolicy::class);
 });
@@ -113,6 +116,30 @@ test('saved todo view policy covers owner preset abilities', function () {
         ->and($ownerGate->denies('forceDelete', $savedView))->toBeTrue();
 });
 
+test('todo checklist item policy covers owner contained item abilities', function () {
+    $owner = User::factory()->create();
+    $intruder = User::factory()->create();
+    $todo = Todo::factory()->for($owner)->create();
+    $item = TodoChecklistItem::factory()->forTodo($todo)->create();
+
+    $ownerGate = Gate::forUser($owner);
+    $intruderGate = Gate::forUser($intruder);
+
+    foreach (['view', 'update', 'delete'] as $ability) {
+        expect($ownerGate->allows($ability, $item))->toBeTrue();
+
+        $response = $intruderGate->inspect($ability, $item);
+
+        expect($response->denied())->toBeTrue()
+            ->and($response->status())->toBe(404);
+    }
+
+    expect($ownerGate->allows('viewAny', TodoChecklistItem::class))->toBeTrue()
+        ->and($ownerGate->allows('create', TodoChecklistItem::class))->toBeTrue()
+        ->and($ownerGate->denies('restore', $item))->toBeTrue()
+        ->and($ownerGate->denies('forceDelete', $item))->toBeTrue();
+});
+
 test('reminder placeholder policy denies every ability until ownership exists', function () {
     $user = User::factory()->create();
     $reminder = Reminder::factory()->create();
@@ -154,4 +181,13 @@ test('todo Livewire actions use policy abilities before mutation', function () {
         ->toContain("\$this->authorize('create', SavedTodoView::class);")
         ->toContain("\$this->authorize('view', \$savedView);")
         ->toContain("\$this->authorize('delete', \$savedView);");
+});
+
+test('task detail checklist Livewire actions use policy abilities before mutation', function () {
+    $source = file_get_contents(app_path('Livewire/Todos/Show.php'));
+
+    expect($source)
+        ->toContain("\$this->authorize('update', \$this->todo);")
+        ->toContain("\$this->authorize('update', \$item);")
+        ->toContain("\$this->authorize('delete', \$item);");
 });

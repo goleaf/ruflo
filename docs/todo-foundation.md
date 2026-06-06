@@ -185,6 +185,11 @@ LIKE-wildcard escaping, URL-backed search pagination, active search chips,
 reset behavior, translated empty states, and invalid project/tag query
 parameters resolving to empty results instead of widening a search.
 
+Step 036 adds `TaskFilterTest`, which locks composed project/tag/priority/due
+filters, filter chips, filter pagination, invalid priority/due/lifecycle query
+state returning empty results, and reset behavior for filters, selection, and
+pagination.
+
 ## 2026-06-06 Recheck
 
 The Step 001 recheck confirmed the foundation still matches the current master-plan rules after Steps 002-016:

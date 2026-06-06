@@ -544,6 +544,10 @@ class Index extends Component
 
     public function emptyStateTitle(): string
     {
+        if ($this->hasInvalidScalarFilter()) {
+            return __('todos.empty.filtered.title');
+        }
+
         if ($this->normalizedSearch() !== '') {
             return __('todos.empty.search.title');
         }
@@ -619,16 +623,18 @@ class Index extends Component
             ];
         }
 
-        if (Priority::tryFrom($this->priorityFilter) instanceof Priority) {
+        if ($this->priorityFilter !== '') {
+            $priority = Priority::tryFrom($this->priorityFilter);
+
             $chips[] = [
                 'key' => 'priority',
-                'label' => (string) __('todos.filters.priority_chip', ['priority' => Priority::from($this->priorityFilter)->label()]),
-                'color' => Priority::from($this->priorityFilter)->color(),
+                'label' => (string) __('todos.filters.priority_chip', ['priority' => $priority?->label() ?? __('todos.filters.unavailable_filter')]),
+                'color' => $priority?->color() ?? 'zinc',
                 'icon' => 'flag',
             ];
         }
 
-        if ($this->tab === TodoStatus::Active->value && in_array($this->due, TodoFilters::dueOptions(), true)) {
+        if ($this->tab === TodoStatus::Active->value && $this->due !== '') {
             $chips[] = [
                 'key' => 'due',
                 'label' => (string) __('todos.filters.due_chip', ['due' => $this->dueFilterLabel($this->due)]),
@@ -693,6 +699,23 @@ class Index extends Component
         };
     }
 
+    private function hasInvalidScalarFilter(): bool
+    {
+        $status = TodoStatus::tryFrom($this->tab);
+
+        if ($this->tab !== '' && ! ($status instanceof TodoStatus)) {
+            return true;
+        }
+
+        if ($this->priorityFilter !== '' && ! (Priority::tryFrom($this->priorityFilter) instanceof Priority)) {
+            return true;
+        }
+
+        return ($status ?? TodoStatus::Active) === TodoStatus::Active
+            && $this->due !== ''
+            && ! in_array($this->due, TodoFilters::dueOptions(), true);
+    }
+
     /**
      * Build a sanitized filter object from the (untrusted) URL-bound state.
      */
@@ -700,6 +723,10 @@ class Index extends Component
     {
         $status = TodoStatus::tryFrom($this->tab) ?? TodoStatus::Active;
         $search = $this->normalizedSearch();
+        $priority = Priority::tryFrom($this->priorityFilter);
+        $due = $status === TodoStatus::Active && in_array($this->due, TodoFilters::dueOptions(), true)
+            ? $this->due
+            : null;
 
         return new TodoFilters(
             status: $status,
@@ -707,10 +734,11 @@ class Index extends Component
             projectId: $this->projectFilterId(),
             withoutProject: $this->project === 'none',
             tagId: $this->tagFilterId(),
-            priority: Priority::tryFrom($this->priorityFilter),
-            due: $status === TodoStatus::Active && in_array($this->due, TodoFilters::dueOptions(), true) ? $this->due : null,
+            priority: $priority,
+            due: $due,
             sort: in_array($this->sort, TodoFilters::sortOptions(), true) ? $this->sort : 'created',
             direction: $this->direction === 'asc' ? 'asc' : 'desc',
+            hasInvalidFilter: $this->hasInvalidScalarFilter(),
         );
     }
 

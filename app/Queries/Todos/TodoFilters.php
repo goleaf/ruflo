@@ -25,6 +25,7 @@ final readonly class TodoFilters
         public ?string $due = null,
         public string $sort = 'created',
         public string $direction = 'desc',
+        public bool $hasInvalidFilter = false,
     ) {
         //
     }

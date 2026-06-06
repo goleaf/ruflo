@@ -56,3 +56,4 @@ Record changes after every step.
 - Completed Step 033 by adding a protected Overdue Livewire page, owner-scoped overdue query/action boundaries, a dashboard shortcut, translated Overdue copy, and overdue route/privacy tests.
 - Completed Step 034 by adding a protected Upcoming Livewire page, owner-scoped future-due query/action boundaries, a dashboard shortcut, translated Upcoming copy, and upcoming route/privacy tests.
 - Completed Step 035 by hardening private title search with translated active filter chips, pagination/reset coverage, LIKE-wildcard privacy tests, and invalid project/tag query parameters that resolve to empty results instead of widening search.
+- Completed Step 036 by adding invalid-filter state to the task filter value object, returning empty results for invalid lifecycle/priority/due filter state, preserving composed private filter pagination, and adding filter regression tests.

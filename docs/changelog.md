@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-06-06 - Step 036 Filters
+
+### Implemented
+
+- Added `TodoFilters::hasInvalidFilter` so the query layer can return an empty result for invalid filter state.
+- Hardened invalid lifecycle, priority, and active-tab due-bucket query values so they do not silently widen a filtered task list.
+- Kept valid project, tag, priority, due, search, sorting, and pagination filters composable through the existing Livewire/Flux filter panel and owner-scoped query object.
+
+### Testing
+
+- Added `TaskFilterTest` for composed private filters, filter chips, filter pagination, invalid scalar filters, invalid lifecycle state, and reset behavior.
+- Rechecked search, organization, ownership scoping, due-date, private-view, dashboard, route-protection, and architecture coverage.
+
+### Documentation
+
+- Updated `docs/task-organization.md` and `docs/todo-foundation.md` with the Step 036 filter contract.
+
 ## 2026-06-06 - Step 035 Search
 
 ### Implemented

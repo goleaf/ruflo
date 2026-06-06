@@ -175,6 +175,7 @@ return [
             'title' => 'No matching tasks.',
         ],
         'filtered' => [
+            'title' => 'No matching tasks.',
             'description' => 'Clear search or reset filters to widen the list.',
         ],
         'due' => [

@@ -489,3 +489,19 @@ Record test/build/check results here.
 | 2026-06-06 | `git diff --check` | Passed | No whitespace errors after Step 035 changes. |
 | 2026-06-06 | `mcp__laravel_boost.browser_logs entries=20` | Passed | Only an old Vite reconnect message from 2026-06-05 was present; no current search UI browser/runtime error was found. |
 | 2026-06-06 | `php artisan test --compact` | Passed | Full suite passed with 324 tests and 1449 assertions after Step 035 search changes. |
+| 2026-06-06 | `mcp__laravel_boost.application_info` | Passed | Confirmed Step 036 runtime context: Laravel 13.14.0, Livewire 4.3.1, Flux 2.14.1, Tailwind 4.3.0, Pest 4.7.2, PHP CLI 8.4, SQLite. |
+| 2026-06-06 | `mcp__laravel_boost.search_docs` | Passed | Reviewed Livewire URL query parameters, computed properties, Flux select/badge components, Laravel query filters, and Pest Livewire query-param testing before Step 036 changes. |
+| 2026-06-06 | `mcp__laravel_boost.database_schema todo/projects/tags` | Passed | Reconfirmed todos, tag_todo, projects, and tags ownership/filter columns and indexes before hardening attribute filters. |
+| 2026-06-06 | `php artisan make:test --pest TaskFilterTest --no-interaction` | Passed | Created the Step 036 filter regression test. |
+| 2026-06-06 | `php artisan test --compact tests/Feature/TaskFilterTest.php` | Passed | 5 tests, 35 assertions for composed project/tag/priority/due filters, filter chips, filter pagination, invalid scalar filters, invalid lifecycle state, and reset behavior. |
+| 2026-06-06 | `vendor/bin/pint --dirty --format agent` | Passed | PHP style passed after Step 036 filter value-object, query, Livewire, translation, test, and documentation updates. |
+| 2026-06-06 | `php artisan test --compact tests/Feature/TaskFilterTest.php` | Passed | 5 tests, 35 assertions after Pint formatting. |
+| 2026-06-06 | `php artisan test --compact tests/Feature/TaskFilterTest.php tests/Feature/TaskSearchTest.php tests/Feature/TodoOrganizationTest.php tests/Feature/OwnershipQueryScopingTest.php tests/Feature/TaskDueDateTest.php tests/Feature/TaskPrivateViewsTest.php tests/Feature/DashboardTest.php tests/Feature/GuestRouteProtectionTest.php tests/Feature/TodoArchitectureTest.php` | Passed | 95 tests, 343 assertions across filters, search, organization, ownership scoping, due dates, private views, dashboard, route protection, and architecture guards. |
+| 2026-06-06 | `rg Volt scan` | Passed | No Volt usage found in app, resources, routes, config, tests, Composer, or package files after Step 036. |
+| 2026-06-06 | `rg hardcoded filter copy scan` | Passed | No hardcoded visible filter labels or invalid-filter empty-state copy remain outside English language files. |
+| 2026-06-06 | `rg invalid-filter source guard scan` | Passed | Confirmed `hasInvalidFilter`, `hasInvalidScalarFilter`, `projectFilterId`, `tagFilterId`, and query-level invalid-filter rejection are in the expected source locations. |
+| 2026-06-06 | `rg compressed-progress scan` | Passed | Mutable root progress/docs files contain no compressed grouped-step placeholder lines after Step 036. |
+| 2026-06-06 | `php artisan route:list --no-interaction -vv --path=todos` | Passed | Reconfirmed todo routes remain behind auth and verified middleware after Step 036. |
+| 2026-06-06 | `git diff --check` | Passed | No whitespace errors after Step 036 changes. |
+| 2026-06-06 | `mcp__laravel_boost.browser_logs entries=20` | Passed | Only an old Vite reconnect message from 2026-06-05 was present; no current filter UI browser/runtime error was found. |
+| 2026-06-06 | `php artisan test --compact` | Passed | Full suite passed with 329 tests and 1484 assertions after Step 036 filter changes. |

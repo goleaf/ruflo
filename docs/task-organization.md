@@ -119,6 +119,11 @@ the (sanitized) filter object.
   another user's id or falling back to an unfiltered list. Step 035 also treats
   non-numeric project/tag URL values as invalid filters so they reach that same
   empty-result path instead of being silently ignored.
+  Step 036 extends that empty-result behavior to invalid lifecycle, priority,
+  and active-tab due-bucket values. Valid filters compose across project, tag,
+  priority, due bucket, search, sorting, and pagination; invalid filter state is
+  carried by `TodoFilters::hasInvalidFilter` so the query object, not the view,
+  decides the result is empty.
 - **Sorting** — `created`, `updated`, `due` (nulls last), `priority` (by weight
   via a bounded `CASE`), `project` (by owned project name, ungrouped tasks last),
   or `title`, each asc/desc. The sort key is validated against

@@ -62,6 +62,13 @@ final class TodoListQuery
 
         $this->applyStatus($query, $filters->status);
 
+        if ($filters->hasInvalidFilter) {
+            $this->rejectInvalidFilter($query);
+            $this->applySort($query, $filters->sort, $filters->direction);
+
+            return $query;
+        }
+
         if ($filters->search !== null && $filters->search !== '') {
             $query->matching($filters->search);
         }

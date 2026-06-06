@@ -2,19 +2,19 @@
 
 ## Current status
 
-Steps 001-035 are complete. The requested recheck from Step 001 has been completed through Step 035. The tracker is expanded to one ledger line per step from 001 through 100 so later work cannot be hidden behind a range.
+Steps 001-036 are complete. The requested recheck from Step 001 has been completed through Step 036. The tracker is expanded to one ledger line per step from 001 through 100 so later work cannot be hidden behind a range.
 
 ## Current step
 
-Step 036 — Filters
+Step 037 — Sorting
 
 ## Last completed action
 
-Completed Step 035 by hardening private title search with translated active filter chips, pagination/reset coverage, LIKE-wildcard privacy tests, and invalid project/tag query parameters that resolve to empty results instead of widening search.
+Completed Step 036 by adding invalid-filter state to the task filter value object, returning empty results for invalid lifecycle/priority/due filter state, preserving composed private filter pagination, and adding filter regression tests.
 
 ## Next action
 
-Begin `steps/step-036-filters.md`, then implement the next not-yet-completed plan step without grouping it with later work.
+Begin `steps/step-037-sorting.md`, then implement the next not-yet-completed plan step without grouping it with later work.
 
 ## Step ledger
 
@@ -55,7 +55,7 @@ Begin `steps/step-036-filters.md`, then implement the next not-yet-completed pla
 | 033 — Overdue view | Complete | Added protected class-based `App\Livewire\Todos\Overdue` at `todos.overdue`, added `TodoListQuery::overdueFor()` and `findOverdueFor()`, rendered a focused Flux Overdue list with owner-scoped project/tag badges and complete action, and linked the dashboard to Overdue. | Boost app info/docs/schema checks, overdue inventory scan, focused `OverdueViewTest`, and adjacent overdue/today/date/list/private-view/project-detail/dashboard/domain/route-protection/architecture suite passed; final scans and full-suite checks recorded in test report. | `docs/task-organization.md`, `docs/domain-readiness.md`, `docs/todo-foundation.md`, `docs/changelog.md`, root changelog, decisions, risks, and test report updated. | Overdue action scope risk logged and mitigated with `findOverdueFor()`. | 4a62851 |
 | 034 — Upcoming view | Complete | Added protected class-based `App\Livewire\Todos\Upcoming` at `todos.upcoming`, added `TodoListQuery::upcomingFor()` and `findUpcomingFor()`, rendered a focused Flux Upcoming list with owner-scoped project/tag badges and complete action, and linked the dashboard to Upcoming. | Boost app info/docs/schema checks, focused `UpcomingViewTest`, adjacent upcoming/overdue/today/date/list/private-view/project-detail/dashboard/domain/route-protection/architecture suite, static scans, browser logs, and full-suite checks passed; final evidence recorded in test report. | `docs/task-organization.md`, `docs/domain-readiness.md`, `docs/todo-foundation.md`, `docs/changelog.md`, root changelog, decisions, risks, checklist, and test report updated. | Upcoming action scope risk logged and mitigated with `findUpcomingFor()`. | 114e7e0 |
 | 035 — Search | Complete | Added translated Flux active filter chips for search and existing filters, kept private title search local through owner-scoped bound `LIKE ... ESCAPE` queries, and hardened non-numeric project/tag URL filters so searched lists cannot be widened by unexpected query params. | Boost app info/docs/schema checks, focused `TaskSearchTest`, adjacent search/organization/ownership/private-view/due-date/dashboard/route-protection/architecture suite, static scans, browser logs, and full-suite checks passed; final evidence recorded in test report. | `docs/task-organization.md`, `docs/todo-foundation.md`, `docs/changelog.md`, root changelog, decisions, risks, checklist, and test report updated. | Non-numeric project/tag query-param widening risk logged and mitigated. | 0f42e4e |
-| 036 — Filters | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 036 — Filters | Complete | Added `TodoFilters::hasInvalidFilter`, made `TodoListQuery` resolve invalid scalar filter state to an empty owner-scoped result, hardened invalid lifecycle/priority/due URL state, and preserved composed project/tag/priority/due filter chips, pagination, and reset behavior. | Boost app info/docs/schema checks, focused `TaskFilterTest`, adjacent filter/search/organization/ownership/due-date/private-view/dashboard/route-protection/architecture suite, static scans, browser logs, and full-suite checks passed; final evidence recorded in test report. | `docs/task-organization.md`, `docs/todo-foundation.md`, `docs/changelog.md`, root changelog, decisions, risks, checklist, and test report updated. | Invalid lifecycle/priority/due filter widening risk logged and mitigated. | Pending |
 | 037 — Sorting | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
 | 038 — Saved views | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
 | 039 — Bulk selection and actions | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |

@@ -1,5 +1,24 @@
 # Changelog
 
+## 2026-06-06 - Step 023 Task editing
+
+### Implemented
+
+- Trimmed edited task titles at the `UpdateTodo` write boundary, matching the creation action.
+- Kept edit mutations limited to editable details: title, priority, due date, project, and tags.
+- Preserved lifecycle separation so editing cannot complete, archive, restore, or delete a task.
+- Added edit-modal validation error placement beside priority, due date, project, and tampered tag fields.
+- Updated `TodoUpdated` documentation for future activity-history readiness.
+
+### Testing
+
+- Added `TaskEditingTest` for full detail edits, action-level trimming, organization re-scoping, foreign edit denial, invalid edit preservation, archived-task rejection, and modal error placement.
+- Rechecked adjacent lifecycle, organization, ownership, query-scoping, creation, private-view, project, tag, and architecture suites.
+
+### Documentation
+
+- Updated `docs/task-lifecycle.md` and `docs/task-organization.md` with the Step 023 editing contract.
+
 ## 2026-06-06 - Step 022 Task list and private task views
 
 ### Implemented

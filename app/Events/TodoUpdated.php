@@ -7,8 +7,8 @@ use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
 /**
- * A task's editable details (currently its title) were changed. Lifecycle
- * transitions have their own events and do not dispatch this.
+ * A task's editable details were changed. Lifecycle transitions have their own
+ * events and do not dispatch this.
  */
 final class TodoUpdated
 {

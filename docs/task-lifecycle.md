@@ -51,8 +51,9 @@ Explicit rules:
   data layer; `forceDelete` is disabled by policy, and a trash-restore UI is
   intentionally deferred.
 - **Edit details** — `UpdateTodo`. Changes editable details such as title,
-  priority, due date, project, and tags; never alters completion, archive, or
-  deletion state.
+  priority, due date, project, and tags; trims the title at the action write
+  boundary; re-scopes project and tag ids to the owner; never alters
+  completion, archive, or deletion state.
 
 ## Rejected transitions (safe failures)
 
@@ -103,7 +104,8 @@ reminders step.
 - Title: `required|string|max:120`, normalized (trimmed) before persistence.
   `TodoForm` validates the Livewire input, `TodoData::fromArray()` trims the
   normal form path, and `CreateTodo` trims again at the write boundary so a
-  manually constructed DTO cannot persist wrapper whitespace.
+  manually constructed DTO cannot persist wrapper whitespace. Step 023 applies
+  the same action-level trim to `UpdateTodo`.
 - Tab/filter input is validated against `TodoStatus::tabValues()`; an unknown
   tab falls back to Active and never widens the query scope.
 

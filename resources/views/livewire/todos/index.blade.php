@@ -309,21 +309,30 @@
             </div>
 
             <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                <flux:select wire:model="editForm.priority" :label="__('todos.fields.priority')">
-                    @foreach ($this->priorityOptions() as $priority)
-                        <flux:select.option value="{{ $priority->value }}">{{ $priority->label() }}</flux:select.option>
-                    @endforeach
-                </flux:select>
+                <div>
+                    <flux:select wire:model="editForm.priority" :label="__('todos.fields.priority')">
+                        @foreach ($this->priorityOptions() as $priority)
+                            <flux:select.option value="{{ $priority->value }}">{{ $priority->label() }}</flux:select.option>
+                        @endforeach
+                    </flux:select>
+                    <flux:error name="editForm.priority" />
+                </div>
 
-                <flux:input type="date" wire:model="editForm.due_date" :label="__('todos.fields.due_date')" />
+                <div>
+                    <flux:input type="date" wire:model="editForm.due_date" :label="__('todos.fields.due_date')" />
+                    <flux:error name="editForm.due_date" />
+                </div>
             </div>
 
-            <flux:select wire:model="editForm.project_id" :label="__('todos.fields.project')">
-                <flux:select.option value="">{{ __('todos.fields.no_project') }}</flux:select.option>
-                @foreach ($this->projects as $project)
-                    <flux:select.option value="{{ $project->id }}">{{ $project->name }}</flux:select.option>
-                @endforeach
-            </flux:select>
+            <div>
+                <flux:select wire:model="editForm.project_id" :label="__('todos.fields.project')">
+                    <flux:select.option value="">{{ __('todos.fields.no_project') }}</flux:select.option>
+                    @foreach ($this->projects as $project)
+                        <flux:select.option value="{{ $project->id }}">{{ $project->name }}</flux:select.option>
+                    @endforeach
+                </flux:select>
+                <flux:error name="editForm.project_id" />
+            </div>
 
             @if ($this->tags->isNotEmpty())
                 <div class="flex flex-wrap items-center gap-2">
@@ -334,6 +343,9 @@
                             {{ $tagOption->name }}
                         </label>
                     @endforeach
+                    @error('editForm.tag_ids.*')
+                        <flux:text class="basis-full text-sm text-red-600 dark:text-red-400">{{ $message }}</flux:text>
+                    @enderror
                 </div>
             @endif
 

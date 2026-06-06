@@ -26,7 +26,7 @@ final class UpdateTodo
         }
 
         $todo->fill([
-            'title' => $data->title,
+            'title' => trim($data->title),
             'priority' => $data->priority,
             'due_date' => $data->dueDate,
         ]);

@@ -112,6 +112,9 @@ and `BulkDeleteTodos` each take the user plus a list of selected ids and
 - The create form renders validation feedback beside the Flux title, priority,
   due date, project, and tag controls so failed input stays visible and
   recoverable.
+- The edit modal uses the same validation boundary and renders errors beside
+  every editable field; invalid priority, due date, project, or tag input keeps
+  the modal open and leaves the task unchanged.
 - Per-row badges: priority (hidden when Normal to reduce noise), due date
   (red overdue / amber today / zinc upcoming), project, and tags.
 - Task titles link to `todos.show`, a private detail page that reuses the same

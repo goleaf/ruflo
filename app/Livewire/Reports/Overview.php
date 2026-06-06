@@ -44,10 +44,10 @@ class Overview extends Component
      *     projects: array{active: int, with_active_tasks: int, completed_tasks_this_week: int, overdue_tasks: int, no_project_active: int, top: list<array{id: int, name: string, color: string, active: int, completed: int, overdue: int, completion_percent: int}>},
      *     time: array{today_seconds: int, week_seconds: int, previous_week_seconds: int, delta_seconds: int, active_timers: int},
      *     charts: array{
-     *         productivity: list<array{key: string, label: string, value: int, percent: int, summary: string}>,
-     *         overdue: list<array{key: string, label: string, value: int, percent: int, summary: string}>,
-     *         habits: list<array{key: string, label: string, value: int, percent: int, summary: string}>,
-     *         time: list<array{key: string, label: string, value: int, percent: int, summary: string}>
+     *         productivity: list<array{key: string, label: string, value: int, display_value: string, percent: int, summary: string}>,
+     *         overdue: list<array{key: string, label: string, value: int, display_value: string, percent: int, summary: string}>,
+     *         habits: list<array{key: string, label: string, value: int, display_value: string, percent: int, summary: string}>,
+     *         time: list<array{key: string, label: string, value: int, display_value: string, percent: int, summary: string}>
      *     }
      * }
      */
@@ -157,7 +157,7 @@ class Overview extends Component
     }
 
     /**
-     * @return list<array{key: string, label: string, description: string, aria: string, rows: list<array{key: string, label: string, value: int, percent: int, summary: string}>}>
+     * @return list<array{key: string, label: string, description: string, aria: string, rows: list<array{key: string, label: string, value: int, display_value: string, percent: int, summary: string}>}>
      */
     #[Computed]
     public function chartSections(): array

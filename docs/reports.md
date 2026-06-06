@@ -1,5 +1,20 @@
 # Reports
 
+## Step 065 Charts Without Paid Services
+
+Reports trend charts now render through the shared
+`resources/views/components/ui/local-bar-chart.blade.php` component. The
+component uses local Blade, Flux text/heading elements, Tailwind CSS utility
+classes, inline width percentages from owner-scoped query data, and
+screen-reader-only row summaries. It does not load a chart JavaScript package,
+CDN asset, hosted charting service, paid analytics service, or Flux Pro chart
+runtime.
+
+Each reports chart keeps `role="img"`, an owner-specific translated ARIA label,
+`data-chart-driver="local-css"`, and `data-chart-library="none"` so tests and
+future audits can distinguish the local fallback from external charting
+libraries.
+
 ## Step 064 Reports Overview
 
 The app now includes a protected reports overview at `/reports`. It summarizes

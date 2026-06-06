@@ -130,34 +130,16 @@
     @if ($showTrends)
         <div class="grid grid-cols-1 gap-4 xl:grid-cols-2" data-test="reports-trend-grid">
             @foreach ($this->chartSections as $chart)
-                <flux:card wire:key="reports-chart-{{ $chart['key'] }}" class="space-y-4" data-test="reports-chart-{{ $chart['key'] }}" role="img" aria-label="{{ $chart['aria'] }}">
-                    <div class="space-y-1">
-                        <flux:subheading>{{ __('reports.charts.label') }}</flux:subheading>
-                        <flux:heading size="lg">{{ $chart['label'] }}</flux:heading>
-                        <flux:text size="sm">{{ $chart['description'] }}</flux:text>
-                    </div>
-
-                    <div class="space-y-3">
-                        @foreach ($chart['rows'] as $bar)
-                            <div wire:key="reports-chart-{{ $chart['key'] }}-{{ $bar['key'] }}" class="space-y-1">
-                                <div class="flex flex-wrap items-center justify-between gap-2">
-                                    <span class="text-sm font-medium text-zinc-700 dark:text-zinc-200">{{ $bar['label'] }}</span>
-                                    <span class="text-sm tabular-nums text-zinc-500 dark:text-zinc-400">
-                                        @if ($chart['key'] === 'time')
-                                            {{ __('reports.values.minutes', ['minutes' => $bar['value']]) }}
-                                        @else
-                                            {{ $bar['value'] }}
-                                        @endif
-                                    </span>
-                                </div>
-                                <div class="h-2 overflow-hidden rounded-full bg-zinc-100 dark:bg-white/10">
-                                    <span class="block h-full rounded-full bg-blue-600 dark:bg-blue-400" style="width: {{ $bar['percent'] }}%"></span>
-                                </div>
-                                <span class="sr-only">{{ $bar['summary'] }}</span>
-                            </div>
-                        @endforeach
-                    </div>
-                </flux:card>
+                <x-ui.local-bar-chart
+                    wire:key="reports-chart-{{ $chart['key'] }}"
+                    :accessible-label="$chart['aria']"
+                    :description="$chart['description']"
+                    :eyebrow="__('reports.charts.label')"
+                    :heading="$chart['label']"
+                    :items="$chart['rows']"
+                    item-key-prefix="reports-chart-{{ $chart['key'] }}"
+                    test="reports-chart-{{ $chart['key'] }}"
+                />
             @endforeach
         </div>
     @endif

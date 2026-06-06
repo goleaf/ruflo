@@ -1,5 +1,27 @@
 # Changelog
 
+## 2026-06-06 - Step 065 Charts without paid services
+
+### Added
+
+- Added a reusable `x-ui.local-bar-chart` Blade component for local,
+  accessible bar charts on dashboard and reports screens.
+- Added local chart driver markers and screen-reader row summaries so future
+  audits can prove charts do not depend on hosted or paid charting services.
+
+### Tests
+
+- Added `LocalChartRenderingTest` coverage for dashboard and reports chart
+  rendering, local CSS driver markers, translated summaries, private data
+  boundaries, and absence of Flux chart/CDN output.
+
+### Restricted Hosting
+
+- Charts render during normal authenticated web requests through Blade and
+  Tailwind CSS. They require no cron, queue worker, supervisor, terminal action,
+  Artisan command, CDN, hosted chart library, paid analytics service, or
+  background job.
+
 ## 2026-06-06 - Step 064 Reports overview
 
 ### Added

@@ -8,6 +8,7 @@ use App\Queries\Dashboard\DailyDashboardQuery;
 use App\Queries\Dashboard\DailySummaryQuery;
 use App\Queries\Dashboard\DashboardFoundationQuery;
 use App\Queries\Dashboard\ProjectProgressDashboardQuery;
+use App\Support\Charts\BrowserBarChart;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
@@ -413,24 +414,19 @@ class Index extends Component
     }
 
     /**
-     * @return list<array{key: string, label: string, value: int, percent: int, summary: string}>
+     * @return list<array{key: string, label: string, value: int, display_value: string, percent: int, summary: string}>
      */
     #[Computed]
     public function foundationChart(): array
     {
         $widgets = $this->foundationWidgets;
-        $max = max(1, ...array_map(fn (array $widget): int => $widget['chart_value'], $widgets));
 
-        return array_map(fn (array $widget): array => [
+        return BrowserBarChart::rows(array_map(fn (array $widget): array => [
             'key' => $widget['key'],
             'label' => $widget['label'],
             'value' => $widget['chart_value'],
-            'percent' => (int) max(4, round(($widget['chart_value'] / $max) * 100)),
-            'summary' => __('dashboard.foundation.chart.item_summary', [
-                'label' => $widget['label'],
-                'value' => $widget['chart_value'],
-            ]),
-        ], $widgets);
+            'display_value' => (string) $widget['chart_value'],
+        ], $widgets), 'dashboard.foundation.chart.item_summary');
     }
 
     public function formatDailySummarySeconds(int $seconds): string

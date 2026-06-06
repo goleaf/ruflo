@@ -10,6 +10,7 @@ use App\Models\Project;
 use App\Models\TimeEntry;
 use App\Models\Todo;
 use App\Models\User;
+use App\Support\Charts\BrowserBarChart;
 use Illuminate\Database\Eloquent\Builder;
 
 final class ReportsOverviewQuery
@@ -25,10 +26,10 @@ final class ReportsOverviewQuery
      *     projects: array{active: int, with_active_tasks: int, completed_tasks_this_week: int, overdue_tasks: int, no_project_active: int, top: list<array{id: int, name: string, color: string, active: int, completed: int, overdue: int, completion_percent: int}>},
      *     time: array{today_seconds: int, week_seconds: int, previous_week_seconds: int, delta_seconds: int, active_timers: int},
      *     charts: array{
-     *         productivity: list<array{key: string, label: string, value: int, percent: int, summary: string}>,
-     *         overdue: list<array{key: string, label: string, value: int, percent: int, summary: string}>,
-     *         habits: list<array{key: string, label: string, value: int, percent: int, summary: string}>,
-     *         time: list<array{key: string, label: string, value: int, percent: int, summary: string}>
+     *         productivity: list<array{key: string, label: string, value: int, display_value: string, percent: int, summary: string}>,
+     *         overdue: list<array{key: string, label: string, value: int, display_value: string, percent: int, summary: string}>,
+     *         habits: list<array{key: string, label: string, value: int, display_value: string, percent: int, summary: string}>,
+     *         time: list<array{key: string, label: string, value: int, display_value: string, percent: int, summary: string}>
      *     }
      * }
      */
@@ -74,9 +75,9 @@ final class ReportsOverviewQuery
                     ['key' => 'distinct', 'label' => __('reports.charts.habits.distinct'), 'value' => $habits['weekly_distinct_habits']],
                 ], 'reports.charts.item_summary'),
                 'time' => $this->chart([
-                    ['key' => 'today', 'label' => __('reports.charts.time.today'), 'value' => intdiv($time['today_seconds'], 60)],
-                    ['key' => 'this_week', 'label' => __('reports.charts.time.this_week'), 'value' => intdiv($time['week_seconds'], 60)],
-                    ['key' => 'previous_week', 'label' => __('reports.charts.time.previous_week'), 'value' => intdiv($time['previous_week_seconds'], 60)],
+                    ['key' => 'today', 'label' => __('reports.charts.time.today'), 'value' => intdiv($time['today_seconds'], 60), 'display_value' => __('reports.values.minutes', ['minutes' => intdiv($time['today_seconds'], 60)])],
+                    ['key' => 'this_week', 'label' => __('reports.charts.time.this_week'), 'value' => intdiv($time['week_seconds'], 60), 'display_value' => __('reports.values.minutes', ['minutes' => intdiv($time['week_seconds'], 60)])],
+                    ['key' => 'previous_week', 'label' => __('reports.charts.time.previous_week'), 'value' => intdiv($time['previous_week_seconds'], 60), 'display_value' => __('reports.values.minutes', ['minutes' => intdiv($time['previous_week_seconds'], 60)])],
                 ], 'reports.charts.minutes_summary'),
             ],
         ];
@@ -315,22 +316,11 @@ final class ReportsOverviewQuery
     }
 
     /**
-     * @param  list<array{key: string, label: string, value: int}>  $items
-     * @return list<array{key: string, label: string, value: int, percent: int, summary: string}>
+     * @param  list<array{key: string, label: string, value: int, display_value?: string}>  $items
+     * @return list<array{key: string, label: string, value: int, display_value: string, percent: int, summary: string}>
      */
     private function chart(array $items, string $summaryKey): array
     {
-        $max = max(1, ...array_map(fn (array $item): int => $item['value'], $items));
-
-        return array_map(fn (array $item): array => [
-            'key' => $item['key'],
-            'label' => $item['label'],
-            'value' => $item['value'],
-            'percent' => (int) max(4, round(($item['value'] / $max) * 100)),
-            'summary' => __($summaryKey, [
-                'label' => $item['label'],
-                'value' => $item['value'],
-            ]),
-        ], $items);
+        return BrowserBarChart::rows($items, $summaryKey);
     }
 }

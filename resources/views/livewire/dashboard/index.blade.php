@@ -232,27 +232,14 @@
         @endif
 
         @if ($this->hasVisibleFoundationWidgets)
-            <div class="space-y-4 rounded-lg border border-zinc-200 p-4 dark:border-white/10" data-test="dashboard-foundation-chart" role="img" aria-label="{{ $this->foundationChartAria }}">
-                <div class="space-y-1">
-                    <flux:subheading>{{ __('dashboard.foundation.chart.label') }}</flux:subheading>
-                    <flux:text size="sm">{{ __('dashboard.foundation.chart.description') }}</flux:text>
-                </div>
-
-                <div class="space-y-3">
-                    @foreach ($this->foundationChart as $bar)
-                        <div wire:key="dashboard-foundation-chart-{{ $bar['key'] }}" class="space-y-1">
-                            <div class="flex flex-wrap items-center justify-between gap-2">
-                                <span class="text-sm font-medium text-zinc-700 dark:text-zinc-200">{{ $bar['label'] }}</span>
-                                <span class="text-sm tabular-nums text-zinc-500 dark:text-zinc-400">{{ $bar['value'] }}</span>
-                            </div>
-                            <div class="h-2 overflow-hidden rounded-full bg-zinc-100 dark:bg-white/10">
-                                <span class="block h-full rounded-full bg-blue-600 dark:bg-blue-400" style="width: {{ $bar['percent'] }}%"></span>
-                            </div>
-                            <span class="sr-only">{{ $bar['summary'] }}</span>
-                        </div>
-                    @endforeach
-                </div>
-            </div>
+            <x-ui.local-bar-chart
+                :accessible-label="$this->foundationChartAria"
+                :description="__('dashboard.foundation.chart.description')"
+                :eyebrow="__('dashboard.foundation.chart.label')"
+                :items="$this->foundationChart"
+                item-key-prefix="dashboard-foundation-chart"
+                test="dashboard-foundation-chart"
+            />
         @endif
 
         <flux:callout icon="lock-closed" variant="secondary" data-test="dashboard-foundation-privacy-note">

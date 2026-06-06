@@ -139,3 +139,17 @@ requires no cron, queue worker, supervisor, terminal access, Artisan command,
 paid charting service, hosted API, email provider, or background job. No model,
 migration, factory, or seeder was added because existing project and task
 models already contain the state needed for this browser-triggered summary.
+
+## Step 065 Charts Without Paid Services
+
+Dashboard foundation charts now use the shared local bar-chart component at
+`resources/views/components/ui/local-bar-chart.blade.php`. The chart is rendered
+with local Blade, Flux heading/text elements, Tailwind CSS utility classes, and
+screen-reader-only summaries from the existing owner-scoped dashboard query. It
+adds no external chart package, CDN script, hosted charting service, paid
+analytics service, queue, cron job, worker, terminal command, or Artisan runtime
+dependency.
+
+The chart root exposes `data-chart-driver="local-css"` and
+`data-chart-library="none"` so tests can verify the restricted-hosting fallback
+remains active.

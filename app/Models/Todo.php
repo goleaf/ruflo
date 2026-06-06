@@ -25,7 +25,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * excluded — it is assigned through actions that verify the project belongs to
  * the same user.
  */
-#[Fillable(['title', 'is_completed', 'priority', 'due_date'])]
+#[Fillable(['title', 'priority', 'due_date'])]
 #[UsePolicy(TodoPolicy::class)]
 class Todo extends Model
 {

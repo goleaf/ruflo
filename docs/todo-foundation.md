@@ -56,6 +56,13 @@ Current Livewire Todo creation uses `App\Livewire\Forms\Todos\TodoForm`. Future 
 
 Validation must cover create, update, completion, reopening, due dates, filtering, sorting, bulk actions, archiving, restoring, deleting, and collaboration actions when those features are introduced. Validation should normalize input before it reaches action classes.
 
+Step 021 hardens the core creation boundary: `CreateTodo` trims the task title
+again before persistence, assigns ownership through `$user->todos()`, sets only
+editable task details, re-scopes project and tag ids to the owner, and emits
+`TodoCreated`. `Todo` mass assignment excludes ownership, project, completion,
+archive, and deletion state so task creation cannot silently become a lifecycle
+transition.
+
 ## Data Lifecycle
 
 Deleting user work should be safe by default.
@@ -118,6 +125,11 @@ Every Todo feature must include tests for:
 The core invariant is: one user must never view, change, delete, restore, or infer another user's private Todo data.
 
 Step 1 adds tests for owner-scoped viewing, creation, validation, toggling, soft deletion, clearing completed todos, and cross-user mutation attempts. It also adds architecture tests to keep Livewire thin and translation-based.
+
+Step 021 adds `CoreTaskCreationTest`, which locks direct action creation,
+event dispatch, bypassed-validation organization scoping, mass-assignment
+guards, lifecycle-action completion, long-title validation, form-state
+preservation, and create-form error placement.
 
 ## 2026-06-06 Recheck
 

@@ -245,3 +245,15 @@ Record test/build/check results here.
 | 2026-06-06 | `git diff --check` | Passed | No whitespace errors after Step 020 changes. |
 | 2026-06-06 | `mcp__laravel_boost.browser_logs entries=20` | Passed | Only an old Vite reconnect message was present; no current route-protection/browser runtime error was found. |
 | 2026-06-06 | `php artisan test --compact` | Passed | Full suite passed with 229 tests and 881 assertions after Step 020 route-protection changes. |
+| 2026-06-06 | `mcp__laravel_boost.search_docs` | Passed | Reviewed Laravel 13 Form Request, Eloquent events, policy authorization, Livewire 4 form validation/testing, and Flux form component guidance before Step 021 changes. |
+| 2026-06-06 | `rg task creation inventory` | Passed | Inspected todo model, migrations, factories, seeders, creation/update/toggle actions, DTO, Livewire form/component, Blade create form, policies, queries, events, translations, and task docs before Step 021 changes. |
+| 2026-06-06 | `php artisan make:test --pest CoreTaskCreationTest --no-interaction` | Passed | Created Step 021 core task creation regression coverage. |
+| 2026-06-06 | `php artisan test --compact tests/Feature/CoreTaskCreationTest.php` | Failed | First Step 021 run exposed that direct `CreateTodo` calls with manually constructed `TodoData` persisted wrapper whitespace; fixed by trimming inside `CreateTodo`. |
+| 2026-06-06 | `php artisan test --compact tests/Feature/CoreTaskCreationTest.php` | Passed | 6 tests, 30 assertions for direct action creation, event dispatch, bypassed-validation organization scoping, mass-assignment guards, lifecycle toggling, long-title validation, and form error placement. |
+| 2026-06-06 | `php artisan test --compact tests/Feature/CoreTaskCreationTest.php tests/Feature/TodoTest.php tests/Feature/TodoOrganizationTest.php tests/Feature/TodoOwnershipTest.php tests/Feature/TodoLifecycleTest.php tests/Feature/TodoArchitectureTest.php tests/Feature/OwnershipQueryScopingTest.php tests/Feature/PrivateWorkspaceModelTest.php tests/Feature/DashboardTest.php tests/Feature/GuestRouteProtectionTest.php` | Passed | 125 tests, 391 assertions across core creation, todo CRUD/lifecycle/organization, ownership, architecture, dashboard privacy, and route protection. |
+| 2026-06-06 | `vendor/bin/pint --dirty --format agent` | Passed | PHP style passed after Step 021 action/model/test updates. |
+| 2026-06-06 | `php artisan test --compact tests/Feature/CoreTaskCreationTest.php` | Passed | 6 tests, 30 assertions after Pint formatting. |
+| 2026-06-06 | `rg compressed-progress scan` | Passed | Mutable root progress/docs files contain no compressed grouped-step placeholder lines after Step 021. |
+| 2026-06-06 | `git diff --check` | Passed | No whitespace errors after Step 021 changes. |
+| 2026-06-06 | `php artisan test --compact` | Passed | Full suite passed with 235 tests and 911 assertions after Step 021 core task creation changes. |
+| 2026-06-06 | `mcp__laravel_boost.browser_logs entries=20` | Passed | Only an old Vite reconnect message was present; no current task-form browser/runtime error was found. |

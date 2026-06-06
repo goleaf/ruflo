@@ -50,8 +50,9 @@ Explicit rules:
 - **Any non-deleted → Trashed** — `DeleteTodo`. Soft delete. Recoverable at the
   data layer; `forceDelete` is disabled by policy, and a trash-restore UI is
   intentionally deferred.
-- **Edit title** — `UpdateTodo`. Changes only the title; never alters
-  completion, archive, or deletion state.
+- **Edit details** — `UpdateTodo`. Changes editable details such as title,
+  priority, due date, project, and tags; never alters completion, archive, or
+  deletion state.
 
 ## Rejected transitions (safe failures)
 
@@ -99,8 +100,10 @@ reminders step.
 
 ## Validation
 
-- Title: `required|string|max:120`, normalized (trimmed) into `TodoData` before
-  it reaches an action. Applies to both create and edit (`TodoForm`).
+- Title: `required|string|max:120`, normalized (trimmed) before persistence.
+  `TodoForm` validates the Livewire input, `TodoData::fromArray()` trims the
+  normal form path, and `CreateTodo` trims again at the write boundary so a
+  manually constructed DTO cannot persist wrapper whitespace.
 - Tab/filter input is validated against `TodoStatus::tabValues()`; an unknown
   tab falls back to Active and never widens the query scope.
 

@@ -20,9 +20,8 @@ final class ToggleTodoCompletion
             throw InvalidTodoTransition::cannotToggleArchived();
         }
 
-        $todo->update([
-            'is_completed' => ! $todo->is_completed,
-        ]);
+        $todo->is_completed = ! $todo->is_completed;
+        $todo->save();
 
         TodoCompletionToggled::dispatch($todo);
 

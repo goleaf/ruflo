@@ -21,7 +21,7 @@ final class CreateTodo
     public function handle(User $user, TodoData $data): Todo
     {
         $todo = $user->todos()->make([
-            'title' => $data->title,
+            'title' => trim($data->title),
             'priority' => $data->priority,
             'due_date' => $data->dueDate,
         ]);

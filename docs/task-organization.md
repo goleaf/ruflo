@@ -109,6 +109,9 @@ and `BulkDeleteTodos` each take the user plus a list of selected ids and
 
 - Reusable `x-ui.stat` (summary counters) and `x-ui.status-badge` components;
   the lifecycle segmented control (Flux Free has no `tabs`).
+- The create form renders validation feedback beside the Flux title, priority,
+  due date, project, and tag controls so failed input stays visible and
+  recoverable.
 - Per-row badges: priority (hidden when Normal to reduce noise), due date
   (red overdue / amber today / zinc upcoming), project, and tags.
 - A filter toolbar (search, project, tag, priority, due, sort, direction,

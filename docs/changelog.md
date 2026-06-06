@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026-06-06 - Step 021 Core task creation
+
+### Implemented
+
+- Removed completion state from todo mass assignment so task creation cannot set lifecycle state accidentally.
+- Changed the completion toggle action to set `is_completed` explicitly through the lifecycle action.
+- Trimmed task titles at the `CreateTodo` write boundary, even when a backend caller constructs `TodoData` manually.
+- Added create-form validation error placement beside priority, due date, project, and tampered tag fields while keeping the class-based Livewire/Flux UI.
+
+### Testing
+
+- Added `CoreTaskCreationTest` for direct action creation, event dispatch, bypassed-validation organization scoping, mass-assignment guards, lifecycle toggling, long-title validation, and create-form error placement.
+- Rechecked adjacent todo, lifecycle, ownership, organization, architecture, dashboard, and route-protection suites.
+
+### Documentation
+
+- Updated `docs/todo-foundation.md`, `docs/task-lifecycle.md`, and `docs/task-organization.md` with the Step 021 creation contract.
+
 ## 2026-06-06 - Step 020 Guest and route protection
 
 ### Implemented

@@ -1,7 +1,3 @@
-@php
-    use App\Enums\TodoStatus;
-@endphp
-
 <section class="mx-auto flex w-full max-w-5xl flex-col gap-6">
     <x-ui.page-header :title="__('todos.pages.index.title')" :description="__('todos.pages.index.description')">
         <div class="grid grid-cols-2 gap-3 text-sm sm:grid-cols-4 sm:min-w-[26rem]">
@@ -13,7 +9,7 @@
     </x-ui.page-header>
 
     {{-- Create form (active tab only) --}}
-    @if ($tab === TodoStatus::Active->value)
+    @if ($tab === 'active')
         <flux:card>
             <form wire:submit="createTodo" class="flex flex-col gap-4">
                 <div class="flex flex-col gap-3 sm:flex-row sm:items-start">
@@ -34,20 +30,29 @@
                 </div>
 
                 <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
-                    <flux:select wire:model="form.priority" :label="__('todos.fields.priority')">
-                        @foreach ($this->priorityOptions() as $priority)
-                            <flux:select.option value="{{ $priority->value }}">{{ $priority->label() }}</flux:select.option>
-                        @endforeach
-                    </flux:select>
+                    <div>
+                        <flux:select wire:model="form.priority" :label="__('todos.fields.priority')">
+                            @foreach ($this->priorityOptions() as $priority)
+                                <flux:select.option value="{{ $priority->value }}">{{ $priority->label() }}</flux:select.option>
+                            @endforeach
+                        </flux:select>
+                        <flux:error name="form.priority" />
+                    </div>
 
-                    <flux:input type="date" wire:model="form.due_date" :label="__('todos.fields.due_date')" />
+                    <div>
+                        <flux:input type="date" wire:model="form.due_date" :label="__('todos.fields.due_date')" />
+                        <flux:error name="form.due_date" />
+                    </div>
 
-                    <flux:select wire:model="form.project_id" :label="__('todos.fields.project')">
-                        <flux:select.option value="">{{ __('todos.fields.no_project') }}</flux:select.option>
-                        @foreach ($this->projects as $project)
-                            <flux:select.option value="{{ $project->id }}">{{ $project->name }}</flux:select.option>
-                        @endforeach
-                    </flux:select>
+                    <div>
+                        <flux:select wire:model="form.project_id" :label="__('todos.fields.project')">
+                            <flux:select.option value="">{{ __('todos.fields.no_project') }}</flux:select.option>
+                            @foreach ($this->projects as $project)
+                                <flux:select.option value="{{ $project->id }}">{{ $project->name }}</flux:select.option>
+                            @endforeach
+                        </flux:select>
+                        <flux:error name="form.project_id" />
+                    </div>
                 </div>
 
                 @if ($this->tags->isNotEmpty())
@@ -59,6 +64,9 @@
                                 {{ $tagOption->name }}
                             </label>
                         @endforeach
+                        @error('form.tag_ids.*')
+                            <flux:text class="basis-full text-sm text-red-600 dark:text-red-400">{{ $message }}</flux:text>
+                        @enderror
                     </div>
                 @endif
             </form>
@@ -124,7 +132,7 @@
                 @endforeach
             </flux:select>
 
-            @if ($tab === TodoStatus::Active->value)
+            @if ($tab === 'active')
                 <flux:select wire:model.live="due" :label="__('todos.filters.due')">
                     <flux:select.option value="">{{ __('todos.filters.all_dates') }}</flux:select.option>
                     <flux:select.option value="today">{{ __('todos.filters.due_today') }}</flux:select.option>
@@ -173,10 +181,10 @@
                     <flux:button size="sm" variant="ghost" icon="folder-arrow-down" wire:click="bulkMove">{{ __('todos.bulk.move') }}</flux:button>
                     <flux:error name="bulkProject" />
                 </div>
-                @if ($tab === TodoStatus::Active->value)
+                @if ($tab === 'active')
                     <flux:button size="sm" variant="ghost" icon="check" wire:click="bulkComplete">{{ __('todos.bulk.complete') }}</flux:button>
                 @endif
-                @if ($tab !== TodoStatus::Archived->value)
+                @if ($tab !== 'archived')
                     <flux:button size="sm" variant="ghost" icon="archive-box" wire:click="bulkArchive">{{ __('todos.bulk.archive') }}</flux:button>
                 @else
                     <flux:button size="sm" variant="ghost" icon="archive-box-x-mark" wire:click="bulkRestore">{{ __('todos.bulk.restore') }}</flux:button>
@@ -275,7 +283,7 @@
             <div>{{ $this->todos->links() }}</div>
         @endif
 
-        @if ($tab === TodoStatus::Completed->value && $this->summary['completed'] > 0)
+        @if ($tab === 'completed' && $this->summary['completed'] > 0)
             <div class="flex justify-end">
                 <flux:button type="button" variant="subtle" size="sm" wire:click="clearCompleted" wire:confirm="{{ __('todos.confirmations.clear_completed') }}">
                     {{ __('todos.actions.clear_completed') }}

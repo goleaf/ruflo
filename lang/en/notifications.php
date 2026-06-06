@@ -50,6 +50,13 @@ return [
         'description' => 'Due reminders and future in-app events will appear here.',
     ],
 
+    'comments' => [
+        'created' => [
+            'title' => 'New task comment',
+            'message' => ':author commented on ":task".',
+        ],
+    ],
+
     'fallback' => [
         'title' => 'Notification',
         'message' => 'No notification details were provided.',

@@ -20,6 +20,7 @@ Step 011 covers the tracked application models:
 - `App\Models\TimeEntry`
 - `App\Models\Todo`
 - `App\Models\TodoChecklistItem`
+- `App\Models\TodoComment`
 - `App\Models\TodoDependency`
 - `App\Models\TodoRecurrenceException`
 - `App\Models\TodoRecurrenceRule`
@@ -251,6 +252,23 @@ priority/date setup.
 
 Checklist rows are private resources and use the same `BelongsToUser` concern as
 todos, projects, tags, and saved views.
+
+## Todo Comment Factory
+
+`TodoCommentFactory` covers:
+
+- default plain-text comments whose generated parent task shares the same
+  owner,
+- `forTodo()` for explicit parent task attachment while preserving the parent
+  owner,
+- `authoredBy()` for comments written by a shared participant,
+- edited comments with `edited_at`,
+- soft-deleted comments for thread placeholders,
+- demo body text for deterministic local/testing/demo seed data.
+
+Comment rows are owned by the parent task owner's workspace and store the
+writer separately in `author_id`, so shared participants can comment without
+changing resource ownership.
 
 ## Todo Dependency Factory
 

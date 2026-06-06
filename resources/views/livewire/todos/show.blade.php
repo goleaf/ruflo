@@ -86,6 +86,8 @@
 
     <livewire:todos.task-timeline :todo-id="$this->todo->id" :key="'task-timeline-'.$this->todo->id" />
 
+    <livewire:todos.comments :todo-id="$this->todo->id" :key="'task-comments-'.$this->todo->id" />
+
     <flux:card class="space-y-5" data-test="task-recurrence">
         <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div class="space-y-1">

@@ -32,6 +32,7 @@ ownership rules:
 - `App\Rules\Todos\TemplateChecklistItems`
 - `App\Rules\Todos\TemplateName`
 - `App\Rules\Todos\TimeEntryDuration`
+- `App\Rules\Todos\TodoCommentBody`
 
 `TagName` validates that a submitted tag name still has visible content after
 normalization (`squish()` + lower-case). It prevents whitespace-only labels
@@ -130,6 +131,13 @@ routine templates.
 only whole minutes from 1 to 1440, so a forged Livewire request cannot create a
 zero-length or multi-day manual time entry.
 
+`TodoCommentBody` validates task comment bodies. It normalizes line endings,
+removes null bytes, trims surrounding whitespace, rejects empty visible text,
+and caps normalized plain text at 2000 characters. Comment create and edit
+flows use it through `StoreTodoCommentRequest` and
+`UpdateTodoCommentRequest`, and the action layer repeats the same validation so
+direct calls cannot persist blank or oversized comments.
+
 The action layer still re-scopes ids to the current user before writing. The rule objects improve request feedback; the action layer remains the defense-in-depth boundary.
 
 ## Translation
@@ -138,7 +146,8 @@ Rule failure messages live in `lang/en/todos.php` under `todos.validation` and
 feature sections such as `todos.collaboration.invites.validation`, in
 `todos.collaboration.members.validation`, in
 `lang/en/goals.php` under `goals.validation`, and feature-specific files such
-as `lang/en/automation.php` and `lang/en/reminders.php`.
+as `lang/en/automation.php` and `lang/en/reminders.php`. Comment rule failures
+live in `lang/en/todos.php` under `todos.comments.validation`.
 
 ## Future Domains
 

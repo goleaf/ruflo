@@ -97,7 +97,7 @@ Use this file as a persistent task tracker. Step detail lives in `TODO_MASTER_PR
 - [x] Step 069 — Link-only invite system
 - [x] Step 070 — Member management
 - [x] Step 071 — Shared dashboard search filter scope
-- [ ] Step 072 — Comments
+- [x] Step 072 — Comments
 - [ ] Step 073 — Mentions
 - [ ] Step 074 — Comment moderation
 - [ ] Step 075 — Attachments

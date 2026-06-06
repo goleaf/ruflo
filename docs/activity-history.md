@@ -6,6 +6,9 @@ Step 067 embeds a focused task timeline on private task detail pages.
 ## Runtime
 
 - Activity records are written synchronously from existing task domain events.
+- Step 072 adds synchronous comment activity for comment created, edited, and
+  deleted events. Comment activity is recorded against the parent task with a
+  bounded plain-text excerpt.
 - The feature does not use queues, cron, workers, supervisors, terminal access,
   Artisan commands, hosted audit services, or paid analytics providers.
 - The `/activity` page is a class-based Livewire page behind `auth` and
@@ -22,6 +25,9 @@ Step 067 embeds a focused task timeline on private task detail pages.
   unless the current user can still see the task.
 - Updated task metadata stores only a small allow-listed set of safe old/new
   values. No-op updates are ignored to avoid noisy history.
+- Comment activity stores the comment id and a safe excerpt only. The activity
+  subject remains the parent task, so shared members do not gain a separate
+  comment lookup path outside the authorized task detail page.
 
 ## User Interface
 
@@ -47,6 +53,9 @@ Step 067 embeds a focused task timeline on private task detail pages.
 - The task timeline intentionally does not render subject links. This prevents
   stale, deleted, or no-longer-visible subject references from becoming
   clickable from the detail page.
+- Comment activity appears in the same timeline formatter as task and
+  checklist activity, using translated labels and icons from
+  `lang/en/activity.php`.
 
 ## Factories And Seeding
 

@@ -18,6 +18,7 @@ final class ActivityFormatter
             'subject' => $activity->subject_title ?? __('activity.subjects.deleted'),
             'count' => (int) data_get($activity->metadata, 'count', 0),
             'item' => (string) data_get($activity->metadata, 'item_title', __('activity.subjects.item')),
+            'comment' => (string) data_get($activity->metadata, 'comment_excerpt', __('activity.subjects.comment')),
             'changes' => $this->changeSummary($activity),
         ]);
     }
@@ -54,7 +55,10 @@ final class ActivityFormatter
             'todo.checklist_completed',
             'todo.checklist_reopened',
             'todo.checklist_moved',
-            'todo.checklist_deleted' => 'amber',
+            'todo.checklist_deleted',
+            'todo.comment_created',
+            'todo.comment_updated',
+            'todo.comment_deleted' => 'amber',
             default => 'blue',
         };
     }
@@ -69,6 +73,9 @@ final class ActivityFormatter
             'todo.archived' => 'archive-box',
             'todo.unarchived' => 'arrow-path',
             'todo.deleted' => 'trash',
+            'todo.comment_created' => 'chat-bubble-left-right',
+            'todo.comment_updated' => 'pencil-square',
+            'todo.comment_deleted' => 'trash',
             'todos.completed_cleared' => 'check',
             default => 'bolt',
         };

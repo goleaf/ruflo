@@ -1,6 +1,6 @@
 # Task Organization
 
-Through Step 071, the private task lifecycle is extended into a usable productivity system:
+Through Step 072, the private task lifecycle is extended into a usable productivity system:
 projects, tags, priorities, due dates, search, filters, sorting, and bulk
 actions, calendar/board/focus views, contained checklists, templates, a quick
 capture Inbox, time tracking, task dependencies, cleanup smart views, and
@@ -24,6 +24,7 @@ owner-scoped on top of the model in
 | **Checklist item** | `todo_checklist_items` table; `todo_id`, ordered `position`, completion fields | `todo_checklist_items.user_id`, private, contained by parent task |
 | **Inbox capture** | `todos.inbox_captured_at` nullable timestamp | `todos.user_id`, private |
 | **Task dependency** | `todo_dependencies` table; waiting task plus blocker task ids | `todo_dependencies.user_id`, private, both tasks must belong to the same owner |
+| **Task comment** | `todo_comments` table; parent task, author, plain-text body, edited/deleted timestamps | `todo_comments.user_id`, owned by the parent task owner; `author_id` records the writer |
 | **Automation rule** | `automation_rules` and `automation_rule_runs` tables | `automation_rules.user_id` and `automation_rule_runs.user_id`, private |
 | **Reminder** | `reminders` table; one reminder per user/task with status and processing timestamps | `reminders.user_id`, private, linked to an owned task |
 | **Notification** | Laravel `notifications` table; database notification payload and read state | scoped by the authenticated user as notifiable type/id |
@@ -72,6 +73,29 @@ Reads and mutations flow through `NotificationInboxQuery`, scoped by the current
 user's notifiable type and id. Action URLs are treated as hints: the center
 renders relative or same-host links only, and the destination route must still
 authorize the linked private task or resource.
+
+Step 072 task comments add database-only owner notifications when a shared
+participant comments on a task. These notifications are created synchronously
+during the Livewire comment request and link back to the already protected task
+detail page.
+
+## Task comments
+
+Step 072 adds plain-text task comment threads on task detail pages. Comments
+are stored in `todo_comments` and read through `TodoCommentListQuery` after the
+parent task has been resolved through `TodoListQuery`. Owners, managers, and
+editors can write when the parent task allows comment edits; viewers can read
+but cannot post. Only the original comment author can edit or delete their own
+comment.
+
+Comment text is rendered as escaped Blade output, normalized through
+`TodoCommentData`, and validated by `TodoCommentBody` with a 2000-character
+plain-text cap. Deleted comments are soft deleted and stay visible as
+translated placeholders so thread chronology remains understandable.
+
+Step 072 intentionally keeps `@mention` text inert. It does not generate
+mention suggestions, links, or notifications; safe mention behavior is reserved
+for Step 073.
 
 ## Subtasks and checklists
 

@@ -222,6 +222,57 @@ return [
         'clear_recurrence' => 'Clear this recurrence rule? Existing tasks are kept.',
     ],
 
+    'comments' => [
+        'label' => 'Comments',
+        'heading' => 'Task comments',
+        'description' => 'Discuss this task with people who can access it. Comments are plain text and stay attached to the task owner workspace.',
+        'count' => '{0} No comments|{1} 1 comment|[2,*] :count comments',
+        'plain_text_notice' => 'Plain text only. Links and markup are shown as text.',
+        'deleted_body' => 'This comment was deleted.',
+        'fields' => [
+            'body' => 'Comment',
+            'body_placeholder' => 'Add a concise update or decision note',
+        ],
+        'actions' => [
+            'post' => 'Post comment',
+            'edit' => 'Edit',
+            'delete' => 'Delete',
+            'save' => 'Save comment',
+            'cancel' => 'Cancel',
+            'load_more' => 'Load more comments',
+        ],
+        'status' => [
+            'edited' => 'Edited',
+            'deleted' => 'Deleted',
+        ],
+        'meta' => [
+            'posted_at' => 'Posted :time',
+        ],
+        'author' => [
+            'deleted' => 'Deleted user',
+        ],
+        'empty' => [
+            'title' => 'No comments yet.',
+            'description' => 'Post the first update when this task needs shared context.',
+        ],
+        'locked' => [
+            'heading' => 'Comments are read-only.',
+            'description' => 'You can read comments for this task, but new comments are disabled for this task state or access level.',
+        ],
+        'confirmations' => [
+            'delete' => 'Delete this comment? It will stay as a deleted placeholder in the thread.',
+        ],
+        'messages' => [
+            'created' => 'Comment posted.',
+            'updated' => 'Comment updated.',
+            'deleted' => 'Comment deleted.',
+        ],
+        'validation' => [
+            'body_required' => 'Enter a comment with visible text.',
+            'body_max' => 'Keep comments under :max characters.',
+        ],
+    ],
+
     'checklist' => [
         'label' => 'Subtasks',
         'heading' => 'Checklist',

@@ -48,6 +48,7 @@ return [
     'subjects' => [
         'deleted' => 'Deleted task',
         'item' => 'Checklist item',
+        'comment' => 'Comment',
     ],
 
     'changes' => [
@@ -130,6 +131,18 @@ return [
             'checklist_deleted' => [
                 'label' => 'Deleted checklist item',
                 'description' => 'Deleted :item from :subject.',
+            ],
+            'comment_created' => [
+                'label' => 'Added comment',
+                'description' => 'Added a comment to :subject: :comment.',
+            ],
+            'comment_updated' => [
+                'label' => 'Edited comment',
+                'description' => 'Edited a comment on :subject: :comment.',
+            ],
+            'comment_deleted' => [
+                'label' => 'Deleted comment',
+                'description' => 'Deleted a comment from :subject.',
             ],
         ],
 

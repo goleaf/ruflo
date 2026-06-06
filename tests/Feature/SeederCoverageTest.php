@@ -16,6 +16,7 @@ use App\Models\Tag;
 use App\Models\TimeEntry;
 use App\Models\Todo;
 use App\Models\TodoChecklistItem;
+use App\Models\TodoComment;
 use App\Models\TodoDependency;
 use App\Models\TodoRecurrenceException;
 use App\Models\TodoRecurrenceRule;
@@ -56,6 +57,7 @@ test('database seeder creates safe demo users and complete private workspaces', 
         ->and(Tag::query()->count())->toBeGreaterThanOrEqual(40)
         ->and(TodoChecklistItem::query()->count())->toBeGreaterThanOrEqual(450)
         ->and(TodoDependency::query()->count())->toBeGreaterThanOrEqual(46)
+        ->and(TodoComment::withTrashed()->count())->toBeGreaterThanOrEqual(5)
         ->and(TodoRecurrenceException::query()->count())->toBeGreaterThanOrEqual(6)
         ->and(TodoRecurrenceRule::query()->count())->toBeGreaterThanOrEqual(4)
         ->and(TodoTemplate::query()->count())->toBeGreaterThanOrEqual(38)

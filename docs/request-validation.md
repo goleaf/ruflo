@@ -125,6 +125,15 @@ member-role form rules and translated attributes. The project page consumes its
 repeats active-membership, owner-role, assignable-role, and authorization
 guards before updating a membership row.
 
+Step 072 task comments remain a class-based Livewire workflow, but the comment
+body rules live in dedicated Form Request classes:
+`StoreTodoCommentRequest` and `UpdateTodoCommentRequest`. The Livewire
+component and the `CreateTodoComment`/`UpdateTodoComment` actions both consume
+their `baseRules()` and `attributeNames()` helpers so UI validation and direct
+backend action calls share one translated rule source. Authorization remains in
+`TodoCommentPolicy` and the parent `TodoPolicy::comment` ability; the request
+classes are the rule source, not the security boundary.
+
 ## Custom Business Rules
 
 Reusable business validation rules are documented in `docs/validation-rules.md`.

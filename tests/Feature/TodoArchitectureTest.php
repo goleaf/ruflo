@@ -28,12 +28,14 @@ use App\Actions\Todos\CreatePomodoroTimeEntry;
 use App\Actions\Todos\CreateSavedTodoView;
 use App\Actions\Todos\CreateTodo;
 use App\Actions\Todos\CreateTodoChecklistItem;
+use App\Actions\Todos\CreateTodoComment;
 use App\Actions\Todos\CreateTodoFromTemplate;
 use App\Actions\Todos\CreateTodoTemplate;
 use App\Actions\Todos\DeleteSavedTodoView;
 use App\Actions\Todos\DeleteTimeEntry;
 use App\Actions\Todos\DeleteTodo;
 use App\Actions\Todos\DeleteTodoChecklistItem;
+use App\Actions\Todos\DeleteTodoComment;
 use App\Actions\Todos\DeleteTodoRecurrenceRule;
 use App\Actions\Todos\DeleteTodoTemplate;
 use App\Actions\Todos\DiscardTimeEntryTimer;
@@ -57,6 +59,7 @@ use App\Actions\Todos\ToggleTodoChecklistItem;
 use App\Actions\Todos\ToggleTodoRecurrenceRule;
 use App\Actions\Todos\TriageInboxTodo;
 use App\Actions\Todos\UpdateTodoChecklistItem;
+use App\Actions\Todos\UpdateTodoComment;
 use App\Actions\Todos\UpdateTodoTemplate;
 use App\Contracts\Processing\ManualWebProcess;
 use App\Data\Goals\GoalData;
@@ -72,6 +75,7 @@ use App\Data\Todos\RecurrenceRuleData;
 use App\Data\Todos\SavedTodoViewData;
 use App\Data\Todos\TimeEntryData;
 use App\Data\Todos\TodoCleanupFilters;
+use App\Data\Todos\TodoCommentData;
 use App\Data\Todos\TodoData;
 use App\Data\Todos\TodoTemplateData;
 use App\Enums\AutomationRuleKind;
@@ -87,6 +91,11 @@ use App\Enums\TimeEntrySource;
 use App\Enums\TimeEntryStatus;
 use App\Enums\TodoTransition;
 use App\Events\TodoChecklistChanged;
+use App\Events\TodoCommentCreated;
+use App\Events\TodoCommentDeleted;
+use App\Events\TodoCommentUpdated;
+use App\Http\Requests\Todos\StoreTodoCommentRequest;
+use App\Http\Requests\Todos\UpdateTodoCommentRequest;
 use App\Livewire\Forms\Todos\TodoForm;
 use App\Livewire\Goals\Create as GoalsCreate;
 use App\Livewire\Goals\CreateMilestone as GoalsCreateMilestone;
@@ -100,6 +109,7 @@ use App\Livewire\Todos\Blocked as TodoBlocked;
 use App\Livewire\Todos\Board as TodoBoard;
 use App\Livewire\Todos\Calendar as TodoCalendar;
 use App\Livewire\Todos\Cleanup as TodoCleanup;
+use App\Livewire\Todos\Comments as TodoComments;
 use App\Livewire\Todos\Focus as TodoFocus;
 use App\Livewire\Todos\Inbox as TodoInbox;
 use App\Livewire\Todos\RecurringRules as TodoRecurringRules;
@@ -118,6 +128,7 @@ use App\Policies\ReminderPolicy;
 use App\Policies\SavedTodoViewPolicy;
 use App\Policies\TimeEntryPolicy;
 use App\Policies\TodoChecklistItemPolicy;
+use App\Policies\TodoCommentPolicy;
 use App\Policies\TodoDependencyPolicy;
 use App\Policies\TodoPolicy;
 use App\Policies\TodoRecurrenceExceptionPolicy;
@@ -137,6 +148,7 @@ use App\Queries\Todos\TodoBoardQuery;
 use App\Queries\Todos\TodoCalendarQuery;
 use App\Queries\Todos\TodoChecklistItemListQuery;
 use App\Queries\Todos\TodoCleanupQuery;
+use App\Queries\Todos\TodoCommentListQuery;
 use App\Queries\Todos\TodoDependencyQuery;
 use App\Queries\Todos\TodoFocusQuery;
 use App\Queries\Todos\TodoInboxQuery;
@@ -153,6 +165,7 @@ use App\Rules\Todos\AcyclicTodoDependency;
 use App\Rules\Todos\BoardStatus;
 use App\Rules\Todos\CalendarMonth;
 use App\Rules\Todos\ChecklistItemTitle;
+use App\Rules\Todos\TodoCommentBody;
 use App\Rules\Todos\InboxCaptureTitle;
 use App\Rules\Todos\OwnedActiveTodo;
 use App\Rules\Todos\PomodoroDuration;
@@ -167,6 +180,15 @@ test('todo foundation classes exist', function () {
         ->and(class_exists(TodoForm::class))->toBeTrue()
         ->and(class_exists(TodoData::class))->toBeTrue()
         ->and(class_exists(TodoListQuery::class))->toBeTrue()
+        ->and(class_exists(TodoCommentData::class))->toBeTrue()
+        ->and(class_exists(TodoCommentListQuery::class))->toBeTrue()
+        ->and(class_exists(TodoCommentBody::class))->toBeTrue()
+        ->and(class_exists(TodoCommentPolicy::class))->toBeTrue()
+        ->and(class_exists(StoreTodoCommentRequest::class))->toBeTrue()
+        ->and(class_exists(UpdateTodoCommentRequest::class))->toBeTrue()
+        ->and(class_exists(CreateTodoComment::class))->toBeTrue()
+        ->and(class_exists(UpdateTodoComment::class))->toBeTrue()
+        ->and(class_exists(DeleteTodoComment::class))->toBeTrue()
         ->and(class_exists(CreateTodo::class))->toBeTrue()
         ->and(class_exists(CompleteTodo::class))->toBeTrue()
         ->and(class_exists(ReopenTodo::class))->toBeTrue()
@@ -281,6 +303,7 @@ test('todo foundation classes exist', function () {
         ->and(class_exists(ReminderPolicy::class))->toBeTrue()
         ->and(class_exists(TodoBoard::class))->toBeTrue()
         ->and(class_exists(TodoCalendar::class))->toBeTrue()
+        ->and(class_exists(TodoComments::class))->toBeTrue()
         ->and(class_exists(TodoBlocked::class))->toBeTrue()
         ->and(class_exists(TodoCleanup::class))->toBeTrue()
         ->and(class_exists(TodoShow::class))->toBeTrue()
@@ -298,6 +321,9 @@ test('todo foundation classes exist', function () {
         ->and(class_exists(NotificationInbox::class))->toBeTrue()
         ->and(class_exists(ProjectShow::class))->toBeTrue()
         ->and(class_exists(TodoChecklistChanged::class))->toBeTrue()
+        ->and(class_exists(TodoCommentCreated::class))->toBeTrue()
+        ->and(class_exists(TodoCommentUpdated::class))->toBeTrue()
+        ->and(class_exists(TodoCommentDeleted::class))->toBeTrue()
         ->and(enum_exists(PomodoroSessionStatus::class))->toBeTrue()
         ->and(enum_exists(TimeEntrySource::class))->toBeTrue()
         ->and(enum_exists(TimeEntryStatus::class))->toBeTrue()
@@ -442,6 +468,28 @@ test('todo detail page delegates checklist dependency and recurrence responsibil
         ->not->toContain('TodoChecklistItem::query()')
         ->not->toContain('TodoRecurrenceRule::query()')
         ->not->toContain('->save()');
+});
+
+test('todo comments component delegates comment responsibilities', function () {
+    $source = file_get_contents(app_path('Livewire/Todos/Comments.php'));
+    $viewSource = file_get_contents(resource_path('views/livewire/todos/comments.blade.php'));
+
+    expect($source)
+        ->toContain('TodoCommentListQuery')
+        ->toContain('TodoListQuery')
+        ->toContain('CreateTodoComment')
+        ->toContain('UpdateTodoComment')
+        ->toContain('DeleteTodoComment')
+        ->toContain('StoreTodoCommentRequest')
+        ->toContain('UpdateTodoCommentRequest')
+        ->toContain('$this->authorize')
+        ->not->toContain('TodoComment::query()')
+        ->not->toContain('->save()')
+        ->and($viewSource)
+        ->toContain('flux:textarea')
+        ->toContain('data-test="task-comments"')
+        ->not->toContain('@php')
+        ->not->toContain('{!!');
 });
 
 test('todo recurring page delegates recurrence responsibilities', function () {

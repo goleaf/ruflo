@@ -16,6 +16,10 @@ Step 055 adds a private in-app notification center at `/notifications`.
   protocol-relative, and unsupported-scheme links. Known task links are
   pre-checked against the current user's task scope, and target routes must
   still authorize access before showing private records.
+- Step 072 task-comment notifications are database-only. When a shared
+  participant comments on a task, the task owner receives a
+  `todo-comment-added` database notification. The comment author and unrelated
+  shared viewers are not notified in this step.
 
 ## UI
 
@@ -25,6 +29,9 @@ Step 055 adds a private in-app notification center at `/notifications`.
   list.
 - Empty states, labels, button text, status badges, toasts, and fallback
   messages live in `lang/en/notifications.php`.
+- Comment notification titles and messages also live in
+  `lang/en/notifications.php`; author fallback copy remains in
+  `lang/en/todos.php`.
 
 ## Restricted Hosting
 
@@ -33,11 +40,19 @@ workers, supervisors, shell access, Artisan commands, or paid services during
 normal usage. It reads and updates database notifications synchronously during
 authenticated browser requests.
 
+Task-comment notifications follow that same contract. They are created
+synchronously inside the comment creation request and do not require email,
+queues, workers, cron, supervisors, shell access, Artisan commands during
+normal usage, hosted services, or paid providers.
+
 ## Verification
 
 - `NotificationCenterTest` covers private rendering, read/unread state changes,
   mark-all-read owner scoping, same-host link filtering, protocol-relative and
   unsupported-scheme filtering, stale private task-link hiding, known task-link
   prechecks, and target-route authorization.
+- `TaskCommentTest` covers Step 072 owner database notifications and confirms
+  inert `@mention` text does not notify unrelated users before the dedicated
+  mentions step.
 - Guest route, domain, localization, and architecture coverage include the
   protected `/notifications` surface.

@@ -49,6 +49,7 @@ through policy and query boundaries.
 | Reports read boundary | `App\Queries\Reports\ReportsOverviewQuery` | Owner-scoped productivity, habit, project, time, and overdue report aggregates. |
 | Activity read boundary | `App\Queries\Activity\ActivityFeedQuery` | Owner-scoped activity timeline, summary counts, and safe task-link prechecks. |
 | Task timeline read boundary | `App\Livewire\Todos\TaskTimeline` + `App\Queries\Activity\ActivityFeedQuery::forTodo()` | Re-resolves the parent task through `TodoListQuery`, authorizes `view`, then reads only that task's owner-scoped activity records with no stale subject links. |
+| Comment read boundary | `App\Queries\Todos\TodoCommentListQuery` | Reads plain-text task comments only after the parent task is visible to the current user. |
 | Recurrence read boundary | `App\Queries\Todos\TodoRecurrenceRuleQuery` | Owner-scoped recurrence rules, generated occurrences, exceptions, and active task options. |
 | Template read boundary | `App\Queries\Todos\TodoTemplateListQuery` | Owner-scoped reusable task/project/checklist/routine templates. |
 | Inbox read boundary | `App\Queries\Todos\TodoInboxQuery` | Owner-scoped active captured tasks waiting for triage. |

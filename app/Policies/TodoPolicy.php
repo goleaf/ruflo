@@ -68,6 +68,16 @@ final class TodoPolicy
     }
 
     /**
+     * Determine whether the user can comment on the task.
+     */
+    public function comment(User $user, Todo $todo): Response
+    {
+        return $this->canEdit($user, $todo)
+            ? Response::allow()
+            : Response::denyAsNotFound();
+    }
+
+    /**
      * Determine whether the user can archive the model.
      */
     public function archive(User $user, Todo $todo): Response

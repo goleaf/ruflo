@@ -45,7 +45,11 @@ final class ActivityFeedQuery
      */
     public function forTodo(User $user, Todo $todo): Builder
     {
-        return $this->for($user)
+        return ActivityRecord::query()
+            ->where('user_id', $todo->user_id)
+            ->with(['actor:id,name'])
+            ->latest('occurred_at')
+            ->latest('id')
             ->where('subject_type', $todo->getMorphClass())
             ->where('subject_id', $todo->getKey());
     }

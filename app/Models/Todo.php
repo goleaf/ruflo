@@ -123,6 +123,16 @@ class Todo extends Model
     }
 
     /**
+     * Plain-text collaboration comments attached to this task.
+     *
+     * @return HasMany<TodoComment, $this>
+     */
+    public function comments(): HasMany
+    {
+        return $this->hasMany(TodoComment::class);
+    }
+
+    /**
      * Browser-triggered focus sessions attached to this task.
      *
      * @return HasMany<PomodoroSession, $this>

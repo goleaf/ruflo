@@ -18,6 +18,7 @@ Step 012 covers the committed model set:
 - `ActivityRecord`
 - `Todo`
 - `TodoChecklistItem`
+- `TodoComment`
 - `TodoDependency`
 - `TodoRecurrenceException`
 - `TodoRecurrenceRule`
@@ -30,9 +31,10 @@ local/testing/demo rule definitions and generated occurrences. The tracked
 edited, and moved occurrence examples. The tracked `ProjectMembership` model is
 seeded with local/testing/demo project sharing between the configured demo
 users. The tracked `ProjectInvitation` model is seeded with local/testing/demo
-pending, accepted, cancelled, and expired link-only invite examples. Future
-models for comments, attachments, and settings are not seeded yet because those
-committed models do not exist yet.
+pending, accepted, cancelled, and expired link-only invite examples. The tracked
+`TodoComment` model is seeded with local/testing/demo comment threads on shared
+demo tasks. Future models for attachments and settings are not seeded yet
+because those committed models do not exist yet.
 
 ## Seeders
 
@@ -42,9 +44,10 @@ committed models do not exist yet.
 2. `TodoSeeder`
 3. `ProjectMembershipSeeder`
 4. `ProjectInvitationSeeder`
-5. `ExecutiveWorkspaceSeeder`
-6. `TodoRecurrenceRuleSeeder`
-7. `ActivityRecordSeeder`
+5. `TodoCommentSeeder`
+6. `ExecutiveWorkspaceSeeder`
+7. `TodoRecurrenceRuleSeeder`
+8. `ActivityRecordSeeder`
 
 `DemoUserSeeder` creates the configured demo users only when the app is running in a safe environment: `local`, `testing`, or `demo`, and when the demo login panel is enabled. The first configured demo user is seeded as an admin for protected local maintenance access; the second configured demo user is seeded as a normal account for denial and isolation checks.
 
@@ -118,6 +121,12 @@ only after the configured demo users and seeded projects exist. It writes one
 pending, one accepted, one cancelled, and one expired invitation with
 deterministic tokens so repeated seed runs update the same rows. Invite seed
 data does not send email and does not create global access.
+
+`TodoCommentSeeder` creates local/testing/demo comment threads only after the
+configured demo users, seeded tasks, and project memberships exist. It writes
+normal, edited, and deleted plain-text comments on shared demo tasks so task
+detail pages show realistic collaboration context without email, queues, or
+global access.
 
 Step 045's focus mode also reuses the current catalog. `Review the current
 flow` is high priority and due today, while `Send the overdue report` is urgent
@@ -214,6 +223,11 @@ existing exception. Re-running the seeder does not duplicate exception rows
 because the database enforces one exception per user, rule, and original
 occurrence date, and the seeder skips occurrences that already have an
 exception.
+
+Task comments are idempotent by task, author, and body, including soft-deleted
+demo comments. Re-running the seeder refreshes the same local/testing/demo
+threads without creating duplicate comment rows or exposing comments outside
+the shared task boundary.
 
 Step 055 adds idempotent database notification seed rows for each safe demo
 user. Each demo workspace gets one unread task reminder-style notification and

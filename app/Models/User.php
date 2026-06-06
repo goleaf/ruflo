@@ -183,6 +183,26 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
     }
 
     /**
+     * Get the task comments owned by the user's private workspace.
+     *
+     * @return HasMany<TodoComment, $this>
+     */
+    public function todoComments(): HasMany
+    {
+        return $this->hasMany(TodoComment::class);
+    }
+
+    /**
+     * Get comments written by this user, including comments on shared tasks.
+     *
+     * @return HasMany<TodoComment, $this>
+     */
+    public function authoredTodoComments(): HasMany
+    {
+        return $this->hasMany(TodoComment::class, 'author_id');
+    }
+
+    /**
      * Get the user's reusable task templates.
      *
      * @return HasMany<TodoTemplate, $this>

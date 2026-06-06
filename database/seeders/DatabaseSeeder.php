@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
                 TodoSeeder::class,
                 ProjectMembershipSeeder::class,
                 ProjectInvitationSeeder::class,
+                TodoCommentSeeder::class,
                 ExecutiveWorkspaceSeeder::class,
                 TodoRecurrenceRuleSeeder::class,
                 ActivityRecordSeeder::class,

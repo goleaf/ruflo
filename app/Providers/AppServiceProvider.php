@@ -5,6 +5,9 @@ namespace App\Providers;
 use App\Events\CompletedTodosCleared;
 use App\Events\TodoArchived;
 use App\Events\TodoChecklistChanged;
+use App\Events\TodoCommentCreated;
+use App\Events\TodoCommentDeleted;
+use App\Events\TodoCommentUpdated;
 use App\Events\TodoCompleted;
 use App\Events\TodoCreated;
 use App\Events\TodoDeleted;
@@ -107,6 +110,9 @@ class AppServiceProvider extends ServiceProvider
         Event::listen(TodoDeleted::class, RecordTodoActivity::class);
         Event::listen(TodoRestoredFromTrash::class, RecordTodoActivity::class);
         Event::listen(TodoChecklistChanged::class, RecordTodoActivity::class);
+        Event::listen(TodoCommentCreated::class, RecordTodoActivity::class);
+        Event::listen(TodoCommentUpdated::class, RecordTodoActivity::class);
+        Event::listen(TodoCommentDeleted::class, RecordTodoActivity::class);
         Event::listen(CompletedTodosCleared::class, RecordTodoActivity::class);
     }
 }

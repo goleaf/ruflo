@@ -1,5 +1,36 @@
 # Changelog
 
+## 2026-06-06 - Step 072 Comments
+
+### Added
+
+- Added owner-scoped `todo_comments` with separate `author_id`, class-based
+  Livewire comment threads, Flux create/edit/delete/read-only UI, translated
+  plain-text validation, activity records, and database-only owner
+  notifications.
+- Added comment factory states and local/testing/demo seed threads for normal,
+  edited, deleted, and shared-author comments.
+
+### Tests
+
+- Added `TaskCommentTest` coverage for shared participant posting, XSS-safe
+  rendering, owner notifications, activity records, viewer read-only behavior,
+  removed-member denial, author-only edit/delete, validation, inert mention
+  text, and idempotent seed data.
+
+### Restricted Hosting
+
+- Comment writes, activity logging, and owner notifications run during normal
+  authenticated Livewire requests. No cron, queue worker, supervisor, terminal
+  action, Artisan command during normal usage, email provider, hosted comment
+  service, or paid service is required.
+
+### Deferred
+
+- Real mention suggestions, mention parsing, mention links, and mention
+  notifications remain Step 073. Moderation and attachments remain their own
+  later steps.
+
 ## 2026-06-06 - Step 071 Shared dashboard search filter scope
 
 ### Added

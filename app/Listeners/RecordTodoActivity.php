@@ -5,6 +5,9 @@ namespace App\Listeners;
 use App\Events\CompletedTodosCleared;
 use App\Events\TodoArchived;
 use App\Events\TodoChecklistChanged;
+use App\Events\TodoCommentCreated;
+use App\Events\TodoCommentDeleted;
+use App\Events\TodoCommentUpdated;
 use App\Events\TodoCompleted;
 use App\Events\TodoCreated;
 use App\Events\TodoDeleted;
@@ -15,6 +18,7 @@ use App\Events\TodoUpdated;
 use App\Models\ActivityRecord;
 use App\Models\Todo;
 use App\Models\TodoChecklistItem;
+use App\Models\TodoComment;
 use App\Models\User;
 
 final class RecordTodoActivity
@@ -38,6 +42,9 @@ final class RecordTodoActivity
             ]),
             $event instanceof TodoRestoredFromTrash => $this->recordTodo($event->todo, 'todo.restored'),
             $event instanceof TodoChecklistChanged => $this->recordChecklist($event->todo, $event->item, $event->change),
+            $event instanceof TodoCommentCreated => $this->recordComment($event->comment, 'todo.comment_created'),
+            $event instanceof TodoCommentUpdated => $this->recordComment($event->comment, 'todo.comment_updated'),
+            $event instanceof TodoCommentDeleted => $this->recordComment($event->comment, 'todo.comment_deleted'),
             $event instanceof CompletedTodosCleared => $this->recordUser($event->user, 'todos.completed_cleared', [
                 'count' => $event->deletedCount,
             ]),
@@ -70,6 +77,29 @@ final class RecordTodoActivity
     {
         $this->recordTodo($todo, 'todo.checklist_'.$change, [
             'item_title' => $item instanceof TodoChecklistItem ? $this->safeTitle($item->title, __('activity.subjects.item')) : null,
+        ]);
+    }
+
+    private function recordComment(TodoComment $comment, string $event): void
+    {
+        $todo = $comment->todo()->first();
+
+        if (! $todo instanceof Todo) {
+            return;
+        }
+
+        ActivityRecord::query()->create([
+            'user_id' => $todo->user_id,
+            'actor_id' => $comment->author_id,
+            'event' => $event,
+            'subject_type' => $todo->getMorphClass(),
+            'subject_id' => $todo->getKey(),
+            'subject_title' => $this->todoSubjectTitle($todo),
+            'metadata' => $this->safeMetadata([
+                'comment_id' => $comment->id,
+                'comment_excerpt' => $this->safeTitle($comment->body, __('activity.subjects.comment')),
+            ]),
+            'occurred_at' => now(),
         ]);
     }
 

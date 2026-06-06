@@ -23,6 +23,7 @@ The current application surface covers these URL consumers:
 - Authenticated dashboard route at `/dashboard`.
 - Authenticated goals route at `/goals`.
 - Authenticated habits route at `/habits`.
+- Authenticated notification center route at `/notifications`.
 - Authenticated task board route at `/todos/board`.
 - Authenticated task calendar route at `/todos/calendar`.
 - Authenticated task templates route at `/todos/templates`.
@@ -93,4 +94,12 @@ its runtime profile is visible on the existing protected maintenance route at
 Step 054 adds the protected `todos.reminders` route at
 `https://ruflo.test/todos/reminders`. Reminder notification payloads use named
 routes for task action links, so links stay under the configured
-`https://ruflo.test` root.
+`https://ruflo.test` root. Known private task links are also pre-checked before
+the notification center renders an Open action.
+
+## 2026-06-06 Step 055 Update
+
+Step 055 adds the protected `notifications.inbox` route at
+`https://ruflo.test/notifications`. The notification center only renders
+relative links or same-host `https://ruflo.test` links; external notification
+payload URLs are hidden.

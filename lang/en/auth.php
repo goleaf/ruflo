@@ -129,12 +129,12 @@ return [
         'quick_login' => 'Log in as :name',
         'users' => [
             'test' => [
-                'role' => 'Primary demo admin workspace',
-                'description' => 'A seeded personal workspace with realistic projects, tags, filters, task states, and maintenance access.',
+                'role' => 'Apple company manager workspace',
+                'description' => 'A seeded executive workspace for an Apple manager with launch planning, operations reviews, goals, habits, time tracking, reminders, and maintenance access.',
             ],
             'second' => [
-                'role' => 'Isolation demo workspace',
-                'description' => 'A separate seeded workspace used to verify private data boundaries.',
+                'role' => 'Microsoft top manager workspace',
+                'description' => 'A separate seeded executive workspace for a Microsoft top manager with cloud, Copilot, partner, security, and leadership planning data.',
             ],
         ],
     ],

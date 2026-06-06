@@ -36,7 +36,7 @@ Without cron or workers, RuFlo cannot promise exact-time automation. Reminder, r
 
 ## Related Steps
 
-Step 007 added the protected setup status foundation. Step 008 added the protected maintenance center. Step 052 added feature-specific browser-triggered automation rule chunks. Step 053 added the reusable manual web-processing engine that feature-specific processors can reuse. Step 054 adds reminder processing as another authenticated web-triggered consumer.
+Step 007 added the protected setup status foundation. Step 008 added the protected maintenance center. Step 052 added feature-specific browser-triggered automation rule chunks. Step 053 added the reusable manual web-processing engine that feature-specific processors can reuse. Step 054 adds reminder processing as another authenticated web-triggered consumer. Step 055 adds database-backed in-app notification review and read-state controls.
 
 ## 2026-06-06 Recheck
 
@@ -84,3 +84,11 @@ and remaining counts in Livewire.
 Reminder delivery is self-hosted database notifications only. There is no cron,
 queue worker, supervisor, shell access, Artisan command, email dependency, paid
 service, or hosted notification provider required for normal reminder usage.
+
+## 2026-06-06 Step 055 Update
+
+The notification center reads and updates existing database notifications from
+the authenticated browser session. Read/unread changes, filtering, and
+pagination are synchronous web requests and require no cron, queue worker,
+supervisor, shell access, Artisan command, email provider, push provider, or
+paid service during normal usage.

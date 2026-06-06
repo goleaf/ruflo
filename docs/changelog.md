@@ -1,5 +1,37 @@
 # Changelog
 
+## 2026-06-06 - Step 055 Notification center
+
+### Implemented
+
+- Added the protected class-based `/notifications` Livewire/Flux page.
+- Added `NotificationInboxQuery` for owner-scoped database notification reads,
+  unread/read filtering, and scoped lookup before mutations.
+- Added same-host action-link filtering while leaving target authorization on
+  the destination route.
+- Added notification navigation, translated notification copy, and an index for
+  owner/read-state notification filtering.
+
+### Testing
+
+- Added notification center tests for private rendering, read/unread actions,
+  mark-all-read owner scoping, safe action links, and stale private-link
+  authorization.
+- Expanded route protection, domain, architecture, and localization coverage for
+  `/notifications`.
+
+### Documentation
+
+- Added `docs/notifications.md`.
+- Updated domain readiness, localization, authorization, restricted hosting,
+  todo foundation, and root progress ledgers.
+
+### Restricted Hosting
+
+- Notification review and read-state changes are synchronous database-backed
+  browser requests. No email provider, push service, cron, queue worker,
+  supervisor, shell access, or Artisan command is required for normal usage.
+
 ## 2026-06-06 - Step 054 Reminder system web-mode
 
 ### Implemented

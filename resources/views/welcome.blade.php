@@ -14,131 +14,168 @@
         @vite(['resources/css/app.css', 'resources/scss/app.scss', 'resources/js/app.js'])
         @fluxAppearance
     </head>
-    <body class="bg-white text-zinc-950 antialiased dark:bg-zinc-950 dark:text-zinc-100">
-        <div class="relative min-h-screen overflow-hidden ruflo-grid">
-            <div class="absolute inset-0 ruflo-veil"></div>
+    <body class="bg-zinc-50 text-zinc-950 antialiased dark:bg-zinc-950 dark:text-zinc-100">
+        <div class="min-h-screen">
+            <section class="relative isolate overflow-hidden bg-zinc-950 text-white">
+                <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('{{ asset('images/ruflo-banner.jpeg') }}')" aria-hidden="true"></div>
+                <div class="absolute inset-0 bg-zinc-950/70" aria-hidden="true"></div>
 
-            <div class="relative mx-auto flex min-h-screen max-w-7xl flex-col px-6 py-6 lg:px-10">
-                <header class="flex flex-col gap-4 border-b border-zinc-200 pb-4 dark:border-white/10 sm:flex-row sm:items-center sm:justify-between">
-                    <div class="flex items-center gap-3">
-                        <div class="flex size-11 shrink-0 overflow-hidden rounded-xl border border-zinc-200 bg-zinc-100 shadow-sm dark:border-white/10 dark:bg-white/5">
-                            <img src="{{ asset('images/ruflo-banner.jpeg') }}" alt="{{ __('welcome.image_alt') }}" class="h-full w-full object-cover">
-                        </div>
+                <div class="relative mx-auto flex min-h-[64svh] max-w-7xl flex-col px-5 py-5 sm:px-8 lg:px-10">
+                    <header class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                        <a href="{{ route('home') }}" class="flex items-center gap-3" aria-label="{{ __('welcome.brand.aria') }}">
+                            <span class="flex size-11 shrink-0 overflow-hidden rounded-lg border border-white/20 bg-white/10 shadow-sm">
+                                <img src="{{ asset('images/ruflo-banner.jpeg') }}" alt="{{ __('welcome.image_alt') }}" class="h-full w-full object-cover">
+                            </span>
+                            <span>
+                                <span class="block text-base font-semibold">{{ __('welcome.brand.name') }}</span>
+                                <span class="block text-xs text-zinc-300">{{ __('welcome.brand.line') }}</span>
+                            </span>
+                        </a>
 
-                        <div>
-                            <p class="text-[0.65rem] uppercase tracking-[0.32em] text-cyan-700 dark:text-cyan-300/80">{{ __('welcome.tagline') }}</p>
-                            <p class="text-sm text-zinc-600 dark:text-zinc-400">{{ __('welcome.subtitle') }}</p>
-                        </div>
-                    </div>
+                        <nav class="flex flex-wrap items-center gap-2 text-sm" aria-label="{{ __('welcome.nav.aria') }}">
+                            <a href="#features" class="rounded-md px-3 py-2 text-zinc-200 transition hover:bg-white/10 hover:text-white">{{ __('welcome.nav.features') }}</a>
+                            <a href="#workflow" class="rounded-md px-3 py-2 text-zinc-200 transition hover:bg-white/10 hover:text-white">{{ __('welcome.nav.workflow') }}</a>
+                            <a href="#privacy" class="rounded-md px-3 py-2 text-zinc-200 transition hover:bg-white/10 hover:text-white">{{ __('welcome.nav.privacy') }}</a>
+                            @auth
+                                <a href="{{ route('dashboard') }}" class="rounded-md bg-white px-4 py-2 font-medium text-zinc-950 transition hover:bg-zinc-100">{{ __('welcome.nav.dashboard') }}</a>
+                            @else
+                                <a href="{{ route('login') }}" class="rounded-md px-3 py-2 text-zinc-200 transition hover:bg-white/10 hover:text-white">{{ __('welcome.nav.sign_in') }}</a>
+                                <a href="{{ route('register') }}" class="rounded-md bg-white px-4 py-2 font-medium text-zinc-950 transition hover:bg-zinc-100">{{ __('welcome.nav.create') }}</a>
+                            @endauth
+                        </nav>
+                    </header>
 
-                    <a
-                        href="https://github.com/ruvnet/ruflo"
-                        target="_blank"
-                        rel="noreferrer"
-                        class="inline-flex items-center justify-center rounded-full border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-900 transition hover:border-cyan-300 hover:bg-cyan-50 dark:border-white/10 dark:bg-white/5 dark:text-zinc-100 dark:hover:border-cyan-400/40 dark:hover:bg-cyan-400/10"
-                    >
-                        {{ __('welcome.source') }}
-                    </a>
-                </header>
-
-                <main class="grid flex-1 gap-8 py-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-start">
-                    <section class="space-y-8">
-                        <div class="space-y-5">
-                            <p class="inline-flex rounded-full border border-cyan-200 bg-cyan-50 px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-cyan-800 dark:border-cyan-400/25 dark:bg-cyan-400/10 dark:text-cyan-200">{{ __('welcome.eyebrow') }}</p>
-                            <h1 class="max-w-3xl text-5xl font-semibold tracking-tight text-zinc-950 dark:text-white sm:text-6xl">{{ __('welcome.heading') }}</h1>
-                            <p class="max-w-2xl text-lg leading-8 text-zinc-600 dark:text-zinc-300">
+                    <div class="flex flex-1 items-center py-12 sm:py-16">
+                        <div class="max-w-4xl">
+                            <p class="inline-flex rounded-md border border-white/20 bg-white/10 px-3 py-1 text-xs font-semibold uppercase text-zinc-100">{{ __('welcome.hero.eyebrow') }}</p>
+                            <h1 class="mt-6 max-w-3xl text-5xl font-semibold tracking-tight text-white sm:text-6xl lg:text-7xl">{{ __('welcome.heading') }}</h1>
+                            <p class="mt-5 max-w-2xl text-lg leading-8 text-zinc-200 sm:text-xl">
                                 {{ __('welcome.description') }}
                             </p>
+
+                            <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+                                @auth
+                                    <a href="{{ route('dashboard') }}" class="inline-flex items-center justify-center rounded-md bg-white px-5 py-3 text-sm font-semibold text-zinc-950 transition hover:bg-zinc-100">{{ __('welcome.hero.dashboard_cta') }}</a>
+                                @else
+                                    <a href="{{ route('register') }}" class="inline-flex items-center justify-center rounded-md bg-white px-5 py-3 text-sm font-semibold text-zinc-950 transition hover:bg-zinc-100">{{ __('welcome.hero.primary_cta') }}</a>
+                                    <a href="{{ route('login') }}" class="inline-flex items-center justify-center rounded-md border border-white/25 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10">{{ __('welcome.hero.secondary_cta') }}</a>
+                                @endauth
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <main>
+                <section class="mx-auto grid max-w-7xl grid-cols-1 gap-3 px-5 py-6 sm:grid-cols-2 sm:px-8 lg:grid-cols-4 lg:px-10" aria-label="{{ __('welcome.proof.aria') }}">
+                    @foreach (__('welcome.proof.items') as $item)
+                        <div class="rounded-lg border border-zinc-200 bg-white p-4 shadow-sm dark:border-white/10 dark:bg-white/5">
+                            <p class="text-2xl font-semibold text-zinc-950 dark:text-white">{{ $item['value'] }}</p>
+                            <p class="mt-1 text-sm leading-6 text-zinc-600 dark:text-zinc-300">{{ $item['label'] }}</p>
+                        </div>
+                    @endforeach
+                </section>
+
+                <section id="features" class="border-y border-zinc-200 bg-white py-14 dark:border-white/10 dark:bg-zinc-900">
+                    <div class="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
+                        <div class="max-w-3xl">
+                            <p class="text-sm font-semibold uppercase text-sky-700 dark:text-sky-300">{{ __('welcome.features.eyebrow') }}</p>
+                            <h2 class="mt-3 text-3xl font-semibold tracking-tight text-zinc-950 dark:text-white sm:text-4xl">{{ __('welcome.features.heading') }}</h2>
+                            <p class="mt-4 text-base leading-7 text-zinc-600 dark:text-zinc-300">{{ __('welcome.features.description') }}</p>
                         </div>
 
-                        <div class="grid gap-4 md:grid-cols-3">
-                            @foreach (__('welcome.steps') as $step)
-                                <article class="rounded-2xl border border-zinc-200 bg-white/80 p-5 shadow-sm backdrop-blur dark:border-white/10 dark:bg-white/5">
-                                    <p class="text-xs font-semibold uppercase tracking-[0.28em] text-zinc-500 dark:text-zinc-400">{{ $step['label'] }}</p>
-                                    <h2 class="mt-3 text-lg font-medium text-zinc-950 dark:text-white">{{ $step['heading'] }}</h2>
-                                    <p class="mt-2 text-sm leading-6 text-zinc-600 dark:text-zinc-400">{{ $step['description'] }}</p>
+                        <div class="mt-10 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+                            @foreach (__('welcome.feature_groups') as $feature)
+                                <article @class([
+                                    'rounded-lg border bg-zinc-50 p-5 shadow-sm dark:bg-white/5',
+                                    'border-t-4 border-zinc-200 border-t-sky-500 dark:border-white/10' => $loop->iteration === 1,
+                                    'border-t-4 border-zinc-200 border-t-emerald-500 dark:border-white/10' => $loop->iteration === 2,
+                                    'border-t-4 border-zinc-200 border-t-amber-500 dark:border-white/10' => $loop->iteration === 3,
+                                    'border-t-4 border-zinc-200 border-t-rose-500 dark:border-white/10' => $loop->iteration === 4,
+                                    'border-t-4 border-zinc-200 border-t-indigo-500 dark:border-white/10' => $loop->iteration === 5,
+                                    'border-t-4 border-zinc-200 border-t-teal-500 dark:border-white/10' => $loop->iteration === 6,
+                                    'border-t-4 border-zinc-200 border-t-lime-500 dark:border-white/10' => $loop->iteration === 7,
+                                    'border-t-4 border-zinc-200 border-t-cyan-500 dark:border-white/10' => $loop->iteration === 8,
+                                    'border-t-4 border-zinc-200 border-t-violet-500 dark:border-white/10' => $loop->iteration === 9,
+                                ])>
+                                    <p class="text-xs font-semibold uppercase text-zinc-500 dark:text-zinc-400">{{ $feature['label'] }}</p>
+                                    <h3 class="mt-3 text-xl font-semibold text-zinc-950 dark:text-white">{{ $feature['title'] }}</h3>
+                                    <p class="mt-2 text-sm leading-6 text-zinc-600 dark:text-zinc-300">{{ $feature['description'] }}</p>
+                                    <ul class="mt-4 space-y-2 text-sm text-zinc-700 dark:text-zinc-200">
+                                        @foreach ($feature['items'] as $point)
+                                            <li class="flex gap-2">
+                                                <span class="mt-2 size-1.5 shrink-0 rounded-full bg-zinc-900 dark:bg-white" aria-hidden="true"></span>
+                                                <span>{{ $point }}</span>
+                                            </li>
+                                        @endforeach
+                                    </ul>
                                 </article>
                             @endforeach
                         </div>
-
-                        <div class="grid gap-4 lg:grid-cols-2">
-                            <section class="rounded-3xl border border-zinc-200 bg-white/90 p-6 shadow-sm backdrop-blur dark:border-white/10 dark:bg-white/5">
-                                <div class="flex items-center justify-between gap-4">
-                                    <div>
-                                        <p class="text-xs uppercase tracking-[0.28em] text-zinc-500 dark:text-zinc-400">{{ __('welcome.paths.plugin.label') }}</p>
-                                        <h2 class="mt-2 text-2xl font-semibold text-zinc-950 dark:text-white">{{ __('welcome.paths.plugin.heading') }}</h2>
-                                    </div>
-
-                                    <span class="rounded-full border border-zinc-200 bg-zinc-50 px-3 py-1 text-xs text-zinc-600 dark:border-white/10 dark:bg-white/5 dark:text-zinc-400">{{ __('welcome.paths.plugin.badge') }}</span>
-                                </div>
-
-                                <pre class="mt-5 overflow-x-auto rounded-2xl border border-zinc-200 bg-zinc-950 px-4 py-4 text-sm leading-6 text-zinc-100 dark:border-white/10"><code>/plugin marketplace add ruvnet/ruflo
-/plugin install ruflo-core@ruflo
-/plugin install ruflo-swarm@ruflo
-/plugin install ruflo-rag-memory@ruflo
-/plugin install ruflo-neural-trader@ruflo</code></pre>
-
-                                <p class="mt-4 text-sm leading-6 text-zinc-600 dark:text-zinc-400">
-                                    {{ __('welcome.paths.plugin.description') }}
-                                </p>
-                            </section>
-
-                            <section class="rounded-3xl border border-cyan-200 bg-cyan-50/70 p-6 shadow-sm backdrop-blur dark:border-cyan-400/20 dark:bg-cyan-400/5">
-                                <div class="flex items-center justify-between gap-4">
-                                    <div>
-                                        <p class="text-xs uppercase tracking-[0.28em] text-cyan-700 dark:text-cyan-300/80">{{ __('welcome.paths.cli.label') }}</p>
-                                        <h2 class="mt-2 text-2xl font-semibold text-zinc-950 dark:text-white">{{ __('welcome.paths.cli.heading') }}</h2>
-                                    </div>
-
-                                    <span class="rounded-full border border-cyan-200 bg-white px-3 py-1 text-xs text-cyan-800 dark:border-cyan-400/20 dark:bg-cyan-400/10 dark:text-cyan-100">{{ __('welcome.paths.cli.badge') }}</span>
-                                </div>
-
-                                <pre class="mt-5 overflow-x-auto rounded-2xl border border-cyan-200 bg-zinc-950 px-4 py-4 text-sm leading-6 text-zinc-100 dark:border-cyan-400/20"><code>npx ruflo@latest init wizard
-claude mcp add ruflo -- npx ruflo@latest mcp start
-npm install -g ruflo@latest</code></pre>
-
-                                <p class="mt-4 text-sm leading-6 text-zinc-700 dark:text-zinc-300">
-                                    {{ __('welcome.paths.cli.description') }}
-                                </p>
-                            </section>
-                        </div>
-                    </section>
-
-                    <aside class="space-y-4">
-                        <div class="overflow-hidden rounded-3xl border border-zinc-200 bg-white/90 shadow-sm dark:border-white/10 dark:bg-white/5">
-                            <img src="{{ asset('images/ruflo-banner.jpeg') }}" alt="{{ __('welcome.image_alt') }}" class="h-full w-full object-cover">
-                        </div>
-
-                        <div class="rounded-3xl border border-zinc-200 bg-white/90 p-6 shadow-sm dark:border-white/10 dark:bg-white/5">
-                            <p class="text-xs uppercase tracking-[0.28em] text-zinc-500 dark:text-zinc-400">{{ __('welcome.use.label') }}</p>
-                            <ol class="mt-4 space-y-4 text-sm leading-6 text-zinc-600 dark:text-zinc-300">
-                                <li><span class="mr-2 font-semibold text-zinc-950 dark:text-white">1.</span> {{ __('welcome.use.install') }}</li>
-                                <li><span class="mr-2 font-semibold text-zinc-950 dark:text-white">2.</span> {{ __('welcome.use.register') }}</li>
-                                <li><span class="mr-2 font-semibold text-zinc-950 dark:text-white">3.</span> {{ __('welcome.use.normal') }}</li>
-                            </ol>
-                        </div>
-
-                        <div class="rounded-3xl border border-zinc-200 bg-white/90 p-6 shadow-sm dark:border-white/10 dark:bg-white/5">
-                            <p class="text-xs uppercase tracking-[0.28em] text-zinc-500 dark:text-zinc-400">{{ __('welcome.features.label') }}</p>
-                            <ul class="mt-4 space-y-3 text-sm leading-6 text-zinc-600 dark:text-zinc-300">
-                                <li>{{ __('welcome.features.agents') }}</li>
-                                <li>{{ __('welcome.features.memory') }}</li>
-                                <li>{{ __('welcome.features.federation') }}</li>
-                                <li>{!! __('welcome.features.demo', ['url' => '<a href="https://flo.ruv.io/" target="_blank" rel="noreferrer" class="font-medium text-cyan-700 underline decoration-cyan-300 decoration-2 underline-offset-4 dark:text-cyan-300">flo.ruv.io</a>']) !!}</li>
-                            </ul>
-                        </div>
-                    </aside>
-                </main>
-
-                <footer class="flex flex-col gap-3 border-t border-zinc-200 py-4 text-sm text-zinc-500 dark:border-white/10 sm:flex-row sm:items-center sm:justify-between">
-                    <p>{{ __('welcome.footer.description') }}</p>
-
-                    <div class="flex flex-wrap gap-4">
-                        <a href="https://flo.ruv.io/" target="_blank" rel="noreferrer" class="font-medium text-zinc-700 underline decoration-cyan-300 decoration-2 underline-offset-4 dark:text-zinc-300">{{ __('welcome.footer.demo') }}</a>
-                        <a href="https://github.com/ruvnet/ruflo" target="_blank" rel="noreferrer" class="font-medium text-zinc-700 underline decoration-cyan-300 decoration-2 underline-offset-4 dark:text-zinc-300">{{ __('welcome.footer.source') }}</a>
                     </div>
-                </footer>
-            </div>
+                </section>
+
+                <section id="workflow" class="bg-zinc-50 py-14 dark:bg-zinc-950">
+                    <div class="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
+                        <div class="grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
+                            <div>
+                                <p class="text-sm font-semibold uppercase text-emerald-700 dark:text-emerald-300">{{ __('welcome.workflow.eyebrow') }}</p>
+                                <h2 class="mt-3 text-3xl font-semibold tracking-tight text-zinc-950 dark:text-white sm:text-4xl">{{ __('welcome.workflow.heading') }}</h2>
+                                <p class="mt-4 text-base leading-7 text-zinc-600 dark:text-zinc-300">{{ __('welcome.workflow.description') }}</p>
+                            </div>
+
+                            <div class="grid gap-3">
+                                @foreach (__('welcome.workflow.steps') as $step)
+                                    <article class="grid gap-4 rounded-lg border border-zinc-200 bg-white p-5 shadow-sm dark:border-white/10 dark:bg-white/5 sm:grid-cols-[8rem_1fr]">
+                                        <p class="text-sm font-semibold uppercase text-zinc-500 dark:text-zinc-400">{{ $step['stage'] }}</p>
+                                        <div>
+                                            <h3 class="text-lg font-semibold text-zinc-950 dark:text-white">{{ $step['title'] }}</h3>
+                                            <p class="mt-2 text-sm leading-6 text-zinc-600 dark:text-zinc-300">{{ $step['description'] }}</p>
+                                        </div>
+                                    </article>
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="privacy" class="bg-white py-14 dark:bg-zinc-900">
+                    <div class="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
+                        <div class="grid gap-6 lg:grid-cols-[1fr_1fr] lg:items-stretch">
+                            <div class="rounded-lg border border-zinc-200 bg-zinc-950 p-6 text-white shadow-sm dark:border-white/10">
+                                <p class="text-sm font-semibold uppercase text-amber-300">{{ __('welcome.privacy.eyebrow') }}</p>
+                                <h2 class="mt-3 text-3xl font-semibold tracking-tight">{{ __('welcome.privacy.heading') }}</h2>
+                                <p class="mt-4 text-base leading-7 text-zinc-300">{{ __('welcome.privacy.description') }}</p>
+                            </div>
+
+                            <div class="grid gap-3">
+                                @foreach (__('welcome.privacy.items') as $item)
+                                    <div class="rounded-lg border border-zinc-200 bg-zinc-50 p-5 dark:border-white/10 dark:bg-white/5">
+                                        <h3 class="text-base font-semibold text-zinc-950 dark:text-white">{{ $item['title'] }}</h3>
+                                        <p class="mt-2 text-sm leading-6 text-zinc-600 dark:text-zinc-300">{{ $item['description'] }}</p>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="bg-zinc-950 px-5 py-14 text-white sm:px-8 lg:px-10">
+                    <div class="mx-auto flex max-w-7xl flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+                        <div class="max-w-3xl">
+                            <p class="text-sm font-semibold uppercase text-cyan-300">{{ __('welcome.cta.eyebrow') }}</p>
+                            <h2 class="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">{{ __('welcome.cta.heading') }}</h2>
+                            <p class="mt-4 text-base leading-7 text-zinc-300">{{ __('welcome.cta.description') }}</p>
+                        </div>
+
+                        @auth
+                            <a href="{{ route('dashboard') }}" class="inline-flex shrink-0 items-center justify-center rounded-md bg-white px-5 py-3 text-sm font-semibold text-zinc-950 transition hover:bg-zinc-100">{{ __('welcome.cta.dashboard') }}</a>
+                        @else
+                            <a href="{{ route('register') }}" class="inline-flex shrink-0 items-center justify-center rounded-md bg-white px-5 py-3 text-sm font-semibold text-zinc-950 transition hover:bg-zinc-100">{{ __('welcome.cta.create') }}</a>
+                        @endauth
+                    </div>
+                </section>
+            </main>
         </div>
     </body>
 </html>

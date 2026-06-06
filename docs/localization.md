@@ -13,6 +13,8 @@ Step 016 keeps visible application copy in English language files instead of har
   validation messages, run statuses, and action messages.
 - `lang/en/reminders.php` contains reminder page, validation, processing,
   preference, status, and notification copy.
+- `lang/en/notifications.php` contains notification-center labels, filters,
+  statuses, action text, empty states, toasts, and fallback payload copy.
 - `lang/en/maintenance.php` contains the protected maintenance-center copy,
   including Step 053 manual web-processing engine labels.
 - Existing domain files such as `lang/en/todos.php` and `lang/en/setup.php`
@@ -49,3 +51,10 @@ Reminder UI text, validation messages, processing reports, preference toasts,
 status labels, empty states, and database notification messages live in
 `lang/en/reminders.php`. Dashboard and task-toolbar reminder links use existing
 dashboard/todo language files.
+
+## 2026-06-06 Step 055 Update
+
+Notification center page text, filter labels, read-state actions, toasts, empty
+states, status badges, and fallback notification payload text live in
+`lang/en/notifications.php`. The shared navigation label lives in
+`lang/en/navigation.php`.

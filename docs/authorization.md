@@ -39,6 +39,7 @@ scope) rather than across the whole codebase.
 | Cleanup read boundary | `App\Queries\Todos\TodoCleanupQuery` | Owner-scoped active cleanup smart views for stale, unplanned, blocked, and risky tasks. |
 | Automation read boundary | `App\Queries\Automation\AutomationRuleQuery` | Owner-scoped automation rules with latest run reports. |
 | Reminder read boundary | `App\Queries\Reminders\ReminderListQuery` | Owner-scoped reminders, task options, and summary counts. |
+| Notification read boundary | `App\Queries\Notifications\NotificationInboxQuery` | Owner-scoped database notifications, read-state filters, and scoped mutation lookup. |
 | Template read boundary | `App\Queries\Todos\TodoTemplateListQuery` | Owner-scoped reusable task/project/checklist/routine templates. |
 | Inbox read boundary | `App\Queries\Todos\TodoInboxQuery` | Owner-scoped active captured tasks waiting for triage. |
 | Focus read boundary | `App\Queries\Todos\TodoFocusQuery` | Owner-scoped active urgent/overdue/due-today/high-priority focus set. |
@@ -220,6 +221,16 @@ through `ReminderListQuery`, schedule input validates the selected task through
 `OwnedTodo`, and due processing starts from `$user->reminders()` before any
 notification is created. Notification action URLs route to protected task pages,
 where the task is resolved again through owner-scoped lookup.
+
+The notification center uses the same private route and owner boundary.
+`notifications.inbox` is a class-based Livewire page behind `auth` and
+`verified`. Notification rows are listed through `NotificationInboxQuery`, which
+scopes by the authenticated user's notifiable type and id. Read/unread actions
+resolve submitted notification ids through that same query before changing
+`read_at`, so another user's notification id is treated as not found. Action
+URLs are same-host display hints only. Known task links are pre-checked against
+the current user's task scope, and destination routes still re-authorize the
+target private record.
 
 ## Error behavior (no leakage)
 

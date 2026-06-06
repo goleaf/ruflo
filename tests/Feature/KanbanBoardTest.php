@@ -34,6 +34,17 @@ test('board route is protected and renders only current user tasks', function ()
         ->assertSee('Owner completed card')
         ->assertSee('Owner archived card')
         ->assertSee(route('todos.show', $active), false)
+        ->assertSee('wire:sort="moveCardByDrag"', false)
+        ->assertSee('wire:sort:group="todo-board-cards"', false)
+        ->assertSee('wire:sort:group-id="'.TodoStatus::Active->value.'"', false)
+        ->assertSee('wire:sort:item="'.$active->id.'"', false)
+        ->assertSee('data-test="board-card"', false)
+        ->assertSee('data-test="board-card-project-row"', false)
+        ->assertSee('grid-cols-[auto_minmax(0,1fr)_auto]', false)
+        ->assertSee('aria-label="'.__('todos.board.project_label').'"', false)
+        ->assertSee('whitespace-nowrap', false)
+        ->assertSee('touch-manipulation', false)
+        ->assertSee('cursor-grab', false)
         ->assertDontSee('Foreign hidden card')
         ->assertDontSee(route('todos.show', $foreign), false);
 
@@ -60,6 +71,22 @@ test('users can move board cards between lifecycle columns with fallback actions
 
     expect($todo->refresh()->status())->toBe(TodoStatus::Active)
         ->and($archivedCompleted->refresh()->status())->toBe(TodoStatus::Active);
+});
+
+test('users can drag board cards between lifecycle columns with mouse or touch sorting', function () {
+    $user = User::factory()->create();
+    $todo = Todo::factory()->for($user)->create();
+
+    Livewire::actingAs($user)
+        ->test(Board::class)
+        ->call('moveCardByDrag', $todo->id, 0, TodoStatus::Completed->value)
+        ->assertHasNoErrors()
+        ->call('moveCardByDrag', $todo->id, 0, TodoStatus::Archived->value)
+        ->assertHasNoErrors()
+        ->call('moveCardByDrag', $todo->id, 0, TodoStatus::Active->value)
+        ->assertHasNoErrors();
+
+    expect($todo->refresh()->status())->toBe(TodoStatus::Active);
 });
 
 test('board project movement accepts owned active projects and rejects unsafe targets', function () {

@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class DemoUserSeeder extends Seeder
 {
@@ -16,19 +17,25 @@ class DemoUserSeeder extends Seeder
             return;
         }
 
-        foreach (config('demo.login_panel.users', []) as $index => $demoUser) {
-            $user = User::query()
-                ->where('email', $demoUser['email'])
-                ->first() ?? new User;
+        $demoUsers = collect(config('demo.login_panel.users', []));
+        $existingUsers = User::query()
+            ->whereIn('email', $demoUsers->pluck('email')->all())
+            ->get()
+            ->keyBy('email');
 
-            $user->forceFill([
-                'name' => $demoUser['name'],
-                'email' => $demoUser['email'],
-                'email_verified_at' => $user->email_verified_at ?? now(),
-                'is_admin' => $index === 0,
-                'password' => (string) config('demo.login_panel.password', 'password'),
-            ])->save();
-        }
+        DB::transaction(function () use ($demoUsers, $existingUsers): void {
+            foreach ($demoUsers as $index => $demoUser) {
+                $user = $existingUsers->get($demoUser['email']) ?? new User;
+
+                $user->forceFill([
+                    'name' => $demoUser['name'],
+                    'email' => $demoUser['email'],
+                    'email_verified_at' => $user->email_verified_at ?? now(),
+                    'is_admin' => $index === 0,
+                    'password' => (string) config('demo.login_panel.password', 'password'),
+                ])->save();
+            }
+        });
     }
 
     private function canSeedDemoUsers(): bool

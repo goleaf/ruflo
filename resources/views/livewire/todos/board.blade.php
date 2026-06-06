@@ -29,9 +29,20 @@
                     </flux:badge>
                 </div>
 
-                <div class="space-y-3">
+                <div
+                    class="space-y-3"
+                    wire:sort="moveCardByDrag"
+                    wire:sort:group="todo-board-cards"
+                    wire:sort:group-id="{{ $column['status']->value }}"
+                    data-test="board-card-list-{{ $column['status']->value }}"
+                >
                     @forelse ($column['todos'] as $todo)
-                        <div wire:key="board-card-{{ $columnKey }}-{{ $todo->id }}" class="space-y-3 rounded-lg border border-zinc-200 bg-zinc-50 p-3 dark:border-white/10 dark:bg-zinc-900">
+                        <div
+                            wire:key="board-card-{{ $columnKey }}-{{ $todo->id }}"
+                            wire:sort:item="{{ $todo->id }}"
+                            class="space-y-3 rounded-lg border border-zinc-200 bg-zinc-50 p-3 touch-manipulation cursor-grab select-none transition hover:border-zinc-300 hover:bg-white active:cursor-grabbing dark:border-white/10 dark:bg-zinc-900 dark:hover:border-white/20 dark:hover:bg-zinc-800"
+                            data-test="board-card"
+                        >
                             <div class="space-y-1">
                                 <a href="{{ route('todos.show', $todo) }}" wire:navigate class="text-sm font-medium break-words text-zinc-950 dark:text-white">
                                     {{ $todo->title }}
@@ -62,26 +73,32 @@
                                 </div>
                             </div>
 
-                            <div class="grid grid-cols-1 gap-2 sm:grid-cols-[1fr_auto] xl:grid-cols-1 2xl:grid-cols-[1fr_auto]">
-                                <div>
-                                    <flux:select wire:model="projectMoves.{{ $todo->id }}" :label="__('todos.board.project_label')" size="sm">
+                            <div class="space-y-1" data-test="board-card-project-row">
+                                <div class="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2">
+                                    <span class="whitespace-nowrap text-xs font-medium text-zinc-500 dark:text-zinc-400">
+                                        {{ __('todos.board.project_label') }}
+                                    </span>
+
+                                    <flux:select wire:model="projectMoves.{{ $todo->id }}" size="sm" aria-label="{{ __('todos.board.project_label') }}">
                                         <flux:select.option value="">{{ __('todos.fields.no_project') }}</flux:select.option>
                                         @foreach ($this->projects as $project)
                                             <flux:select.option value="{{ $project->id }}">{{ $project->name }}</flux:select.option>
                                         @endforeach
                                     </flux:select>
-                                    <flux:error name="projectMoves.{{ $todo->id }}" />
+
+                                    <flux:button
+                                        size="sm"
+                                        variant="subtle"
+                                        icon="folder-arrow-down"
+                                        class="whitespace-nowrap"
+                                        wire:click="moveProject({{ $todo->id }})"
+                                        wire:loading.attr="disabled"
+                                    >
+                                        {{ __('todos.board.move_project') }}
+                                    </flux:button>
                                 </div>
 
-                                <flux:button
-                                    size="sm"
-                                    variant="subtle"
-                                    icon="folder-arrow-down"
-                                    wire:click="moveProject({{ $todo->id }})"
-                                    wire:loading.attr="disabled"
-                                >
-                                    {{ __('todos.board.move_project') }}
-                                </flux:button>
+                                <flux:error name="projectMoves.{{ $todo->id }}" />
                             </div>
 
                             <div class="flex flex-wrap gap-2">

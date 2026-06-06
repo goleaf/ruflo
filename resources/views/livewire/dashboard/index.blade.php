@@ -24,60 +24,81 @@
         </div>
     </div>
 
-    <flux:card class="overflow-x-auto">
-        <div class="flex min-w-max items-center gap-4" data-test="dashboard-workspace-row">
-            <div class="flex shrink-0 items-center gap-3 whitespace-nowrap">
-                <flux:subheading>{{ __('dashboard.workspace.label') }}</flux:subheading>
-                <span class="h-4 w-px bg-zinc-200 dark:bg-white/10" aria-hidden="true"></span>
-                <flux:heading size="lg">{{ __('dashboard.workspace.heading') }}</flux:heading>
-                <flux:text>{{ __('dashboard.workspace.description') }}</flux:text>
+    <flux:card class="space-y-4" data-test="dashboard-workspace-tabs">
+        <flux:subheading>{{ __('dashboard.workspace.label') }}</flux:subheading>
+
+        <div class="overflow-x-auto pb-1">
+            <div role="tablist" aria-label="{{ __('dashboard.workspace.tabs_label') }}" class="flex min-w-max gap-1 rounded-lg border border-zinc-200 bg-zinc-50 p-1 dark:border-white/10 dark:bg-zinc-900">
+                <button type="button" role="tab" aria-selected="true" class="inline-flex h-9 items-center gap-2 rounded-md bg-white px-3 text-sm font-medium text-zinc-950 shadow-sm dark:bg-white/10 dark:text-white" data-test="dashboard-owner-tab">
+                    <flux:icon.lock-closed variant="micro" class="size-4 shrink-0" />
+                    <span class="whitespace-nowrap">{{ __('dashboard.workspace.heading') }}</span>
+                </button>
+
+                <a href="{{ route('todos.today') }}" wire:navigate role="tab" aria-selected="false" class="inline-flex h-9 items-center gap-2 rounded-md px-3 text-sm font-medium text-zinc-600 transition hover:bg-white hover:text-zinc-950 dark:text-zinc-300 dark:hover:bg-white/10 dark:hover:text-white" data-test="dashboard-workspace-tab-link">
+                    <flux:icon.calendar variant="micro" class="size-4 shrink-0" />
+                    <span class="whitespace-nowrap">{{ __('dashboard.workspace.today_action') }}</span>
+                </a>
+
+                <a href="{{ route('todos.overdue') }}" wire:navigate role="tab" aria-selected="false" class="inline-flex h-9 items-center gap-2 rounded-md px-3 text-sm font-medium text-zinc-600 transition hover:bg-white hover:text-zinc-950 dark:text-zinc-300 dark:hover:bg-white/10 dark:hover:text-white" data-test="dashboard-workspace-tab-link">
+                    <flux:icon.exclamation-triangle variant="micro" class="size-4 shrink-0" />
+                    <span class="whitespace-nowrap">{{ __('dashboard.workspace.overdue_action') }}</span>
+                </a>
+
+                <a href="{{ route('todos.upcoming') }}" wire:navigate role="tab" aria-selected="false" class="inline-flex h-9 items-center gap-2 rounded-md px-3 text-sm font-medium text-zinc-600 transition hover:bg-white hover:text-zinc-950 dark:text-zinc-300 dark:hover:bg-white/10 dark:hover:text-white" data-test="dashboard-workspace-tab-link">
+                    <flux:icon.calendar variant="micro" class="size-4 shrink-0" />
+                    <span class="whitespace-nowrap">{{ __('dashboard.workspace.upcoming_action') }}</span>
+                </a>
+
+                <a href="{{ route('todos.focus') }}" wire:navigate role="tab" aria-selected="false" class="inline-flex h-9 items-center gap-2 rounded-md px-3 text-sm font-medium text-zinc-600 transition hover:bg-white hover:text-zinc-950 dark:text-zinc-300 dark:hover:bg-white/10 dark:hover:text-white" data-test="dashboard-workspace-tab-link">
+                    <flux:icon.bolt variant="micro" class="size-4 shrink-0" />
+                    <span class="whitespace-nowrap">{{ __('dashboard.workspace.focus_action') }}</span>
+                </a>
+
+                <a href="{{ route('todos.time') }}" wire:navigate role="tab" aria-selected="false" class="inline-flex h-9 items-center gap-2 rounded-md px-3 text-sm font-medium text-zinc-600 transition hover:bg-white hover:text-zinc-950 dark:text-zinc-300 dark:hover:bg-white/10 dark:hover:text-white" data-test="dashboard-workspace-tab-link">
+                    <flux:icon.clock variant="micro" class="size-4 shrink-0" />
+                    <span class="whitespace-nowrap">{{ __('dashboard.workspace.time_action') }}</span>
+                </a>
+
+                <a href="{{ route('todos.blocked') }}" wire:navigate role="tab" aria-selected="false" class="inline-flex h-9 items-center gap-2 rounded-md px-3 text-sm font-medium text-zinc-600 transition hover:bg-white hover:text-zinc-950 dark:text-zinc-300 dark:hover:bg-white/10 dark:hover:text-white" data-test="dashboard-workspace-tab-link">
+                    <flux:icon.exclamation-triangle variant="micro" class="size-4 shrink-0" />
+                    <span class="whitespace-nowrap">{{ __('dashboard.workspace.blocked_action') }}</span>
+                </a>
+
+                <a href="{{ route('todos.cleanup') }}" wire:navigate role="tab" aria-selected="false" class="inline-flex h-9 items-center gap-2 rounded-md px-3 text-sm font-medium text-zinc-600 transition hover:bg-white hover:text-zinc-950 dark:text-zinc-300 dark:hover:bg-white/10 dark:hover:text-white" data-test="dashboard-workspace-tab-link">
+                    <flux:icon.sparkles variant="micro" class="size-4 shrink-0" />
+                    <span class="whitespace-nowrap">{{ __('dashboard.workspace.cleanup_action') }}</span>
+                </a>
+
+                <a href="{{ route('todos.automations') }}" wire:navigate role="tab" aria-selected="false" class="inline-flex h-9 items-center gap-2 rounded-md px-3 text-sm font-medium text-zinc-600 transition hover:bg-white hover:text-zinc-950 dark:text-zinc-300 dark:hover:bg-white/10 dark:hover:text-white" data-test="dashboard-workspace-tab-link">
+                    <flux:icon.bolt variant="micro" class="size-4 shrink-0" />
+                    <span class="whitespace-nowrap">{{ __('dashboard.workspace.automations_action') }}</span>
+                </a>
+
+                <a href="{{ route('todos.reminders') }}" wire:navigate role="tab" aria-selected="false" class="inline-flex h-9 items-center gap-2 rounded-md px-3 text-sm font-medium text-zinc-600 transition hover:bg-white hover:text-zinc-950 dark:text-zinc-300 dark:hover:bg-white/10 dark:hover:text-white" data-test="dashboard-workspace-tab-link">
+                    <flux:icon.bell variant="micro" class="size-4 shrink-0" />
+                    <span class="whitespace-nowrap">{{ __('dashboard.workspace.reminders_action') }}</span>
+                </a>
+
+                <a href="{{ route('goals.index') }}" wire:navigate role="tab" aria-selected="false" class="inline-flex h-9 items-center gap-2 rounded-md px-3 text-sm font-medium text-zinc-600 transition hover:bg-white hover:text-zinc-950 dark:text-zinc-300 dark:hover:bg-white/10 dark:hover:text-white" data-test="dashboard-workspace-tab-link">
+                    <flux:icon.flag variant="micro" class="size-4 shrink-0" />
+                    <span class="whitespace-nowrap">{{ __('dashboard.workspace.goals_action') }}</span>
+                </a>
+
+                <a href="{{ route('habits.index') }}" wire:navigate role="tab" aria-selected="false" class="inline-flex h-9 items-center gap-2 rounded-md px-3 text-sm font-medium text-zinc-600 transition hover:bg-white hover:text-zinc-950 dark:text-zinc-300 dark:hover:bg-white/10 dark:hover:text-white" data-test="dashboard-workspace-tab-link">
+                    <flux:icon.arrow-path variant="micro" class="size-4 shrink-0" />
+                    <span class="whitespace-nowrap">{{ __('dashboard.workspace.habits_action') }}</span>
+                </a>
+
+                <a href="{{ route('todos.index') }}" wire:navigate role="tab" aria-selected="false" class="inline-flex h-9 items-center gap-2 rounded-md px-3 text-sm font-medium text-zinc-600 transition hover:bg-white hover:text-zinc-950 dark:text-zinc-300 dark:hover:bg-white/10 dark:hover:text-white" data-test="dashboard-workspace-tab-link">
+                    <flux:icon.list-bullet variant="micro" class="size-4 shrink-0" />
+                    <span class="whitespace-nowrap">{{ __('dashboard.workspace.action') }}</span>
+                </a>
             </div>
+        </div>
 
-            <div class="flex shrink-0 items-center gap-2 whitespace-nowrap" data-test="dashboard-workspace-actions">
-                <flux:button :href="route('todos.today')" wire:navigate variant="primary" icon="calendar" class="shrink-0">
-                    {{ __('dashboard.workspace.today_action') }}
-                </flux:button>
-
-                <flux:button :href="route('todos.overdue')" wire:navigate variant="subtle" icon="exclamation-triangle" class="shrink-0">
-                    {{ __('dashboard.workspace.overdue_action') }}
-                </flux:button>
-
-                <flux:button :href="route('todos.upcoming')" wire:navigate variant="subtle" icon="calendar" class="shrink-0">
-                    {{ __('dashboard.workspace.upcoming_action') }}
-                </flux:button>
-
-                <flux:button :href="route('todos.focus')" wire:navigate variant="subtle" icon="bolt" class="shrink-0">
-                    {{ __('dashboard.workspace.focus_action') }}
-                </flux:button>
-
-                <flux:button :href="route('todos.time')" wire:navigate variant="subtle" icon="clock" class="shrink-0">
-                    {{ __('dashboard.workspace.time_action') }}
-                </flux:button>
-
-                <flux:button :href="route('todos.blocked')" wire:navigate variant="subtle" icon="exclamation-triangle" class="shrink-0">
-                    {{ __('dashboard.workspace.blocked_action') }}
-                </flux:button>
-
-                <flux:button :href="route('todos.cleanup')" wire:navigate variant="subtle" icon="sparkles" class="shrink-0">
-                    {{ __('dashboard.workspace.cleanup_action') }}
-                </flux:button>
-
-                <flux:button :href="route('todos.automations')" wire:navigate variant="subtle" icon="bolt" class="shrink-0">
-                    {{ __('dashboard.workspace.automations_action') }}
-                </flux:button>
-
-                <flux:button :href="route('goals.index')" wire:navigate variant="subtle" icon="flag" class="shrink-0">
-                    {{ __('dashboard.workspace.goals_action') }}
-                </flux:button>
-
-                <flux:button :href="route('habits.index')" wire:navigate variant="subtle" icon="arrow-path" class="shrink-0">
-                    {{ __('dashboard.workspace.habits_action') }}
-                </flux:button>
-
-                <flux:button :href="route('todos.index')" wire:navigate variant="ghost" icon="list-bullet" class="shrink-0">
-                    {{ __('dashboard.workspace.action') }}
-                </flux:button>
-            </div>
+        <div role="tabpanel" class="rounded-lg border border-sky-200 bg-sky-50 p-4 dark:border-sky-400/20 dark:bg-sky-400/10" data-test="dashboard-owner-boundary-panel">
+            <flux:heading size="lg">{{ __('dashboard.workspace.heading') }}</flux:heading>
+            <flux:text class="mt-1">{{ __('dashboard.workspace.description') }}</flux:text>
         </div>
     </flux:card>
 </x-ui.page-container>

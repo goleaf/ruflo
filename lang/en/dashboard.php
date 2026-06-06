@@ -22,6 +22,7 @@ return [
 
     'workspace' => [
         'label' => 'Private workspace',
+        'tabs_label' => 'Workspace tabs',
         'heading' => 'Todos stay owner-scoped',
         'description' => 'Lists, project filters, tag filters, and dashboard counters use the same authenticated owner boundary.',
         'action' => 'Open todos',
@@ -33,6 +34,7 @@ return [
         'blocked_action' => 'Blocked',
         'cleanup_action' => 'Cleanup',
         'automations_action' => 'Automations',
+        'reminders_action' => 'Reminders',
         'goals_action' => 'Goals',
         'habits_action' => 'Habits',
     ],

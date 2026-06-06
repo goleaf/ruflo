@@ -80,7 +80,7 @@ Use this file as a persistent task tracker. Step detail lives in `TODO_MASTER_PR
 - [x] Step 052 — Automation rules web-only
 - [x] Step 053 — Manual web processing engine
 - [x] Step 054 — Reminder system web-mode
-- [ ] Step 055 — Notification center
+- [x] Step 055 — Notification center
 - [ ] Step 056 — Daily summary dashboard
 - [ ] Step 057 — Recurring task rules
 - [ ] Step 058 — Recurring occurrence generation

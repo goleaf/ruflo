@@ -10,6 +10,14 @@ return [
             'title' => 'Goals and milestones',
             'description' => 'Connect private tasks and projects to measurable outcomes without fake progress.',
         ],
+        'create' => [
+            'title' => 'Create a goal',
+            'description' => 'Define a private outcome and optionally connect it to one active project.',
+        ],
+        'create_milestone' => [
+            'title' => 'Add a milestone',
+            'description' => 'Add a check-in point to one of your active goals.',
+        ],
     ],
 
     'summary' => [
@@ -48,6 +56,7 @@ return [
 
     'actions' => [
         'back_to_dashboard' => 'Back to dashboard',
+        'back_to_goals' => 'Back to goals',
         'open_tasks' => 'Open tasks',
         'create' => 'Create goal',
         'add_milestone' => 'Add milestone',

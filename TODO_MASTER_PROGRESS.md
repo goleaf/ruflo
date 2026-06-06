@@ -2,19 +2,19 @@
 
 ## Current status
 
-Individual ledger rows for Steps 001 through 054 are complete. The requested recheck from Step 001 has been completed through Step 054. The tracker is expanded to one ledger line per step from 001 through 100 so later work cannot be hidden behind a range.
+Individual ledger rows for Steps 001 through 055 are complete. The requested recheck from Step 001 has been completed through Step 055. The tracker is expanded to one ledger line per step from 001 through 100 so later work cannot be hidden behind a range.
 
 ## Current step
 
-Step 055 — Notification center
+Step 056 — Daily summary dashboard
 
 ## Last completed action
 
-Completed Step 054 by adding owner-scoped web-mode reminders, database-only reminder notifications, a protected class-based reminders page, dashboard/page/manual processing triggers, demo data, docs, and reminder processing tests.
+Completed Step 055 by adding an owner-scoped in-app notification center, read/unread controls, safe same-host action-link filtering, protected navigation, translations, docs, and notification privacy tests.
 
 ## Next action
 
-Begin `steps/step-055-notification-center.md`, then implement the next not-yet-completed plan step without grouping it with later work.
+Begin `steps/step-056-daily-summary-dashboard.md`, then implement the next not-yet-completed plan step without grouping it with later work.
 
 ## Step ledger
 
@@ -74,7 +74,7 @@ Begin `steps/step-055-notification-center.md`, then implement the next not-yet-c
 | 052 — Automation rules web-only | Complete | Added owner-scoped `automation_rules` and `automation_rule_runs`, class-based `/todos/automations`, translated create/toggle/test/run controls, bounded dry-run/live chunks, disabled no-op runs, retry/resume by rerun, and seeded demo automation rules. | Boost docs/search evidence, migration/seed checks, URL/route/middleware checks, focused automation/rule/seeder/domain/route/dashboard/architecture/localization/restricted-hosting suite passed with 104 tests and 676 assertions; full suite passed with 505 tests and 3137 assertions. | Added `docs/automation-rules.md` and updated task organization, authorization, request validation, validation rules, factory coverage, seeding, domain readiness, localization, restricted-hosting, todo foundation, changelog, and root ledgers. | Generic reusable processor remains Step 053; Step 052 uses a feature-specific bounded runner and documents exact-time/background limitations. | ed3e4d4 |
 | 053 — Manual web processing engine | Complete | Added `ManualWebProcess`, `RunManualWebProcess`, `ManualWebProcessResult`, bounded profile/detail helpers, automation process adapters, and maintenance-center engine visibility. Refactored automation rules to use the reusable browser-triggered processor and stabilized the class-based habit-create split. | Boost docs/app/URL/log checks, syntax checks, focused Step 053 suites passed with 48 tests/473 assertions and 29 tests/203 assertions, habit/goal stabilization suite passed with 103 tests/625 assertions, and full suite passed with 513 tests/3273 assertions. | Added `docs/manual-web-processing.md` and updated restricted hosting, maintenance center, automation rules, task organization, authorization, request validation, localization, domain readiness, todo foundation, changelog, and root ledgers. | Manual web-processing processes must provide their own owner scope; risk logged for future feature consumers. | 948c961, c582185 |
 | 054 — Reminder system web-mode | Complete | Added owned task reminders with pending/processed/skipped states, strict reminder-time validation, user reminder preferences, database-only due notifications, compiler-safe local browser notification controls, protected `/todos/reminders`, and dashboard/page/manual browser processing through the Step 053 engine. | Boost docs/schema/URL/database checks, local migrate/seed checks, focused reminder/date suite passed with 14 tests and 123 assertions, adjacent suite passed with 181 tests and 1545 assertions, Pint, asset build after native datepicker changes, diff check, and full suite passed with 540 tests and 3798 assertions. | Added `docs/reminders.md` and updated restricted hosting, task organization, authorization, factory coverage, seeding, domain readiness, localization, changelogs, checklist, decisions, risks, and test report. | Exact-time reminder delivery remains limited by browser-triggered restricted-hosting runtime; recorded in risks. Inline local-notification Blade compiler risk mitigated by moving the large Alpine payload into a compact view-scoped helper. | d074663, 40ee997 |
-| 055 — Notification center | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 055 — Notification center | Complete | Added protected `/notifications`, `NotificationInboxQuery`, read/unread/mark-all-read controls, safe same-host action-link filtering, known task-link prechecks, navigation, translations, and a read-state filter index. | Syntax checks, focused notification/route/domain/localization/architecture suite passed with 113 tests and 606 assertions; full suite passed with 550 tests and 3852 assertions. | Added `docs/notifications.md` and updated domain readiness, localization, authorization, restricted hosting, task organization, todo foundation, changelogs, checklist, decisions, risks, and test report. | Stale notification links can point at inaccessible private records; mitigated by external/protocol filtering, known task-link prechecks, and target-route authorization. | Pending post-commit |
 | 056 — Daily summary dashboard | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
 | 057 — Recurring task rules | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
 | 058 — Recurring occurrence generation | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |

@@ -780,6 +780,7 @@ return [
         'open_list' => 'List view',
         'column' => 'Column',
         'column_limit' => 'Showing :shown of :total tasks.',
+        'position' => 'Board position',
         'target_status' => 'Board column',
         'project_label' => 'Project',
         'move_project' => 'Move project',

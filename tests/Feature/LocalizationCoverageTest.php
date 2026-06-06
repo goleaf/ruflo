@@ -32,7 +32,13 @@ test('public and authenticated landing pages render localized copy', function ()
     $this->get(route('home'))
         ->assertOk()
         ->assertSee(__('welcome.heading'))
-        ->assertSee(__('welcome.paths.cli.heading'))
+        ->assertSee(__('welcome.features.heading'))
+        ->assertSee(__('welcome.feature_groups.2.title'))
+        ->assertSee(__('welcome.feature_groups.4.title'))
+        ->assertSee(__('welcome.cta.heading'))
+        ->assertDontSee('CLI install')
+        ->assertDontSee('Claude Code plugins')
+        ->assertDontSee('github.com/ruvnet/ruflo')
         ->assertDontSee('welcome.');
 
     $user = User::factory()->create();

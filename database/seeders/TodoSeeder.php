@@ -28,6 +28,7 @@ use App\Models\TodoTemplate;
 use App\Models\User;
 use DateTimeInterface;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Seeds realistic, isolated todo workspaces.
@@ -42,8 +43,12 @@ class TodoSeeder extends Seeder
 {
     public function run(): void
     {
-        User::query()->each(function (User $user): void {
-            $this->seedWorkspace($user);
+        DB::transaction(function (): void {
+            User::query()
+                ->select(['id', 'name', 'email'])
+                ->each(function (User $user): void {
+                    $this->seedWorkspace($user);
+                });
         });
     }
 

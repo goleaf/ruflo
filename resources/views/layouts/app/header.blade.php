@@ -25,6 +25,10 @@
                 <flux:navbar.item icon="arrow-path" :href="route('habits.index')" :current="request()->routeIs('habits.*')" wire:navigate>
                     {{ __('habits.navigation.label') }}
                 </flux:navbar.item>
+
+                <flux:navbar.item icon="bell" :href="route('notifications.inbox')" :current="request()->routeIs('notifications.*')" wire:navigate>
+                    {{ __('navigation.items.notifications') }}
+                </flux:navbar.item>
             </flux:navbar>
 
             <flux:spacer />
@@ -61,6 +65,10 @@
 
                     <flux:sidebar.item icon="arrow-path" :href="route('habits.index')" :current="request()->routeIs('habits.*')" wire:navigate>
                         {{ __('habits.navigation.label') }}
+                    </flux:sidebar.item>
+
+                    <flux:sidebar.item icon="bell" :href="route('notifications.inbox')" :current="request()->routeIs('notifications.*')" wire:navigate>
+                        {{ __('navigation.items.notifications') }}
                     </flux:sidebar.item>
                 </flux:sidebar.group>
             </flux:sidebar.nav>

@@ -78,6 +78,31 @@ class Board extends Component
         Flux::toast(variant: 'success', text: __('todos.messages.board_project_moved'));
     }
 
+    public function moveCardByDrag(int $todoId, int $position, string $targetStatus, TodoListQuery $query, MoveTodoOnBoard $moveTodoOnBoard): void
+    {
+        Validator::make(
+            ['position' => $position, 'targetStatus' => $targetStatus],
+            ['position' => ['required', 'integer', 'min:0'], 'targetStatus' => ['required', new BoardStatus]],
+            attributes: [
+                'position' => __('todos.board.position'),
+                'targetStatus' => __('todos.board.target_status'),
+            ],
+        )->validate();
+
+        $user = $this->currentUser();
+        $todo = $query->findVisibleFor($user, $todoId);
+        $target = TodoStatus::from($targetStatus);
+
+        if ($todo->status() === $target) {
+            return;
+        }
+
+        $moveTodoOnBoard->handle($user, $todo, $target, $todo->project_id);
+        $this->afterMove($todo->id);
+
+        Flux::toast(variant: 'success', text: __('todos.messages.board_status_moved'));
+    }
+
     /**
      * @return array{active: int, completed: int, archived: int, trash: int, overdue: int}
      */

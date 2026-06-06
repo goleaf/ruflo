@@ -29,8 +29,16 @@ test('authenticated users can visit the dashboard', function () {
         ->assertSeeText('Blocked')
         ->assertSeeText('Cleanup')
         ->assertSeeText('Automations')
-        ->assertSee('data-test="dashboard-workspace-row"', false)
-        ->assertSee('data-test="dashboard-workspace-actions"', false)
+        ->assertSeeText('Reminders')
+        ->assertSee('data-test="dashboard-workspace-tabs"', false)
+        ->assertSee('data-test="dashboard-owner-tab"', false)
+        ->assertSee('data-test="dashboard-workspace-tab-link"', false)
+        ->assertSee('data-test="dashboard-owner-boundary-panel"', false)
+        ->assertSee('role="tablist"', false)
+        ->assertSee('role="tab"', false)
+        ->assertSee('role="tabpanel"', false)
+        ->assertSee('aria-selected="true"', false)
+        ->assertSee('aria-selected="false"', false)
         ->assertSee('min-w-max', false)
         ->assertSee('whitespace-nowrap', false)
         ->assertSee('data-test="dashboard-summary-widgets"', false)
@@ -41,7 +49,6 @@ test('authenticated users can visit the dashboard', function () {
         ->assertSeeInOrder([
             __('dashboard.workspace.label'),
             __('dashboard.workspace.heading'),
-            __('dashboard.workspace.description'),
             __('dashboard.workspace.today_action'),
             __('dashboard.workspace.overdue_action'),
             __('dashboard.workspace.upcoming_action'),
@@ -50,9 +57,11 @@ test('authenticated users can visit the dashboard', function () {
             __('dashboard.workspace.blocked_action'),
             __('dashboard.workspace.cleanup_action'),
             __('dashboard.workspace.automations_action'),
+            __('dashboard.workspace.reminders_action'),
             __('dashboard.workspace.goals_action'),
             __('dashboard.workspace.habits_action'),
             __('dashboard.workspace.action'),
+            __('dashboard.workspace.description'),
         ])
         ->assertSeeInOrder([
             __('dashboard.summary.active'),

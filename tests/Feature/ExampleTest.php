@@ -1,10 +1,10 @@
 <?php
 
-test('shows the RuFlo guide on the home page', function () {
+test('shows the RuFlo landing page', function () {
     $this->get(route('home'))
         ->assertOk()
-        ->assertSeeText('RuFlo')
-        ->assertSeeText('npx ruflo@latest init wizard')
-        ->assertSeeText('claude mcp add ruflo -- npx ruflo@latest mcp start')
-        ->assertSeeText('/plugin marketplace add ruvnet/ruflo');
+        ->assertSeeText(__('welcome.heading'))
+        ->assertSeeText(__('welcome.features.heading'))
+        ->assertSeeText(__('welcome.feature_groups.4.title'))
+        ->assertSeeText(__('welcome.cta.heading'));
 });

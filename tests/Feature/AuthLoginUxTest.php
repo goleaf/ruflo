@@ -26,6 +26,7 @@ test('demo login action returns only seeded users in safe environments', functio
 
 test('demo login panel is rendered for seeded users in safe environments', function () {
     seedAuthLoginUxDemoUsers();
+    $primaryName = (string) config('demo.login_panel.users.0.name', 'Test User');
 
     $this->get(route('login'))
         ->assertOk()
@@ -38,7 +39,7 @@ test('demo login panel is rendered for seeded users in safe environments', funct
         ->assertSee(__('auth.demo.users.test.description'))
         ->assertSee(__('auth.demo.users.second.role'))
         ->assertSee(__('auth.demo.users.second.description'))
-        ->assertSee(__('auth.demo.quick_login', ['name' => 'Test User']))
+        ->assertSee(__('auth.demo.quick_login', ['name' => $primaryName]))
         ->assertSee('data-test="demo-login-panel"', false)
         ->assertSee('data-test="demo-login-button"', false);
 });

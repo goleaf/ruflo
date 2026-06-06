@@ -1,11 +1,12 @@
 # Task Organization
 
-Through Step 054, the private task lifecycle is extended into a usable productivity system:
+Through Step 055, the private task lifecycle is extended into a usable productivity system:
 projects, tags, priorities, due dates, search, filters, sorting, and bulk
 actions, calendar/board/focus views, contained checklists, templates, a quick
 capture Inbox, time tracking, task dependencies, cleanup smart views, and
 browser-triggered automation and reminder workflows backed by the reusable
-manual web-processing engine. Everything here is
+manual web-processing engine, plus a private in-app notification center for
+database notification review. Everything here is
 owner-scoped on top of the model in
 [`authorization.md`](authorization.md) and the lifecycle in
 [`task-lifecycle.md`](task-lifecycle.md).
@@ -24,6 +25,20 @@ owner-scoped on top of the model in
 | **Task dependency** | `todo_dependencies` table; waiting task plus blocker task ids | `todo_dependencies.user_id`, private, both tasks must belong to the same owner |
 | **Automation rule** | `automation_rules` and `automation_rule_runs` tables | `automation_rules.user_id` and `automation_rule_runs.user_id`, private |
 | **Reminder** | `reminders` table; one reminder per user/task with status and processing timestamps | `reminders.user_id`, private, linked to an owned task |
+| **Notification** | Laravel `notifications` table; database notification payload and read state | scoped by the authenticated user as notifiable type/id |
+
+## Notifications
+
+Step 055 adds the protected `/notifications` center for database-backed in-app
+notifications. It is not a background delivery system: reminder processing and
+future feature workflows create database notifications, and the notification
+center lets the authenticated user review them, filter read/unread state, and
+mark items read or unread.
+
+Reads and mutations flow through `NotificationInboxQuery`, scoped by the current
+user's notifiable type and id. Action URLs are treated as hints: the center
+renders relative or same-host links only, and the destination route must still
+authorize the linked private task or resource.
 
 ## Subtasks and checklists
 

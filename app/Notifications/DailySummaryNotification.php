@@ -2,21 +2,14 @@
 
 namespace App\Notifications;
 
-use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class DailySummaryNotification extends Notification
+final class DailySummaryNotification extends Notification
 {
-    use Queueable;
-
-    /**
-     * Create a new notification instance.
-     */
-    public function __construct()
-    {
-        //
-    }
+    public function __construct(
+        private readonly int $dueCount,
+        private readonly int $overdueCount,
+    ) {}
 
     /**
      * Get the notification's delivery channels.
@@ -25,29 +18,29 @@ class DailySummaryNotification extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        return ['database'];
     }
 
-    /**
-     * Get the mail representation of the notification.
-     */
-    public function toMail(object $notifiable): MailMessage
+    public function databaseType(object $notifiable): string
     {
-        return (new MailMessage)
-            ->line('The introduction to the notification.')
-            ->action('Notification Action', url('/'))
-            ->line('Thank you for using our application!');
+        return 'daily-summary';
     }
 
     /**
-     * Get the array representation of the notification.
-     *
      * @return array<string, mixed>
      */
-    public function toArray(object $notifiable): array
+    public function toDatabase(object $notifiable): array
     {
         return [
-            //
+            'kind' => 'daily_summary',
+            'title' => __('reminders.notifications.daily_summary.title'),
+            'message' => __('reminders.notifications.daily_summary.message', [
+                'due' => $this->dueCount,
+                'overdue' => $this->overdueCount,
+            ]),
+            'action_url' => route('dashboard'),
+            'due_count' => $this->dueCount,
+            'overdue_count' => $this->overdueCount,
         ];
     }
 }

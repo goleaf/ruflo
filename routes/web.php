@@ -1,8 +1,11 @@
 <?php
 
+use App\Livewire\Goals\Create as GoalsCreate;
+use App\Livewire\Goals\CreateMilestone as GoalsCreateMilestone;
 use App\Livewire\Goals\Index as GoalsIndex;
 use App\Livewire\Habits\Create as HabitsCreate;
 use App\Livewire\Habits\Index as HabitsIndex;
+use App\Livewire\Notifications\Inbox as NotificationsInbox;
 use App\Livewire\Projects\Show as ProjectsShow;
 use App\Livewire\Todos\Automations as TodosAutomations;
 use App\Livewire\Todos\Blocked as TodosBlocked;
@@ -26,9 +29,12 @@ Route::view('/', 'welcome')->name('home');
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::view('dashboard', 'dashboard')->name('dashboard');
 
+    Route::livewire('goals/create', GoalsCreate::class)->name('goals.create');
+    Route::livewire('goals/milestones/create', GoalsCreateMilestone::class)->name('goals.milestones.create');
     Route::livewire('goals', GoalsIndex::class)->name('goals.index');
     Route::livewire('habits/create', HabitsCreate::class)->name('habits.create');
     Route::livewire('habits', HabitsIndex::class)->name('habits.index');
+    Route::livewire('notifications', NotificationsInbox::class)->name('notifications.inbox');
     Route::livewire('todos', TodosIndex::class)->name('todos.index');
     Route::livewire('todos/today', TodosToday::class)->name('todos.today');
     Route::livewire('todos/overdue', TodosOverdue::class)->name('todos.overdue');

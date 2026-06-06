@@ -259,6 +259,11 @@ owner-scoped stale/unplanned/blocked/risky smart views, invalid URL fail-closed
 behavior, search/sort/pagination/reset state, seeded cleanup coverage, and
 no-Volt class-based Livewire guardrails.
 
+Step 055 adds `NotificationCenterTest`, which locks the protected notification
+center route, owner-scoped database notification rendering, read/unread actions,
+mark-all-read scoping, same-host action-link filtering, and target-route
+authorization for stale private notification links.
+
 Step 052 adds `AutomationRulesTest` and `AutomationRuleNameValidationTest`,
 which lock the protected Automations route, owner-scoped rule listing, rule
 creation validation, translated rule-name messages, dry-run reports, disabled

@@ -13,6 +13,10 @@ use App\Actions\Habits\CreateHabit;
 use App\Actions\Habits\LinkTodoToHabit;
 use App\Actions\Habits\ToggleHabitCheckIn;
 use App\Actions\Processing\RunManualWebProcess;
+use App\Actions\Reminders\ProcessDueReminders;
+use App\Actions\Reminders\Processes\ProcessDueRemindersProcess;
+use App\Actions\Reminders\SyncTodoReminder;
+use App\Actions\Reminders\ToggleReminderPreference;
 use App\Actions\Todos\AbandonPomodoroSession;
 use App\Actions\Todos\AddTodoDependency;
 use App\Actions\Todos\CaptureInboxTodo;
@@ -55,6 +59,8 @@ use App\Data\Goals\GoalProgress;
 use App\Data\Habits\HabitData;
 use App\Data\Habits\HabitProgress;
 use App\Data\Processing\ManualWebProcessResult;
+use App\Data\Reminders\ReminderData;
+use App\Data\Reminders\ReminderProcessingResult;
 use App\Data\Todos\BulkActionResult;
 use App\Data\Todos\SavedTodoViewData;
 use App\Data\Todos\TimeEntryData;
@@ -64,15 +70,19 @@ use App\Data\Todos\TodoTemplateData;
 use App\Enums\AutomationRuleKind;
 use App\Enums\AutomationRunStatus;
 use App\Enums\PomodoroSessionStatus;
+use App\Enums\ReminderStatus;
 use App\Enums\TaskTemplateKind;
 use App\Enums\TimeEntrySource;
 use App\Enums\TimeEntryStatus;
 use App\Enums\TodoTransition;
 use App\Events\TodoChecklistChanged;
 use App\Livewire\Forms\Todos\TodoForm;
+use App\Livewire\Goals\Create as GoalsCreate;
+use App\Livewire\Goals\CreateMilestone as GoalsCreateMilestone;
 use App\Livewire\Goals\Index as GoalsIndex;
 use App\Livewire\Habits\Create as HabitsCreate;
 use App\Livewire\Habits\Index as HabitsIndex;
+use App\Livewire\Notifications\Inbox as NotificationInbox;
 use App\Livewire\Projects\Show as ProjectShow;
 use App\Livewire\Todos\Automations as TodoAutomations;
 use App\Livewire\Todos\Blocked as TodoBlocked;
@@ -81,6 +91,7 @@ use App\Livewire\Todos\Calendar as TodoCalendar;
 use App\Livewire\Todos\Cleanup as TodoCleanup;
 use App\Livewire\Todos\Focus as TodoFocus;
 use App\Livewire\Todos\Inbox as TodoInbox;
+use App\Livewire\Todos\Reminders as TodoReminders;
 use App\Livewire\Todos\Show as TodoShow;
 use App\Livewire\Todos\Templates as TodoTemplates;
 use App\Livewire\Todos\Time as TodoTime;
@@ -91,6 +102,7 @@ use App\Policies\GoalPolicy;
 use App\Policies\HabitCheckInPolicy;
 use App\Policies\HabitPolicy;
 use App\Policies\PomodoroSessionPolicy;
+use App\Policies\ReminderPolicy;
 use App\Policies\SavedTodoViewPolicy;
 use App\Policies\TimeEntryPolicy;
 use App\Policies\TodoChecklistItemPolicy;
@@ -100,6 +112,8 @@ use App\Policies\TodoTemplatePolicy;
 use App\Queries\Automation\AutomationRuleQuery;
 use App\Queries\Goals\GoalListQuery;
 use App\Queries\Habits\HabitListQuery;
+use App\Queries\Notifications\NotificationInboxQuery;
+use App\Queries\Reminders\ReminderListQuery;
 use App\Queries\Todos\PomodoroSessionQuery;
 use App\Queries\Todos\SavedTodoViewListQuery;
 use App\Queries\Todos\TimeEntryQuery;
@@ -117,6 +131,7 @@ use App\Rules\Goals\GoalTitle;
 use App\Rules\Goals\MilestoneTitle;
 use App\Rules\Habits\HabitTargetCount;
 use App\Rules\Habits\HabitTitle;
+use App\Rules\Reminders\ReminderAt;
 use App\Rules\Todos\AcyclicTodoDependency;
 use App\Rules\Todos\BoardStatus;
 use App\Rules\Todos\CalendarMonth;
@@ -183,8 +198,12 @@ test('todo foundation classes exist', function () {
         ->and(class_exists(GoalProgress::class))->toBeTrue()
         ->and(class_exists(HabitData::class))->toBeTrue()
         ->and(class_exists(HabitProgress::class))->toBeTrue()
+        ->and(class_exists(ReminderData::class))->toBeTrue()
+        ->and(class_exists(ReminderProcessingResult::class))->toBeTrue()
         ->and(class_exists(GoalListQuery::class))->toBeTrue()
         ->and(class_exists(HabitListQuery::class))->toBeTrue()
+        ->and(class_exists(NotificationInboxQuery::class))->toBeTrue()
+        ->and(class_exists(ReminderListQuery::class))->toBeTrue()
         ->and(class_exists(PomodoroSessionQuery::class))->toBeTrue()
         ->and(class_exists(TimeEntryQuery::class))->toBeTrue()
         ->and(class_exists(SavedTodoViewListQuery::class))->toBeTrue()
@@ -210,6 +229,7 @@ test('todo foundation classes exist', function () {
         ->and(class_exists(TemplateChecklistItems::class))->toBeTrue()
         ->and(class_exists(TemplateName::class))->toBeTrue()
         ->and(class_exists(SavedViewName::class))->toBeTrue()
+        ->and(class_exists(ReminderAt::class))->toBeTrue()
         ->and(class_exists(BulkActionResult::class))->toBeTrue()
         ->and(class_exists(SavedTodoViewPolicy::class))->toBeTrue()
         ->and(class_exists(TodoChecklistItemPolicy::class))->toBeTrue()
@@ -221,18 +241,23 @@ test('todo foundation classes exist', function () {
         ->and(class_exists(HabitCheckInPolicy::class))->toBeTrue()
         ->and(class_exists(PomodoroSessionPolicy::class))->toBeTrue()
         ->and(class_exists(TimeEntryPolicy::class))->toBeTrue()
+        ->and(class_exists(ReminderPolicy::class))->toBeTrue()
         ->and(class_exists(TodoBoard::class))->toBeTrue()
         ->and(class_exists(TodoCalendar::class))->toBeTrue()
         ->and(class_exists(TodoBlocked::class))->toBeTrue()
         ->and(class_exists(TodoCleanup::class))->toBeTrue()
         ->and(class_exists(TodoShow::class))->toBeTrue()
         ->and(class_exists(TodoFocus::class))->toBeTrue()
+        ->and(class_exists(GoalsCreate::class))->toBeTrue()
+        ->and(class_exists(GoalsCreateMilestone::class))->toBeTrue()
         ->and(class_exists(GoalsIndex::class))->toBeTrue()
         ->and(class_exists(HabitsCreate::class))->toBeTrue()
         ->and(class_exists(HabitsIndex::class))->toBeTrue()
         ->and(class_exists(TodoTemplates::class))->toBeTrue()
         ->and(class_exists(TodoInbox::class))->toBeTrue()
         ->and(class_exists(TodoTime::class))->toBeTrue()
+        ->and(class_exists(TodoReminders::class))->toBeTrue()
+        ->and(class_exists(NotificationInbox::class))->toBeTrue()
         ->and(class_exists(ProjectShow::class))->toBeTrue()
         ->and(class_exists(TodoChecklistChanged::class))->toBeTrue()
         ->and(enum_exists(PomodoroSessionStatus::class))->toBeTrue()
@@ -240,10 +265,15 @@ test('todo foundation classes exist', function () {
         ->and(enum_exists(TimeEntryStatus::class))->toBeTrue()
         ->and(enum_exists(TodoTransition::class))->toBeTrue()
         ->and(enum_exists(TaskTemplateKind::class))->toBeTrue()
+        ->and(enum_exists(ReminderStatus::class))->toBeTrue()
         ->and(class_exists(ClearCompletedTodos::class))->toBeTrue()
         ->and(class_exists(CreateAutomationRule::class))->toBeTrue()
         ->and(class_exists(ToggleAutomationRule::class))->toBeTrue()
         ->and(class_exists(RunAutomationRule::class))->toBeTrue()
+        ->and(class_exists(SyncTodoReminder::class))->toBeTrue()
+        ->and(class_exists(ToggleReminderPreference::class))->toBeTrue()
+        ->and(class_exists(ProcessDueReminders::class))->toBeTrue()
+        ->and(class_exists(ProcessDueRemindersProcess::class))->toBeTrue()
         ->and(class_exists(RunManualWebProcess::class))->toBeTrue()
         ->and(interface_exists(ManualWebProcess::class))->toBeTrue()
         ->and(class_exists(ManualWebProcessResult::class))->toBeTrue()
@@ -282,18 +312,32 @@ test('habits page delegates habit responsibilities', function () {
 
 test('goals page delegates goal responsibilities', function () {
     $source = file_get_contents(app_path('Livewire/Goals/Index.php'));
+    $createSource = file_get_contents(app_path('Livewire/Goals/Create.php'));
+    $milestoneSource = file_get_contents(app_path('Livewire/Goals/CreateMilestone.php'));
 
     expect($source)
         ->toContain('GoalListQuery')
-        ->toContain('CreateGoal')
-        ->toContain('CreateGoalMilestone')
         ->toContain('CheckInGoalMilestone')
         ->toContain('LinkTodoToGoal')
-        ->toContain('GoalTitle')
-        ->toContain('MilestoneTitle')
         ->toContain('$this->authorize')
+        ->not->toContain('CreateGoal')
+        ->not->toContain('CreateGoalMilestone')
         ->not->toContain('Goal::query()')
         ->not->toContain('Todo::query()')
+        ->not->toContain('->save()')
+        ->and($createSource)
+        ->toContain('CreateGoal')
+        ->toContain('GoalTitle')
+        ->toContain('ProjectListQuery')
+        ->toContain('$this->authorize')
+        ->not->toContain('Goal::query()')
+        ->not->toContain('->save()')
+        ->and($milestoneSource)
+        ->toContain('CreateGoalMilestone')
+        ->toContain('MilestoneTitle')
+        ->toContain('GoalListQuery')
+        ->toContain('$this->authorize')
+        ->not->toContain('Goal::query()')
         ->not->toContain('->save()');
 });
 
@@ -406,6 +450,59 @@ test('automation runner delegates chunk processing to reusable web engine', func
         ->not->toContain('config(\'hosting.web_processing.chunk_size\'');
 });
 
+test('todo reminders page delegates reminder responsibilities', function () {
+    $source = file_get_contents(app_path('Livewire/Todos/Reminders.php'));
+    $processorSource = file_get_contents(app_path('Actions/Reminders/ProcessDueReminders.php'));
+    $processSource = file_get_contents(app_path('Actions/Reminders/Processes/ProcessDueRemindersProcess.php'));
+    $viewSource = file_get_contents(resource_path('views/livewire/todos/reminders.blade.php'));
+
+    expect($source)
+        ->toContain('ReminderListQuery')
+        ->toContain('SyncTodoReminder')
+        ->toContain('ToggleReminderPreference')
+        ->toContain('ProcessDueReminders')
+        ->toContain('ReminderData')
+        ->toContain('ReminderAt')
+        ->toContain('OwnedTodo')
+        ->toContain('$this->authorize')
+        ->not->toContain('Reminder::query()')
+        ->not->toContain('Todo::query()')
+        ->not->toContain('->save()')
+        ->and($processorSource)
+        ->toContain('RunManualWebProcess')
+        ->toContain('ProcessDueRemindersProcess')
+        ->and($processSource)
+        ->toContain('ManualWebProcess')
+        ->toContain('TodoReminderDueNotification')
+        ->toContain('reminders_enabled')
+        ->toContain('$user->reminders()')
+        ->and($viewSource)
+        ->toContain('<x-ui.page-header')
+        ->toContain('<flux:callout')
+        ->toContain('reminders.pages.index.title')
+        ->not->toContain('@php');
+});
+
+test('notification center delegates notification responsibilities', function () {
+    $source = file_get_contents(app_path('Livewire/Notifications/Inbox.php'));
+    $querySource = file_get_contents(app_path('Queries/Notifications/NotificationInboxQuery.php'));
+    $viewSource = file_get_contents(resource_path('views/livewire/notifications/inbox.blade.php'));
+
+    expect($source)
+        ->toContain('NotificationInboxQuery')
+        ->toContain('findFor($this->currentUser()')
+        ->toContain('unreadNotifications()')
+        ->not->toContain('DatabaseNotification::query()')
+        ->and($querySource)
+        ->toContain('DatabaseNotification::query()')
+        ->toContain('notifiable_type')
+        ->toContain('notifiable_id')
+        ->and($viewSource)
+        ->toContain('<x-ui.page-header')
+        ->toContain('notifications.pages.inbox.title')
+        ->not->toContain('@php');
+});
+
 test('todo templates page delegates template responsibilities', function () {
     $source = file_get_contents(app_path('Livewire/Todos/Templates.php'));
 
@@ -494,7 +591,8 @@ test('todo documentation exists for future implementation steps', function () {
         ->and(file_exists(base_path('docs/authorization.md')))->toBeTrue()
         ->and(file_exists(base_path('docs/task-lifecycle.md')))->toBeTrue()
         ->and(file_exists(base_path('docs/task-organization.md')))->toBeTrue()
-        ->and(file_exists(base_path('docs/automation-rules.md')))->toBeTrue();
+        ->and(file_exists(base_path('docs/automation-rules.md')))->toBeTrue()
+        ->and(file_exists(base_path('docs/notifications.md')))->toBeTrue();
 });
 
 test('todo model routes ownership through the shared concern and explicit policy', function () {

@@ -229,6 +229,11 @@ owner-scoped important active task rendering, urgent-task inclusion, quick
 complete/defer/snooze actions, selected-task keyboard action targets, foreign
 and non-focus denial, and browser-only timer/keyboard markup.
 
+Step 046 adds `GoalMilestoneTest`, which locks the protected Goals route,
+owner-scoped goal and milestone rendering, honest progress calculation from real
+tasks and check-ins, goal/milestone validation, milestone check-in toggles,
+task-to-goal linking, and foreign-id spoofing denial.
+
 ## 2026-06-06 Recheck
 
 The Step 001 recheck confirmed the foundation still matches the current master-plan rules after Steps 002-016:

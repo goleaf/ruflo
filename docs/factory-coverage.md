@@ -3,6 +3,8 @@
 Step 011 covers the tracked application models:
 
 - `App\Models\User`
+- `App\Models\Goal`
+- `App\Models\GoalMilestone`
 - `App\Models\Project`
 - `App\Models\Reminder`
 - `App\Models\SavedTodoView`
@@ -42,6 +44,26 @@ Demo user factory states read from `config/demo.php` so the login panel, seeders
 - named and color states,
 - `urgent()` and `waiting()` demo states.
 
+## Goal And Milestone Factories
+
+`GoalFactory` covers:
+
+- default user-owned goals,
+- `forProject()` to attach a goal to an owned project while preserving the
+  owner boundary,
+- explicit titles through `titled()`,
+- target dates through `targetDate()`,
+- completed and archived states.
+
+`GoalMilestoneFactory` covers:
+
+- default user-owned milestones,
+- `forGoal()` to attach a milestone to an owned goal while preserving the
+  owner boundary,
+- explicit titles and positions,
+- target dates,
+- pending and completed check-in states.
+
 ## Reminder Factory
 
 `ReminderFactory` covers valid placeholder record creation for the current reminder schema. It does not define active, due, sent, failed, retry, or processed states yet because the table has no columns for those concepts.
@@ -69,6 +91,7 @@ shared/global visibility and remain owner-scoped through `user_id`.
 - low, normal, high, and urgent priority shortcuts,
 - due today, overdue, upcoming, no due date, explicit due date, and max-length title states,
 - project ownership helper through `forProject()`,
+- goal ownership helpers through `forGoal()` and `forMilestone()`,
 - tag ownership helpers through `forTag()` and `withTags()`.
 
 The tag helpers avoid cross-user attachment by attaching only tags that share the todo owner.

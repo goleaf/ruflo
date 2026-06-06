@@ -37,6 +37,16 @@ class Project extends Model
         return $this->hasMany(Todo::class);
     }
 
+    /**
+     * Goals attached to this project.
+     *
+     * @return HasMany<Goal, $this>
+     */
+    public function goals(): HasMany
+    {
+        return $this->hasMany(Goal::class);
+    }
+
     public function isArchived(): bool
     {
         return $this->archived_at !== null;

@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Goal;
+use App\Models\GoalMilestone;
 use App\Models\Project;
 use App\Models\Reminder;
 use App\Models\SavedTodoView;
@@ -8,6 +10,8 @@ use App\Models\Todo;
 use App\Models\TodoChecklistItem;
 use App\Models\TodoTemplate;
 use App\Models\User;
+use App\Policies\GoalMilestonePolicy;
+use App\Policies\GoalPolicy;
 use App\Policies\ProjectPolicy;
 use App\Policies\ReminderPolicy;
 use App\Policies\SavedTodoViewPolicy;
@@ -20,11 +24,60 @@ use Illuminate\Support\Facades\Gate;
 test('tracked private resources resolve explicit policies', function () {
     expect(Gate::getPolicyFor(Todo::class))->toBeInstanceOf(TodoPolicy::class)
         ->and(Gate::getPolicyFor(Project::class))->toBeInstanceOf(ProjectPolicy::class)
+        ->and(Gate::getPolicyFor(Goal::class))->toBeInstanceOf(GoalPolicy::class)
+        ->and(Gate::getPolicyFor(GoalMilestone::class))->toBeInstanceOf(GoalMilestonePolicy::class)
         ->and(Gate::getPolicyFor(Tag::class))->toBeInstanceOf(TagPolicy::class)
         ->and(Gate::getPolicyFor(TodoChecklistItem::class))->toBeInstanceOf(TodoChecklistItemPolicy::class)
         ->and(Gate::getPolicyFor(TodoTemplate::class))->toBeInstanceOf(TodoTemplatePolicy::class)
         ->and(Gate::getPolicyFor(SavedTodoView::class))->toBeInstanceOf(SavedTodoViewPolicy::class)
         ->and(Gate::getPolicyFor(Reminder::class))->toBeInstanceOf(ReminderPolicy::class);
+});
+
+test('goal policy covers owner lifecycle abilities', function () {
+    $owner = User::factory()->create();
+    $intruder = User::factory()->create();
+    $goal = Goal::factory()->for($owner)->create();
+
+    $ownerGate = Gate::forUser($owner);
+    $intruderGate = Gate::forUser($intruder);
+
+    foreach (['view', 'update', 'delete'] as $ability) {
+        expect($ownerGate->allows($ability, $goal))->toBeTrue();
+
+        $response = $intruderGate->inspect($ability, $goal);
+
+        expect($response->denied())->toBeTrue()
+            ->and($response->status())->toBe(404);
+    }
+
+    expect($ownerGate->allows('viewAny', Goal::class))->toBeTrue()
+        ->and($ownerGate->allows('create', Goal::class))->toBeTrue()
+        ->and($ownerGate->denies('restore', $goal))->toBeTrue()
+        ->and($ownerGate->denies('forceDelete', $goal))->toBeTrue();
+});
+
+test('goal milestone policy covers owner check in abilities', function () {
+    $owner = User::factory()->create();
+    $intruder = User::factory()->create();
+    $goal = Goal::factory()->for($owner)->create();
+    $milestone = GoalMilestone::factory()->forGoal($goal)->create();
+
+    $ownerGate = Gate::forUser($owner);
+    $intruderGate = Gate::forUser($intruder);
+
+    foreach (['view', 'update', 'delete'] as $ability) {
+        expect($ownerGate->allows($ability, $milestone))->toBeTrue();
+
+        $response = $intruderGate->inspect($ability, $milestone);
+
+        expect($response->denied())->toBeTrue()
+            ->and($response->status())->toBe(404);
+    }
+
+    expect($ownerGate->allows('viewAny', GoalMilestone::class))->toBeTrue()
+        ->and($ownerGate->allows('create', GoalMilestone::class))->toBeTrue()
+        ->and($ownerGate->denies('restore', $milestone))->toBeTrue()
+        ->and($ownerGate->denies('forceDelete', $milestone))->toBeTrue();
 });
 
 test('todo template policy covers owner template abilities', function () {

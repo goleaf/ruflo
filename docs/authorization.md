@@ -317,3 +317,9 @@ owner templates render without foreign templates, create/edit/delete/use flows
 are owner-scoped, invalid template data is rejected in Livewire and direct DTO
 calls, foreign and missing template ids resolve as not found, and direct
 instantiation of another user's template is denied.
+
+`GoalMilestoneTest` locks the Step 046 contract: the goals page is protected,
+owner goals render without foreign goals, progress counts only real linked
+tasks and checked-in milestones, goal creation accepts only owned active
+projects, milestone check-ins cannot be spoofed for another user, and task links
+are resolved through owner-scoped goals, milestones, and active/completed tasks.

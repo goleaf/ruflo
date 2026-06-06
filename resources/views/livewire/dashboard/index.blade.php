@@ -8,6 +8,8 @@
             <x-ui.stat :label="__('dashboard.summary.trash')" :value="$this->summary['trash']" tone="danger" />
             <x-ui.stat :label="__('dashboard.summary.projects')" :value="$this->summary['projects']" />
             <x-ui.stat :label="__('dashboard.summary.tags')" :value="$this->summary['tags']" />
+            <x-ui.stat :label="__('dashboard.summary.goals')" :value="$this->summary['goals']" />
+            <x-ui.stat :label="__('dashboard.summary.milestones')" :value="$this->summary['milestones']" />
         </div>
     </x-ui.page-header>
 
@@ -35,6 +37,10 @@
 
                     <flux:button :href="route('todos.focus')" wire:navigate variant="subtle" icon="bolt">
                         {{ __('dashboard.workspace.focus_action') }}
+                    </flux:button>
+
+                    <flux:button :href="route('goals.index')" wire:navigate variant="subtle" icon="flag">
+                        {{ __('dashboard.workspace.goals_action') }}
                     </flux:button>
 
                     <flux:button :href="route('todos.index')" wire:navigate variant="ghost" icon="list-bullet">

@@ -38,6 +38,14 @@ authorized before complete, defer, or snooze mutations run. No dedicated HTTP
 Form Request or custom rule is introduced because there is no controller
 request body or repeated free-form validation logic.
 
+Step 046 goals and milestones remain Livewire-only. No HTTP Form Request is
+introduced because `/goals` is a class-based Livewire page, not a controller
+endpoint. The component validates goal and milestone form state, reuses
+`OwnedActiveProject` for project assignment, uses `GoalTitle` and
+`MilestoneTitle` for repeated visible-title checks, and passes normalized data
+objects into action classes that repeat ownership and spoofing guards for direct
+calls.
+
 ## Custom Business Rules
 
 Reusable business validation rules are documented in `docs/validation-rules.md`.

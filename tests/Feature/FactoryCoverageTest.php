@@ -3,6 +3,8 @@
 use App\Enums\Priority;
 use App\Enums\TaskTemplateKind;
 use App\Enums\TodoStatus;
+use App\Models\Goal;
+use App\Models\GoalMilestone;
 use App\Models\Project;
 use App\Models\Reminder;
 use App\Models\SavedTodoView;
@@ -16,8 +18,10 @@ use Illuminate\Support\Facades\Hash;
 test('tracked models can be created from their default factories', function () {
     $user = User::factory()->create();
     $project = Project::factory()->for($user)->create();
+    $goal = Goal::factory()->forProject($project)->create();
+    $milestone = GoalMilestone::factory()->forGoal($goal)->completed()->position(1)->create();
     $tag = Tag::factory()->for($user)->create();
-    $todo = Todo::factory()->for($user)->forProject($project)->withTags($tag)->create();
+    $todo = Todo::factory()->for($user)->forProject($project)->forMilestone($milestone)->withTags($tag)->create();
     $checklistItem = TodoChecklistItem::factory()->forTodo($todo)->completed()->position(1)->create();
     $template = TodoTemplate::factory()->for($user)->routine()->create();
     $savedView = SavedTodoView::factory()->for($user)->create();
@@ -25,9 +29,16 @@ test('tracked models can be created from their default factories', function () {
 
     expect($user->exists)->toBeTrue()
         ->and($project->isOwnedBy($user))->toBeTrue()
+        ->and($goal->isOwnedBy($user))->toBeTrue()
+        ->and($goal->project_id)->toBe($project->id)
+        ->and($milestone->isOwnedBy($user))->toBeTrue()
+        ->and($milestone->goal_id)->toBe($goal->id)
+        ->and($milestone->isCompleted())->toBeTrue()
         ->and($tag->isOwnedBy($user))->toBeTrue()
         ->and($todo->isOwnedBy($user))->toBeTrue()
         ->and($todo->project_id)->toBe($project->id)
+        ->and($todo->goal_id)->toBe($goal->id)
+        ->and($todo->goal_milestone_id)->toBe($milestone->id)
         ->and($todo->tags()->pluck('tags.id')->all())->toBe([$tag->id])
         ->and($checklistItem->isOwnedBy($user))->toBeTrue()
         ->and($checklistItem->todo->is($todo))->toBeTrue()
@@ -38,6 +49,25 @@ test('tracked models can be created from their default factories', function () {
         ->and($savedView->isOwnedBy($user))->toBeTrue()
         ->and($savedView->criteria['sort'])->toBe('created')
         ->and($reminder->exists)->toBeTrue();
+});
+
+test('goal and milestone factories cover ownership project and lifecycle states', function () {
+    $project = Project::factory()->work()->create();
+    $goal = Goal::factory()->forProject($project)->targetDate('2026-04-01')->create();
+    $completedGoal = Goal::factory()->completed()->create();
+    $archivedGoal = Goal::factory()->archived()->create();
+    $milestone = GoalMilestone::factory()->forGoal($goal)->position(2)->targetDate('2026-03-15')->create();
+    $completedMilestone = GoalMilestone::factory()->forGoal($goal)->completed()->create();
+
+    expect($goal->isOwnedBy($project->user))->toBeTrue()
+        ->and($goal->project_id)->toBe($project->id)
+        ->and($goal->target_date->toDateString())->toBe('2026-04-01')
+        ->and($completedGoal->isCompleted())->toBeTrue()
+        ->and($archivedGoal->isArchived())->toBeTrue()
+        ->and($milestone->isOwnedBy($goal->user))->toBeTrue()
+        ->and($milestone->position)->toBe(2)
+        ->and($milestone->target_date->toDateString())->toBe('2026-03-15')
+        ->and($completedMilestone->isCompleted())->toBeTrue();
 });
 
 test('todo template factory covers kind visibility checklist and edge states', function () {

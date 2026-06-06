@@ -2,6 +2,8 @@
 
 use App\Livewire\Dashboard\Index as DashboardIndex;
 use App\Models\Concerns\BelongsToUser;
+use App\Models\Goal;
+use App\Models\GoalMilestone;
 use App\Models\Project;
 use App\Models\Reminder;
 use App\Models\SavedTodoView;
@@ -10,6 +12,8 @@ use App\Models\Todo;
 use App\Models\TodoChecklistItem;
 use App\Models\TodoTemplate;
 use App\Models\User;
+use App\Policies\GoalMilestonePolicy;
+use App\Policies\GoalPolicy;
 use App\Policies\ProjectPolicy;
 use App\Policies\ReminderPolicy;
 use App\Policies\SavedTodoViewPolicy;
@@ -26,7 +30,7 @@ use Illuminate\Support\Facades\Gate;
 use Livewire\Livewire;
 
 test('private workspace resources share the owning user boundary', function () {
-    $privateModels = [Todo::class, Project::class, Tag::class, SavedTodoView::class, TodoChecklistItem::class, TodoTemplate::class];
+    $privateModels = [Todo::class, Project::class, Goal::class, GoalMilestone::class, Tag::class, SavedTodoView::class, TodoChecklistItem::class, TodoTemplate::class];
 
     foreach ($privateModels as $modelClass) {
         /** @var Model $model */
@@ -40,6 +44,8 @@ test('private workspace resources share the owning user boundary', function () {
 test('private workspace models resolve explicit policies', function () {
     expect(Gate::getPolicyFor(Todo::class))->toBeInstanceOf(TodoPolicy::class)
         ->and(Gate::getPolicyFor(Project::class))->toBeInstanceOf(ProjectPolicy::class)
+        ->and(Gate::getPolicyFor(Goal::class))->toBeInstanceOf(GoalPolicy::class)
+        ->and(Gate::getPolicyFor(GoalMilestone::class))->toBeInstanceOf(GoalMilestonePolicy::class)
         ->and(Gate::getPolicyFor(Tag::class))->toBeInstanceOf(TagPolicy::class)
         ->and(Gate::getPolicyFor(TodoChecklistItem::class))->toBeInstanceOf(TodoChecklistItemPolicy::class)
         ->and(Gate::getPolicyFor(TodoTemplate::class))->toBeInstanceOf(TodoTemplatePolicy::class)
@@ -59,6 +65,8 @@ test('foreign private records are denied as not found', function (string $modelC
 })->with([
     'todo' => Todo::class,
     'project' => Project::class,
+    'goal' => Goal::class,
+    'goal milestone' => GoalMilestone::class,
     'tag' => Tag::class,
     'saved todo view' => SavedTodoView::class,
     'todo checklist item' => TodoChecklistItem::class,
@@ -76,10 +84,13 @@ test('dashboard summary counts only the authenticated users private workspace', 
     Todo::factory()->for($user)->deleted()->create();
     Project::factory()->for($user)->create();
     Project::factory()->for($user)->archived()->create();
+    $goal = Goal::factory()->for($user)->create();
+    GoalMilestone::factory()->forGoal($goal)->create();
     Tag::factory()->for($user)->create();
 
     Todo::factory()->for($other)->count(5)->create();
     Project::factory()->for($other)->count(4)->create();
+    Goal::factory()->for($other)->count(3)->create();
     Tag::factory()->for($other)->count(3)->create();
 
     expect(app(DailySummaryQuery::class)->for($user))->toBe([
@@ -90,6 +101,8 @@ test('dashboard summary counts only the authenticated users private workspace', 
         'overdue' => 1,
         'projects' => 1,
         'tags' => 1,
+        'goals' => 1,
+        'milestones' => 1,
     ]);
 });
 
@@ -104,6 +117,7 @@ test('dashboard Livewire component renders the scoped private summary', function
         ->assertSee(__('dashboard.summary.active'))
         ->assertSee(__('dashboard.summary.trash'))
         ->assertSee(__('dashboard.summary.projects'))
+        ->assertSee(__('dashboard.summary.goals'))
         ->assertSee(__('dashboard.workspace.action'));
 });
 

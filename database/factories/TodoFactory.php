@@ -3,6 +3,8 @@
 namespace Database\Factories;
 
 use App\Enums\Priority;
+use App\Models\Goal;
+use App\Models\GoalMilestone;
 use App\Models\Project;
 use App\Models\Tag;
 use App\Models\Todo;
@@ -195,6 +197,26 @@ class TodoFactory extends Factory
             ->for($project, 'project')
             ->state(fn (array $attributes) => [
                 'user_id' => $project->user_id,
+            ]);
+    }
+
+    public function forGoal(Goal $goal): static
+    {
+        return $this
+            ->for($goal, 'goal')
+            ->state(fn (array $attributes) => [
+                'user_id' => $goal->user_id,
+                'goal_milestone_id' => null,
+            ]);
+    }
+
+    public function forMilestone(GoalMilestone $milestone): static
+    {
+        return $this
+            ->for($milestone->goal, 'goal')
+            ->for($milestone, 'goalMilestone')
+            ->state(fn (array $attributes) => [
+                'user_id' => $milestone->user_id,
             ]);
     }
 

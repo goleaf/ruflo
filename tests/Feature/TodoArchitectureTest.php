@@ -1,5 +1,9 @@
 <?php
 
+use App\Actions\Goals\CheckInGoalMilestone;
+use App\Actions\Goals\CreateGoal;
+use App\Actions\Goals\CreateGoalMilestone;
+use App\Actions\Goals\LinkTodoToGoal;
 use App\Actions\Todos\CaptureInboxTodo;
 use App\Actions\Todos\ClearCompletedTodos;
 use App\Actions\Todos\CompleteTodo;
@@ -22,6 +26,9 @@ use App\Actions\Todos\ToggleTodoChecklistItem;
 use App\Actions\Todos\TriageInboxTodo;
 use App\Actions\Todos\UpdateTodoChecklistItem;
 use App\Actions\Todos\UpdateTodoTemplate;
+use App\Data\Goals\GoalData;
+use App\Data\Goals\GoalMilestoneData;
+use App\Data\Goals\GoalProgress;
 use App\Data\Todos\BulkActionResult;
 use App\Data\Todos\SavedTodoViewData;
 use App\Data\Todos\TodoData;
@@ -30,6 +37,7 @@ use App\Enums\TaskTemplateKind;
 use App\Enums\TodoTransition;
 use App\Events\TodoChecklistChanged;
 use App\Livewire\Forms\Todos\TodoForm;
+use App\Livewire\Goals\Index as GoalsIndex;
 use App\Livewire\Projects\Show as ProjectShow;
 use App\Livewire\Todos\Board as TodoBoard;
 use App\Livewire\Todos\Calendar as TodoCalendar;
@@ -37,10 +45,13 @@ use App\Livewire\Todos\Focus as TodoFocus;
 use App\Livewire\Todos\Inbox as TodoInbox;
 use App\Livewire\Todos\Show as TodoShow;
 use App\Livewire\Todos\Templates as TodoTemplates;
+use App\Policies\GoalMilestonePolicy;
+use App\Policies\GoalPolicy;
 use App\Policies\SavedTodoViewPolicy;
 use App\Policies\TodoChecklistItemPolicy;
 use App\Policies\TodoPolicy;
 use App\Policies\TodoTemplatePolicy;
+use App\Queries\Goals\GoalListQuery;
 use App\Queries\Todos\SavedTodoViewListQuery;
 use App\Queries\Todos\TodoBoardQuery;
 use App\Queries\Todos\TodoCalendarQuery;
@@ -49,6 +60,8 @@ use App\Queries\Todos\TodoFocusQuery;
 use App\Queries\Todos\TodoInboxQuery;
 use App\Queries\Todos\TodoListQuery;
 use App\Queries\Todos\TodoTemplateListQuery;
+use App\Rules\Goals\GoalTitle;
+use App\Rules\Goals\MilestoneTitle;
 use App\Rules\Todos\BoardStatus;
 use App\Rules\Todos\CalendarMonth;
 use App\Rules\Todos\ChecklistItemTitle;
@@ -80,11 +93,19 @@ test('todo foundation classes exist', function () {
         ->and(class_exists(CaptureInboxTodo::class))->toBeTrue()
         ->and(class_exists(TriageInboxTodo::class))->toBeTrue()
         ->and(class_exists(RescheduleFocusedTodo::class))->toBeTrue()
+        ->and(class_exists(CreateGoal::class))->toBeTrue()
+        ->and(class_exists(CreateGoalMilestone::class))->toBeTrue()
+        ->and(class_exists(CheckInGoalMilestone::class))->toBeTrue()
+        ->and(class_exists(LinkTodoToGoal::class))->toBeTrue()
         ->and(class_exists(TodoLifecycleStateMachine::class))->toBeTrue()
         ->and(class_exists(CreateSavedTodoView::class))->toBeTrue()
         ->and(class_exists(DeleteSavedTodoView::class))->toBeTrue()
         ->and(class_exists(SavedTodoViewData::class))->toBeTrue()
         ->and(class_exists(TodoTemplateData::class))->toBeTrue()
+        ->and(class_exists(GoalData::class))->toBeTrue()
+        ->and(class_exists(GoalMilestoneData::class))->toBeTrue()
+        ->and(class_exists(GoalProgress::class))->toBeTrue()
+        ->and(class_exists(GoalListQuery::class))->toBeTrue()
         ->and(class_exists(SavedTodoViewListQuery::class))->toBeTrue()
         ->and(class_exists(TodoBoardQuery::class))->toBeTrue()
         ->and(class_exists(TodoCalendarQuery::class))->toBeTrue()
@@ -96,6 +117,8 @@ test('todo foundation classes exist', function () {
         ->and(class_exists(CalendarMonth::class))->toBeTrue()
         ->and(class_exists(ChecklistItemTitle::class))->toBeTrue()
         ->and(class_exists(InboxCaptureTitle::class))->toBeTrue()
+        ->and(class_exists(GoalTitle::class))->toBeTrue()
+        ->and(class_exists(MilestoneTitle::class))->toBeTrue()
         ->and(class_exists(TemplateChecklistItems::class))->toBeTrue()
         ->and(class_exists(TemplateName::class))->toBeTrue()
         ->and(class_exists(SavedViewName::class))->toBeTrue()
@@ -103,10 +126,13 @@ test('todo foundation classes exist', function () {
         ->and(class_exists(SavedTodoViewPolicy::class))->toBeTrue()
         ->and(class_exists(TodoChecklistItemPolicy::class))->toBeTrue()
         ->and(class_exists(TodoTemplatePolicy::class))->toBeTrue()
+        ->and(class_exists(GoalPolicy::class))->toBeTrue()
+        ->and(class_exists(GoalMilestonePolicy::class))->toBeTrue()
         ->and(class_exists(TodoBoard::class))->toBeTrue()
         ->and(class_exists(TodoCalendar::class))->toBeTrue()
         ->and(class_exists(TodoShow::class))->toBeTrue()
         ->and(class_exists(TodoFocus::class))->toBeTrue()
+        ->and(class_exists(GoalsIndex::class))->toBeTrue()
         ->and(class_exists(TodoTemplates::class))->toBeTrue()
         ->and(class_exists(TodoInbox::class))->toBeTrue()
         ->and(class_exists(ProjectShow::class))->toBeTrue()
@@ -114,6 +140,23 @@ test('todo foundation classes exist', function () {
         ->and(enum_exists(TodoTransition::class))->toBeTrue()
         ->and(enum_exists(TaskTemplateKind::class))->toBeTrue()
         ->and(class_exists(ClearCompletedTodos::class))->toBeTrue();
+});
+
+test('goals page delegates goal responsibilities', function () {
+    $source = file_get_contents(app_path('Livewire/Goals/Index.php'));
+
+    expect($source)
+        ->toContain('GoalListQuery')
+        ->toContain('CreateGoal')
+        ->toContain('CreateGoalMilestone')
+        ->toContain('CheckInGoalMilestone')
+        ->toContain('LinkTodoToGoal')
+        ->toContain('GoalTitle')
+        ->toContain('MilestoneTitle')
+        ->toContain('$this->authorize')
+        ->not->toContain('Goal::query()')
+        ->not->toContain('Todo::query()')
+        ->not->toContain('->save()');
 });
 
 test('todo livewire page delegates domain responsibilities', function () {

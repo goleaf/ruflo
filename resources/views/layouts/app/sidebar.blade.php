@@ -19,6 +19,10 @@
                     <flux:sidebar.item icon="check-circle" :href="route('todos.index')" :current="request()->routeIs('todos.*')" wire:navigate>
                         {{ __('todos.navigation.label') }}
                     </flux:sidebar.item>
+
+                    <flux:sidebar.item icon="flag" :href="route('goals.index')" :current="request()->routeIs('goals.*')" wire:navigate>
+                        {{ __('goals.navigation.label') }}
+                    </flux:sidebar.item>
                 </flux:sidebar.group>
             </flux:sidebar.nav>
 

@@ -7,6 +7,8 @@ RuFlo uses reusable Laravel rule objects for business validation that appears in
 The current committed app has tag-name and todo workspace ownership rules:
 
 - `App\Rules\Tags\TagName`
+- `App\Rules\Goals\GoalTitle`
+- `App\Rules\Goals\MilestoneTitle`
 - `App\Rules\Todos\BoardStatus`
 - `App\Rules\Todos\CalendarMonth`
 - `App\Rules\Todos\ChecklistItemTitle`
@@ -22,6 +24,13 @@ The current committed app has tag-name and todo workspace ownership rules:
 `TagName` validates that a submitted tag name still has visible content after
 normalization (`squish()` + lower-case). It prevents whitespace-only labels
 from being persisted if a form input contains only spaces.
+
+`GoalTitle` validates that submitted goal titles contain visible text after
+whitespace normalization and stay within the current 120-character title limit.
+
+`MilestoneTitle` validates that submitted milestone titles contain visible text
+after whitespace normalization and stay within the current 120-character title
+limit.
 
 `BoardStatus` validates Kanban target columns. It accepts only Active,
 Completed, and Archived so the board cannot move cards into Trash or an unknown
@@ -67,7 +76,8 @@ The action layer still re-scopes ids to the current user before writing. The rul
 
 ## Translation
 
-Rule failure messages live in `lang/en/todos.php` under `todos.validation`.
+Rule failure messages live in `lang/en/todos.php` under `todos.validation` and
+`lang/en/goals.php` under `goals.validation`.
 
 ## Future Domains
 
@@ -140,3 +150,12 @@ Step 044 added `App\Rules\Todos\InboxCaptureTitle` and wired it into the
 quick-capture Livewire form plus `CaptureInboxTodo` and `TriageInboxTodo`.
 The rule keeps captured titles visible-text-only, normalized, translated, and
 bounded before a captured task can be written or triaged.
+
+## 2026-06-06 Step 046 Recheck
+
+Step 046 added `App\Rules\Goals\GoalTitle` and
+`App\Rules\Goals\MilestoneTitle` for the goals page create forms. The
+`CreateGoal`, `CreateGoalMilestone`, and `LinkTodoToGoal` actions repeat
+backend guards so direct calls cannot persist blank goal/milestone titles,
+foreign projects, foreign milestones, mismatched milestones, or archived/trashed
+task links.

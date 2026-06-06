@@ -69,6 +69,26 @@ class Todo extends Model
     }
 
     /**
+     * The goal this task contributes to, if any.
+     *
+     * @return BelongsTo<Goal, $this>
+     */
+    public function goal(): BelongsTo
+    {
+        return $this->belongsTo(Goal::class);
+    }
+
+    /**
+     * The milestone this task contributes to, if any.
+     *
+     * @return BelongsTo<GoalMilestone, $this>
+     */
+    public function goalMilestone(): BelongsTo
+    {
+        return $this->belongsTo(GoalMilestone::class);
+    }
+
+    /**
      * The tags attached to this task.
      *
      * @return BelongsToMany<Tag, $this>

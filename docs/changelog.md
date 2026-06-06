@@ -1,5 +1,41 @@
 # Changelog
 
+## 2026-06-06 - Step 046 Goals and milestones
+
+### Implemented
+
+- Added owner-scoped `goals` and `goal_milestones` tables plus nullable goal
+  and milestone links on tasks.
+- Added `Goal`, `GoalMilestone`, policies, factories, data objects,
+  `GoalListQuery`, `GoalProgress`, translated title rules, and actions for
+  creating goals, adding/checking-in milestones, and linking tasks.
+- Added a protected class-based Livewire Goals page at `goals.index` with Flux
+  goal cards, progress bars with text alternatives, create/add/link forms,
+  milestone check-in buttons, dashboard shortcuts, and app navigation.
+- Added seeded demo goals and milestones that link existing seeded tasks for
+  real progress on `https://ruflo.test/goals`.
+
+### Testing
+
+- Added `GoalMilestoneTest` for route protection, owner-only rendering, honest
+  progress calculation, goal validation, milestone check-ins, task linking,
+  foreign-id denial, and component/view guardrails.
+- Expanded route-protection, domain, policy, private workspace, architecture,
+  factory, seeder, validation-rule, dashboard, and localization coverage.
+
+### Documentation
+
+- Updated task organization, authorization, validation, request validation,
+  factory coverage, seeding, domain readiness, and todo foundation docs with the
+  Step 046 Goals contract.
+
+### Restricted Hosting
+
+- Goals and milestones are synchronous Livewire workflows. They require no
+  cron, queue worker, supervisor, terminal access, Artisan command, paid
+  service, chunk processor, retry loop, or resume state during normal usage.
+  Full habit tracking is intentionally deferred to Step 047.
+
 ## 2026-06-06 - Step 045 Focus mode
 
 ### Implemented

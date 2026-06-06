@@ -416,6 +416,30 @@ Step 043 adds reusable task templates at `todos.templates`.
 - Template workflows are synchronous Livewire actions. They require no cron,
   queue worker, supervisor, terminal, or Artisan command during normal usage.
 
+## Goals and milestones
+
+Step 046 adds private goals and milestones as real, owner-scoped records:
+
+- `goals` are owned by one user and can optionally point at one active project.
+- `goal_milestones` are owned by the same user and belong to one goal.
+- `todos.goal_id` and `todos.goal_milestone_id` link existing tasks to a whole
+  goal or to a specific milestone. If a goal or milestone is removed later, the
+  task link nulls instead of deleting the task.
+- `GoalListQuery` is the read boundary for the Goals page. It eager-loads the
+  current user's project, milestones, linked tasks, and milestone tasks without
+  hydrating foreign labels.
+- `GoalProgress` calculates progress from real units only: completed linked
+  tasks plus checked-in milestones divided by total linked tasks plus total
+  milestones. Goals with no units show 0% instead of fake progress.
+- `CreateGoal`, `CreateGoalMilestone`, `CheckInGoalMilestone`, and
+  `LinkTodoToGoal` repeat policy checks and owner scoping at the action layer.
+- Milestone "check in" is a synchronous Livewire action that toggles
+  `completed_at`; it is not a habit streak system. Full habit tracking remains
+  scheduled for Step 047.
+- The workflow is web-only and bounded. It requires no cron, queue worker,
+  supervisor, terminal access, Artisan command, external service, paid feature,
+  chunk processor, retry loop, or resume state during normal usage.
+
 ## UI
 
 - Reusable `x-ui.stat` (summary counters) and `x-ui.status-badge` components;
@@ -442,6 +466,9 @@ Step 043 adds reusable task templates at `todos.templates`.
 - The templates page renders a Flux create form, radio-card template type
   controls, status/priority/due/project/checklist previews, per-template quick
   actions, an edit modal, field-level errors, and a translated empty state.
+- The goals page renders Flux goal cards, translated create/add/link forms,
+  progress bars with text alternatives, milestone check-in buttons, task-link
+  controls, and empty states.
 - Project badges in task lists and task detail pages link to the private
   project detail page. The detail page renders the project status, scoped
   lifecycle counts, a paginated task list, and a translated empty state.
@@ -476,6 +503,10 @@ Step 043 adds reusable task templates at `todos.templates`.
   ordering. The derived set is bounded to the normal target size plus any
   additional urgent tasks, and all mutations re-resolve through
   `TodoFocusQuery`.
+- Goals use `(user_id, archived_at)`, `(user_id, target_date)`,
+  `(user_id, goal_id, position)`, `(user_id, goal_id)`, and
+  `(user_id, goal_milestone_id)` indexes for owner-scoped listing, progress,
+  and task linking.
 
 ## Intentionally not implemented
 

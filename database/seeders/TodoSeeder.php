@@ -4,6 +4,8 @@ namespace Database\Seeders;
 
 use App\Data\Todos\SavedTodoViewData;
 use App\Enums\Priority;
+use App\Models\Goal;
+use App\Models\GoalMilestone;
 use App\Models\Project;
 use App\Models\SavedTodoView;
 use App\Models\Tag;
@@ -81,7 +83,7 @@ class TodoSeeder extends Seeder
             'inbox_captured_at' => now()->subMinutes(15),
         ]);
 
-        $this->upsertTodo($user, 'Ship one small improvement', [
+        $smallImprovement = $this->upsertTodo($user, 'Ship one small improvement', [
             'project_id' => $work->id,
             'is_completed' => true,
             'priority' => Priority::Normal,
@@ -173,6 +175,40 @@ class TodoSeeder extends Seeder
                 'Decide fix or backlog',
             ],
         ]);
+
+        $commandCenterGoal = $this->upsertGoal($user, 'Launch the personal command center', [
+            'project_id' => $work->id,
+            'description' => 'Tie the daily workspace to clear, measurable outcomes.',
+            'target_date' => today()->addWeeks(2)->toDateString(),
+        ]);
+
+        $foundationMilestone = $this->upsertMilestone($commandCenterGoal, 'Confirm the foundation', [
+            'position' => 1,
+            'completed' => true,
+            'target_date' => today()->toDateString(),
+        ]);
+
+        $focusMilestone = $this->upsertMilestone($commandCenterGoal, 'Review the focus flow', [
+            'position' => 2,
+            'completed' => false,
+            'target_date' => today()->addDays(5)->toDateString(),
+        ]);
+
+        $this->linkTodoToGoal($smallImprovement, $commandCenterGoal, $foundationMilestone);
+        $this->linkTodoToGoal($reviewFlow, $commandCenterGoal, $focusMilestone);
+        $this->linkTodoToGoal($overdueReport, $commandCenterGoal);
+
+        $weekendGoal = $this->upsertGoal($user, 'Plan a calmer weekend', [
+            'project_id' => $home->id,
+            'description' => 'Turn loose weekend planning into one visible outcome.',
+            'target_date' => today()->addDays(10)->toDateString(),
+        ]);
+
+        $this->linkTodoToGoal($weekend, $weekendGoal, $this->upsertMilestone($weekendGoal, 'Pick the first plan', [
+            'position' => 1,
+            'completed' => false,
+            'target_date' => today()->addDays(3)->toDateString(),
+        ]));
     }
 
     private function upsertProject(User $user, string $name, string $color, bool $archived = false): Project
@@ -303,5 +339,60 @@ class TodoSeeder extends Seeder
         ])->save();
 
         return $savedView;
+    }
+
+    /**
+     * @param  array{project_id?: int|null, description?: string|null, target_date?: string|null, completed?: bool, archived?: bool}  $attributes
+     */
+    private function upsertGoal(User $user, string $title, array $attributes): Goal
+    {
+        $goal = Goal::query()
+            ->where('user_id', $user->id)
+            ->where('title', $title)
+            ->first() ?? new Goal;
+
+        $goal->forceFill([
+            'user_id' => $user->id,
+            'project_id' => $attributes['project_id'] ?? null,
+            'title' => $title,
+            'description' => $attributes['description'] ?? null,
+            'target_date' => $attributes['target_date'] ?? null,
+            'completed_at' => ($attributes['completed'] ?? false) ? ($goal->completed_at ?? now()) : null,
+            'archived_at' => ($attributes['archived'] ?? false) ? ($goal->archived_at ?? now()) : null,
+        ])->save();
+
+        return $goal;
+    }
+
+    /**
+     * @param  array{position: int, completed?: bool, target_date?: string|null}  $attributes
+     */
+    private function upsertMilestone(Goal $goal, string $title, array $attributes): GoalMilestone
+    {
+        $milestone = GoalMilestone::query()
+            ->where('goal_id', $goal->id)
+            ->where('title', $title)
+            ->first() ?? new GoalMilestone;
+
+        $completed = $attributes['completed'] ?? false;
+
+        $milestone->forceFill([
+            'user_id' => $goal->user_id,
+            'goal_id' => $goal->id,
+            'title' => $title,
+            'target_date' => $attributes['target_date'] ?? null,
+            'position' => $attributes['position'],
+            'completed_at' => $completed ? ($milestone->completed_at ?? now()) : null,
+        ])->save();
+
+        return $milestone;
+    }
+
+    private function linkTodoToGoal(Todo $todo, Goal $goal, ?GoalMilestone $milestone = null): void
+    {
+        $todo->forceFill([
+            'goal_id' => $goal->id,
+            'goal_milestone_id' => $milestone?->id,
+        ])->save();
     }
 }

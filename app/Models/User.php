@@ -63,6 +63,26 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
     }
 
     /**
+     * Get the user's goals.
+     *
+     * @return HasMany<Goal, $this>
+     */
+    public function goals(): HasMany
+    {
+        return $this->hasMany(Goal::class);
+    }
+
+    /**
+     * Get the user's goal milestones.
+     *
+     * @return HasMany<GoalMilestone, $this>
+     */
+    public function goalMilestones(): HasMany
+    {
+        return $this->hasMany(GoalMilestone::class);
+    }
+
+    /**
      * Get the user's contained task checklist rows.
      *
      * @return HasMany<TodoChecklistItem, $this>

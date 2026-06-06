@@ -3,6 +3,8 @@
 Step 012 covers the committed model set:
 
 - `User`
+- `Goal`
+- `GoalMilestone`
 - `Project`
 - `SavedTodoView`
 - `Tag`
@@ -36,6 +38,10 @@ The tracked `Reminder` model is currently a placeholder with no ownership, sched
   `Waiting on others`.
 - three reusable templates per user: `Daily planning routine`,
   `Project kickoff`, and `Bug triage checklist`.
+- two goals per user: `Launch the personal command center` and
+  `Plan a calmer weekend`.
+- three milestones per user, with one checked in, linked to existing seeded
+  tasks so `/goals` shows real progress immediately.
 
 Step 041's calendar view reuses that catalog: the seeded due-today, overdue,
 upcoming, and no-due-date tasks give the local `/todos/calendar` page immediate
@@ -47,6 +53,10 @@ Step 045's focus mode also reuses the current catalog. `Review the current
 flow` is high priority and due today, while `Send the overdue report` is urgent
 and overdue, so `/todos/focus` has realistic current work immediately after
 seeding without adding another table or a focus-specific seed model.
+
+Step 046's goals page links existing seeded tasks into seeded goals and
+milestones. It does not create extra task rows for fake progress; progress comes
+from real task completion and milestone check-ins.
 
 ## Idempotency
 
@@ -63,6 +73,10 @@ role rules.
 Inbox demo tasks are upserted per user/title and keep their captured timestamp
 fresh on reseed. They remain normal owner-scoped todos and do not grant any
 global or shared access.
+
+Goals and milestones are upserted per user/title and per goal/title. Task links
+are refreshed on reseed so the local demo remains useful after prior manual
+testing without duplicating goal rows.
 
 Placeholder reminder rows are intentionally excluded from the current catalog because they would not be owned by a user or connected to a task.
 

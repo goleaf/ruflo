@@ -2,19 +2,19 @@
 
 ## Current status
 
-Steps 001-045 are complete. The requested recheck from Step 001 has been completed through Step 045. The tracker is expanded to one ledger line per step from 001 through 100 so later work cannot be hidden behind a range.
+Individual ledger rows for Steps 001 through 046 are complete. The requested recheck from Step 001 has been completed through Step 046. The tracker is expanded to one ledger line per step from 001 through 100 so later work cannot be hidden behind a range.
 
 ## Current step
 
-Step 046 — Goals and milestones
+Step 047 — Habits tracker
 
 ## Last completed action
 
-Completed Step 045 by adding an owner-scoped Focus mode, focus query boundary, complete/defer/snooze actions, distraction-light class-based Livewire/Flux UI with browser-only timer and keyboard shortcuts, factory/seeder support, translations, docs, and privacy tests.
+Completed Step 046 by adding owner-scoped goals and milestones, honest linked-task/milestone progress, private goal cards, milestone check-ins, task-to-goal linking, factories, seeders, translations, docs, and privacy tests.
 
 ## Next action
 
-Begin `steps/step-046-goals-and-milestones.md`, then implement the next not-yet-completed plan step without grouping it with later work.
+Begin `steps/step-047-habits-tracker.md`, then implement the next not-yet-completed plan step without grouping it with later work.
 
 ## Step ledger
 
@@ -65,7 +65,7 @@ Begin `steps/step-046-goals-and-milestones.md`, then implement the next not-yet-
 | 043 — Task templates | Complete | Added owner-scoped reusable templates for task, project, checklist, and routine defaults. Templates can create real tasks, create or reuse owner-scoped active projects by name, and add contained checklist rows through existing actions. Shared visibility is stored but remains owner-only until collaboration/member roles exist. | Boost docs/schema checks, migration, focused template tests, adjacent architecture/factory/seeder/policy/private-workspace/validation/localization/route/domain/restricted-hosting suite, route checks, Pint, seed/database checks, scans, browser logs, and full suite recorded in test report. | `docs/task-organization.md`, `docs/authorization.md`, `docs/validation-rules.md`, `docs/request-validation.md`, `docs/factory-coverage.md`, `docs/seeding-strategy.md`, `docs/domain-readiness.md`, `docs/changelog.md`, root progress, checklist, changelog, decisions, risks, and test report updated. | Shared-template role limitation logged; no data leak because policies and queries remain owner-only. | 2f29ec1 |
 | 044 — Quick capture inbox | Complete | Added an explicit owner-scoped Inbox marker on tasks, capture and triage actions, `TodoInboxQuery`, `InboxCaptureTitle`, a protected class-based Livewire/Flux Inbox page, task-list shortcut, factory states, and two seeded inbox tasks per demo user. | Boost app/docs/schema checks, migration, syntax checks, focused `TaskInboxTest`, adjacent 118-test suite, Pint, route checks, local seed/database verification, scans, browser logs, diff check, and full suite recorded in test report. | `docs/task-organization.md`, `docs/authorization.md`, `docs/validation-rules.md`, `docs/request-validation.md`, `docs/factory-coverage.md`, `docs/seeding-strategy.md`, `docs/domain-readiness.md`, `docs/todo-foundation.md`, `docs/changelog.md`, root progress, checklist, changelog, decisions, risks, and test report updated. | Manual-only Inbox triage limitation logged; feature remains safe because capture/triage are bounded synchronous Livewire actions with no worker/cron dependency. | e3f4d00 |
 | 045 — Focus mode | Complete | Added an owner-scoped Focus mode that prioritizes active urgent, overdue, due-today, and high-priority tasks through `TodoFocusQuery`, added quick complete/defer/snooze actions, rendered a distraction-light class-based Livewire/Flux page with browser-only timer and keyboard shortcuts, and added task-list/dashboard shortcuts plus factory/seeder support. | Boost app/docs/schema checks, syntax checks, focused `FocusModeTest`, adjacent 94-test suite, Pint, route checks, local seed/query verification, URL/browser-log checks, static scans, diff check, and full suite recorded in test report. | `docs/task-organization.md`, `docs/authorization.md`, `docs/request-validation.md`, `docs/factory-coverage.md`, `docs/seeding-strategy.md`, `docs/domain-readiness.md`, `docs/todo-foundation.md`, `docs/changelog.md`, root progress, checklist, changelog, decisions, risks, and test report updated. | Browser-only Focus timer persistence limitation logged; urgent tasks are always included before normal focus-fill tasks so important work is not hidden dangerously. | 2e997a9 |
-| 046 — Goals and milestones | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 046 — Goals and milestones | Complete | Added owner-scoped goals and milestones linked to tasks/projects, honest progress from completed linked tasks plus checked-in milestones, private Flux goal cards, milestone check-in/reopen controls, task linking, dashboard counts, and factory/seeder support. | Boost app/docs/schema checks, migration, syntax checks, focused `GoalMilestoneTest`, adjacent 117-test suite, Pint, local seed/database verification, route/URL/browser-log checks, static scans, diff check, and full suite recorded in test report. | `docs/task-organization.md`, `docs/authorization.md`, `docs/request-validation.md`, `docs/validation-rules.md`, `docs/factory-coverage.md`, `docs/seeding-strategy.md`, `docs/domain-readiness.md`, `docs/todo-foundation.md`, `docs/changelog.md`, root progress, checklist, changelog, decisions, risks, and test report updated. | Full habit streak tracking is deferred to Step 047; goal edit/delete/archive UI remains intentionally narrow after Step 046. | Pending |
 | 047 — Habits tracker | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
 | 048 — Pomodoro focus timer | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
 | 049 — Time tracking | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |

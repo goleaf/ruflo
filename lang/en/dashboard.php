@@ -14,6 +14,8 @@ return [
         'trash' => 'Trash',
         'projects' => 'Projects',
         'tags' => 'Tags',
+        'goals' => 'Goals',
+        'milestones' => 'Milestones',
     ],
 
     'cards' => [
@@ -55,5 +57,6 @@ return [
         'overdue_action' => 'Review overdue',
         'upcoming_action' => 'Plan upcoming',
         'focus_action' => 'Focus',
+        'goals_action' => 'Goals',
     ],
 ];

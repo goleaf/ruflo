@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Goal;
+use App\Models\GoalMilestone;
 use App\Models\Project;
 use App\Models\Reminder;
 use App\Models\SavedTodoView;
@@ -23,6 +25,8 @@ test('database seeder creates safe demo users and complete private workspaces', 
         ->and($users->firstWhere('email', 'second@example.com')->is_admin)->toBeFalse()
         ->and(Hash::check('password', $users->firstWhere('email', 'test@example.com')->password))->toBeTrue()
         ->and(Project::query()->count())->toBe(6)
+        ->and(Goal::query()->count())->toBe(4)
+        ->and(GoalMilestone::query()->count())->toBe(6)
         ->and(Reminder::query()->count())->toBe(0)
         ->and(SavedTodoView::query()->count())->toBe(6)
         ->and(Tag::query()->count())->toBe(4)
@@ -34,6 +38,12 @@ test('database seeder creates safe demo users and complete private workspaces', 
     $users->each(function (User $user): void {
         expect($user->projects()->whereNull('archived_at')->count())->toBe(2)
             ->and($user->projects()->whereNotNull('archived_at')->count())->toBe(1)
+            ->and($user->goals()->pluck('title')->sort()->values()->all())->toBe([
+                'Launch the personal command center',
+                'Plan a calmer weekend',
+            ])
+            ->and($user->goalMilestones()->count())->toBe(3)
+            ->and($user->goalMilestones()->whereNotNull('completed_at')->count())->toBe(1)
             ->and($user->tags()->pluck('name')->sort()->values()->all())->toBe(['urgent', 'waiting'])
             ->and($user->todos()->active()->count())->toBe(5)
             ->and($user->todos()->completed()->count())->toBe(1)
@@ -66,6 +76,8 @@ test('database seeder is idempotent for the current demo catalog', function () {
 
     expect(User::query()->count())->toBe(2)
         ->and(Project::query()->count())->toBe(6)
+        ->and(Goal::query()->count())->toBe(4)
+        ->and(GoalMilestone::query()->count())->toBe(6)
         ->and(Reminder::query()->count())->toBe(0)
         ->and(SavedTodoView::query()->count())->toBe(6)
         ->and(Tag::query()->count())->toBe(4)
@@ -83,6 +95,8 @@ test('database seeder does not create known demo credentials in production envir
 
     expect(User::query()->count())->toBe(0)
         ->and(Project::query()->count())->toBe(0)
+        ->and(Goal::query()->count())->toBe(0)
+        ->and(GoalMilestone::query()->count())->toBe(0)
         ->and(Reminder::query()->count())->toBe(0)
         ->and(SavedTodoView::query()->count())->toBe(0)
         ->and(Tag::query()->count())->toBe(0)

@@ -165,6 +165,22 @@
             </div>
         </div>
 
+        @if (count($this->activeFilterChips()) > 0)
+            <div class="flex flex-wrap items-center gap-2 rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2 dark:border-white/10 dark:bg-zinc-900">
+                <flux:text class="text-xs font-medium uppercase text-zinc-500 dark:text-zinc-400">{{ __('todos.filters.active') }}</flux:text>
+
+                @foreach ($this->activeFilterChips() as $chip)
+                    <flux:badge wire:key="active-filter-{{ $chip['key'] }}" size="sm" :color="$chip['color']" :icon="$chip['icon']">
+                        {{ $chip['label'] }}
+                    </flux:badge>
+                @endforeach
+
+                <flux:button size="xs" variant="ghost" icon="x-mark" wire:click="resetFilters">
+                    {{ __('todos.actions.clear_filters') }}
+                </flux:button>
+            </div>
+        @endif
+
         {{-- Bulk action toolbar --}}
         @if (count($selected) > 0)
             <div class="flex flex-wrap items-center gap-3 rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-sm dark:border-blue-500/30 dark:bg-blue-500/10">

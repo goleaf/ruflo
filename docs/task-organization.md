@@ -106,13 +106,19 @@ the (sanitized) filter object.
 - **Search** — case-insensitive `LIKE` on title, with LIKE wildcards (`%`, `_`)
   escaped via an `ESCAPE` clause so a search for `50%` matches the literal text
   instead of returning everything.
+  Step 035 keeps this local and self-hosted instead of adding a paid or hosted
+  search service. The URL-backed Livewire search term is squished, limited to
+  120 characters before querying, debounced in the UI, and shown as a translated
+  active filter chip. Search composes with pagination and reset behavior.
 - **Filters** — lifecycle tab (active/completed/archived), project (or "none"),
   tag, priority, and due bucket. Every filter value is sanitized in the
   component's `buildFilters()` before it reaches the query: unknown enum/sort/
   due values fall back to safe defaults and can never widen scope.
   Numeric project/tag filters are re-checked inside `TodoListQuery::filtered()`;
   foreign, archived, or missing ids return an empty result rather than applying
-  another user's id or falling back to an unfiltered list.
+  another user's id or falling back to an unfiltered list. Step 035 also treats
+  non-numeric project/tag URL values as invalid filters so they reach that same
+  empty-result path instead of being silently ignored.
 - **Sorting** — `created`, `updated`, `due` (nulls last), `priority` (by weight
   via a bounded `CASE`), `project` (by owned project name, ungrouped tasks last),
   or `title`, each asc/desc. The sort key is validated against
@@ -122,7 +128,9 @@ the (sanitized) filter object.
   never loads an unbounded result set.
 
 Filters, search, sort, and pagination compose: changing any of them resets the
-page and clears the bulk selection.
+page and clears the bulk selection. Active filters render as translated Flux
+badges with one clear action so users can see when a search or filter is
+constraining the list.
 
 ## Today view
 

@@ -2,19 +2,19 @@
 
 ## Current status
 
-Steps 001-034 are complete. The requested recheck from Step 001 has been completed through Step 034. The tracker is expanded to one ledger line per step from 001 through 100 so later work cannot be hidden behind a range.
+Steps 001-035 are complete. The requested recheck from Step 001 has been completed through Step 035. The tracker is expanded to one ledger line per step from 001 through 100 so later work cannot be hidden behind a range.
 
 ## Current step
 
-Step 035 — Search
+Step 036 — Filters
 
 ## Last completed action
 
-Completed Step 034 by adding a protected Upcoming Livewire page, owner-scoped future-due query/action boundaries, a dashboard shortcut, translated Upcoming copy, and upcoming route/privacy tests.
+Completed Step 035 by hardening private title search with translated active filter chips, pagination/reset coverage, LIKE-wildcard privacy tests, and invalid project/tag query parameters that resolve to empty results instead of widening search.
 
 ## Next action
 
-Begin `steps/step-035-search.md`, then implement the next not-yet-completed plan step without grouping it with later work.
+Begin `steps/step-036-filters.md`, then implement the next not-yet-completed plan step without grouping it with later work.
 
 ## Step ledger
 
@@ -54,7 +54,7 @@ Begin `steps/step-035-search.md`, then implement the next not-yet-completed plan
 | 032 — Today view | Complete | Added protected class-based `App\Livewire\Todos\Today` at `todos.today`, added `TodoListQuery::todayFor()` and `findTodayFor()`, rendered a focused Flux Today list with owner-scoped project/tag badges and complete action, and linked the dashboard to Today. | Boost app info/docs/schema checks, today inventory scan, focused `TodayViewTest`, and adjacent date/list/private-view/project-detail/dashboard/domain/route-protection/architecture suite passed; final scans and full-suite checks recorded in test report. | `docs/task-organization.md`, `docs/domain-readiness.md`, `docs/todo-foundation.md`, `docs/changelog.md`, root changelog, decisions, risks, and test report updated. | Today action scope risk logged and mitigated with `findTodayFor()`. | 3cdb7d3 |
 | 033 — Overdue view | Complete | Added protected class-based `App\Livewire\Todos\Overdue` at `todos.overdue`, added `TodoListQuery::overdueFor()` and `findOverdueFor()`, rendered a focused Flux Overdue list with owner-scoped project/tag badges and complete action, and linked the dashboard to Overdue. | Boost app info/docs/schema checks, overdue inventory scan, focused `OverdueViewTest`, and adjacent overdue/today/date/list/private-view/project-detail/dashboard/domain/route-protection/architecture suite passed; final scans and full-suite checks recorded in test report. | `docs/task-organization.md`, `docs/domain-readiness.md`, `docs/todo-foundation.md`, `docs/changelog.md`, root changelog, decisions, risks, and test report updated. | Overdue action scope risk logged and mitigated with `findOverdueFor()`. | 4a62851 |
 | 034 — Upcoming view | Complete | Added protected class-based `App\Livewire\Todos\Upcoming` at `todos.upcoming`, added `TodoListQuery::upcomingFor()` and `findUpcomingFor()`, rendered a focused Flux Upcoming list with owner-scoped project/tag badges and complete action, and linked the dashboard to Upcoming. | Boost app info/docs/schema checks, focused `UpcomingViewTest`, adjacent upcoming/overdue/today/date/list/private-view/project-detail/dashboard/domain/route-protection/architecture suite, static scans, browser logs, and full-suite checks passed; final evidence recorded in test report. | `docs/task-organization.md`, `docs/domain-readiness.md`, `docs/todo-foundation.md`, `docs/changelog.md`, root changelog, decisions, risks, checklist, and test report updated. | Upcoming action scope risk logged and mitigated with `findUpcomingFor()`. | 114e7e0 |
-| 035 — Search | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 035 — Search | Complete | Added translated Flux active filter chips for search and existing filters, kept private title search local through owner-scoped bound `LIKE ... ESCAPE` queries, and hardened non-numeric project/tag URL filters so searched lists cannot be widened by unexpected query params. | Boost app info/docs/schema checks, focused `TaskSearchTest`, adjacent search/organization/ownership/private-view/due-date/dashboard/route-protection/architecture suite, static scans, browser logs, and full-suite checks passed; final evidence recorded in test report. | `docs/task-organization.md`, `docs/todo-foundation.md`, `docs/changelog.md`, root changelog, decisions, risks, checklist, and test report updated. | Non-numeric project/tag query-param widening risk logged and mitigated. | Pending |
 | 036 — Filters | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
 | 037 — Sorting | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
 | 038 — Saved views | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |

@@ -92,6 +92,13 @@ return [
         'without_due_date' => 'Without due date',
         'sort' => 'Sort by',
         'direction' => 'Order',
+        'active' => 'Active filters',
+        'search_chip' => 'Search: :term',
+        'project_chip' => 'Project: :project',
+        'tag_chip' => 'Tag: :tag',
+        'priority_chip' => 'Priority: :priority',
+        'due_chip' => 'Due: :due',
+        'unavailable_filter' => 'Unavailable',
     ],
 
     'sort' => [

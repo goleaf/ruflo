@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-06-06 - Step 035 Search
+
+### Implemented
+
+- Added translated active filter chips for search and the existing list filters inside the Flux filter panel.
+- Kept search self-hosted through the existing owner-scoped `TodoListQuery` title search with bound `LIKE` parameters and escaped wildcards.
+- Hardened non-numeric project/tag query-string values so they resolve to the existing empty-result path instead of widening a searched list.
+
+### Testing
+
+- Added `TaskSearchTest` for owner-scoped search privacy, literal `%` searches, search pagination, reset behavior, translated empty states, and tampered query parameters.
+- Rechecked organization, ownership scoping, private views, due-date, dashboard, route-protection, and architecture coverage.
+
+### Documentation
+
+- Updated `docs/task-organization.md` and `docs/todo-foundation.md` with the Step 035 search contract.
+
 ## 2026-06-06 - Step 034 Upcoming view
 
 ### Implemented

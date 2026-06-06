@@ -473,3 +473,19 @@ Record test/build/check results here.
 | 2026-06-06 | `git diff --check` | Passed | No whitespace errors after Step 034 changes. |
 | 2026-06-06 | `mcp__laravel_boost.browser_logs entries=20` | Passed | Only an old Vite reconnect message from 2026-06-05 was present; no current Upcoming page browser/runtime error was found. |
 | 2026-06-06 | `php artisan test --compact` | Passed | Full suite passed with 319 tests and 1426 assertions after Step 034 Upcoming view changes. |
+| 2026-06-06 | `mcp__laravel_boost.application_info` | Passed | Confirmed Step 035 runtime context: Laravel 13.14.0, Livewire 4.3.1, Flux 2.14.1, Tailwind 4.3.0, Pest 4.7.2, PHP CLI 8.4, SQLite. |
+| 2026-06-06 | `mcp__laravel_boost.search_docs` | Passed | Reviewed Livewire URL query parameters, debounced wire:model, pagination URL state, Laravel bound raw query methods, Flux badges, and Pest browser/query assertions before Step 035 changes. |
+| 2026-06-06 | `mcp__laravel_boost.database_schema todos` | Passed | Reconfirmed `todos.title`, ownership, lifecycle columns, and existing owner indexes before hardening private title search. |
+| 2026-06-06 | `php artisan make:test --pest TaskSearchTest --no-interaction` | Passed | Created the Step 035 search regression test. |
+| 2026-06-06 | `php artisan test --compact tests/Feature/TaskSearchTest.php` | Passed | 5 tests, 23 assertions for owner-scoped search, literal wildcard search, search pagination, reset/chip behavior, translated empty state, and tampered project/tag query parameters. |
+| 2026-06-06 | `vendor/bin/pint --dirty --format agent` | Passed | PHP style passed after Step 035 search chip, query-param hardening, translation, test, and documentation updates. |
+| 2026-06-06 | `php artisan test --compact tests/Feature/TaskSearchTest.php` | Passed | 5 tests, 23 assertions after Pint formatting. |
+| 2026-06-06 | `php artisan test --compact tests/Feature/TaskSearchTest.php tests/Feature/TodoOrganizationTest.php tests/Feature/OwnershipQueryScopingTest.php tests/Feature/TaskPrivateViewsTest.php tests/Feature/TaskDueDateTest.php tests/Feature/DashboardTest.php tests/Feature/GuestRouteProtectionTest.php tests/Feature/TodoArchitectureTest.php` | Passed | 90 tests, 308 assertions across search, organization filters, ownership scoping, private views, due dates, dashboard, route protection, and architecture guards. |
+| 2026-06-06 | `rg Volt scan` | Passed | No Volt usage found in app, resources, routes, config, tests, Composer, or package files after Step 035. |
+| 2026-06-06 | `rg strict hardcoded search/chip copy scan` | Passed | No hardcoded visible search or active-filter-chip labels remain outside English language files. |
+| 2026-06-06 | `rg search source guard scan` | Passed | Confirmed `activeFilterChips`, `normalizedSearch`, invalid project/tag filter helpers, and bound escaped `LIKE ... ESCAPE` search are in the expected source locations. |
+| 2026-06-06 | `rg compressed-progress scan` | Passed | Mutable root progress/docs files contain no compressed grouped-step placeholder lines after Step 035. |
+| 2026-06-06 | `php artisan route:list --no-interaction -vv --path=todos` | Passed | Reconfirmed todo routes remain behind auth and verified middleware after Step 035. |
+| 2026-06-06 | `git diff --check` | Passed | No whitespace errors after Step 035 changes. |
+| 2026-06-06 | `mcp__laravel_boost.browser_logs entries=20` | Passed | Only an old Vite reconnect message from 2026-06-05 was present; no current search UI browser/runtime error was found. |
+| 2026-06-06 | `php artisan test --compact` | Passed | Full suite passed with 324 tests and 1449 assertions after Step 035 search changes. |

@@ -580,6 +580,66 @@ class Index extends Component
         return __('todos.empty.'.$this->tab.'.description');
     }
 
+    /**
+     * @return list<array{key: string, label: string, color: string, icon: string}>
+     */
+    public function activeFilterChips(): array
+    {
+        $chips = [];
+        $search = $this->normalizedSearch();
+
+        if ($search !== '') {
+            $chips[] = [
+                'key' => 'search',
+                'label' => (string) __('todos.filters.search_chip', ['term' => $search]),
+                'color' => 'blue',
+                'icon' => 'magnifying-glass',
+            ];
+        }
+
+        if ($this->project !== '') {
+            $project = $this->project === 'none'
+                ? __('todos.fields.no_project')
+                : $this->projectFilterLabel();
+
+            $chips[] = [
+                'key' => 'project',
+                'label' => (string) __('todos.filters.project_chip', ['project' => $project]),
+                'color' => 'zinc',
+                'icon' => 'folder',
+            ];
+        }
+
+        if ($this->tag !== '') {
+            $chips[] = [
+                'key' => 'tag',
+                'label' => (string) __('todos.filters.tag_chip', ['tag' => $this->tagFilterLabel()]),
+                'color' => 'zinc',
+                'icon' => 'tag',
+            ];
+        }
+
+        if (Priority::tryFrom($this->priorityFilter) instanceof Priority) {
+            $chips[] = [
+                'key' => 'priority',
+                'label' => (string) __('todos.filters.priority_chip', ['priority' => Priority::from($this->priorityFilter)->label()]),
+                'color' => Priority::from($this->priorityFilter)->color(),
+                'icon' => 'flag',
+            ];
+        }
+
+        if ($this->tab === TodoStatus::Active->value && in_array($this->due, TodoFilters::dueOptions(), true)) {
+            $chips[] = [
+                'key' => 'due',
+                'label' => (string) __('todos.filters.due_chip', ['due' => $this->dueFilterLabel($this->due)]),
+                'color' => $this->due === 'overdue' ? 'red' : ($this->due === 'today' ? 'amber' : 'zinc'),
+                'icon' => 'calendar',
+            ];
+        }
+
+        return $chips;
+    }
+
     // --- Internals ---
 
     private function hasActiveFilters(): bool
@@ -599,6 +659,40 @@ class Index extends Component
             ->value();
     }
 
+    private function projectFilterLabel(): string
+    {
+        if (! ctype_digit($this->project)) {
+            return (string) __('todos.filters.unavailable_filter');
+        }
+
+        return (string) ($this->projects->firstWhere('id', (int) $this->project)?->name ?? __('todos.filters.unavailable_filter'));
+    }
+
+    private function tagFilterLabel(): string
+    {
+        if (! ctype_digit($this->tag)) {
+            return (string) __('todos.filters.unavailable_filter');
+        }
+
+        $tag = $this->tags->firstWhere('id', (int) $this->tag)?->name;
+
+        return $tag === null
+            ? (string) __('todos.filters.unavailable_filter')
+            : '#'.$tag;
+    }
+
+    private function dueFilterLabel(string $due): string
+    {
+        return match ($due) {
+            'today' => (string) __('todos.filters.due_today'),
+            'overdue' => (string) __('todos.filters.overdue'),
+            'upcoming' => (string) __('todos.filters.upcoming'),
+            'with' => (string) __('todos.filters.with_due_date'),
+            'without' => (string) __('todos.filters.without_due_date'),
+            default => (string) __('todos.filters.unavailable_filter'),
+        };
+    }
+
     /**
      * Build a sanitized filter object from the (untrusted) URL-bound state.
      */
@@ -610,14 +704,32 @@ class Index extends Component
         return new TodoFilters(
             status: $status,
             search: $search === '' ? null : $search,
-            projectId: ($this->project !== '' && $this->project !== 'none' && ctype_digit($this->project)) ? (int) $this->project : null,
+            projectId: $this->projectFilterId(),
             withoutProject: $this->project === 'none',
-            tagId: ($this->tag !== '' && ctype_digit($this->tag)) ? (int) $this->tag : null,
+            tagId: $this->tagFilterId(),
             priority: Priority::tryFrom($this->priorityFilter),
             due: $status === TodoStatus::Active && in_array($this->due, TodoFilters::dueOptions(), true) ? $this->due : null,
             sort: in_array($this->sort, TodoFilters::sortOptions(), true) ? $this->sort : 'created',
             direction: $this->direction === 'asc' ? 'asc' : 'desc',
         );
+    }
+
+    private function projectFilterId(): ?int
+    {
+        if ($this->project === '' || $this->project === 'none') {
+            return null;
+        }
+
+        return ctype_digit($this->project) ? (int) $this->project : 0;
+    }
+
+    private function tagFilterId(): ?int
+    {
+        if ($this->tag === '') {
+            return null;
+        }
+
+        return ctype_digit($this->tag) ? (int) $this->tag : 0;
     }
 
     private function validateBulkSelection(bool $onlyTrashed = false): void

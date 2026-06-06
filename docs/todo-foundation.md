@@ -180,6 +180,11 @@ owner-only future-due rendering, active-only exclusions, empty state,
 dashboard/domain link contract, and the Upcoming page's upcoming-only complete
 action boundary.
 
+Step 035 adds `TaskSearchTest`, which locks owner-scoped title search,
+LIKE-wildcard escaping, URL-backed search pagination, active search chips,
+reset behavior, translated empty states, and invalid project/tag query
+parameters resolving to empty results instead of widening a search.
+
 ## 2026-06-06 Recheck
 
 The Step 001 recheck confirmed the foundation still matches the current master-plan rules after Steps 002-016:

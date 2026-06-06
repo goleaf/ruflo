@@ -11,12 +11,20 @@
   `RunManualWebProcess`.
 - Added database-only reminder notifications with authorized task links.
 - Added reminder factories, demo seed data, and English reminder translations.
+- Added asset-backed local browser notification controls so the reminders page
+  can watch loaded pending reminders without embedding a large Alpine payload in
+  Blade.
+- Replaced the external Flatpickr datepicker dependency with the native browser
+  date picker for due-date fields.
 
 ### Testing
 
 - Added reminder system and notification tests for owner scoping, validation,
   disabled preferences, inactive-task skips, bounded chunk retry/resume,
   dashboard-triggered processing, and database notification payloads.
+- Rebuilt frontend assets and reran the focused reminder/date suite, adjacent
+  reminder suite, and full Pest suite after stabilizing the local notification
+  helper.
 
 ### Documentation
 

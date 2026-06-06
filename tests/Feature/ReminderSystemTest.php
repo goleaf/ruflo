@@ -35,6 +35,7 @@ test('reminders route renders owner scoped web mode controls', function () {
 test('reminders page includes alpine only local browser notification controls', function () {
     $user = User::factory()->create();
     $todo = Todo::factory()->for($user)->active()->create(['title' => 'Browser alert reminder task']);
+    $script = file_get_contents(resource_path('js/app.js'));
 
     Reminder::factory()->forTodo($todo)->future(now()->addDay())->create();
 
@@ -42,13 +43,21 @@ test('reminders page includes alpine only local browser notification controls', 
         ->get(route('todos.reminders'))
         ->assertOk()
         ->assertSee('data-test="local-browser-notifications"', false)
-        ->assertSee('x-data="{', false)
+        ->assertSee('window.RuFlo.localReminderNotifications', false)
         ->assertSee('Notification.requestPermission', false)
         ->assertSee('new Notification', false)
-        ->assertSee('window.localStorage', false)
-        ->assertDontSee('window.RuFlo.localReminderNotifications', false)
+        ->assertSee('ruflo:local-reminders', false)
         ->assertDontSee('navigator.serviceWorker', false)
         ->assertDontSee('PushManager', false);
+
+    expect($script)
+        ->toContain('window.RuFlo')
+        ->not->toContain('window.RuFlo.localReminderNotifications')
+        ->not->toContain('Notification.requestPermission')
+        ->not->toContain('new Notification')
+        ->not->toContain('window.Alpine.data')
+        ->not->toContain('navigator.serviceWorker')
+        ->not->toContain('PushManager');
 });
 
 test('local browser notification payload stays owner scoped and pending only', function () {

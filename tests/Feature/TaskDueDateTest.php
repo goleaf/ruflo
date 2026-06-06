@@ -115,18 +115,26 @@ test('due query parameters are sanitized and limited to the active tab', functio
         ->assertDontSee('Active overdue');
 });
 
-test('todo due date fields use the modal flatpickr integration', function () {
+test('todo due date fields use the native browser date picker integration', function () {
     $component = file_get_contents(resource_path('views/components/ui/modal-datepicker.blade.php'));
     $script = file_get_contents(resource_path('js/app.js'));
+    $styles = file_get_contents(resource_path('css/app.css'));
+    $translations = file_get_contents(lang_path('en/todos.php'));
 
     expect($component)
-        ->toContain('modalDatePicker')
         ->toContain('$wire.entangle(@js($model)).live')
-        ->toContain('wire:ignore')
-        ->toContain('flux:modal')
+        ->toContain('type="date"')
+        ->toContain('x-ref="dateInput"')
+        ->toContain('showPicker')
+        ->toContain('x-on:click="openPicker()"')
+        ->not->toContain('flatpickr')
+        ->not->toContain('flux:modal')
+        ->not->toContain('Calendar failed to load')
         ->and($script)
-        ->toContain('https://cdn.jsdelivr.net/npm/flatpickr')
-        ->toContain('https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css')
-        ->toContain('window.Alpine.data')
-        ->toContain("dateFormat: 'Y-m-d'");
+        ->toContain('window.RuFlo')
+        ->not->toContain('window.Alpine.data')
+        ->and($styles)
+        ->toContain('[x-cloak]')
+        ->and($translations)
+        ->not->toContain('Calendar failed to load');
 });

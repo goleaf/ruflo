@@ -121,6 +121,11 @@ Step 066 records those events through the synchronous
 timeline stores a safe subject snapshot for deleted tasks, allow-listed update
 metadata, and skips no-op update events.
 
+Step 067 renders that lifecycle and checklist history directly on private task
+detail pages through an owner-scoped task timeline. The embedded timeline uses
+the same formatter as `/activity`, but omits stale subject links because the
+current page is already the scoped subject context.
+
 Step 024 replaces the former generic completion toggle with separate
 completion and reopening actions/events. The row checkbox still gives the same
 fast UX, but it calls the explicit transition for the task's current state and

@@ -12,6 +12,7 @@ return [
         'back_to_dashboard' => 'Back to dashboard',
         'open_tasks' => 'Open tasks',
         'open_subject' => 'Open task',
+        'open_full_history' => 'Full history',
         'load_more' => 'Load more',
     ],
 
@@ -28,6 +29,16 @@ return [
         'description' => 'Only activity from your workspace appears here. Deleted tasks keep a safe title snapshot but do not expose a stale task link.',
         'loaded' => ':count loaded',
         'actor_time' => ':actor, :time',
+    ],
+
+    'task_timeline' => [
+        'label' => 'Task history',
+        'heading' => 'Timeline',
+        'description' => 'Review meaningful changes for this task. Deleted related details use safe snapshots instead of stale object links.',
+        'empty' => [
+            'title' => 'No timeline entries yet',
+            'description' => 'Create, update, complete, archive, restore, or edit checklist items to build this task history.',
+        ],
     ],
 
     'actor' => [

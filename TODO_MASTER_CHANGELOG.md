@@ -4,6 +4,7 @@ Record changes after every step.
 
 ## Unreleased
 
+- Completed Step 067 by adding an owner-scoped task timeline to private task detail pages, sharing activity formatting with `/activity`, adding a task timeline activity index, bounded Load more behavior, hiding stale/deleted subject links, translating the Flux UI, and adding focused timeline privacy tests.
 - Completed Step 066 by adding owner-scoped activity history records, synchronous todo lifecycle/checklist/completed-clear activity logging with safe metadata snapshots, a protected `/activity` Flux timeline, demo factory/seeder support, docs, and focused activity/privacy regression tests.
 - Completed Step 065 by adding a reusable local browser bar-chart helper and Blade component, wiring dashboard foundation and reports trend charts through local CSS/Blade rendering, documenting the no-paid/no-CDN chart contract, and adding focused local chart rendering tests.
 - Completed Step 062 by adding session-backed dashboard foundation widget show/hide and reordering controls, translated Flux customization UI, reset/all-hidden states, server-side tamper validation, docs, and focused Livewire tests.

@@ -28,14 +28,42 @@ final class ActivityFeedQuery
     public function recentFor(User $user, int $limit): Collection
     {
         return $this->for($user)
-            ->limit(max(1, min($limit, 100)))
+            ->limit($this->normalizeLimit($limit))
             ->get();
     }
 
     public function hasMoreThan(User $user, int $limit): bool
     {
         return $this->for($user)
-            ->skip(max(1, min($limit, 100)))
+            ->skip($this->normalizeLimit($limit))
+            ->take(1)
+            ->exists();
+    }
+
+    /**
+     * @return Builder<ActivityRecord>
+     */
+    public function forTodo(User $user, Todo $todo): Builder
+    {
+        return $this->for($user)
+            ->where('subject_type', $todo->getMorphClass())
+            ->where('subject_id', $todo->getKey());
+    }
+
+    /**
+     * @return Collection<int, ActivityRecord>
+     */
+    public function recentForTodo(User $user, Todo $todo, int $limit): Collection
+    {
+        return $this->forTodo($user, $todo)
+            ->limit($this->normalizeLimit($limit))
+            ->get();
+    }
+
+    public function hasMoreThanForTodo(User $user, Todo $todo, int $limit): bool
+    {
+        return $this->forTodo($user, $todo)
+            ->skip($this->normalizeLimit($limit))
             ->take(1)
             ->exists();
     }
@@ -72,5 +100,10 @@ final class ActivityFeedQuery
             ->pluck('id')
             ->map(fn (mixed $id): int => (int) $id)
             ->all();
+    }
+
+    private function normalizeLimit(int $limit): int
+    {
+        return max(1, min($limit, 100));
     }
 }

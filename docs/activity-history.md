@@ -1,6 +1,7 @@
 # Activity History
 
 Step 066 adds a private activity history for meaningful task-domain events.
+Step 067 embeds a focused task timeline on private task detail pages.
 
 ## Runtime
 
@@ -30,6 +31,23 @@ Step 066 adds a private activity history for meaningful task-domain events.
 - All visible copy lives in `lang/en/activity.php` and existing navigation
   language files.
 
+## Task Timeline
+
+- Task detail pages render a class-based `todos.task-timeline` Livewire
+  component after the task summary.
+- The component re-resolves the parent task through `TodoListQuery`, authorizes
+  `view`, then reads only that task's records through
+  `ActivityFeedQuery::forTodo()`.
+- The per-task read path is backed by the
+  `activity_records_user_subject_time_index` composite index on owner, subject,
+  and event time.
+- The embedded timeline uses bounded Load more pagination and shares
+  `ActivityFormatter` with the full `/activity` page so event names, icons,
+  colors, actor labels, and change summaries stay consistent.
+- The task timeline intentionally does not render subject links. This prevents
+  stale, deleted, or no-longer-visible subject references from becoming
+  clickable from the detail page.
+
 ## Factories And Seeding
 
 - `ActivityRecordFactory` covers generic records, task-created, task-updated,
@@ -43,3 +61,6 @@ Step 066 adds a private activity history for meaningful task-domain events.
 Step 066 adds no new user-submitted form input. Existing task create/edit and
 checklist validation remains the input boundary. Activity recording listens to
 already validated domain actions and sanitizes stored metadata before writing.
+
+Step 067 also adds no new user-submitted data. The only interactive input is a
+bounded Load more action on an already owner-scoped task timeline.

@@ -1,5 +1,30 @@
 # Changelog
 
+## 2026-06-06 - Step 067 Task timeline UI
+
+### Added
+
+- Added an owner-scoped task timeline to private task detail pages using a
+  class-based Livewire component and translated Flux UI.
+- Added per-task activity feed query helpers and a shared activity formatter so
+  task timelines and the full activity page render event copy consistently.
+- Added the task timeline composite activity index for owner-scoped subject
+  history reads.
+- Added bounded Load more behavior and deleted/stale subject handling that
+  avoids rendering subject links from the embedded timeline.
+
+### Tests
+
+- Added `TaskTimelineTest` coverage for owner-scoped rendering, Load more
+  behavior, deleted-label fallback, stale subject-link hiding, and foreign task
+  id rejection.
+
+### Restricted Hosting
+
+- Task timelines read existing activity records during normal authenticated web
+  requests. They require no cron, queue worker, supervisor, terminal action,
+  Artisan command, hosted service, paid API, or background processor.
+
 ## 2026-06-06 - Step 066 Activity history
 
 ### Added

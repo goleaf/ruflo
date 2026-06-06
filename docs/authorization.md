@@ -45,6 +45,7 @@ scope) rather than across the whole codebase.
 | Project progress dashboard read boundary | `App\Queries\Dashboard\ProjectProgressDashboardQuery` | Owner-scoped active project, no-project, completion, overdue, undated, and stale cleanup counters. |
 | Reports read boundary | `App\Queries\Reports\ReportsOverviewQuery` | Owner-scoped productivity, habit, project, time, and overdue report aggregates. |
 | Activity read boundary | `App\Queries\Activity\ActivityFeedQuery` | Owner-scoped activity timeline, summary counts, and safe task-link prechecks. |
+| Task timeline read boundary | `App\Livewire\Todos\TaskTimeline` + `App\Queries\Activity\ActivityFeedQuery::forTodo()` | Re-resolves the parent task through `TodoListQuery`, authorizes `view`, then reads only that task's owner-scoped activity records with no stale subject links. |
 | Recurrence read boundary | `App\Queries\Todos\TodoRecurrenceRuleQuery` | Owner-scoped recurrence rules, generated occurrences, exceptions, and active task options. |
 | Template read boundary | `App\Queries\Todos\TodoTemplateListQuery` | Owner-scoped reusable task/project/checklist/routine templates. |
 | Inbox read boundary | `App\Queries\Todos\TodoInboxQuery` | Owner-scoped active captured tasks waiting for triage. |
@@ -116,6 +117,11 @@ The Livewire component authorizes **before** delegating to an action:
   authenticated users, while per-record `view` is owner-only. The activity page
   reads through `ActivityFeedQuery` and links task subjects only after an
   owner-scoped visibility precheck.
+- Task timelines use the same activity read boundary from a scoped parent task:
+  `TaskTimeline` resolves the task through `TodoListQuery::findVisibleFor()`,
+  authorizes `view`, and delegates per-task activity reads to
+  `ActivityFeedQuery::forTodo()`. The embedded timeline renders event history
+  only; it does not expose subject links.
 - Checklist rows use `TodoChecklistItemPolicy`: `viewAny` and `create` are
   available to authenticated users, while per-row `view`, `update`, and
   `delete` are owner-only and hide foreign ids as not found. Checklist actions

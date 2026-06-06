@@ -26,7 +26,7 @@ Step 066 adds a private activity history for meaningful task-domain events.
 
 - The activity page renders Flux summary cards, timeline badges, actor/time
   copy, translated event descriptions, an empty state, and a load-more button.
-- Navigation and command palette entries point to the protected activity route.
+- The authenticated sidebar navigation points to the protected activity route.
 - All visible copy lives in `lang/en/activity.php` and existing navigation
   language files.
 

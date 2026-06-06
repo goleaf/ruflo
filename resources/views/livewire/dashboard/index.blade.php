@@ -33,6 +33,10 @@
                         {{ __('dashboard.workspace.upcoming_action') }}
                     </flux:button>
 
+                    <flux:button :href="route('todos.focus')" wire:navigate variant="subtle" icon="bolt">
+                        {{ __('dashboard.workspace.focus_action') }}
+                    </flux:button>
+
                     <flux:button :href="route('todos.index')" wire:navigate variant="ghost" icon="list-bullet">
                         {{ __('dashboard.workspace.action') }}
                     </flux:button>

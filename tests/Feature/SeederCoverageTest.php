@@ -8,6 +8,7 @@ use App\Models\Todo;
 use App\Models\TodoChecklistItem;
 use App\Models\TodoTemplate;
 use App\Models\User;
+use App\Queries\Todos\TodoFocusQuery;
 use Database\Seeders\DatabaseSeeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -53,7 +54,9 @@ test('database seeder creates safe demo users and complete private workspaces', 
                 'Today focus',
                 'Urgent work',
                 'Waiting on others',
-            ]);
+            ])
+            ->and(app(TodoFocusQuery::class)->for($user)->pluck('title')->all())
+            ->toContain('Review the current flow', 'Send the overdue report');
     });
 });
 

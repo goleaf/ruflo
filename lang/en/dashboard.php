@@ -54,5 +54,6 @@ return [
         'today_action' => 'Open today',
         'overdue_action' => 'Review overdue',
         'upcoming_action' => 'Plan upcoming',
+        'focus_action' => 'Focus',
     ],
 ];

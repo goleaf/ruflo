@@ -65,6 +65,7 @@ shared/global visibility and remain owner-scoped through `user_id`.
 
 - active, completed, archived, archived-completed, and soft-deleted Trash lifecycle states,
 - inbox and triaged states through `inbox()` and `triaged()`,
+- focus candidate state through `focusCandidate()`,
 - low, normal, high, and urgent priority shortcuts,
 - due today, overdue, upcoming, no due date, explicit due date, and max-length title states,
 - project ownership helper through `forProject()`,
@@ -75,6 +76,10 @@ The tag helpers avoid cross-user attachment by attaching only tags that share th
 Inbox factory state marks active, unprojected, unscheduled tasks with
 `inbox_captured_at`; `triaged()` clears that marker for tests that need normal
 active tasks that have left the Inbox.
+
+Focus candidate state marks an active high-priority due-today task so focus
+query and quick-action tests can create important work without repeating
+priority/date setup.
 
 ## Todo Checklist Item Factory
 

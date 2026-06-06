@@ -62,6 +62,14 @@ class TodoFactory extends Factory
         return $this->priority(Priority::Urgent);
     }
 
+    public function focusCandidate(): static
+    {
+        return $this
+            ->highPriority()
+            ->dueToday()
+            ->active();
+    }
+
     /**
      * Indicate the task is due on a given date (defaults to today).
      */

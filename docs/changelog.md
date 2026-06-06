@@ -1,5 +1,40 @@
 # Changelog
 
+## 2026-06-06 - Step 045 Focus mode
+
+### Implemented
+
+- Added `TodoFocusQuery` for a derived owner-scoped focus set: all active
+  urgent tasks plus enough overdue, due-today, and high-priority tasks to fill
+  the normal target size.
+- Added `RescheduleFocusedTodo` for defer and snooze actions that update only
+  the due date after authorization and lifecycle checks.
+- Added a protected class-based Livewire Focus page at `todos.focus` with a
+  Flux low-distraction layout, selected-task quick actions, keyboard hints,
+  clear back navigation, and a browser-only 25-minute session timer.
+- Added task-list and dashboard shortcuts to Focus mode.
+
+### Testing
+
+- Added `FocusModeTest` for route protection, owner-only rendering, urgent
+  overflow behavior, complete/defer/snooze actions, foreign/non-focus denial,
+  and component/view guardrails.
+- Expanded route-protection, domain, architecture, factory, and seeder coverage
+  for focus mode.
+
+### Documentation
+
+- Updated task organization, authorization, request validation, factory
+  coverage, seeding, domain readiness, and todo foundation docs with the Step
+  045 Focus contract.
+
+### Restricted Hosting
+
+- Focus mode is a bounded web-triggered Livewire workflow. The timer runs only
+  in the browser and task actions are single synchronous requests; no worker,
+  cron, supervisor, terminal, Artisan command, paid service, chunk processor,
+  retry loop, or resume state is required during normal usage.
+
 ## 2026-06-06 - Step 044 Quick capture inbox
 
 ### Implemented

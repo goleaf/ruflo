@@ -224,6 +224,11 @@ owner-scoped active captured-task rendering, Livewire quick capture, action
 validation, triage into normal organization fields, foreign-id denial, and
 non-inbox task denial.
 
+Step 045 adds `FocusModeTest`, which locks the protected Focus route,
+owner-scoped important active task rendering, urgent-task inclusion, quick
+complete/defer/snooze actions, selected-task keyboard action targets, foreign
+and non-focus denial, and browser-only timer/keyboard markup.
+
 ## 2026-06-06 Recheck
 
 The Step 001 recheck confirmed the foundation still matches the current master-plan rules after Steps 002-016:

@@ -145,6 +145,7 @@ test('todo factory covers priority date and lifecycle states', function () {
     $normal = Todo::factory()->normalPriority()->create();
     $high = Todo::factory()->highPriority()->create();
     $urgent = Todo::factory()->urgentPriority()->create();
+    $focusCandidate = Todo::factory()->focusCandidate()->create();
 
     expect($active->status())->toBe(TodoStatus::Active)
         ->and($completed->status())->toBe(TodoStatus::Completed)
@@ -164,7 +165,9 @@ test('todo factory covers priority date and lifecycle states', function () {
         ->and($low->priority)->toBe(Priority::Low)
         ->and($normal->priority)->toBe(Priority::Normal)
         ->and($high->priority)->toBe(Priority::High)
-        ->and($urgent->priority)->toBe(Priority::Urgent);
+        ->and($urgent->priority)->toBe(Priority::Urgent)
+        ->and($focusCandidate->priority)->toBe(Priority::High)
+        ->and($focusCandidate->isDueToday())->toBeTrue();
 });
 
 test('todo relationship helpers keep project and tag data inside the same owner boundary', function () {

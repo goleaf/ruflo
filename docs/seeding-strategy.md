@@ -43,6 +43,11 @@ month and unscheduled examples without adding new model rows or changing the
 stable seeder counts. Reminder and recurrence rows remain deferred until those
 schemas exist.
 
+Step 045's focus mode also reuses the current catalog. `Review the current
+flow` is high priority and due today, while `Send the overdue report` is urgent
+and overdue, so `/todos/focus` has realistic current work immediately after
+seeding without adding another table or a focus-specific seed model.
+
 ## Idempotency
 
 Seeders are idempotent for the current demo catalog. Re-running them updates existing demo records instead of creating duplicate users, tags, projects, saved views, or seeded task titles.

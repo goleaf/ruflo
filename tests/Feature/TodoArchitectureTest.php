@@ -15,6 +15,7 @@ use App\Actions\Todos\DeleteTodoTemplate;
 use App\Actions\Todos\MoveTodoChecklistItem;
 use App\Actions\Todos\MoveTodoOnBoard;
 use App\Actions\Todos\ReopenTodo;
+use App\Actions\Todos\RescheduleFocusedTodo;
 use App\Actions\Todos\RestoreDeletedTodo;
 use App\Actions\Todos\TodoLifecycleStateMachine;
 use App\Actions\Todos\ToggleTodoChecklistItem;
@@ -32,6 +33,7 @@ use App\Livewire\Forms\Todos\TodoForm;
 use App\Livewire\Projects\Show as ProjectShow;
 use App\Livewire\Todos\Board as TodoBoard;
 use App\Livewire\Todos\Calendar as TodoCalendar;
+use App\Livewire\Todos\Focus as TodoFocus;
 use App\Livewire\Todos\Inbox as TodoInbox;
 use App\Livewire\Todos\Show as TodoShow;
 use App\Livewire\Todos\Templates as TodoTemplates;
@@ -43,6 +45,7 @@ use App\Queries\Todos\SavedTodoViewListQuery;
 use App\Queries\Todos\TodoBoardQuery;
 use App\Queries\Todos\TodoCalendarQuery;
 use App\Queries\Todos\TodoChecklistItemListQuery;
+use App\Queries\Todos\TodoFocusQuery;
 use App\Queries\Todos\TodoInboxQuery;
 use App\Queries\Todos\TodoListQuery;
 use App\Queries\Todos\TodoTemplateListQuery;
@@ -76,6 +79,7 @@ test('todo foundation classes exist', function () {
         ->and(class_exists(CreateTodoFromTemplate::class))->toBeTrue()
         ->and(class_exists(CaptureInboxTodo::class))->toBeTrue()
         ->and(class_exists(TriageInboxTodo::class))->toBeTrue()
+        ->and(class_exists(RescheduleFocusedTodo::class))->toBeTrue()
         ->and(class_exists(TodoLifecycleStateMachine::class))->toBeTrue()
         ->and(class_exists(CreateSavedTodoView::class))->toBeTrue()
         ->and(class_exists(DeleteSavedTodoView::class))->toBeTrue()
@@ -85,6 +89,7 @@ test('todo foundation classes exist', function () {
         ->and(class_exists(TodoBoardQuery::class))->toBeTrue()
         ->and(class_exists(TodoCalendarQuery::class))->toBeTrue()
         ->and(class_exists(TodoChecklistItemListQuery::class))->toBeTrue()
+        ->and(class_exists(TodoFocusQuery::class))->toBeTrue()
         ->and(class_exists(TodoTemplateListQuery::class))->toBeTrue()
         ->and(class_exists(TodoInboxQuery::class))->toBeTrue()
         ->and(class_exists(BoardStatus::class))->toBeTrue()
@@ -101,6 +106,7 @@ test('todo foundation classes exist', function () {
         ->and(class_exists(TodoBoard::class))->toBeTrue()
         ->and(class_exists(TodoCalendar::class))->toBeTrue()
         ->and(class_exists(TodoShow::class))->toBeTrue()
+        ->and(class_exists(TodoFocus::class))->toBeTrue()
         ->and(class_exists(TodoTemplates::class))->toBeTrue()
         ->and(class_exists(TodoInbox::class))->toBeTrue()
         ->and(class_exists(ProjectShow::class))->toBeTrue()
@@ -190,6 +196,18 @@ test('todo inbox page delegates capture and triage responsibilities', function (
         ->toContain('TriageInboxTodo')
         ->toContain('InboxCaptureTitle')
         ->toContain('TodoForm')
+        ->toContain('$this->authorize')
+        ->not->toContain('Todo::query()')
+        ->not->toContain('->save()');
+});
+
+test('todo focus page delegates focus responsibilities', function () {
+    $source = file_get_contents(app_path('Livewire/Todos/Focus.php'));
+
+    expect($source)
+        ->toContain('TodoFocusQuery')
+        ->toContain('RescheduleFocusedTodo')
+        ->toContain('CompleteTodo')
         ->toContain('$this->authorize')
         ->not->toContain('Todo::query()')
         ->not->toContain('->save()');

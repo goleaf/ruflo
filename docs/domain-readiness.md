@@ -25,6 +25,7 @@ The current application surface covers these URL consumers:
 - Authenticated task calendar route at `/todos/calendar`.
 - Authenticated task templates route at `/todos/templates`.
 - Authenticated task Inbox route at `/todos/inbox`.
+- Authenticated task focus route at `/todos/focus`.
 - Authenticated todo route at `/todos`.
 - Authenticated Today route at `/todos/today`.
 - Authenticated Overdue route at `/todos/overdue`.

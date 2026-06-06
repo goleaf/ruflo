@@ -1,9 +1,9 @@
 # Task Organization
 
-Through Step 044, the private task lifecycle is extended into a usable productivity system:
+Through Step 045, the private task lifecycle is extended into a usable productivity system:
 projects, tags, priorities, due dates, search, filters, sorting, and bulk
-actions, calendar/board views, contained checklists, templates, and a quick
-capture Inbox. Everything here is owner-scoped on top of the model in
+actions, calendar/board/focus views, contained checklists, templates, and a
+quick capture Inbox. Everything here is owner-scoped on top of the model in
 [`authorization.md`](authorization.md) and the lifecycle in
 [`task-lifecycle.md`](task-lifecycle.md).
 
@@ -256,6 +256,33 @@ The Upcoming page:
 The dashboard workspace card links to Upcoming beside Today, Overdue, and the
 full Todo workspace shortcuts.
 
+## Focus mode
+
+Step 045 adds `todos.focus`, a protected class-based Livewire page for working
+from a short set of important active tasks.
+
+- Focus reads use `TodoFocusQuery`; the page never queries tasks directly.
+- The set is derived from existing private task state: all active urgent tasks
+  are included first, then the remaining slots are filled with active overdue,
+  due-today, and high-priority tasks until the normal target size of 5 is met.
+- Urgent tasks are never hidden to preserve safety. If a user has more than 5
+  active urgent tasks, the focus set grows beyond 5 instead of dropping urgent
+  work.
+- Quick complete uses `CompleteTodo`; defer and snooze use
+  `RescheduleFocusedTodo` to move the due date to tomorrow or three days from
+  today without changing owner, project, tags, priority, or lifecycle.
+- Every submitted task id is resolved through `TodoFocusQuery::findFor()`
+  before action authorization. Foreign tasks, archived tasks, completed tasks,
+  trashed tasks, and active tasks outside the current focus set return not
+  found from this page.
+- The page includes a browser-only 25-minute session timer plus keyboard-backed
+  selected-task actions (`C`, `D`, `S`). Timer state is not persisted and does
+  not run server-side.
+- Focus mode is synchronous and bounded to one task action per request. It
+  requires no cron, queue worker, supervisor, shell, Artisan command, paid
+  service, chunk processor, retry loop, or resume state during normal hosted
+  usage.
+
 ## Inbox
 
 Step 044 adds a dedicated `todos.inbox` Livewire page for fast, unsorted task
@@ -445,6 +472,10 @@ Step 043 adds reusable task templates at `todos.templates`.
   template listing and future filters.
 - Inbox reads are backed by `(user_id, inbox_captured_at)` and stay paginated
   through `TodoInboxQuery`.
+- Focus reads reuse existing task indexes for owner, priority, and due-date
+  ordering. The derived set is bounded to the normal target size plus any
+  additional urgent tasks, and all mutations re-resolve through
+  `TodoFocusQuery`.
 
 ## Intentionally not implemented
 

@@ -37,6 +37,7 @@ scope) rather than across the whole codebase.
 | Checklist read boundary | `App\Queries\Todos\TodoChecklistItemListQuery` | Owner-scoped checklist rows for one already scoped parent task. |
 | Template read boundary | `App\Queries\Todos\TodoTemplateListQuery` | Owner-scoped reusable task/project/checklist/routine templates. |
 | Inbox read boundary | `App\Queries\Todos\TodoInboxQuery` | Owner-scoped active captured tasks waiting for triage. |
+| Focus read boundary | `App\Queries\Todos\TodoFocusQuery` | Owner-scoped active urgent/overdue/due-today/high-priority focus set. |
 | Saved view read boundary | `App\Queries\Todos\SavedTodoViewListQuery` | Owner-scoped saved task-view listing and lookup. |
 | Per-action decisions | `App\Policies\TodoPolicy` | The only place "may this user do this?" is answered. |
 | Policy binding | `#[UsePolicy(...Policy::class)]` on current private models | Explicit, greppable mapping — not naming-convention magic. |
@@ -158,6 +159,12 @@ tasks through `TodoInboxQuery`, and resolves every submitted task id through
 archived, trashed, or already-triaged task id returns not found from the Inbox
 surface.
 
+Focus mode uses the same private route boundary. `todos.focus` is a class-based
+Livewire page behind `auth` and `verified`, lists only active owner-scoped
+urgent, overdue, due-today, and high-priority tasks through `TodoFocusQuery`,
+and resolves every selected task id through `findFor($user, $id)` before
+complete, defer, or snooze actions run.
+
 ## Error behavior (no leakage)
 
 - Forbidden private records resolve as **not found** (404-style), never
@@ -198,6 +205,10 @@ it on:
   resolves through `TodoInboxQuery`, authorizes update, delegates organization
   changes to `UpdateTodo`, and clears `inbox_captured_at` only for an active
   owner-scoped inbox row.
+- **Focus mode** — focused task actions resolve through `TodoFocusQuery` before
+  authorization. Complete delegates to `CompleteTodo`; defer and snooze
+  delegate to `RescheduleFocusedTodo`, which authorizes update and applies the
+  existing lifecycle state-machine guard before changing the due date.
 - **Bulk actions** — never trust a submitted set of IDs. Re-scope every
   selected ID to the owner and authorize each actionable record before acting;
   a foreign ID in the Livewire payload is rejected at validation, while direct

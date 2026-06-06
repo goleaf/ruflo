@@ -42,6 +42,10 @@ return [
             'title' => 'Inbox',
             'description' => 'Capture loose tasks quickly and triage them into projects, dates, priorities, and tags later.',
         ],
+        'focus' => [
+            'title' => 'Focus mode',
+            'description' => 'Work from a short owner-scoped set of urgent, overdue, due-today, and high-priority tasks.',
+        ],
     ],
 
     'fields' => [
@@ -320,6 +324,9 @@ return [
         'template_instantiated' => 'Created ":title" from template.',
         'inbox_captured' => 'Captured ":title".',
         'inbox_triaged' => 'Task removed from inbox.',
+        'focus_deferred' => 'Task deferred to tomorrow.',
+        'focus_snoozed' => 'Task snoozed for three days.',
+        'focus_empty' => 'No focus task is available.',
     ],
 
     'today' => [
@@ -409,6 +416,30 @@ return [
         'empty' => [
             'title' => 'Inbox is clear.',
             'description' => 'Quick captures will appear here until you triage them.',
+        ],
+    ],
+
+    'focus' => [
+        'label' => 'Focus mode',
+        'heading' => 'Priority set',
+        'description' => 'Urgent tasks stay visible while the remaining slots favor overdue, due-today, and high-priority work.',
+        'count' => 'Focus tasks',
+        'urgent_note' => 'Urgent tasks are always included, even when the focus set grows past the normal target size.',
+        'actions' => [
+            'open_focus' => 'Focus',
+            'select' => 'Select focus task',
+            'defer' => 'Defer',
+            'snooze' => 'Snooze',
+        ],
+        'timer' => [
+            'label' => 'Session timer',
+            'start' => 'Start',
+            'pause' => 'Pause',
+            'reset' => 'Reset',
+        ],
+        'empty' => [
+            'title' => 'No focus tasks.',
+            'description' => 'Urgent, overdue, due-today, and high-priority active tasks will appear here.',
         ],
     ],
 

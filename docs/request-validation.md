@@ -31,6 +31,13 @@ the component validates `captureTitle`, `InboxCaptureTitle` handles reusable
 visible-text rules, and `CaptureInboxTodo` plus `TriageInboxTodo` repeat the
 backend guards for direct action calls.
 
+Step 045 focus mode remains Livewire-only and introduces no free-form request
+payload. The only submitted values are task ids from Livewire actions; those
+ids are resolved through `TodoFocusQuery::findFor($user, $id)` and then
+authorized before complete, defer, or snooze mutations run. No dedicated HTTP
+Form Request or custom rule is introduced because there is no controller
+request body or repeated free-form validation logic.
+
 ## Custom Business Rules
 
 Reusable business validation rules are documented in `docs/validation-rules.md`.

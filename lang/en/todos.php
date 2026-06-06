@@ -644,6 +644,48 @@ return [
                 'description' => 'Recurring tasks are generated only when you open this page or press this button. Each run processes a bounded owner-scoped chunk and never needs cron, queues, workers, or paid services.',
             ],
         ],
+        'exceptions' => [
+            'heading' => 'Occurrence exceptions',
+            'occurrences_heading' => 'Generated occurrences',
+            'occurrences_description' => 'Move, skip, or mark one generated occurrence without changing the whole series.',
+            'badge' => '{0} No exceptions|{1} :count exception|[2,*] :count exceptions',
+            'summary' => 'Original :original, adjusted :adjusted',
+            'occurrence_dates' => 'Original :original, current due :current',
+            'types' => [
+                'skipped' => 'Skipped',
+                'moved' => 'Moved',
+                'edited' => 'Edited',
+            ],
+            'fields' => [
+                'move_to' => 'Move to',
+                'note' => 'Exception note',
+            ],
+            'actions' => [
+                'skip' => 'Skip',
+                'move' => 'Move',
+                'save_move' => 'Save move',
+                'mark_edited' => 'Mark edited',
+            ],
+            'move_modal' => [
+                'heading' => 'Move this occurrence',
+                'description' => 'Change only this generated task date. The original series date stays recorded as an exception.',
+            ],
+            'confirmations' => [
+                'skip' => 'Skip this generated occurrence? The task will move to Trash and the series will not recreate that date.',
+            ],
+            'messages' => [
+                'skipped' => 'Recurring occurrence skipped.',
+                'moved' => 'Recurring occurrence moved to :date.',
+                'edited' => 'Recurring occurrence marked as edited.',
+            ],
+            'validation' => [
+                'generated_occurrence' => 'Choose a generated occurrence from your workspace.',
+                'adjusted_occurs_on' => 'Choose a valid move date.',
+                'adjusted_occurs_on_unique' => 'That series already has an occurrence on this date.',
+                'move_date_changed' => 'Choose a different date for this occurrence.',
+                'move_date_available' => 'Choose a date that does not already have a generated occurrence in this series.',
+            ],
+        ],
         'confirmations' => [
             'delete' => 'Delete this recurrence rule? Existing tasks are kept.',
         ],

@@ -16,12 +16,15 @@ Step 012 covers the committed model set:
 - `Todo`
 - `TodoChecklistItem`
 - `TodoDependency`
+- `TodoRecurrenceException`
 - `TodoRecurrenceRule`
 - `TodoTemplate`
 
 The tracked `Reminder` model is now seeded with owner-scoped local/testing/demo
 records. The tracked `TodoRecurrenceRule` model is seeded with owner-scoped
-local/testing/demo rule definitions. Future models for comments, attachments,
+local/testing/demo rule definitions and generated occurrences. The tracked
+`TodoRecurrenceException` model is seeded with local/testing/demo skipped,
+edited, and moved occurrence examples. Future models for comments, attachments,
 activity, invites, settings, and collaboration are not seeded yet because those
 committed models do not exist yet.
 
@@ -77,13 +80,17 @@ committed models do not exist yet.
 - three recurrence rules per user: an enabled daily rule, an enabled weekly
   rule ending on a date, and a paused monthly rule ending after a count, so
   `/todos/recurring` and task detail recurrence cards have immediate demo data.
+- recurring exception examples per user when enough generated occurrences
+  exist: one skipped occurrence, one edited occurrence, and one moved occurrence
+  created through the same application actions used by `/todos/recurring`.
 
 Step 041's calendar view reuses that catalog: the seeded due-today, overdue,
 upcoming, no-due-date, and generated recurrence tasks give the local
 `/todos/calendar` page immediate month and unscheduled examples. Step 054 adds
-real reminder rows. Step 057 adds recurrence rule rows, and Step 058 generates
+real reminder rows. Step 057 adds recurrence rule rows, Step 058 generates
 short-window demo occurrences through the same web-safe generation action used
-by the browser UI.
+by the browser UI, and Step 059 records occurrence exceptions through the same
+browser-safe actions used by the recurring page.
 
 Step 045's focus mode also reuses the current catalog. `Review the current
 flow` is high priority and due today, while `Send the overdue report` is urgent
@@ -171,6 +178,12 @@ the same daily, weekly, and monthly demo definitions and runs the Step 058
 web-safe occurrence generator through a short demo window. Generated tasks are
 duplicate-safe through the recurrence occurrence key and remain private to each
 safe demo user.
+
+Recurrence exceptions are created only for generated occurrences without an
+existing exception. Re-running the seeder does not duplicate exception rows
+because the database enforces one exception per user, rule, and original
+occurrence date, and the seeder skips occurrences that already have an
+exception.
 
 Step 055 adds idempotent database notification seed rows for each safe demo
 user. Each demo workspace gets one unread task reminder-style notification and

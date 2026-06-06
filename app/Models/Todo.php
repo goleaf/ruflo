@@ -195,6 +195,16 @@ class Todo extends Model
     }
 
     /**
+     * The recurrence exception recorded for this generated occurrence, if any.
+     *
+     * @return HasOne<TodoRecurrenceException, $this>
+     */
+    public function recurrenceException(): HasOne
+    {
+        return $this->hasOne(TodoRecurrenceException::class);
+    }
+
+    /**
      * Tasks this task is waiting on.
      *
      * @return HasMany<TodoDependency, $this>

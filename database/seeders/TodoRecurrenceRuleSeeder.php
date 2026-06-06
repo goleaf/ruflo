@@ -3,18 +3,28 @@
 namespace Database\Seeders;
 
 use App\Actions\Todos\GenerateRecurringOccurrences;
+use App\Actions\Todos\MoveRecurringOccurrence;
+use App\Actions\Todos\RecordRecurringOccurrenceEdit;
+use App\Actions\Todos\SkipRecurringOccurrence;
 use App\Enums\RecurrenceEndType;
+use App\Enums\RecurrenceExceptionType;
 use App\Enums\RecurrenceFrequency;
 use App\Enums\RecurrenceWeekday;
 use App\Models\Todo;
+use App\Models\TodoRecurrenceException;
 use App\Models\TodoRecurrenceRule;
 use App\Models\User;
+use Carbon\CarbonImmutable;
 use Illuminate\Database\Seeder;
+use Illuminate\Validation\ValidationException;
 
 class TodoRecurrenceRuleSeeder extends Seeder
 {
     public function __construct(
         private readonly GenerateRecurringOccurrences $generateRecurringOccurrences,
+        private readonly SkipRecurringOccurrence $skipRecurringOccurrence,
+        private readonly RecordRecurringOccurrenceEdit $recordRecurringOccurrenceEdit,
+        private readonly MoveRecurringOccurrence $moveRecurringOccurrence,
     ) {}
 
     /**
@@ -92,6 +102,7 @@ class TodoRecurrenceRuleSeeder extends Seeder
                 }
 
                 $this->generateRecurringOccurrences->handle($user, today()->addWeeks(2));
+                $this->seedDemoExceptions($user);
             });
     }
 
@@ -112,5 +123,88 @@ class TodoRecurrenceRuleSeeder extends Seeder
             'starts_on' => max(today()->toDateString(), $todo->due_date?->toDateString() ?? today()->toDateString()),
             'last_generated_until' => $rule->last_generated_until?->toDateString(),
         ])->save();
+    }
+
+    private function seedDemoExceptions(User $user): void
+    {
+        $occurrences = Todo::query()
+            ->ownedBy($user)
+            ->active()
+            ->whereNotNull('recurrence_rule_id')
+            ->whereNotNull('recurrence_source_todo_id')
+            ->whereNotNull('recurrence_occurs_on')
+            ->whereDoesntHave('recurrenceException')
+            ->orderBy('recurrence_occurs_on')
+            ->orderBy('id')
+            ->limit(6)
+            ->get();
+
+        if (! $this->hasDemoException($user, RecurrenceExceptionType::Skipped)) {
+            $skipOccurrence = $occurrences->shift();
+
+            if ($skipOccurrence instanceof Todo) {
+                try {
+                    $this->skipRecurringOccurrence->handle($user, $skipOccurrence->id, 'Demo skipped occurrence');
+                } catch (ValidationException) {
+                }
+            }
+        }
+
+        if (! $this->hasDemoException($user, RecurrenceExceptionType::Edited)) {
+            $editedOccurrence = $occurrences->shift();
+
+            if ($editedOccurrence instanceof Todo) {
+                $editedOccurrence->forceFill([
+                    'title' => $editedOccurrence->title.' - edited demo',
+                ])->save();
+
+                try {
+                    $this->recordRecurringOccurrenceEdit->handle($user, $editedOccurrence->id, 'Demo edited occurrence');
+                } catch (ValidationException) {
+                }
+            }
+        }
+
+        if (! $this->hasDemoException($user, RecurrenceExceptionType::Moved)) {
+            $movedOccurrence = $occurrences->shift();
+
+            if ($movedOccurrence instanceof Todo) {
+                try {
+                    $this->moveRecurringOccurrence->handle(
+                        $user,
+                        $movedOccurrence->id,
+                        $this->nextAvailableOccurrenceDate($user, $movedOccurrence),
+                        'Demo moved occurrence',
+                    );
+                } catch (ValidationException) {
+                }
+            }
+        }
+    }
+
+    private function hasDemoException(User $user, RecurrenceExceptionType $type): bool
+    {
+        return TodoRecurrenceException::query()
+            ->ownedBy($user)
+            ->where('type', $type->value)
+            ->exists();
+    }
+
+    private function nextAvailableOccurrenceDate(User $user, Todo $occurrence): string
+    {
+        $date = CarbonImmutable::parse($occurrence->recurrence_occurs_on?->toDateString() ?? today()->toDateString())->addDay();
+
+        while (
+            Todo::query()
+                ->withTrashed()
+                ->ownedBy($user)
+                ->where('recurrence_rule_id', $occurrence->recurrence_rule_id)
+                ->whereDate('due_date', $date->toDateString())
+                ->exists()
+        ) {
+            $date = $date->addDay();
+        }
+
+        return $date->toDateString();
     }
 }

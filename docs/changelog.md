@@ -1,5 +1,41 @@
 # Changelog
 
+## 2026-06-06 - Step 059 Recurring exceptions
+
+### Added
+
+- Added owner-scoped `todo_recurrence_exceptions` for skipped, moved, and edited
+  generated recurrence occurrences.
+- Added `RecurrenceExceptionType`, `TodoRecurrenceException`,
+  `TodoRecurrenceExceptionPolicy`, and factories for rule/occurrence exception
+  states.
+- Added skip, move, and edit-marker actions that re-query generated occurrence
+  ids through the current user before mutating.
+- Added recurrence page exception counts, generated occurrence rows, skip
+  controls, edit markers, move controls, and exception history.
+
+### Changed
+
+- Recurrence generation now skips skipped dates plus both the original and
+  adjusted dates for moved exceptions.
+- Moving an occurrence updates `due_date` while preserving the original
+  `recurrence_occurs_on`, and shifts pending reminders by the same date offset.
+- Demo recurrence seeding now records one skipped, one edited, and one moved
+  occurrence when enough generated demo tasks exist.
+
+### Tests
+
+- Added `RecurringExceptionTest` for skip/no-regeneration, move/reminder-shift,
+  edit marker privacy, Livewire controls, and factory states.
+- Expanded factory, seeder, authorization policy, architecture, and localization
+  coverage for recurrence exceptions.
+
+### Restricted Hosting
+
+- Recurrence exception management is handled by authenticated browser-triggered
+  Livewire actions. It requires no cron, queue worker, supervisor, terminal
+  access, Artisan command, paid service, hosted calendar API, or email provider.
+
 ## 2026-06-06 - Step 058 Recurring occurrence generation
 
 ### Added

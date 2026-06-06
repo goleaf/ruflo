@@ -15,6 +15,8 @@ use App\Models\TimeEntry;
 use App\Models\Todo;
 use App\Models\TodoChecklistItem;
 use App\Models\TodoDependency;
+use App\Models\TodoRecurrenceException;
+use App\Models\TodoRecurrenceRule;
 use App\Models\TodoTemplate;
 use App\Models\User;
 use App\Queries\Todos\TodoCleanupQuery;
@@ -50,6 +52,8 @@ test('database seeder creates safe demo users and complete private workspaces', 
         ->and(Tag::query()->count())->toBeGreaterThanOrEqual(40)
         ->and(TodoChecklistItem::query()->count())->toBeGreaterThanOrEqual(450)
         ->and(TodoDependency::query()->count())->toBeGreaterThanOrEqual(46)
+        ->and(TodoRecurrenceException::query()->count())->toBeGreaterThanOrEqual(6)
+        ->and(TodoRecurrenceRule::query()->count())->toBeGreaterThanOrEqual(4)
         ->and(TodoTemplate::query()->count())->toBeGreaterThanOrEqual(38)
         ->and(Todo::query()->count())->toBeGreaterThanOrEqual(174)
         ->and(Todo::withTrashed()->count())->toBeGreaterThanOrEqual(186);
@@ -98,6 +102,8 @@ test('database seeder creates safe demo users and complete private workspaces', 
             ->and($user->todoChecklistItems()->where('is_completed', true)->count())->toBeGreaterThanOrEqual(18)
             ->and($user->todoDependencies()->count())->toBeGreaterThanOrEqual(23)
             ->and($user->todoDependencies()->whereHas('todo', fn ($query) => $query->where('title', 'Send the overdue report'))->count())->toBe(1)
+            ->and($user->todoRecurrenceExceptions()->count())->toBeGreaterThanOrEqual(3)
+            ->and($user->todoRecurrenceRules()->count())->toBeGreaterThanOrEqual(2)
             ->and($user->todoTemplates()->count())->toBeGreaterThanOrEqual(19)
             ->and($user->todoTemplates()->pluck('name')->all())->toContain(
                 'Bug triage checklist',
@@ -159,6 +165,8 @@ test('database seeder does not create known demo credentials in production envir
         ->and(Tag::query()->count())->toBe(0)
         ->and(TodoChecklistItem::query()->count())->toBe(0)
         ->and(TodoDependency::query()->count())->toBe(0)
+        ->and(TodoRecurrenceException::query()->count())->toBe(0)
+        ->and(TodoRecurrenceRule::query()->count())->toBe(0)
         ->and(TodoTemplate::query()->count())->toBe(0)
         ->and(Todo::query()->count())->toBe(0);
 });
@@ -185,6 +193,8 @@ function databaseSeederCounts(): array
         'tags' => Tag::query()->count(),
         'checklist_items' => TodoChecklistItem::query()->count(),
         'dependencies' => TodoDependency::query()->count(),
+        'recurrence_exceptions' => TodoRecurrenceException::query()->count(),
+        'recurrence_rules' => TodoRecurrenceRule::query()->count(),
         'templates' => TodoTemplate::query()->count(),
         'todos' => Todo::query()->count(),
         'todos_with_trashed' => Todo::withTrashed()->count(),

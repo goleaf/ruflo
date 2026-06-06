@@ -18,6 +18,7 @@ Step 011 covers the tracked application models:
 - `App\Models\Todo`
 - `App\Models\TodoChecklistItem`
 - `App\Models\TodoDependency`
+- `App\Models\TodoRecurrenceException`
 - `App\Models\TodoRecurrenceRule`
 - `App\Models\TodoTemplate`
 
@@ -242,6 +243,20 @@ and time entries.
 state attaches a task to its generating rule and source task, sets
 `recurrence_occurs_on`, assigns the owner from the rule, and keeps generated
 occurrences as normal private todo rows.
+
+## Todo Recurrence Exception Factory
+
+`TodoRecurrenceExceptionFactory` covers:
+
+- default skipped exception rows,
+- `forRule()` for a rule/date pair while preserving the owner boundary,
+- `forOccurrence()` for generated occurrence rows while copying owner, rule, and
+  original occurrence date,
+- skipped, moved, and edited states,
+- adjusted move dates and optional note text.
+
+Recurrence exceptions are private resources and use the same `BelongsToUser`
+concern as recurrence rules and generated todo occurrences.
 
 ## Todo Template Factory
 

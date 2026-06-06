@@ -39,6 +39,31 @@ checks existing rows, including soft-deleted generated rows, before creating an
 occurrence, so repeated browser runs are safe and deleting an occurrence can act
 as an intentional skip for that date.
 
+## Step 059 Recurring Exceptions
+
+Step 059 adds `todo_recurrence_exceptions` for per-occurrence changes without
+rewriting the source series. Exceptions are owner-scoped and attached to a
+recurrence rule, the generated occurrence when one exists, and the original
+series date.
+
+Supported exception types are:
+
+- skipped occurrences, which soft-delete the generated task and stop that
+  original date from being recreated,
+- moved occurrences, which move the generated task due date while keeping
+  `recurrence_occurs_on` as the original series date and recording the adjusted
+  date in exception history,
+- edited occurrences, which mark that one generated task was intentionally
+  edited without changing the source task or recurrence rule.
+
+Moved occurrences also shift pending reminders by the same date offset so
+browser-triggered reminder processing keeps the user's intended reminder timing.
+Duplicate prevention checks the generated recurrence date, including trashed
+rows, before a move is accepted. Generation also skips both the moved
+occurrence's original series date and its adjusted due date so a later retry or
+expanded generation window does not create a duplicate task on the adjusted
+date.
+
 ## UI
 
 The protected `todos.recurring` page at `/todos/recurring` lists the current
@@ -46,6 +71,11 @@ user's rules and provides a Flux form for creating, editing, pausing, enabling,
 deleting, and processing rules. Task detail pages also show a compact
 recurrence card so a single task can be configured without leaving
 `/todos/{todo}`.
+
+Rule cards now show exception counts, generated occurrence rows, skip controls,
+edit markers, move controls, and a move modal. Exception history stays visible
+on the same card so skipped, moved, and edited dates can be audited from the
+browser UI.
 
 The recurrence forms use translated Flux form controls, buttons, badges,
 callouts, cards, and checkboxes while staying on the normal class-based
@@ -71,6 +101,11 @@ reports matched rules, processed rules, created tasks, skipped rules, failures,
 remaining rules, and the generated-through date. Each rule card shows its
 current generated-task count.
 
+Recurring exception actions re-query generated occurrence ids through the
+current user's owner scope before mutating. Invalid, foreign, non-generated, or
+duplicate move-date submissions return translated validation errors next to the
+related Flux field.
+
 ## Restricted Hosting
 
 Recurring task generation uses `App\Actions\Processing\RunManualWebProcess`
@@ -83,12 +118,21 @@ command, paid API, hosted calendar service, or email provider during normal
 usage. Exact-time generation is not promised; users see generated future work
 when they open the recurrence page or press the generation button.
 
+Step 059 exception changes are synchronous authenticated Livewire actions. They
+do not require background jobs, cron, queue workers, shell access, Artisan
+commands, email, paid services, or hosted calendar APIs. Retry means reopening
+the same page and submitting the same browser action after correcting any
+validation error.
+
 ## Demo Data
 
 `TodoRecurrenceRuleFactory` covers daily, weekly, monthly, paused, ending-on,
 after-occurrence, and generated-through states. `TodoFactory` also exposes a
-`generatedOccurrence()` state for generated task rows. `TodoRecurrenceRuleSeeder`
-adds three idempotent demo rules for each safe demo user and runs the same
-web-safe generator through a short demo window so `/todos/recurring`, task
-detail pages, and the main task list have immediate local data on
+`generatedOccurrence()` state for generated task rows.
+`TodoRecurrenceExceptionFactory` covers skipped, moved, and edited exception
+states plus owner-safe rule/occurrence helpers. `TodoRecurrenceRuleSeeder` adds
+three idempotent demo rules for each safe demo user, runs the same web-safe
+generator through a short demo window, and records one skipped, one edited, and
+one moved occurrence where enough generated demo tasks exist. `/todos/recurring`,
+task detail pages, and the main task list therefore have immediate local data on
 `https://ruflo.test`.

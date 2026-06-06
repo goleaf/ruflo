@@ -42,6 +42,18 @@ class TodoRecurrenceRule extends Model
             ->orderBy('id');
     }
 
+    /**
+     * Skipped, edited, or moved occurrence exceptions for this rule.
+     *
+     * @return HasMany<TodoRecurrenceException, $this>
+     */
+    public function exceptions(): HasMany
+    {
+        return $this->hasMany(TodoRecurrenceException::class)
+            ->orderByDesc('original_occurs_on')
+            ->orderByDesc('id');
+    }
+
     public function summary(): string
     {
         return __('todos.recurrence.summaries.full', [

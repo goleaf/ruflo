@@ -7,6 +7,7 @@ use App\Models\TodoRecurrenceRule;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Validation\ValidationException;
 
 final class TodoRecurrenceRuleQuery
 {
@@ -17,8 +18,16 @@ final class TodoRecurrenceRuleQuery
     {
         return TodoRecurrenceRule::query()
             ->ownedBy($user)
-            ->withCount('occurrences')
-            ->with(['todo' => fn ($query) => $query->where('todos.user_id', $user->id)])
+            ->withCount(['occurrences', 'exceptions'])
+            ->with([
+                'exceptions.todo',
+                'occurrences' => fn ($query) => $query
+                    ->with('recurrenceException')
+                    ->where('todos.user_id', $user->id)
+                    ->orderByDesc('recurrence_occurs_on')
+                    ->orderByDesc('id'),
+                'todo' => fn ($query) => $query->where('todos.user_id', $user->id),
+            ])
             ->orderByDesc('is_enabled')
             ->orderBy('starts_on')
             ->orderBy('id')
@@ -34,7 +43,7 @@ final class TodoRecurrenceRuleQuery
         return TodoRecurrenceRule::query()
             ->ownedBy($user)
             ->where('is_enabled', true)
-            ->withCount('occurrences')
+            ->withCount(['occurrences', 'exceptions'])
             ->with(['todo' => fn ($query) => $query->where('todos.user_id', $user->id)])
             ->orderBy('starts_on')
             ->orderBy('id')
@@ -64,6 +73,25 @@ final class TodoRecurrenceRuleQuery
             ->ownedBy($user)
             ->active()
             ->findOrFail($todoId);
+    }
+
+    public function findGeneratedOccurrenceFor(User $user, int $occurrenceId): Todo
+    {
+        $occurrence = Todo::query()
+            ->ownedBy($user)
+            ->whereKey($occurrenceId)
+            ->whereNotNull('recurrence_rule_id')
+            ->whereNotNull('recurrence_source_todo_id')
+            ->whereNotNull('recurrence_occurs_on')
+            ->first();
+
+        if ($occurrence instanceof Todo) {
+            return $occurrence;
+        }
+
+        throw ValidationException::withMessages([
+            'recurrenceOccurrence' => __('todos.recurrence.exceptions.validation.generated_occurrence'),
+        ]);
     }
 
     /**

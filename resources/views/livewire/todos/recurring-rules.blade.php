@@ -171,6 +171,9 @@
                             <flux:badge size="sm" color="zinc" icon="rectangle-stack">
                                 {{ trans_choice('todos.recurrence.generation.generated_badge', (int) $rule->occurrences_count, ['count' => (int) $rule->occurrences_count]) }}
                             </flux:badge>
+                            <flux:badge size="sm" color="amber" icon="adjustments-horizontal">
+                                {{ trans_choice('todos.recurrence.exceptions.badge', (int) $rule->exceptions_count, ['count' => (int) $rule->exceptions_count]) }}
+                            </flux:badge>
                         </div>
 
                         <flux:heading size="lg" class="mt-2 break-words">
@@ -192,6 +195,72 @@
                         <div class="mt-1 font-medium text-zinc-900 dark:text-zinc-100">{{ $rule->last_generated_until?->format('Y-m-d') ?? __('todos.recurrence.none') }}</div>
                     </div>
                 </div>
+
+
+                @if ($rule->occurrences->isNotEmpty())
+                    <div class="space-y-3 rounded-lg border border-zinc-200 bg-white p-3 dark:border-white/10 dark:bg-zinc-950">
+                        <div>
+                            <flux:heading size="sm">{{ __('todos.recurrence.exceptions.occurrences_heading') }}</flux:heading>
+                            <flux:text class="text-sm">{{ __('todos.recurrence.exceptions.occurrences_description') }}</flux:text>
+                        </div>
+
+                        <div class="space-y-2">
+                            @foreach ($rule->occurrences->take(5) as $occurrence)
+                                <div class="flex flex-col gap-3 rounded-lg border border-zinc-200 bg-zinc-50 p-3 dark:border-white/10 dark:bg-zinc-900 sm:flex-row sm:items-center sm:justify-between" data-test="recurrence-occurrence-row">
+                                    <div class="min-w-0">
+                                        <div class="flex flex-wrap items-center gap-2">
+                                            <flux:text class="font-medium text-zinc-900 dark:text-zinc-100">{{ $occurrence->title }}</flux:text>
+
+                                            @foreach ($rule->exceptions->where('todo_id', $occurrence->id) as $exception)
+                                                <flux:badge size="sm" :color="$exception->typeColor()" :icon="$exception->typeIcon()">
+                                                    {{ $exception->typeLabel() }}
+                                                </flux:badge>
+                                            @endforeach
+                                        </div>
+                                        <flux:text class="mt-1 text-sm">
+                                            {{ __('todos.recurrence.exceptions.occurrence_dates', [
+                                                'original' => $occurrence->recurrence_occurs_on?->format('Y-m-d') ?? __('todos.recurrence.none'),
+                                                'current' => $occurrence->due_date?->format('Y-m-d') ?? __('todos.recurrence.none'),
+                                            ]) }}
+                                        </flux:text>
+                                    </div>
+
+                                    <div class="flex flex-wrap gap-2">
+                                        <flux:button type="button" size="sm" variant="ghost" icon="pencil-square" wire:click="recordOccurrenceEdit({{ $occurrence->id }})">
+                                            {{ __('todos.recurrence.exceptions.actions.mark_edited') }}
+                                        </flux:button>
+                                        <flux:button type="button" size="sm" variant="ghost" icon="arrow-right-circle" wire:click="startMoveOccurrence({{ $occurrence->id }})">
+                                            {{ __('todos.recurrence.exceptions.actions.move') }}
+                                        </flux:button>
+                                        <flux:button type="button" size="sm" variant="danger" icon="no-symbol" wire:click="skipOccurrence({{ $occurrence->id }})" wire:confirm="{{ __('todos.recurrence.exceptions.confirmations.skip') }}">
+                                            {{ __('todos.recurrence.exceptions.actions.skip') }}
+                                        </flux:button>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
+
+                @if ($rule->exceptions->isNotEmpty())
+                    <div class="space-y-2 rounded-lg border border-amber-200 bg-amber-50 p-3 dark:border-amber-500/30 dark:bg-amber-950/20" data-test="recurrence-exception-list">
+                        <flux:heading size="sm">{{ __('todos.recurrence.exceptions.heading') }}</flux:heading>
+
+                        @foreach ($rule->exceptions->take(5) as $exception)
+                            <div class="flex flex-wrap items-center gap-2 text-sm">
+                                <flux:badge size="sm" :color="$exception->typeColor()" :icon="$exception->typeIcon()">
+                                    {{ $exception->typeLabel() }}
+                                </flux:badge>
+                                <span class="text-zinc-700 dark:text-zinc-200">
+                                    {{ __('todos.recurrence.exceptions.summary', [
+                                        'original' => $exception->original_occurs_on?->format('Y-m-d') ?? __('todos.recurrence.none'),
+                                        'adjusted' => $exception->adjusted_occurs_on?->format('Y-m-d') ?? __('todos.recurrence.none'),
+                                    ]) }}
+                                </span>
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
 
                 <div class="flex flex-wrap justify-end gap-2">
                     <flux:button type="button" variant="ghost" size="sm" icon="pause-circle" wire:click="toggleRule({{ $rule->id }})">
@@ -216,4 +285,31 @@
             </div>
         @endforelse
     </div>
+
+    <flux:modal name="move-recurring-occurrence" class="md:w-md">
+        <form wire:submit="moveOccurrence" class="space-y-5">
+            <div>
+                <flux:heading size="lg">{{ __('todos.recurrence.exceptions.move_modal.heading') }}</flux:heading>
+                <flux:text class="mt-2">{{ __('todos.recurrence.exceptions.move_modal.description') }}</flux:text>
+            </div>
+
+            <flux:error name="recurrenceOccurrence" />
+
+            <flux:input type="date" wire:model="moveTo" :label="__('todos.recurrence.exceptions.fields.move_to')" />
+            <flux:error name="moveTo" />
+
+            <flux:textarea wire:model="exceptionNote" :label="__('todos.recurrence.exceptions.fields.note')" rows="3" />
+            <flux:error name="exceptionNote" />
+
+            <div class="flex justify-end gap-2">
+                <flux:modal.close>
+                    <flux:button type="button" variant="ghost">{{ __('todos.actions.cancel') }}</flux:button>
+                </flux:modal.close>
+
+                <flux:button type="submit" variant="primary" icon="arrow-right-circle" wire:loading.attr="disabled" wire:target="moveOccurrence">
+                    {{ __('todos.recurrence.exceptions.actions.save_move') }}
+                </flux:button>
+            </div>
+        </form>
+    </flux:modal>
 </x-ui.page-container>

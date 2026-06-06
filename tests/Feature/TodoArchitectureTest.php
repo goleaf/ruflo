@@ -37,15 +37,18 @@ use App\Actions\Todos\DeleteTodoChecklistItem;
 use App\Actions\Todos\DeleteTodoRecurrenceRule;
 use App\Actions\Todos\DeleteTodoTemplate;
 use App\Actions\Todos\DiscardTimeEntryTimer;
+use App\Actions\Todos\MoveRecurringOccurrence;
 use App\Actions\Todos\MoveTodoChecklistItem;
 use App\Actions\Todos\MoveTodoOnBoard;
 use App\Actions\Todos\PausePomodoroSession;
+use App\Actions\Todos\RecordRecurringOccurrenceEdit;
 use App\Actions\Todos\RemoveTodoDependency;
 use App\Actions\Todos\ReopenTodo;
 use App\Actions\Todos\RescheduleFocusedTodo;
 use App\Actions\Todos\RestoreDeletedTodo;
 use App\Actions\Todos\ResumePomodoroSession;
 use App\Actions\Todos\SaveTodoRecurrenceRule;
+use App\Actions\Todos\SkipRecurringOccurrence;
 use App\Actions\Todos\StartPomodoroSession;
 use App\Actions\Todos\StartTimeEntryTimer;
 use App\Actions\Todos\StopTimeEntryTimer;
@@ -75,6 +78,7 @@ use App\Enums\AutomationRuleKind;
 use App\Enums\AutomationRunStatus;
 use App\Enums\PomodoroSessionStatus;
 use App\Enums\RecurrenceEndType;
+use App\Enums\RecurrenceExceptionType;
 use App\Enums\RecurrenceFrequency;
 use App\Enums\RecurrenceWeekday;
 use App\Enums\ReminderStatus;
@@ -116,6 +120,7 @@ use App\Policies\TimeEntryPolicy;
 use App\Policies\TodoChecklistItemPolicy;
 use App\Policies\TodoDependencyPolicy;
 use App\Policies\TodoPolicy;
+use App\Policies\TodoRecurrenceExceptionPolicy;
 use App\Policies\TodoRecurrenceRulePolicy;
 use App\Policies\TodoTemplatePolicy;
 use App\Queries\Automation\AutomationRuleQuery;
@@ -185,14 +190,19 @@ test('todo foundation classes exist', function () {
         ->and(class_exists(SaveTodoRecurrenceRule::class))->toBeTrue()
         ->and(class_exists(DeleteTodoRecurrenceRule::class))->toBeTrue()
         ->and(class_exists(ToggleTodoRecurrenceRule::class))->toBeTrue()
+        ->and(class_exists(SkipRecurringOccurrence::class))->toBeTrue()
+        ->and(class_exists(MoveRecurringOccurrence::class))->toBeTrue()
+        ->and(class_exists(RecordRecurringOccurrenceEdit::class))->toBeTrue()
         ->and(class_exists(RecurrenceRuleData::class))->toBeTrue()
         ->and(class_exists(TodoRecurrenceRuleQuery::class))->toBeTrue()
         ->and(class_exists(TodoRecurrenceRulePolicy::class))->toBeTrue()
+        ->and(class_exists(TodoRecurrenceExceptionPolicy::class))->toBeTrue()
         ->and(class_exists(RecurrenceRule::class))->toBeTrue()
         ->and(class_exists(OwnedActiveTodo::class))->toBeTrue()
         ->and(enum_exists(RecurrenceFrequency::class))->toBeTrue()
         ->and(enum_exists(RecurrenceEndType::class))->toBeTrue()
         ->and(enum_exists(RecurrenceWeekday::class))->toBeTrue()
+        ->and(enum_exists(RecurrenceExceptionType::class))->toBeTrue()
         ->and(class_exists(StartPomodoroSession::class))->toBeTrue()
         ->and(class_exists(PausePomodoroSession::class))->toBeTrue()
         ->and(class_exists(ResumePomodoroSession::class))->toBeTrue()

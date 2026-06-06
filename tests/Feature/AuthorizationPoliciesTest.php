@@ -15,6 +15,8 @@ use App\Models\TimeEntry;
 use App\Models\Todo;
 use App\Models\TodoChecklistItem;
 use App\Models\TodoDependency;
+use App\Models\TodoRecurrenceException;
+use App\Models\TodoRecurrenceRule;
 use App\Models\TodoTemplate;
 use App\Models\User;
 use App\Policies\AutomationRulePolicy;
@@ -32,6 +34,7 @@ use App\Policies\TimeEntryPolicy;
 use App\Policies\TodoChecklistItemPolicy;
 use App\Policies\TodoDependencyPolicy;
 use App\Policies\TodoPolicy;
+use App\Policies\TodoRecurrenceExceptionPolicy;
 use App\Policies\TodoTemplatePolicy;
 use Illuminate\Support\Facades\Gate;
 
@@ -47,6 +50,7 @@ test('tracked private resources resolve explicit policies', function () {
         ->and(Gate::getPolicyFor(Tag::class))->toBeInstanceOf(TagPolicy::class)
         ->and(Gate::getPolicyFor(TodoChecklistItem::class))->toBeInstanceOf(TodoChecklistItemPolicy::class)
         ->and(Gate::getPolicyFor(TodoDependency::class))->toBeInstanceOf(TodoDependencyPolicy::class)
+        ->and(Gate::getPolicyFor(TodoRecurrenceException::class))->toBeInstanceOf(TodoRecurrenceExceptionPolicy::class)
         ->and(Gate::getPolicyFor(TodoTemplate::class))->toBeInstanceOf(TodoTemplatePolicy::class)
         ->and(Gate::getPolicyFor(SavedTodoView::class))->toBeInstanceOf(SavedTodoViewPolicy::class)
         ->and(Gate::getPolicyFor(AutomationRule::class))->toBeInstanceOf(AutomationRulePolicy::class)
@@ -266,6 +270,32 @@ test('todo dependency policy covers owner blocker abilities', function () {
         ->and($ownerGate->allows('create', TodoDependency::class))->toBeTrue()
         ->and($ownerGate->denies('restore', $dependency))->toBeTrue()
         ->and($ownerGate->denies('forceDelete', $dependency))->toBeTrue();
+});
+
+test('todo recurrence exception policy covers owner exception abilities', function () {
+    $owner = User::factory()->create();
+    $intruder = User::factory()->create();
+    $source = Todo::factory()->for($owner)->create();
+    $rule = TodoRecurrenceRule::factory()->forTodo($source)->create();
+    $occurrence = Todo::factory()->generatedOccurrence($rule, '2026-06-07')->create();
+    $exception = TodoRecurrenceException::factory()->forOccurrence($occurrence)->edited()->create();
+
+    $ownerGate = Gate::forUser($owner);
+    $intruderGate = Gate::forUser($intruder);
+
+    foreach (['view', 'update', 'delete'] as $ability) {
+        expect($ownerGate->allows($ability, $exception))->toBeTrue();
+
+        $response = $intruderGate->inspect($ability, $exception);
+
+        expect($response->denied())->toBeTrue()
+            ->and($response->status())->toBe(404);
+    }
+
+    expect($ownerGate->allows('viewAny', TodoRecurrenceException::class))->toBeTrue()
+        ->and($ownerGate->allows('create', TodoRecurrenceException::class))->toBeTrue()
+        ->and($ownerGate->denies('restore', $exception))->toBeTrue()
+        ->and($ownerGate->denies('forceDelete', $exception))->toBeTrue();
 });
 
 test('todo template policy covers owner template abilities', function () {

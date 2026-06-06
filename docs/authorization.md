@@ -41,7 +41,7 @@ scope) rather than across the whole codebase.
 | Reminder read boundary | `App\Queries\Reminders\ReminderListQuery` | Owner-scoped reminders, task options, and summary counts. |
 | Notification read boundary | `App\Queries\Notifications\NotificationInboxQuery` | Owner-scoped database notifications, read-state filters, and scoped mutation lookup. |
 | Daily dashboard read boundary | `App\Queries\Dashboard\DailyDashboardQuery` | Owner-scoped daily counts for due work, reminders, unread notifications, and tracked time. |
-| Recurrence read boundary | `App\Queries\Todos\TodoRecurrenceRuleQuery` | Owner-scoped recurrence rules and active task options. |
+| Recurrence read boundary | `App\Queries\Todos\TodoRecurrenceRuleQuery` | Owner-scoped recurrence rules, generated occurrences, exceptions, and active task options. |
 | Template read boundary | `App\Queries\Todos\TodoTemplateListQuery` | Owner-scoped reusable task/project/checklist/routine templates. |
 | Inbox read boundary | `App\Queries\Todos\TodoInboxQuery` | Owner-scoped active captured tasks waiting for triage. |
 | Focus read boundary | `App\Queries\Todos\TodoFocusQuery` | Owner-scoped active urgent/overdue/due-today/high-priority focus set. |
@@ -133,6 +133,12 @@ The Livewire component authorizes **before** delegating to an action:
   `update`, and `delete` are owner-only and hide foreign ids as not found.
   Save, toggle, and delete actions also re-check that the related task belongs
   to the current user and is active before changing rule state.
+- Recurrence exceptions use `TodoRecurrenceExceptionPolicy`: `viewAny` and
+  `create` are available to authenticated users for their own workspace;
+  per-row `view`, `update`, and `delete` are owner-only and hide foreign ids as
+  not found. Skip, edit-marker, and move actions never trust a submitted
+  occurrence id until it has been re-queried as the current user's generated
+  occurrence.
 
 Backend authorization is the real security. Frontend hiding of buttons is UX
 only and is never sufficient.
@@ -253,6 +259,13 @@ with `OwnedActiveTodo`, and save/toggle/delete actions authorize both the rule
 and related task before mutation. Task detail recurrence controls use the same
 actions and show locked context for completed, archived, or deleted tasks
 instead of mutating inactive work.
+
+Recurring exception controls use the same page and owner boundary. Generated
+occurrence ids submitted to skip, edit-marker, or move actions are resolved
+through owner-scoped generated-task queries before any write. A moved occurrence
+updates only that generated task and records the original date in
+`todo_recurrence_exceptions`; skipped occurrences are soft-deleted and remain
+counted as existing rows for duplicate prevention.
 
 ## Error behavior (no leakage)
 

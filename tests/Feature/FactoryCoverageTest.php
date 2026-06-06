@@ -5,6 +5,7 @@ use App\Enums\AutomationRunStatus;
 use App\Enums\PomodoroSessionStatus;
 use App\Enums\Priority;
 use App\Enums\RecurrenceEndType;
+use App\Enums\RecurrenceExceptionType;
 use App\Enums\RecurrenceFrequency;
 use App\Enums\RecurrenceWeekday;
 use App\Enums\ReminderStatus;
@@ -27,6 +28,7 @@ use App\Models\TimeEntry;
 use App\Models\Todo;
 use App\Models\TodoChecklistItem;
 use App\Models\TodoDependency;
+use App\Models\TodoRecurrenceException;
 use App\Models\TodoRecurrenceRule;
 use App\Models\TodoTemplate;
 use App\Models\User;
@@ -50,6 +52,8 @@ test('tracked models can be created from their default factories', function () {
     $savedView = SavedTodoView::factory()->for($user)->create();
     $reminder = Reminder::factory()->forTodo($todo)->due()->create();
     $recurrenceRule = TodoRecurrenceRule::factory()->forTodo($todo)->weekly()->afterOccurrences(6)->create();
+    $recurrenceOccurrence = Todo::factory()->generatedOccurrence($recurrenceRule, '2026-06-07')->create();
+    $recurrenceException = TodoRecurrenceException::factory()->forOccurrence($recurrenceOccurrence)->moved('2026-06-08')->create();
     $automationRule = AutomationRule::factory()->for($user)->promoteOverdueTasks()->create();
     $automationRuleRun = AutomationRuleRun::factory()->forRule($automationRule)->dryRun()->create();
 
@@ -100,6 +104,11 @@ test('tracked models can be created from their default factories', function () {
         ->and($recurrenceRule->weekdays)->toBe([RecurrenceWeekday::Monday->value, RecurrenceWeekday::Wednesday->value])
         ->and($recurrenceRule->end_type)->toBe(RecurrenceEndType::AfterOccurrences)
         ->and($recurrenceRule->max_occurrences)->toBe(6)
+        ->and($recurrenceException->isOwnedBy($user))->toBeTrue()
+        ->and($recurrenceException->todo->is($recurrenceOccurrence))->toBeTrue()
+        ->and($recurrenceException->type)->toBe(RecurrenceExceptionType::Moved)
+        ->and($recurrenceException->original_occurs_on->toDateString())->toBe('2026-06-07')
+        ->and($recurrenceException->adjusted_occurs_on->toDateString())->toBe('2026-06-08')
         ->and($automationRule->isOwnedBy($user))->toBeTrue()
         ->and($automationRule->kind)->toBe(AutomationRuleKind::PromoteOverdueTasks)
         ->and($automationRule->settings)->toBe(AutomationRuleKind::PromoteOverdueTasks->defaultSettings())

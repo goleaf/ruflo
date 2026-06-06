@@ -193,6 +193,16 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
     }
 
     /**
+     * Get the user's skipped, moved, and edited recurrence exceptions.
+     *
+     * @return HasMany<TodoRecurrenceException, $this>
+     */
+    public function todoRecurrenceExceptions(): HasMany
+    {
+        return $this->hasMany(TodoRecurrenceException::class);
+    }
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>

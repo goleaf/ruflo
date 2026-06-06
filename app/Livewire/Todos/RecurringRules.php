@@ -4,7 +4,10 @@ namespace App\Livewire\Todos;
 
 use App\Actions\Todos\DeleteTodoRecurrenceRule;
 use App\Actions\Todos\GenerateRecurringOccurrences;
+use App\Actions\Todos\MoveRecurringOccurrence;
+use App\Actions\Todos\RecordRecurringOccurrenceEdit;
 use App\Actions\Todos\SaveTodoRecurrenceRule;
+use App\Actions\Todos\SkipRecurringOccurrence;
 use App\Actions\Todos\ToggleTodoRecurrenceRule;
 use App\Data\Todos\RecurrenceGenerationResult;
 use App\Data\Todos\RecurrenceRuleData;
@@ -17,6 +20,7 @@ use App\Models\User;
 use App\Queries\Todos\TodoRecurrenceRuleQuery;
 use App\Rules\Todos\OwnedActiveTodo;
 use App\Rules\Todos\RecurrenceRule;
+use Carbon\CarbonImmutable;
 use Flux\Flux;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
@@ -72,6 +76,13 @@ class RecurringRules extends Component
      */
     #[Locked]
     public ?array $lastGenerationReport = null;
+
+    #[Locked]
+    public ?int $movingOccurrenceId = null;
+
+    public string $moveTo = '';
+
+    public string $exceptionNote = '';
 
     public function mount(): void
     {
@@ -173,6 +184,79 @@ class RecurringRules extends Component
         Flux::toast(variant: 'success', text: trans_choice('todos.recurrence.generation.messages.generated', $result->createdCount, [
             'count' => $result->createdCount,
         ]));
+    }
+
+    public function skipOccurrence(int $occurrenceId, SkipRecurringOccurrence $skipRecurringOccurrence): void
+    {
+        try {
+            $skipRecurringOccurrence->handle($this->currentUser(), $occurrenceId);
+        } catch (ValidationException $exception) {
+            $this->copyValidationErrors($exception);
+
+            return;
+        }
+
+        $this->refreshRecurringState();
+
+        Flux::toast(variant: 'success', text: __('todos.recurrence.exceptions.messages.skipped'));
+    }
+
+    public function startMoveOccurrence(int $occurrenceId): void
+    {
+        $occurrence = $this->findGeneratedOccurrence($occurrenceId);
+        $currentDate = $occurrence->due_date?->toDateString() ?? $occurrence->recurrence_occurs_on?->toDateString() ?? today()->toDateString();
+
+        $this->movingOccurrenceId = $occurrence->id;
+        $this->moveTo = CarbonImmutable::parse($currentDate)->addDay()->toDateString();
+        $this->exceptionNote = '';
+        $this->resetValidation(['moveTo', 'exceptionNote', 'recurrenceOccurrence']);
+
+        Flux::modal('move-recurring-occurrence')->show();
+    }
+
+    public function moveOccurrence(MoveRecurringOccurrence $moveRecurringOccurrence): void
+    {
+        $this->validate([
+            'movingOccurrenceId' => ['required', 'integer'],
+            'moveTo' => ['required', 'date_format:Y-m-d'],
+            'exceptionNote' => ['nullable', 'string', 'max:255'],
+        ], attributes: [
+            'moveTo' => __('todos.recurrence.exceptions.fields.move_to'),
+            'exceptionNote' => __('todos.recurrence.exceptions.fields.note'),
+        ]);
+
+        try {
+            $exception = $moveRecurringOccurrence->handle($this->currentUser(), (int) $this->movingOccurrenceId, $this->moveTo, $this->exceptionNote);
+        } catch (ValidationException $exception) {
+            $this->copyValidationErrors($exception);
+
+            return;
+        }
+
+        $this->movingOccurrenceId = null;
+        $this->moveTo = '';
+        $this->exceptionNote = '';
+        $this->refreshRecurringState();
+
+        Flux::modal('move-recurring-occurrence')->close();
+        Flux::toast(variant: 'success', text: __('todos.recurrence.exceptions.messages.moved', [
+            'date' => $exception->adjusted_occurs_on?->toDateString() ?? __('todos.recurrence.none'),
+        ]));
+    }
+
+    public function recordOccurrenceEdit(int $occurrenceId, RecordRecurringOccurrenceEdit $recordRecurringOccurrenceEdit): void
+    {
+        try {
+            $recordRecurringOccurrenceEdit->handle($this->currentUser(), $occurrenceId);
+        } catch (ValidationException $exception) {
+            $this->copyValidationErrors($exception);
+
+            return;
+        }
+
+        $this->refreshRecurringState();
+
+        Flux::toast(variant: 'success', text: __('todos.recurrence.exceptions.messages.edited'));
     }
 
     public function updatedFrequency(): void
@@ -297,6 +381,9 @@ class RecurringRules extends Component
         $this->recurrenceRule = [];
         $this->editingRuleId = null;
         $this->editingTaskTitle = '';
+        $this->movingOccurrenceId = null;
+        $this->moveTo = '';
+        $this->exceptionNote = '';
         $this->resetValidation();
     }
 
@@ -376,6 +463,11 @@ class RecurringRules extends Component
     private function refreshRecurringState(): void
     {
         unset($this->recurrenceRules, $this->taskOptions);
+    }
+
+    private function findGeneratedOccurrence(int $occurrenceId): Todo
+    {
+        return app(TodoRecurrenceRuleQuery::class)->findGeneratedOccurrenceFor($this->currentUser(), $occurrenceId);
     }
 
     /**

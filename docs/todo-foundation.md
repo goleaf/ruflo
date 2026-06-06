@@ -290,6 +290,12 @@ chunks, retry/resume behavior, generated task metadata, copied tags, copied
 pending reminder offsets, Livewire run reports, and generated occurrence
 factory coverage.
 
+Step 059 adds `RecurringExceptionTest`, which locks skipped occurrence
+no-regeneration behavior, moved occurrence due-date and reminder shifting,
+edited occurrence markers, generated-occurrence owner privacy, Livewire
+exception controls, recurrence exception factory states, and idempotent demo
+exception seeding.
+
 Step 052 adds `AutomationRulesTest` and `AutomationRuleNameValidationTest`,
 which lock the protected Automations route, owner-scoped rule listing, rule
 creation validation, translated rule-name messages, dry-run reports, disabled

@@ -4,11 +4,13 @@ namespace App\Actions\Todos\Processes;
 
 use App\Contracts\Processing\ManualWebProcess;
 use App\Enums\RecurrenceEndType;
+use App\Enums\RecurrenceExceptionType;
 use App\Enums\RecurrenceFrequency;
 use App\Enums\ReminderStatus;
 use App\Models\Reminder;
 use App\Models\Todo;
 use App\Models\TodoChecklistItem;
+use App\Models\TodoRecurrenceException;
 use App\Models\TodoRecurrenceRule;
 use App\Models\User;
 use Carbon\CarbonImmutable;
@@ -110,6 +112,10 @@ final class GenerateRecurringOccurrencesProcess implements ManualWebProcess
                 foreach ($dates as $date) {
                     if ($this->hasOccurrenceLimitReached($rule)) {
                         break;
+                    }
+
+                    if ($this->exceptionExists($user, $rule, $date)) {
+                        continue;
                     }
 
                     if ($this->occurrenceExists($user, $rule, $date)) {
@@ -258,7 +264,12 @@ final class GenerateRecurringOccurrencesProcess implements ManualWebProcess
             return false;
         }
 
-        return $rule->occurrences()->count() >= $rule->max_occurrences;
+        $skippedFutureDates = $rule->exceptions()
+            ->where('type', RecurrenceExceptionType::Skipped->value)
+            ->whereNull('todo_id')
+            ->count();
+
+        return $rule->occurrences()->withTrashed()->count() + $skippedFutureDates >= $rule->max_occurrences;
     }
 
     private function occurrenceExists(User $user, TodoRecurrenceRule $rule, CarbonInterface $date): bool
@@ -268,6 +279,27 @@ final class GenerateRecurringOccurrencesProcess implements ManualWebProcess
             ->ownedBy($user)
             ->where('recurrence_rule_id', $rule->id)
             ->whereDate('recurrence_occurs_on', $date->toDateString())
+            ->exists();
+    }
+
+    private function exceptionExists(User $user, TodoRecurrenceRule $rule, CarbonInterface $date): bool
+    {
+        return TodoRecurrenceException::query()
+            ->ownedBy($user)
+            ->where('todo_recurrence_rule_id', $rule->id)
+            ->where(function (Builder $query) use ($date): void {
+                $query
+                    ->where(function (Builder $query) use ($date): void {
+                        $query
+                            ->whereDate('original_occurs_on', $date->toDateString())
+                            ->whereIn('type', [RecurrenceExceptionType::Skipped->value, RecurrenceExceptionType::Moved->value]);
+                    })
+                    ->orWhere(function (Builder $query) use ($date): void {
+                        $query
+                            ->where('type', RecurrenceExceptionType::Moved->value)
+                            ->whereDate('adjusted_occurs_on', $date->toDateString());
+                    });
+            })
             ->exists();
     }
 

@@ -128,3 +128,17 @@ There is no recurrence scheduler, cron, queue worker, supervisor, shell access,
 Artisan command, hosted automation service, paid calendar service, or email
 dependency for normal occurrence generation. Users retry/resume generation by
 pressing the same authenticated browser button again.
+
+## 2026-06-06 Step 059 Update
+
+Recurring exception actions run from `/todos/recurring` through authenticated
+Livewire browser requests. Skipping, marking edited, and moving generated
+occurrences re-query the submitted occurrence id through the current user's
+owner scope, then write a bounded exception row and mutate only that generated
+task.
+
+Exception handling requires no recurrence scheduler, cron, queue worker,
+supervisor, shell access, Artisan command, hosted automation service, paid
+calendar API, email provider, or external notification provider. Users retry by
+submitting the same page action again after any translated validation error is
+fixed.

@@ -11,8 +11,10 @@ policy checks before it can be viewed, toggled, tested, or run.
 Rules do not use cron, queue workers, supervisors, shell access, terminal
 commands, Artisan commands, paid services, or hosted automation providers.
 
-The current rule runner processes one bounded chunk per Livewire action. The
-chunk size comes from `hosting.web_processing.chunk_size` and is capped in the
+As of Step 053, rule execution delegates chunking to
+`App\Actions\Processing\RunManualWebProcess`. The engine processes one bounded
+chunk per Livewire action. Chunk size, max request work window, and visible
+detail rows come from `hosting.web_processing` and are capped in the
 application layer. When more records match than the current chunk, the run log
 stores the remaining count. Clicking **Run now** again retries the same rule and
 resumes from the next owner-scoped query result.

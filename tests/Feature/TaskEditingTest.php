@@ -133,6 +133,8 @@ test('edit modal renders errors beside every editable field', function () {
         ->toContain('name="editForm.title"')
         ->toContain('name="editForm.priority"')
         ->toContain('name="editForm.due_date"')
+        ->toContain('model="editForm.due_date"')
+        ->toContain('todo-edit-due-date')
         ->toContain('name="editForm.project_id"')
         ->toContain("@error('editForm.tag_ids.*')");
 });

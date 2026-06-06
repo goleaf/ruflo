@@ -14,7 +14,11 @@ it('uses restricted hosting defaults for normal runtime', function () {
         ->and($profile->maxRuntimeSeconds)->toBe(8)
         ->and($profile->retryCooldownSeconds)->toBe(30)
         ->and($profile->resumeAfterFailure)->toBeTrue()
+        ->and($profile->detailLimit)->toBe(10)
         ->and($profile->shouldChunk())->toBeTrue()
+        ->and($profile->boundedChunkSize())->toBe(25)
+        ->and($profile->boundedMaxRuntimeSeconds())->toBe(8)
+        ->and($profile->boundedDetailLimit())->toBe(10)
         ->and($profile->forbiddenRuntimeDependencies)->toContain('cron', 'queue-worker', 'supervisor', 'shell', 'artisan');
 });
 

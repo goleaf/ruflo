@@ -265,6 +265,12 @@ creation validation, translated rule-name messages, dry-run reports, disabled
 rule no-op behavior, bounded chunk retry/resume behavior, owner-only task
 mutation, archive automation behavior, and foreign rule-id not-found denials.
 
+Step 053 adds `ManualWebProcessTest`, which locks the reusable web-processing
+engine for dry runs, bounded chunks, visible detail limits, owner-scoped
+queries, changed/remaining counts, and retry/resume by re-running the same
+browser action. `TodoArchitectureTest` also verifies that automation rule runs
+delegate chunk mechanics to the shared engine.
+
 ## 2026-06-06 Recheck
 
 The Step 001 recheck confirmed the foundation still matches the current master-plan rules after Steps 002-016:

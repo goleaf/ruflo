@@ -24,10 +24,12 @@ class BuildMaintenanceSnapshot
         return [
             'setup' => $setup,
             'processing' => [
+                'engine' => 'manual_livewire_chunks',
                 'chunk_size' => $profile->chunkSize,
                 'max_runtime_seconds' => $profile->maxRuntimeSeconds,
                 'retry_cooldown_seconds' => $profile->retryCooldownSeconds,
                 'resume_after_failure' => $profile->resumeAfterFailure,
+                'detail_limit' => $profile->detailLimit,
             ],
             'runtime' => [
                 'cache_store' => (string) config('cache.default'),

@@ -1,5 +1,40 @@
 # Changelog
 
+## 2026-06-06 - Step 053 Manual web processing engine
+
+### Implemented
+
+- Added reusable manual web-processing infrastructure:
+  `ManualWebProcess`, `RunManualWebProcess`, and
+  `ManualWebProcessResult`.
+- Added bounded profile helpers and `RUFLO_WEB_PROCESSING_DETAIL_LIMIT`.
+- Moved automation task-processing logic into small process adapters for
+  promoting overdue tasks and archiving old completed tasks.
+- Refactored `RunAutomationRule` to delegate chunking, dry-run behavior, detail
+  truncation, and remaining-count calculation to the reusable engine.
+- Exposed the active manual Livewire chunk engine and detail limit in the
+  protected maintenance center.
+
+### Testing
+
+- Added `ManualWebProcessTest` for dry-run behavior, bounded chunks, detail
+  limits, owner scoping, and retry/resume by re-running the same web action.
+- Expanded maintenance, restricted-hosting, and architecture coverage for the
+  reusable processing engine.
+
+### Documentation
+
+- Added `docs/manual-web-processing.md`.
+- Updated restricted hosting, maintenance center, automation rules, todo
+  foundation, and root progress ledgers with the Step 053 engine contract.
+
+### Restricted Hosting
+
+- Long-running work now has a shared browser-triggered processor. It processes
+  bounded synchronous chunks and returns progress for the Livewire UI without
+  cron, workers, supervisor, terminal access, Artisan commands, paid services,
+  or hosted automation platforms.
+
 ## 2026-06-06 - Step 052 Web-only automation rules
 
 ### Implemented

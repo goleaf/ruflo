@@ -1,6 +1,8 @@
 <?php
 
 use App\Actions\Automation\CreateAutomationRule;
+use App\Actions\Automation\Processes\ArchiveCompletedTasksProcess;
+use App\Actions\Automation\Processes\PromoteOverdueTasksProcess;
 use App\Actions\Automation\RunAutomationRule;
 use App\Actions\Automation\ToggleAutomationRule;
 use App\Actions\Goals\CheckInGoalMilestone;
@@ -10,6 +12,7 @@ use App\Actions\Goals\LinkTodoToGoal;
 use App\Actions\Habits\CreateHabit;
 use App\Actions\Habits\LinkTodoToHabit;
 use App\Actions\Habits\ToggleHabitCheckIn;
+use App\Actions\Processing\RunManualWebProcess;
 use App\Actions\Todos\AbandonPomodoroSession;
 use App\Actions\Todos\AddTodoDependency;
 use App\Actions\Todos\CaptureInboxTodo;
@@ -45,11 +48,13 @@ use App\Actions\Todos\ToggleTodoChecklistItem;
 use App\Actions\Todos\TriageInboxTodo;
 use App\Actions\Todos\UpdateTodoChecklistItem;
 use App\Actions\Todos\UpdateTodoTemplate;
+use App\Contracts\Processing\ManualWebProcess;
 use App\Data\Goals\GoalData;
 use App\Data\Goals\GoalMilestoneData;
 use App\Data\Goals\GoalProgress;
 use App\Data\Habits\HabitData;
 use App\Data\Habits\HabitProgress;
+use App\Data\Processing\ManualWebProcessResult;
 use App\Data\Todos\BulkActionResult;
 use App\Data\Todos\SavedTodoViewData;
 use App\Data\Todos\TimeEntryData;
@@ -237,6 +242,11 @@ test('todo foundation classes exist', function () {
         ->and(class_exists(CreateAutomationRule::class))->toBeTrue()
         ->and(class_exists(ToggleAutomationRule::class))->toBeTrue()
         ->and(class_exists(RunAutomationRule::class))->toBeTrue()
+        ->and(class_exists(RunManualWebProcess::class))->toBeTrue()
+        ->and(interface_exists(ManualWebProcess::class))->toBeTrue()
+        ->and(class_exists(ManualWebProcessResult::class))->toBeTrue()
+        ->and(class_exists(PromoteOverdueTasksProcess::class))->toBeTrue()
+        ->and(class_exists(ArchiveCompletedTasksProcess::class))->toBeTrue()
         ->and(class_exists(AutomationRuleQuery::class))->toBeTrue()
         ->and(class_exists(AutomationRuleName::class))->toBeTrue()
         ->and(class_exists(AutomationRulePolicy::class))->toBeTrue()
@@ -375,6 +385,17 @@ test('todo automations page delegates automation responsibilities', function () 
         ->not->toContain('AutomationRule::query()')
         ->not->toContain('Todo::query()')
         ->not->toContain('->save()');
+});
+
+test('automation runner delegates chunk processing to reusable web engine', function () {
+    $source = file_get_contents(app_path('Actions/Automation/RunAutomationRule.php'));
+
+    expect($source)
+        ->toContain('RunManualWebProcess')
+        ->toContain('ManualWebProcessResult')
+        ->toContain('processFor')
+        ->not->toContain('->limit($this->chunkSize())')
+        ->not->toContain('config(\'hosting.web_processing.chunk_size\'');
 });
 
 test('todo templates page delegates template responsibilities', function () {

@@ -158,6 +158,7 @@ test('foreign and non inbox tasks cannot be triaged from the inbox', function ()
 
 test('inbox route and component keep private view guardrails', function () {
     $source = file_get_contents(app_path('Livewire/Todos/Inbox.php'));
+    $view = file_get_contents(resource_path('views/livewire/todos/inbox.blade.php'));
 
     expect(inboxRouteMiddleware('todos.inbox'))
         ->toContain('auth', 'verified')
@@ -169,5 +170,9 @@ test('inbox route and component keep private view guardrails', function () {
         ->toContain('InboxCaptureTitle')
         ->toContain('$this->authorize')
         ->not->toContain('Todo::query()')
-        ->not->toContain('->save()');
+        ->not->toContain('->save()')
+        ->and($view)
+        ->toContain('model="triageForm.due_date"')
+        ->toContain('todo-triage-due-date')
+        ->toContain('name="triageForm.due_date"');
 });

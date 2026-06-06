@@ -42,7 +42,7 @@
                     </div>
 
                     <div>
-                        <flux:input type="date" wire:model="form.due_date" :label="__('todos.fields.due_date')" />
+                        <x-ui.modal-datepicker name="todo-create-due-date" model="form.due_date" :label="__('todos.fields.due_date')" />
                         <flux:error name="form.due_date" />
                     </div>
 
@@ -486,7 +486,7 @@
                 </div>
 
                 <div>
-                    <flux:input type="date" wire:model="editForm.due_date" :label="__('todos.fields.due_date')" />
+                    <x-ui.modal-datepicker name="todo-edit-due-date" model="editForm.due_date" :label="__('todos.fields.due_date')" />
                     <flux:error name="editForm.due_date" />
                 </div>
             </div>

@@ -27,7 +27,8 @@ Current defaults live in `config/hosting.php` and are exposed through `App\Data\
 - chunk size: 25 items,
 - max request work window: 8 seconds,
 - retry cooldown: 30 seconds,
-- resume after failure: enabled.
+- resume after failure: enabled,
+- visible detail rows: 10 rows.
 
 ## What Is Not Promised
 
@@ -35,7 +36,7 @@ Without cron or workers, RuFlo cannot promise exact-time automation. Reminder, r
 
 ## Related Steps
 
-Step 007 added the protected setup status foundation. Step 008 added the protected maintenance center. Step 052 added feature-specific browser-triggered automation rule chunks. Step 053 remains responsible for the generic manual web processing engine that feature-specific processors can reuse.
+Step 007 added the protected setup status foundation. Step 008 added the protected maintenance center. Step 052 added feature-specific browser-triggered automation rule chunks. Step 053 added the reusable manual web-processing engine that feature-specific processors can reuse.
 
 ## 2026-06-06 Recheck
 
@@ -60,3 +61,15 @@ changed, and remaining counts, and can be retried by clicking the same browser
 action again. No cron, queue worker, supervisor, shell access, Artisan command,
 terminal dependency, paid service, or hosted automation provider is required
 during normal usage.
+
+## 2026-06-06 Step 053 Update
+
+`App\Actions\Processing\RunManualWebProcess` is the shared browser-triggered
+processing engine. Features implement `App\Contracts\Processing\ManualWebProcess`
+with an owner-scoped query, one-record mutation, and sanitized detail rows.
+
+The engine applies the configured chunk size, request work window, and detail
+limit, supports dry runs without mutation, and returns matched, processed,
+changed, and remaining counts for Livewire progress reports. Retry and resume
+remain explicit user actions: click the same web action again to process the
+next owner-scoped chunk.

@@ -11,7 +11,9 @@ The current admin boundary is `users.is_admin`. The primary seeded demo user (`t
 ## Current Capabilities
 
 - Shows setup health checks from the protected setup inspector.
-- Shows the configured web-processing profile: chunk size, request time window, retry cooldown, and resume flag.
+- Shows the configured web-processing profile: manual Livewire chunk engine,
+  chunk size, request time window, retry cooldown, resume flag, and detail row
+  limit.
 - Shows runtime state for cache store, session driver, queue connection, compiled view count, and storage writability.
 - Provides a web-safe compiled-view cleanup action.
 - Provides a web-safe application cache flush action.
@@ -34,6 +36,14 @@ Those actions need the later generic processing engine or dedicated planned feat
 - Step 053: generic manual web processing engine with chunking, progress, retry, and resume.
 - Step 077: storage and cleanup center.
 - Step 087: demo reset and sample data tools.
+
+## 2026-06-06 Step 053 Update
+
+The maintenance snapshot now exposes the reusable manual web-processing engine
+as `manual_livewire_chunks`, plus its detail row limit. This is read-only
+runtime visibility for admins; processing still happens through feature-owned
+Livewire actions so private data remains behind the relevant owner policies and
+queries.
 
 ## 2026-06-06 Recheck
 

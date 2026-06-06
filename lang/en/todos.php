@@ -77,6 +77,15 @@ return [
         'updated_at' => 'Updated',
     ],
 
+    'datepicker' => [
+        'open' => 'Pick date',
+        'clear' => 'Clear date',
+        'done' => 'Done',
+        'loading' => 'Loading calendar...',
+        'placeholder' => 'YYYY-MM-DD',
+        'unavailable' => 'Calendar failed to load. Enter the date manually.',
+    ],
+
     'summary' => [
         'active' => 'Active',
         'overdue' => 'Overdue',

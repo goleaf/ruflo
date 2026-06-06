@@ -38,6 +38,7 @@ test('maintenance center can be rendered by an admin after password confirmation
         ->get(route('maintenance.center'))
         ->assertOk()
         ->assertSee(__('maintenance.pages.center.heading'))
+        ->assertSee(__('maintenance.values.manual_livewire_chunks'))
         ->assertSee(__('maintenance.sections.safe_controls'));
 });
 
@@ -45,7 +46,9 @@ test('maintenance snapshot reports setup processing and runtime state', function
     $snapshot = app(BuildMaintenanceSnapshot::class)();
 
     expect($snapshot)->toHaveKeys(['setup', 'processing', 'runtime'])
-        ->and($snapshot['processing'])->toHaveKeys(['chunk_size', 'max_runtime_seconds', 'retry_cooldown_seconds', 'resume_after_failure'])
+        ->and($snapshot['processing'])->toHaveKeys(['engine', 'chunk_size', 'max_runtime_seconds', 'retry_cooldown_seconds', 'resume_after_failure', 'detail_limit'])
+        ->and($snapshot['processing']['engine'])->toBe('manual_livewire_chunks')
+        ->and($snapshot['processing']['detail_limit'])->toBe(10)
         ->and($snapshot['runtime'])->toHaveKeys(['cache_store', 'session_driver', 'queue_connection', 'compiled_views', 'storage_writable']);
 });
 

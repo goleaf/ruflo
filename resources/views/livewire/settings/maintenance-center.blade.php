@@ -57,6 +57,10 @@
                     <flux:heading size="sm">{{ __('maintenance.sections.processing') }}</flux:heading>
                     <dl class="mt-3 space-y-2 text-sm">
                         <div class="flex justify-between gap-3">
+                            <dt class="text-zinc-500 dark:text-zinc-400">{{ __('maintenance.fields.engine') }}</dt>
+                            <dd>{{ __("maintenance.values.{$snapshot['processing']['engine']}") }}</dd>
+                        </div>
+                        <div class="flex justify-between gap-3">
                             <dt class="text-zinc-500 dark:text-zinc-400">{{ __('maintenance.fields.chunk_size') }}</dt>
                             <dd>{{ $snapshot['processing']['chunk_size'] }}</dd>
                         </div>
@@ -71,6 +75,10 @@
                         <div class="flex justify-between gap-3">
                             <dt class="text-zinc-500 dark:text-zinc-400">{{ __('maintenance.fields.resume') }}</dt>
                             <dd>{{ $snapshot['processing']['resume_after_failure'] ? __('maintenance.values.enabled') : __('maintenance.values.disabled') }}</dd>
+                        </div>
+                        <div class="flex justify-between gap-3">
+                            <dt class="text-zinc-500 dark:text-zinc-400">{{ __('maintenance.fields.detail_limit') }}</dt>
+                            <dd>{{ $snapshot['processing']['detail_limit'] }}</dd>
                         </div>
                     </dl>
                 </div>

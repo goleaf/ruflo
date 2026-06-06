@@ -2,15 +2,15 @@
 
 namespace App\Actions\Automation;
 
-use App\Actions\Todos\ArchiveTodo;
-use App\Actions\Todos\UpdateTodo;
-use App\Data\Todos\TodoData;
+use App\Actions\Automation\Processes\ArchiveCompletedTasksProcess;
+use App\Actions\Automation\Processes\PromoteOverdueTasksProcess;
+use App\Actions\Processing\RunManualWebProcess;
+use App\Contracts\Processing\ManualWebProcess;
+use App\Data\Processing\ManualWebProcessResult;
 use App\Enums\AutomationRuleKind;
 use App\Enums\AutomationRunStatus;
-use App\Enums\Priority;
 use App\Models\AutomationRule;
 use App\Models\AutomationRuleRun;
-use App\Models\Todo;
 use App\Models\User;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\Gate;
@@ -25,11 +25,10 @@ use Throwable;
  */
 final class RunAutomationRule
 {
-    private const DetailLimit = 10;
-
     public function __construct(
-        private readonly UpdateTodo $updateTodo,
-        private readonly ArchiveTodo $archiveTodo,
+        private readonly RunManualWebProcess $runManualWebProcess,
+        private readonly PromoteOverdueTasksProcess $promoteOverdueTasks,
+        private readonly ArchiveCompletedTasksProcess $archiveCompletedTasks,
     ) {}
 
     /**
@@ -47,32 +46,34 @@ final class RunAutomationRule
                 automationRule: $automationRule,
                 status: AutomationRunStatus::Disabled,
                 dryRun: $dryRun,
-                matchedCount: 0,
-                changedCount: 0,
-                skippedCount: 0,
-                details: [],
+                result: new ManualWebProcessResult(
+                    processKey: $automationRule->kind->value,
+                    matchedCount: 0,
+                    processedCount: 0,
+                    changedCount: 0,
+                    skippedCount: 0,
+                    details: [],
+                    startedAt: $startedAt,
+                    finishedAt: now(),
+                ),
                 message: __('automation.runs.messages.disabled'),
-                startedAt: $startedAt,
             );
         }
 
         try {
-            $result = match ($automationRule->kind) {
-                AutomationRuleKind::PromoteOverdueTasks => $this->promoteOverdueTasks($user, $dryRun),
-                AutomationRuleKind::ArchiveCompletedTasks => $this->archiveCompletedTasks($user, $automationRule, $dryRun),
-            };
+            $result = $this->runManualWebProcess->handle(
+                user: $user,
+                process: $this->processFor($automationRule),
+                dryRun: $dryRun,
+            );
 
             return $this->storeRun(
                 user: $user,
                 automationRule: $automationRule,
                 status: AutomationRunStatus::Completed,
                 dryRun: $dryRun,
-                matchedCount: $result['matched'],
-                changedCount: $result['changed'],
-                skippedCount: $result['skipped'],
-                details: $result['details'],
+                result: $result,
                 message: __('automation.runs.messages.completed'),
-                startedAt: $startedAt,
             );
         } catch (Throwable $exception) {
             report($exception);
@@ -82,121 +83,27 @@ final class RunAutomationRule
                 automationRule: $automationRule,
                 status: AutomationRunStatus::Failed,
                 dryRun: $dryRun,
-                matchedCount: 0,
-                changedCount: 0,
-                skippedCount: 0,
-                details: [],
+                result: new ManualWebProcessResult(
+                    processKey: $automationRule->kind->value,
+                    matchedCount: 0,
+                    processedCount: 0,
+                    changedCount: 0,
+                    skippedCount: 0,
+                    details: [],
+                    startedAt: $startedAt,
+                    finishedAt: now(),
+                ),
                 message: __('automation.runs.messages.failed'),
-                startedAt: $startedAt,
             );
         }
     }
 
-    /**
-     * @return array{matched: int, changed: int, skipped: int, details: array{tasks: list<array{id: int, title: string}>}}
-     */
-    private function promoteOverdueTasks(User $user, bool $dryRun): array
+    private function processFor(AutomationRule $automationRule): ManualWebProcess
     {
-        $query = $user->todos()
-            ->with('tags:id')
-            ->active()
-            ->whereNotNull('due_date')
-            ->whereDate('due_date', '<', today())
-            ->whereIn('priority', [Priority::Low->value, Priority::Normal->value])
-            ->orderBy('due_date')
-            ->orderBy('id');
-
-        $matchedCount = (clone $query)->count();
-        $todos = $query->limit($this->chunkSize())->get();
-        $changedCount = 0;
-        $details = [];
-
-        foreach ($todos as $todo) {
-            if (! $todo instanceof Todo) {
-                continue;
-            }
-
-            $details[] = $this->detailFor($todo);
-
-            if ($dryRun) {
-                continue;
-            }
-
-            $this->updateTodo->handle($user, $todo, new TodoData(
-                title: $todo->title,
-                priority: Priority::High,
-                dueDate: $todo->due_date?->toDateString(),
-                projectId: $todo->project_id,
-                tagIds: $todo->tags->pluck('id')->map(fn (int|string $id): int => (int) $id)->all(),
-            ));
-
-            $changedCount++;
-        }
-
-        return $this->result($matchedCount, $changedCount, $todos->count(), $details);
-    }
-
-    /**
-     * @return array{matched: int, changed: int, skipped: int, details: array{tasks: list<array{id: int, title: string}>}}
-     */
-    private function archiveCompletedTasks(User $user, AutomationRule $automationRule, bool $dryRun): array
-    {
-        $days = $this->archiveDays($automationRule);
-
-        $query = $user->todos()
-            ->completed()
-            ->where('updated_at', '<=', now()->subDays($days))
-            ->orderBy('updated_at')
-            ->orderBy('id');
-
-        $matchedCount = (clone $query)->count();
-        $todos = $query->limit($this->chunkSize())->get();
-        $changedCount = 0;
-        $details = [];
-
-        foreach ($todos as $todo) {
-            if (! $todo instanceof Todo) {
-                continue;
-            }
-
-            $details[] = $this->detailFor($todo);
-
-            if ($dryRun) {
-                continue;
-            }
-
-            $this->archiveTodo->handle($todo);
-            $changedCount++;
-        }
-
-        return $this->result($matchedCount, $changedCount, $todos->count(), $details);
-    }
-
-    /**
-     * @param  list<array{id: int, title: string}>  $details
-     * @return array{matched: int, changed: int, skipped: int, details: array{tasks: list<array{id: int, title: string}>}}
-     */
-    private function result(int $matchedCount, int $changedCount, int $processedCount, array $details): array
-    {
-        return [
-            'matched' => $matchedCount,
-            'changed' => $changedCount,
-            'skipped' => max(0, $matchedCount - $processedCount),
-            'details' => [
-                'tasks' => array_slice($details, 0, self::DetailLimit),
-            ],
-        ];
-    }
-
-    /**
-     * @return array{id: int, title: string}
-     */
-    private function detailFor(Todo $todo): array
-    {
-        return [
-            'id' => $todo->id,
-            'title' => $todo->title,
-        ];
+        return match ($automationRule->kind) {
+            AutomationRuleKind::PromoteOverdueTasks => $this->promoteOverdueTasks,
+            AutomationRuleKind::ArchiveCompletedTasks => $this->archiveCompletedTasks->forDays($this->archiveDays($automationRule)),
+        };
     }
 
     private function archiveDays(AutomationRule $automationRule): int
@@ -210,43 +117,29 @@ final class RunAutomationRule
         return max(1, min(365, (int) $days));
     }
 
-    private function chunkSize(): int
-    {
-        return max(1, min(100, (int) config('hosting.web_processing.chunk_size', 25)));
-    }
-
-    /**
-     * @param  array<string, mixed>  $details
-     */
     private function storeRun(
         User $user,
         AutomationRule $automationRule,
         AutomationRunStatus $status,
         bool $dryRun,
-        int $matchedCount,
-        int $changedCount,
-        int $skippedCount,
-        array $details,
+        ManualWebProcessResult $result,
         string $message,
-        mixed $startedAt,
     ): AutomationRuleRun {
-        $finishedAt = now();
-
         $run = $user->automationRuleRuns()->create([
             'automation_rule_id' => $automationRule->id,
             'status' => $status,
             'dry_run' => $dryRun,
-            'matched_count' => $matchedCount,
-            'changed_count' => $changedCount,
-            'skipped_count' => $skippedCount,
-            'details' => $details,
+            'matched_count' => $result->matchedCount,
+            'changed_count' => $result->changedCount,
+            'skipped_count' => $result->skippedCount,
+            'details' => $result->detailsFor('tasks'),
             'message' => $message,
-            'started_at' => $startedAt,
-            'finished_at' => $finishedAt,
+            'started_at' => $result->startedAt,
+            'finished_at' => $result->finishedAt,
         ]);
 
         $automationRule->forceFill([
-            'last_run_at' => $finishedAt,
+            'last_run_at' => $result->finishedAt,
             'last_status' => $status,
             'last_message' => $message,
         ])->save();

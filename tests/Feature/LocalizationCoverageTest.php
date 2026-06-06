@@ -43,6 +43,10 @@ test('public and authenticated landing pages render localized copy', function ()
         ->assertSee(__('dashboard.heading'))
         ->assertSee(__('dashboard.workspace.heading'))
         ->assertSee(__('dashboard.workspace.automations_action'))
+        ->assertDontSee('Repository')
+        ->assertDontSee('Documentation')
+        ->assertDontSee('livewire-starter-kit')
+        ->assertDontSee('starter-kits#livewire')
         ->assertDontSee('dashboard.heading')
         ->assertDontSee('dashboard.workspace.heading');
 });

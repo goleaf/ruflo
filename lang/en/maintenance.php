@@ -20,16 +20,19 @@ return [
     ],
 
     'fields' => [
+        'engine' => 'Engine',
         'chunk_size' => 'Chunk size',
         'max_runtime' => 'Max runtime',
         'retry_cooldown' => 'Retry cooldown',
         'resume' => 'Resume after failure',
+        'detail_limit' => 'Detail rows',
         'cache_store' => 'Cache store',
         'session_driver' => 'Session driver',
         'compiled_views' => 'Compiled views',
     ],
 
     'values' => [
+        'manual_livewire_chunks' => 'Manual Livewire chunks',
         'seconds' => ':count seconds',
         'enabled' => 'Enabled',
         'disabled' => 'Disabled',

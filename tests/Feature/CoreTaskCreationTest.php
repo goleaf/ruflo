@@ -113,6 +113,8 @@ test('task create form renders errors beside each editable field', function () {
         ->toContain('name="form.title"')
         ->toContain('name="form.priority"')
         ->toContain('name="form.due_date"')
+        ->toContain('model="form.due_date"')
+        ->toContain('todo-create-due-date')
         ->toContain('name="form.project_id"')
         ->toContain("@error('form.tag_ids.*')");
 });

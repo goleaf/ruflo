@@ -99,7 +99,7 @@
                 </div>
 
                 <div>
-                    <flux:input type="date" wire:model="triageForm.due_date" :label="__('todos.fields.due_date')" />
+                    <x-ui.modal-datepicker name="todo-triage-due-date" model="triageForm.due_date" :label="__('todos.fields.due_date')" />
                     <flux:error name="triageForm.due_date" />
                 </div>
             </div>

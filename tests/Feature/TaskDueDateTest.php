@@ -114,3 +114,19 @@ test('due query parameters are sanitized and limited to the active tab', functio
         ->assertSee('Completed overdue')
         ->assertDontSee('Active overdue');
 });
+
+test('todo due date fields use the modal flatpickr integration', function () {
+    $component = file_get_contents(resource_path('views/components/ui/modal-datepicker.blade.php'));
+    $script = file_get_contents(resource_path('js/app.js'));
+
+    expect($component)
+        ->toContain('modalDatePicker')
+        ->toContain('$wire.entangle(@js($model)).live')
+        ->toContain('wire:ignore')
+        ->toContain('flux:modal')
+        ->and($script)
+        ->toContain('https://cdn.jsdelivr.net/npm/flatpickr')
+        ->toContain('https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css')
+        ->toContain('window.Alpine.data')
+        ->toContain("dateFormat: 'Y-m-d'");
+});

@@ -26,5 +26,6 @@ return [
         'max_runtime_seconds' => (int) env('RUFLO_WEB_PROCESSING_MAX_RUNTIME_SECONDS', 8),
         'retry_cooldown_seconds' => (int) env('RUFLO_WEB_PROCESSING_RETRY_COOLDOWN_SECONDS', 30),
         'resume_after_failure' => (bool) env('RUFLO_WEB_PROCESSING_RESUME_AFTER_FAILURE', true),
+        'detail_limit' => (int) env('RUFLO_WEB_PROCESSING_DETAIL_LIMIT', 10),
     ],
 ];

@@ -75,3 +75,4 @@ Record changes after every step.
 - Completed Step 052 by adding owner-scoped web-only automation rules, bounded manual dry-run/live run chunks, translated class-based Livewire/Flux controls, seeded demo automation data, docs, and automation privacy/retry/resume tests.
 - Completed Step 053 by adding a reusable manual web-processing engine, bounded profile/detail limits, automation process adapters, protected maintenance profile visibility, docs, and processing retry/resume tests.
 - Stabilized Step 053 completion by keeping the habit-create workflow on a separate class-based Livewire route, adding goal/habit tab guardrails, and proving the final full suite passes.
+- Completed Step 054 by adding owner-scoped browser-triggered reminders, database-only reminder notifications, protected `/todos/reminders` controls, user reminder preferences, demo reminders, docs, and reminder processing/privacy tests.

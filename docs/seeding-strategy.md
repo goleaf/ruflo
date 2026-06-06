@@ -9,6 +9,7 @@ Step 012 covers the committed model set:
 - `HabitCheckIn`
 - `PomodoroSession`
 - `Project`
+- `Reminder`
 - `SavedTodoView`
 - `Tag`
 - `TimeEntry`
@@ -17,7 +18,10 @@ Step 012 covers the committed model set:
 - `TodoDependency`
 - `TodoTemplate`
 
-The tracked `Reminder` model is currently a placeholder with no ownership, schedule, lifecycle, or message columns, so it is not seeded yet. Seeder coverage asserts the placeholder table stays empty until the reminder domain exists. Future models for recurrence, comments, attachments, activity, invites, settings, and collaboration are not seeded yet because those committed models do not exist yet.
+The tracked `Reminder` model is now seeded with owner-scoped local/testing/demo
+records. Future models for recurrence, comments, attachments, activity,
+invites, settings, and collaboration are not seeded yet because those committed
+models do not exist yet.
 
 ## Seeders
 
@@ -64,12 +68,14 @@ The tracked `Reminder` model is currently a placeholder with no ownership, sched
 - two automation rules per user: an enabled "Promote overdue review tasks" rule
   and a disabled "Archive completed routine tasks" rule, so
   `/todos/automations` shows web-only rules immediately after seeding.
+- three reminders per user: one due pending reminder, one future pending
+  reminder, and one skipped archived-task reminder, so `/todos/reminders` has
+  immediate pending/skip audit examples after seeding.
 
 Step 041's calendar view reuses that catalog: the seeded due-today, overdue,
 upcoming, and no-due-date tasks give the local `/todos/calendar` page immediate
-month and unscheduled examples without adding new model rows or changing the
-stable seeder counts. Reminder and recurrence rows remain deferred until those
-schemas exist.
+month and unscheduled examples. Step 054 adds real reminder rows; recurrence
+rows remain deferred until those schemas exist.
 
 Step 045's focus mode also reuses the current catalog. `Review the current
 flow` is high priority and due today, while `Send the overdue report` is urgent
@@ -148,7 +154,9 @@ duplicate dependency edges.
 Automation rules are upserted per user/name. Re-running the seeder refreshes
 the enabled state and settings without creating duplicate rules or run logs.
 
-Placeholder reminder rows are intentionally excluded from the current catalog because they would not be owned by a user or connected to a task.
+Reminders are upserted per user/task. Re-running the seeder refreshes the same
+due, future, and skipped reminder examples without sending notifications or
+creating duplicate reminder rows.
 
 ## Production Safety
 

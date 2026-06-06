@@ -1,11 +1,11 @@
 # Task Organization
 
-Through Step 053, the private task lifecycle is extended into a usable productivity system:
+Through Step 054, the private task lifecycle is extended into a usable productivity system:
 projects, tags, priorities, due dates, search, filters, sorting, and bulk
 actions, calendar/board/focus views, contained checklists, templates, a quick
 capture Inbox, time tracking, task dependencies, cleanup smart views, and
-browser-triggered automation rules backed by the reusable manual web-processing
-engine. Everything here is
+browser-triggered automation and reminder workflows backed by the reusable
+manual web-processing engine. Everything here is
 owner-scoped on top of the model in
 [`authorization.md`](authorization.md) and the lifecycle in
 [`task-lifecycle.md`](task-lifecycle.md).
@@ -23,6 +23,7 @@ owner-scoped on top of the model in
 | **Inbox capture** | `todos.inbox_captured_at` nullable timestamp | `todos.user_id`, private |
 | **Task dependency** | `todo_dependencies` table; waiting task plus blocker task ids | `todo_dependencies.user_id`, private, both tasks must belong to the same owner |
 | **Automation rule** | `automation_rules` and `automation_rule_runs` tables | `automation_rules.user_id` and `automation_rule_runs.user_id`, private |
+| **Reminder** | `reminders` table; one reminder per user/task with status and processing timestamps | `reminders.user_id`, private, linked to an owned task |
 
 ## Subtasks and checklists
 
@@ -419,6 +420,28 @@ by the current user.
   terminal dependency, paid service, or hosted automation provider during normal
   usage.
 
+## Reminders
+
+Step 054 adds `/todos/reminders`, a protected class-based Livewire/Flux page for
+owner-scoped task reminders.
+
+- `ReminderListQuery` lists recent reminders, task options, pending reminders,
+  and summary counts from the current user's `reminders` rows.
+- `SyncTodoReminder` schedules or clears one reminder per active owner task.
+  Submitted task ids are validated with `OwnedTodo`, resolved through
+  `TodoListQuery`, authorized, and then rechecked by the action.
+- `ReminderAt` validates browser `datetime-local` values and rejects malformed
+  or past reminder times with translated messages.
+- `ProcessDueReminders` uses the Step 053 manual web-processing engine through
+  `ProcessDueRemindersProcess`. Dashboard opens, reminder-page opens, and the
+  Process due button each process a bounded owner-scoped chunk.
+- Due reminders create database notifications only. Completed, archived,
+  deleted, unavailable, or preference-paused reminders are marked skipped with a
+  reason instead of notifying.
+- The workflow uses no cron, queue worker, supervisor, shell, Artisan command,
+  terminal dependency, paid email service, or hosted notification service during
+  normal usage.
+
 ## Inbox
 
 Step 044 adds a dedicated `todos.inbox` Livewire page for fast, unsorted task
@@ -464,11 +487,9 @@ validated by `CalendarMonth`. Invalid month input cannot widen a query; bad
 query strings reset to the current month and show a translated notice. Date
 comparisons continue to use the app timezone documented above.
 
-Reminder and recurring-task panels are present as translated, restricted-hosting
-safe placeholders. The current reminder table has no owner or schedule columns,
-and recurrence models do not exist yet, so the calendar does not query or fake
-those domains. The dedicated reminder and recurrence steps must add owned
-schedule/rule data before those lanes render real entries.
+Reminder controls now live on `/todos/reminders`. The calendar keeps recurring
+task lanes as translated, restricted-hosting safe placeholders until recurrence
+models exist; it does not fake recurrence entries.
 
 ## Kanban board
 
@@ -683,17 +704,21 @@ Step 047 adds private habits and habit check-ins as real, owner-scoped records:
   `(user_id, is_enabled, kind)` for owner-scoped rule filtering, and run-log
   indexes on `(user_id, status)` plus `(automation_rule_id, created_at)` for
   recent report lookups.
+- Reminders use `(user_id, todo_id)` uniqueness so each task has at most one
+  current reminder, plus `(user_id, status, remind_at)` and `(todo_id, status)`
+  indexes for due processing and task-linked lookup.
 
 ## Intentionally not implemented
 
 Manual drag ordering, sub-projects, tag colors editing UI, automatic recurring
-tasks, reminders, collaboration, and generic cross-feature web processing.
+tasks, collaboration, a full notification center, and recurrence series.
 Manual ordering, when added, should store a per-user position and only apply
 when no sort/filter overrides it.
 
 ## Later steps
 
-Reminders and notifications: separating "when it's due" (due_date) from "when
-to be reminded", overdue alerts, today/upcoming notifications, a daily summary,
-notification preferences, and safe queue/scheduler behavior — all reusing the
-date buckets and owner scoping established here.
+Step 054 separates "when it's due" (`due_date`) from "when to be reminded"
+(`remind_at`) and keeps delivery browser-triggered. Later notification,
+summary, preference, and recurrence steps should reuse the reminder owner scope,
+database notification payloads, and manual web-processing contract established
+here.

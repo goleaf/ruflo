@@ -7,6 +7,7 @@ use App\Enums\AutomationRuleKind;
 use App\Enums\HabitFrequency;
 use App\Enums\PomodoroSessionStatus;
 use App\Enums\Priority;
+use App\Enums\ReminderStatus;
 use App\Enums\TimeEntrySource;
 use App\Enums\TimeEntryStatus;
 use App\Models\AutomationRule;
@@ -16,6 +17,7 @@ use App\Models\Habit;
 use App\Models\HabitCheckIn;
 use App\Models\PomodoroSession;
 use App\Models\Project;
+use App\Models\Reminder;
 use App\Models\SavedTodoView;
 use App\Models\Tag;
 use App\Models\TimeEntry;
@@ -230,6 +232,9 @@ class TodoSeeder extends Seeder
         $this->upsertDependency($overdueReport, $reviewFlow);
         $this->upsertTimeEntry($reviewFlow, 35, today()->toDateString(), 'Reviewed task flow and captured the next improvement.');
         $this->upsertProjectTimeEntry($work, 25, today()->subDays(2)->toDateString(), 'Planned the next quiet work block.');
+        $this->upsertReminder($overdueReport, now()->subMinutes(10), ReminderStatus::Pending);
+        $this->upsertReminder($weekend, now()->addDay(), ReminderStatus::Pending);
+        $this->upsertReminder($archivedChecklist, now()->subDay(), ReminderStatus::Skipped, skippedReason: 'task_not_actionable');
 
         $weekendGoal = $this->upsertGoal($user, 'Plan a calmer weekend', [
             'project_id' => $home->id,
@@ -573,6 +578,31 @@ class TodoSeeder extends Seeder
         ])->save();
 
         return $dependency;
+    }
+
+    private function upsertReminder(
+        Todo $todo,
+        DateTimeInterface|string $remindAt,
+        ReminderStatus $status,
+        ?string $skippedReason = null,
+    ): Reminder {
+        $reminder = Reminder::query()
+            ->where('user_id', $todo->user_id)
+            ->where('todo_id', $todo->id)
+            ->first() ?? new Reminder;
+
+        $reminder->forceFill([
+            'user_id' => $todo->user_id,
+            'todo_id' => $todo->id,
+            'remind_at' => $remindAt,
+            'status' => $status,
+            'processed_at' => $status === ReminderStatus::Processed ? ($reminder->processed_at ?? now()) : null,
+            'skipped_at' => $status === ReminderStatus::Skipped ? ($reminder->skipped_at ?? now()) : null,
+            'skipped_reason' => $status === ReminderStatus::Skipped ? $skippedReason : null,
+            'last_error' => null,
+        ])->save();
+
+        return $reminder;
     }
 
     private function upsertTimeEntry(Todo $todo, int $minutes, string $entryDate, string $notes): TimeEntry

@@ -58,6 +58,10 @@ return [
             'title' => 'Smart cleanup',
             'description' => 'Review stale, unplanned, blocked, and risky tasks without leaving your private workspace.',
         ],
+        'reminders' => [
+            'title' => 'Reminders',
+            'description' => 'Schedule and process task reminders through web-triggered browser actions.',
+        ],
     ],
 
     'fields' => [
@@ -80,10 +84,7 @@ return [
     'datepicker' => [
         'open' => 'Pick date',
         'clear' => 'Clear date',
-        'done' => 'Done',
-        'loading' => 'Loading calendar...',
         'placeholder' => 'YYYY-MM-DD',
-        'unavailable' => 'Calendar failed to load. Enter the date manually.',
     ],
 
     'summary' => [
@@ -835,7 +836,7 @@ return [
         ],
         'reminders' => [
             'heading' => 'Reminders',
-            'description' => 'Reminder scheduling will appear here after the web-mode reminder step adds owned schedule data.',
+            'description' => 'Reminder scheduling now lives on the protected web-mode reminders page.',
         ],
         'recurrence' => [
             'heading' => 'Recurring tasks',

@@ -4,6 +4,7 @@ use App\Enums\AutomationRuleKind;
 use App\Enums\AutomationRunStatus;
 use App\Enums\PomodoroSessionStatus;
 use App\Enums\Priority;
+use App\Enums\ReminderStatus;
 use App\Enums\TaskTemplateKind;
 use App\Enums\TimeEntrySource;
 use App\Enums\TimeEntryStatus;
@@ -43,7 +44,7 @@ test('tracked models can be created from their default factories', function () {
     $timeEntry = TimeEntry::factory()->forTodo($todo)->manual(45)->create();
     $template = TodoTemplate::factory()->for($user)->routine()->create();
     $savedView = SavedTodoView::factory()->for($user)->create();
-    $reminder = Reminder::factory()->create();
+    $reminder = Reminder::factory()->forTodo($todo)->due()->create();
     $automationRule = AutomationRule::factory()->for($user)->promoteOverdueTasks()->create();
     $automationRuleRun = AutomationRuleRun::factory()->forRule($automationRule)->dryRun()->create();
 
@@ -84,7 +85,10 @@ test('tracked models can be created from their default factories', function () {
         ->and($template->checklist_items)->toHaveCount(3)
         ->and($savedView->isOwnedBy($user))->toBeTrue()
         ->and($savedView->criteria['sort'])->toBe('created')
-        ->and($reminder->exists)->toBeTrue()
+        ->and($reminder->isOwnedBy($user))->toBeTrue()
+        ->and($reminder->todo->is($todo))->toBeTrue()
+        ->and($reminder->status)->toBe(ReminderStatus::Pending)
+        ->and($reminder->isDue())->toBeTrue()
         ->and($automationRule->isOwnedBy($user))->toBeTrue()
         ->and($automationRule->kind)->toBe(AutomationRuleKind::PromoteOverdueTasks)
         ->and($automationRule->settings)->toBe(AutomationRuleKind::PromoteOverdueTasks->defaultSettings())
@@ -265,6 +269,27 @@ test('user factory covers authentication and demo states', function () {
         ->and($secondaryDemo->email)->toBe('second@example.com')
         ->and($secondaryDemo->is_admin)->toBeFalse()
         ->and(Hash::check('password', $secondaryDemo->password))->toBeTrue();
+});
+
+test('reminder factory covers due future processed skipped and owner states', function () {
+    $user = User::factory()->create();
+    $todos = Todo::factory()->for($user)->active()->count(4)->create();
+
+    $due = Reminder::factory()->forTodo($todos[0])->due(now()->subMinutes(10))->create();
+    $future = Reminder::factory()->forTodo($todos[1])->future(now()->addDay())->create();
+    $processed = Reminder::factory()->forTodo($todos[2])->processed()->create();
+    $skipped = Reminder::factory()->forTodo($todos[3])->skipped('preferences_disabled')->create();
+
+    expect($due->isOwnedBy($user))->toBeTrue()
+        ->and($due->todo->is($todos[0]))->toBeTrue()
+        ->and($due->status)->toBe(ReminderStatus::Pending)
+        ->and($due->isDue())->toBeTrue()
+        ->and($future->isDue())->toBeFalse()
+        ->and($processed->status)->toBe(ReminderStatus::Processed)
+        ->and($processed->processed_at)->not->toBeNull()
+        ->and($skipped->status)->toBe(ReminderStatus::Skipped)
+        ->and($skipped->skipped_reason)->toBe('preferences_disabled')
+        ->and($skipped->skipped_at)->not->toBeNull();
 });
 
 test('project and tag factories cover named color and archive states', function () {

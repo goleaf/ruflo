@@ -407,18 +407,28 @@ test('todo checklist item policy covers owner contained item abilities', functio
         ->and($ownerGate->denies('forceDelete', $item))->toBeTrue();
 });
 
-test('reminder placeholder policy denies every ability until ownership exists', function () {
-    $user = User::factory()->create();
-    $reminder = Reminder::factory()->create();
-    $gate = Gate::forUser($user);
+test('reminder policy covers owner web processing abilities', function () {
+    $owner = User::factory()->create();
+    $intruder = User::factory()->create();
+    $todo = Todo::factory()->for($owner)->create();
+    $reminder = Reminder::factory()->forTodo($todo)->create();
+    $ownerGate = Gate::forUser($owner);
+    $intruderGate = Gate::forUser($intruder);
 
-    foreach (['viewAny', 'create'] as $ability) {
-        expect($gate->denies($ability, Reminder::class))->toBeTrue();
+    foreach (['view', 'update', 'delete'] as $ability) {
+        expect($ownerGate->allows($ability, $reminder))->toBeTrue();
+
+        $response = $intruderGate->inspect($ability, $reminder);
+
+        expect($response->denied())->toBeTrue()
+            ->and($response->status())->toBe(404);
     }
 
-    foreach (['view', 'update', 'delete', 'restore', 'forceDelete'] as $ability) {
-        expect($gate->denies($ability, $reminder))->toBeTrue();
-    }
+    expect($ownerGate->allows('viewAny', Reminder::class))->toBeTrue()
+        ->and($ownerGate->allows('create', Reminder::class))->toBeTrue()
+        ->and($ownerGate->allows('process', Reminder::class))->toBeTrue()
+        ->and($ownerGate->denies('restore', $reminder))->toBeTrue()
+        ->and($ownerGate->denies('forceDelete', $reminder))->toBeTrue();
 });
 
 test('todo Livewire actions use policy abilities before mutation', function () {

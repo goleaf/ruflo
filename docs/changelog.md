@@ -1,5 +1,35 @@
 # Changelog
 
+## 2026-06-06 - Step 054 Reminder system web-mode
+
+### Implemented
+
+- Added owner-scoped task reminders with pending, processed, and skipped states.
+- Added the protected class-based `/todos/reminders` Livewire/Flux page for
+  scheduling, clearing, processing, preferences, and run reports.
+- Processed due reminders from dashboard/page/manual web actions through
+  `RunManualWebProcess`.
+- Added database-only reminder notifications with authorized task links.
+- Added reminder factories, demo seed data, and English reminder translations.
+
+### Testing
+
+- Added reminder system and notification tests for owner scoping, validation,
+  disabled preferences, inactive-task skips, bounded chunk retry/resume,
+  dashboard-triggered processing, and database notification payloads.
+
+### Documentation
+
+- Added `docs/reminders.md`.
+- Updated restricted hosting, task organization, factory coverage, seeding,
+  domain readiness, localization, changelog, and root progress ledgers.
+
+### Restricted Hosting
+
+- Reminder delivery is browser-triggered and chunked. It requires no cron,
+  queue worker, supervisor, shell access, Artisan command, paid service, email
+  provider, or hosted notification API during normal usage.
+
 ## 2026-06-06 - Step 053 Manual web processing engine
 
 ### Implemented

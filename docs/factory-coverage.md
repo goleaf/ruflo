@@ -20,7 +20,9 @@ Step 011 covers the tracked application models:
 - `App\Models\TodoDependency`
 - `App\Models\TodoTemplate`
 
-`App\Models\Reminder` is currently a placeholder model with only an `id` and timestamps. Its default factory creates a valid record, but named reminder states are intentionally deferred until the reminder feature steps add owned reminder fields, lifecycle columns, and processing status.
+`App\Models\Reminder` now has owned task links, scheduled reminder timestamps,
+and pending, processed, and skipped lifecycle state. The factory preserves the
+owner boundary by syncing the reminder owner from the related task.
 
 ## User Factory
 
@@ -114,7 +116,13 @@ rows, time entries, and Pomodoro sessions.
 
 ## Reminder Factory
 
-`ReminderFactory` covers valid placeholder record creation for the current reminder schema. It does not define active, due, sent, failed, retry, or processed states yet because the table has no columns for those concepts.
+`ReminderFactory` covers:
+
+- default future pending reminders,
+- `forTodo()` owner/task alignment,
+- `due()` and `future()` scheduled states,
+- `processed()` notification-complete state,
+- `skipped()` states with a stored reason.
 
 ## Pomodoro Session Factory
 

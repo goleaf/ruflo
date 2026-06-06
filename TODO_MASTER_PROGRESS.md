@@ -2,19 +2,19 @@
 
 ## Current status
 
-Individual ledger rows for Steps 001 through 053 are complete. The requested recheck from Step 001 has been completed through Step 053. The tracker is expanded to one ledger line per step from 001 through 100 so later work cannot be hidden behind a range.
+Individual ledger rows for Steps 001 through 054 are complete. The requested recheck from Step 001 has been completed through Step 054. The tracker is expanded to one ledger line per step from 001 through 100 so later work cannot be hidden behind a range.
 
 ## Current step
 
-Step 054 — Reminder system web-mode
+Step 055 — Notification center
 
 ## Last completed action
 
-Completed Step 053 by adding a reusable manual web-processing engine, bounded profile/detail limits, automation process adapters, protected maintenance profile visibility, docs, and processing retry/resume tests.
+Completed Step 054 by adding owner-scoped web-mode reminders, database-only reminder notifications, a protected class-based reminders page, dashboard/page/manual processing triggers, demo data, docs, and reminder processing tests.
 
 ## Next action
 
-Begin `steps/step-054-reminder-system-web-mode.md`, then implement the next not-yet-completed plan step without grouping it with later work.
+Begin `steps/step-055-notification-center.md`, then implement the next not-yet-completed plan step without grouping it with later work.
 
 ## Step ledger
 
@@ -73,7 +73,7 @@ Begin `steps/step-054-reminder-system-web-mode.md`, then implement the next not-
 | 051 — Smart views and cleanup views | Complete | Added `TodoCleanupFilters`, `TodoCleanupQuery`, and protected class-based `/todos/cleanup` smart views for stale, unplanned, blocked, and risky owner tasks; linked cleanup from dashboard/task list and seeded stale/unplanned demo rows. | Boost docs/app/URL/log/database checks, syntax checks, focused `TodoCleanupViewTest`, 133-test adjacent suite, Pint, local seed verification, restricted-hosting/source scans, and full suite passed with 486 tests and 2959 assertions. | `docs/task-organization.md`, `docs/authorization.md`, `docs/request-validation.md`, `docs/seeding-strategy.md`, `docs/domain-readiness.md`, `docs/todo-foundation.md`, `docs/changelog.md`, and root ledgers updated. | Cleanup buckets are heuristic read-only review aids; they do not mutate tasks or perform background cleanup. Invalid view URL state fails closed to an empty result. | a9dc8e0 |
 | 052 — Automation rules web-only | Complete | Added owner-scoped `automation_rules` and `automation_rule_runs`, class-based `/todos/automations`, translated create/toggle/test/run controls, bounded dry-run/live chunks, disabled no-op runs, retry/resume by rerun, and seeded demo automation rules. | Boost docs/search evidence, migration/seed checks, URL/route/middleware checks, focused automation/rule/seeder/domain/route/dashboard/architecture/localization/restricted-hosting suite passed with 104 tests and 676 assertions; full suite passed with 505 tests and 3137 assertions. | Added `docs/automation-rules.md` and updated task organization, authorization, request validation, validation rules, factory coverage, seeding, domain readiness, localization, restricted-hosting, todo foundation, changelog, and root ledgers. | Generic reusable processor remains Step 053; Step 052 uses a feature-specific bounded runner and documents exact-time/background limitations. | ed3e4d4 |
 | 053 — Manual web processing engine | Complete | Added `ManualWebProcess`, `RunManualWebProcess`, `ManualWebProcessResult`, bounded profile/detail helpers, automation process adapters, and maintenance-center engine visibility. Refactored automation rules to use the reusable browser-triggered processor and stabilized the class-based habit-create split. | Boost docs/app/URL/log checks, syntax checks, focused Step 053 suites passed with 48 tests/473 assertions and 29 tests/203 assertions, habit/goal stabilization suite passed with 103 tests/625 assertions, and full suite passed with 513 tests/3273 assertions. | Added `docs/manual-web-processing.md` and updated restricted hosting, maintenance center, automation rules, task organization, authorization, request validation, localization, domain readiness, todo foundation, changelog, and root ledgers. | Manual web-processing processes must provide their own owner scope; risk logged for future feature consumers. | 948c961, c582185 |
-| 054 — Reminder system web-mode | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 054 — Reminder system web-mode | Complete | Added owned task reminders with pending/processed/skipped states, strict reminder-time validation, user reminder preferences, database-only due notifications, local browser notification controls, protected `/todos/reminders`, and dashboard/page/manual browser processing through the Step 053 engine. | Boost docs/schema/URL/database checks, local migrate/seed checks, focused reminder suite passed with 8 tests and 78 assertions, adjacent suite passed with 181 tests and 1480 assertions, Pint, diff check, and full suite passed with 540 tests and 3683 assertions. | Added `docs/reminders.md` and updated restricted hosting, task organization, authorization, factory coverage, seeding, domain readiness, localization, changelogs, checklist, decisions, risks, and test report. | Exact-time reminder delivery remains limited by browser-triggered restricted-hosting runtime; recorded in risks. | Pending commit |
 | 055 — Notification center | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
 | 056 — Daily summary dashboard | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
 | 057 — Recurring task rules | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |

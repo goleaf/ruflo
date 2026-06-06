@@ -133,6 +133,10 @@
                     {{ __('automation.actions.open_automations') }}
                 </flux:button>
 
+                <flux:button size="sm" variant="ghost" icon="bell" :href="route('todos.reminders')" wire:navigate>
+                    {{ __('reminders.actions.open_reminders') }}
+                </flux:button>
+
                 <flux:button size="sm" variant="ghost" icon="adjustments-horizontal" wire:click="$set('showManageModal', true)">
                     {{ __('todos.actions.manage') }}
                 </flux:button>

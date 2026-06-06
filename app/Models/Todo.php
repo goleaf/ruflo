@@ -141,6 +141,16 @@ class Todo extends Model
     }
 
     /**
+     * Web-triggered reminders attached to this task.
+     *
+     * @return HasMany<Reminder, $this>
+     */
+    public function reminders(): HasMany
+    {
+        return $this->hasMany(Reminder::class);
+    }
+
+    /**
      * Tasks this task is waiting on.
      *
      * @return HasMany<TodoDependency, $this>

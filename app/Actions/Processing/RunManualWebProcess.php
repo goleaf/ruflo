@@ -31,12 +31,11 @@ final class RunManualWebProcess
                 break;
             }
 
-            $details[] = $process->detail($record);
-
             if (! $dryRun && $process->process($user, $record)) {
                 $changedCount++;
             }
 
+            $details[] = $process->detail($record);
             $processedCount++;
         }
 

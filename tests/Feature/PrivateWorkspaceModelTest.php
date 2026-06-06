@@ -44,7 +44,7 @@ use Illuminate\Support\Facades\Gate;
 use Livewire\Livewire;
 
 test('private workspace resources share the owning user boundary', function () {
-    $privateModels = [Todo::class, Project::class, Goal::class, GoalMilestone::class, Habit::class, HabitCheckIn::class, PomodoroSession::class, TimeEntry::class, Tag::class, SavedTodoView::class, TodoChecklistItem::class, TodoDependency::class, TodoTemplate::class, AutomationRule::class, AutomationRuleRun::class];
+    $privateModels = [Todo::class, Project::class, Goal::class, GoalMilestone::class, Habit::class, HabitCheckIn::class, PomodoroSession::class, TimeEntry::class, Tag::class, SavedTodoView::class, TodoChecklistItem::class, TodoDependency::class, TodoTemplate::class, AutomationRule::class, AutomationRuleRun::class, Reminder::class];
 
     foreach ($privateModels as $modelClass) {
         /** @var Model $model */
@@ -99,6 +99,7 @@ test('foreign private records are denied as not found', function (string $modelC
     'todo template' => TodoTemplate::class,
     'automation rule' => AutomationRule::class,
     'automation rule run' => AutomationRuleRun::class,
+    'reminder' => Reminder::class,
 ]);
 
 test('dashboard summary counts only the authenticated users private workspace', function () {
@@ -181,16 +182,21 @@ test('todo list query never hydrates foreign project or tag labels', function ()
         ->and($visibleTodo->tags->pluck('name')->all())->toBe(['mine']);
 });
 
-test('reminder placeholder is inaccessible until it has an owner boundary', function () {
-    $user = User::factory()->create();
-    $reminder = Reminder::factory()->create();
-    $gate = Gate::forUser($user);
+test('reminders keep task links inside the owner boundary', function () {
+    $owner = User::factory()->create();
+    $intruder = User::factory()->create();
+    $todo = Todo::factory()->for($owner)->create(['title' => 'Owner reminder task']);
+    $foreignTodo = Todo::factory()->for($intruder)->create(['title' => 'Foreign reminder task']);
+    $reminder = Reminder::factory()->forTodo($todo)->create();
 
-    expect($gate->denies('viewAny', Reminder::class))->toBeTrue()
-        ->and($gate->denies('create', Reminder::class))->toBeTrue()
-        ->and($gate->denies('view', $reminder))->toBeTrue()
-        ->and($gate->denies('update', $reminder))->toBeTrue()
-        ->and($gate->denies('delete', $reminder))->toBeTrue()
-        ->and($gate->denies('restore', $reminder))->toBeTrue()
-        ->and($gate->denies('forceDelete', $reminder))->toBeTrue();
+    $reminder->forceFill(['todo_id' => $foreignTodo->id])->save();
+
+    $visible = $owner->reminders()
+        ->with(['todo' => fn ($query) => $query->where('todos.user_id', $owner->id)])
+        ->sole();
+
+    expect($reminder->isOwnedBy($owner))->toBeTrue()
+        ->and($visible->todo)->toBeNull()
+        ->and(Gate::forUser($owner)->allows('view', $reminder))->toBeTrue()
+        ->and(Gate::forUser($intruder)->inspect('view', $reminder)->status())->toBe(404);
 });

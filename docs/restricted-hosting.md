@@ -36,7 +36,7 @@ Without cron or workers, RuFlo cannot promise exact-time automation. Reminder, r
 
 ## Related Steps
 
-Step 007 added the protected setup status foundation. Step 008 added the protected maintenance center. Step 052 added feature-specific browser-triggered automation rule chunks. Step 053 added the reusable manual web-processing engine that feature-specific processors can reuse.
+Step 007 added the protected setup status foundation. Step 008 added the protected maintenance center. Step 052 added feature-specific browser-triggered automation rule chunks. Step 053 added the reusable manual web-processing engine that feature-specific processors can reuse. Step 054 adds reminder processing as another authenticated web-triggered consumer.
 
 ## 2026-06-06 Recheck
 
@@ -73,3 +73,14 @@ limit, supports dry runs without mutation, and returns matched, processed,
 changed, and remaining counts for Livewire progress reports. Retry and resume
 remain explicit user actions: click the same web action again to process the
 next owner-scoped chunk.
+
+## 2026-06-06 Step 054 Update
+
+Reminders process from dashboard opens, `/todos/reminders` page opens, and the
+manual Process due button. Each run uses `RunManualWebProcess` to process a
+bounded owner-scoped chunk, then reports matched, processed, skipped, failed,
+and remaining counts in Livewire.
+
+Reminder delivery is self-hosted database notifications only. There is no cron,
+queue worker, supervisor, shell access, Artisan command, email dependency, paid
+service, or hosted notification provider required for normal reminder usage.

@@ -38,6 +38,7 @@ scope) rather than across the whole codebase.
 | Dependency read boundary | `App\Queries\Todos\TodoDependencyQuery` | Owner-scoped dependency rows and blocker candidates for already scoped tasks. |
 | Cleanup read boundary | `App\Queries\Todos\TodoCleanupQuery` | Owner-scoped active cleanup smart views for stale, unplanned, blocked, and risky tasks. |
 | Automation read boundary | `App\Queries\Automation\AutomationRuleQuery` | Owner-scoped automation rules with latest run reports. |
+| Reminder read boundary | `App\Queries\Reminders\ReminderListQuery` | Owner-scoped reminders, task options, and summary counts. |
 | Template read boundary | `App\Queries\Todos\TodoTemplateListQuery` | Owner-scoped reusable task/project/checklist/routine templates. |
 | Inbox read boundary | `App\Queries\Todos\TodoInboxQuery` | Owner-scoped active captured tasks waiting for triage. |
 | Focus read boundary | `App\Queries\Todos\TodoFocusQuery` | Owner-scoped active urgent/overdue/due-today/high-priority focus set. |
@@ -120,6 +121,10 @@ The Livewire component authorizes **before** delegating to an action:
   `instantiate` are owner-only and hide foreign ids as not found. Shared
   visibility is currently a label stored for future collaboration; it does not
   grant access to another user before memberships and roles exist.
+- Reminders use `ReminderPolicy`: `viewAny`, `create`, and `process` are
+  available to authenticated users for their own workspace; `view`, `update`,
+  and `delete` are owner-only and hide foreign ids as not found. Restore and
+  force delete remain unavailable.
 
 Backend authorization is the real security. Frontend hiding of buttons is UX
 only and is never sufficient.
@@ -209,6 +214,13 @@ through `AutomationRuleQuery::findFor($user, $id)` before authorization.
 Automation runs mutate only tasks found through the current user's owned task
 relationship, and foreign rule ids resolve as not found.
 
+Reminders use the same private route and owner boundary. `todos.reminders` is a
+class-based Livewire page behind `auth` and `verified`. Reminder rows are listed
+through `ReminderListQuery`, schedule input validates the selected task through
+`OwnedTodo`, and due processing starts from `$user->reminders()` before any
+notification is created. Notification action URLs route to protected task pages,
+where the task is resolved again through owner-scoped lookup.
+
 ## Error behavior (no leakage)
 
 - Forbidden private records resolve as **not found** (404-style), never
@@ -274,8 +286,9 @@ it on:
   validation path.
 - **Activity history** — visible only to users who can access the related
   record; scoped exactly like the record itself.
-- **Notifications/reminders** — target only the owning user; a notification is
-  a message, not a permission, so opening its link re-checks authorization.
+- **Notifications/reminders** — Step 054 stores due reminder notifications in
+  the database for the owning user only. A notification is a message, not a
+  permission, so opening its link re-checks authorization.
 - **Collaboration** — when added, the policy and `BelongsToUser` boundary
   expand to "authorized member" in one place each; do not hardcode
   "exactly one user" assumptions elsewhere.
@@ -292,22 +305,21 @@ behavior, mass-assignment refusal, owner-scoped queries and counters, and
 guest redirects. Every future todo capability must add the matching
 cross-user denial test before it is considered done.
 
-`PrivateWorkspaceModelTest` locks the Step 017 contract: todo-related private
-models must use the shared owner concern, private policies must hide foreign
-records as not found, dashboard counts must be user-scoped, malformed
-cross-user project/tag links must not hydrate foreign labels, and placeholder
-reminders remain inaccessible until their real owner/schedule schema exists.
+`PrivateWorkspaceModelTest` locks the Step 017 and Step 054 contracts:
+todo-related private models must use the shared owner concern, private policies
+must hide foreign records as not found, dashboard counts must be user-scoped,
+malformed cross-user project/tag links must not hydrate foreign labels, and
+reminder task links must stay inside the owner boundary.
 
 `OwnershipQueryScopingTest` locks the Step 018 contract: project/tag picker
 queries are owner-scoped, tampered project/tag filters are empty rather than
 foreign-scoped, edit-form tag hydration uses the scoped query result, and
 server-assigned Livewire edit IDs are locked.
 
-`AuthorizationPoliciesTest` locks the Step 019 contract: every current private
-resource resolves to an explicit policy, todo lifecycle/bulk abilities are
-named and authorized before mutation, unsupported destructive abilities are
-denied, and placeholder reminders remain deny-all until the reminder schema is
-implemented.
+`AuthorizationPoliciesTest` locks the Step 019 and Step 054 contract: every
+current private resource resolves to an explicit policy, todo lifecycle/bulk
+abilities are named and authorized before mutation, unsupported destructive
+abilities are denied, and reminders expose only owner web-processing abilities.
 
 `GuestRouteProtectionTest` locks the Step 020 contract: guests are redirected
 from every private app page, unverified users are redirected from verified
@@ -400,3 +412,8 @@ bounded chunks must report remaining work, and retry/resume must happen by
 re-running the same authenticated browser action. The engine does not create a
 global data scope; each feature-owned `ManualWebProcess` implementation is
 responsible for starting from an authorized owner boundary.
+
+`ReminderSystemTest` locks the Step 054 contract: owner-scoped reminder page
+rendering, scheduling validation, due reminder processing, chunk resume,
+database notifications, disabled preferences, dashboard-triggered processing,
+and multi-user isolation.

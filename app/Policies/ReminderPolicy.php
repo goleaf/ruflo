@@ -4,6 +4,7 @@ namespace App\Policies;
 
 use App\Models\Reminder;
 use App\Models\User;
+use Illuminate\Auth\Access\Response;
 
 final class ReminderPolicy
 {
@@ -12,15 +13,15 @@ final class ReminderPolicy
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return true;
     }
 
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Reminder $reminder): bool
+    public function view(User $user, Reminder $reminder): Response
     {
-        return false;
+        return $this->ownerOnly($user, $reminder);
     }
 
     /**
@@ -28,23 +29,28 @@ final class ReminderPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return true;
     }
 
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Reminder $reminder): bool
+    public function update(User $user, Reminder $reminder): Response
     {
-        return false;
+        return $this->ownerOnly($user, $reminder);
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Reminder $reminder): bool
+    public function delete(User $user, Reminder $reminder): Response
     {
-        return false;
+        return $this->ownerOnly($user, $reminder);
+    }
+
+    public function process(User $user): bool
+    {
+        return true;
     }
 
     /**
@@ -61,5 +67,12 @@ final class ReminderPolicy
     public function forceDelete(User $user, Reminder $reminder): bool
     {
         return false;
+    }
+
+    private function ownerOnly(User $user, Reminder $reminder): Response
+    {
+        return $reminder->isOwnedBy($user)
+            ? Response::allow()
+            : Response::denyAsNotFound();
     }
 }

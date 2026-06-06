@@ -271,6 +271,12 @@ queries, changed/remaining counts, and retry/resume by re-running the same
 browser action. `TodoArchitectureTest` also verifies that automation rule runs
 delegate chunk mechanics to the shared engine.
 
+Step 054 adds `ReminderSystemTest`, which locks the protected Reminders route,
+owner-scoped reminder rendering, scheduling validation, chunked due processing,
+database notification delivery, skipped completed/archived/deleted reminders,
+disabled preferences, dashboard-triggered processing, and restricted-hosting
+defaults.
+
 ## 2026-06-06 Recheck
 
 The Step 001 recheck confirmed the foundation still matches the current master-plan rules after Steps 002-016:

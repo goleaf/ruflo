@@ -1,6 +1,13 @@
 <x-ui.page-container gap="gap-8">
     <x-ui.page-header :title="__('dashboard.heading')" :description="__('dashboard.description')" />
 
+    @if ($reminderRunReport !== null)
+        <flux:callout icon="bell" variant="secondary" data-test="dashboard-reminder-run-report">
+            <flux:callout.heading>{{ __('reminders.processing.report_heading') }}</flux:callout.heading>
+            <flux:callout.text>{{ __('reminders.processing.report', $reminderRunReport) }}</flux:callout.text>
+        </flux:callout>
+    @endif
+
     <div class="overflow-x-auto pb-2" data-test="dashboard-summary-widgets">
         <div class="grid min-w-[78rem] grid-cols-11 gap-2">
             <x-ui.stat :label="__('dashboard.summary.active')" :value="$this->summary['active']" variant="colored" />

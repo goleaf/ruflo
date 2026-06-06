@@ -11,6 +11,8 @@ Step 016 keeps visible application copy in English language files instead of har
 - `lang/en/welcome.php` contains public landing page copy.
 - `lang/en/automation.php` contains browser-triggered automation rule copy,
   validation messages, run statuses, and action messages.
+- `lang/en/reminders.php` contains reminder page, validation, processing,
+  preference, status, and notification copy.
 - `lang/en/maintenance.php` contains the protected maintenance-center copy,
   including Step 053 manual web-processing engine labels.
 - Existing domain files such as `lang/en/todos.php` and `lang/en/setup.php`
@@ -35,8 +37,15 @@ Step 016 was rechecked from `steps/step-016-english-localization-and-message-cle
 
 Confirmed and updated:
 
-- The current English language files are `auth`, `automation`, `dashboard`, `maintenance`, `navigation`, `settings`, `setup`, `todos`, and `welcome`.
+- The current English language files are `auth`, `automation`, `dashboard`, `maintenance`, `navigation`, `reminders`, `settings`, `setup`, `todos`, and `welcome`.
 - Public and authenticated landing pages render localized copy instead of raw translation keys.
 - Literal English strings are not passed directly to translation APIs, Flux toasts, `addError`, or Livewire `#[Title]` attributes.
 - Added coverage that static translation keys referenced from app and Blade source exist in the English language files.
 - Localization remains render-time only and does not depend on cron, queue workers, shell access, external translation services, or paid APIs.
+
+## 2026-06-06 Step 054 Update
+
+Reminder UI text, validation messages, processing reports, preference toasts,
+status labels, empty states, and database notification messages live in
+`lang/en/reminders.php`. Dashboard and task-toolbar reminder links use existing
+dashboard/todo language files.

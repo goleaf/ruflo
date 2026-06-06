@@ -11,6 +11,7 @@ The current committed app has tag-name and todo workspace ownership rules:
 - `App\Rules\Goals\MilestoneTitle`
 - `App\Rules\Habits\HabitTargetCount`
 - `App\Rules\Habits\HabitTitle`
+- `App\Rules\Reminders\ReminderAt`
 - `App\Rules\Todos\AcyclicTodoDependency`
 - `App\Rules\Todos\BoardStatus`
 - `App\Rules\Todos\CalendarMonth`
@@ -41,6 +42,10 @@ limit.
 
 `HabitTitle` validates that submitted habit titles contain visible text after
 whitespace normalization and stay within the current 120-character title limit.
+
+`ReminderAt` validates browser `datetime-local` reminder timestamps. It accepts
+canonical minute/second browser values in the configured app timezone and
+rejects malformed or past values with translated reminder messages.
 
 `AcyclicTodoDependency` validates a task-dependency blocker id for the current
 user and current task. It rejects non-owned, inactive, duplicate,
@@ -102,11 +107,11 @@ The action layer still re-scopes ids to the current user before writing. The rul
 
 Rule failure messages live in `lang/en/todos.php` under `todos.validation`,
 `lang/en/goals.php` under `goals.validation`, and feature-specific files such
-as `lang/en/automation.php`.
+as `lang/en/automation.php` and `lang/en/reminders.php`.
 
 ## Future Domains
 
-Invite token, recurrence, reminder time, file upload, import/export, settings, and role validation rules should be added with their feature steps when the corresponding stable models and request surfaces exist. Do not create placeholder rules for future domains without a concrete caller and test.
+Invite token, recurrence, file upload, import/export, settings, and role validation rules should be added with their feature steps when the corresponding stable models and request surfaces exist. Do not create placeholder rules for future domains without a concrete caller and test.
 
 ## 2026-06-06 Recheck
 
@@ -226,3 +231,10 @@ and names over 80 characters, and fails with
 check with `automation.validation.rule_name_unique`, while
 `CreateAutomationRule` repeats normalization and duplicate checks for direct
 action calls.
+
+## 2026-06-06 Step 054 Update
+
+Step 054 added `App\Rules\Reminders\ReminderAt` for reminder scheduling. The
+class-based reminders Livewire page uses it beside `OwnedTodo`, and
+`ReminderData` reuses the parser so direct action callers cannot bypass the
+same timestamp format.

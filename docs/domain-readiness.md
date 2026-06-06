@@ -32,6 +32,7 @@ The current application surface covers these URL consumers:
 - Authenticated blocked tasks route at `/todos/blocked`.
 - Authenticated cleanup smart views route at `/todos/cleanup`.
 - Authenticated browser-triggered automation rules route at `/todos/automations`.
+- Authenticated browser-triggered reminders route at `/todos/reminders`.
 - Authenticated todo route at `/todos`.
 - Authenticated Today route at `/todos/today`.
 - Authenticated Overdue route at `/todos/overdue`.
@@ -86,3 +87,10 @@ Step 053 adds no new public route. The reusable manual web-processing engine is
 triggered by feature-owned Livewire actions such as `/todos/automations`, and
 its runtime profile is visible on the existing protected maintenance route at
 `https://ruflo.test/settings/maintenance`.
+
+## 2026-06-06 Step 054 Update
+
+Step 054 adds the protected `todos.reminders` route at
+`https://ruflo.test/todos/reminders`. Reminder notification payloads use named
+routes for task action links, so links stay under the configured
+`https://ruflo.test` root.

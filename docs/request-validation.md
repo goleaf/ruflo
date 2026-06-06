@@ -96,6 +96,13 @@ for validating user input before they trigger a process, while
 `ManualWebProcess::query()` implementations must reapply owner scope before
 records can be processed.
 
+Step 054 reminders remain Livewire-only. No HTTP Form Request is introduced
+because `/todos/reminders` is a class-based Livewire page, not a controller
+endpoint. The component validates the selected task with `OwnedTodo` and the
+reminder timestamp with `ReminderAt`; `SyncTodoReminder` and
+`ProcessDueRemindersProcess` repeat owner, active-task, preference, and
+actionable-task guards before writing reminder state or database notifications.
+
 ## Custom Business Rules
 
 Reusable business validation rules are documented in `docs/validation-rules.md`.

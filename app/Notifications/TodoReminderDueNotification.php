@@ -2,21 +2,15 @@
 
 namespace App\Notifications;
 
-use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Messages\MailMessage;
+use App\Models\Reminder;
+use App\Models\Todo;
 use Illuminate\Notifications\Notification;
 
-class TodoReminderDueNotification extends Notification
+final class TodoReminderDueNotification extends Notification
 {
-    use Queueable;
-
-    /**
-     * Create a new notification instance.
-     */
-    public function __construct()
-    {
-        //
-    }
+    public function __construct(
+        private readonly Reminder $reminder,
+    ) {}
 
     /**
      * Get the notification's delivery channels.
@@ -25,29 +19,31 @@ class TodoReminderDueNotification extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        return ['database'];
     }
 
-    /**
-     * Get the mail representation of the notification.
-     */
-    public function toMail(object $notifiable): MailMessage
+    public function databaseType(object $notifiable): string
     {
-        return (new MailMessage)
-            ->line('The introduction to the notification.')
-            ->action('Notification Action', url('/'))
-            ->line('Thank you for using our application!');
+        return 'todo-reminder-due';
     }
 
     /**
-     * Get the array representation of the notification.
-     *
      * @return array<string, mixed>
      */
-    public function toArray(object $notifiable): array
+    public function toDatabase(object $notifiable): array
     {
+        $todo = $this->reminder->todo;
+
         return [
-            //
+            'kind' => 'todo_reminder_due',
+            'reminder_id' => $this->reminder->id,
+            'todo_id' => $todo instanceof Todo ? $todo->id : null,
+            'title' => __('reminders.notifications.todo_due.title'),
+            'message' => __('reminders.notifications.todo_due.message', [
+                'task' => $todo instanceof Todo ? $todo->title : __('reminders.processing.unknown_task'),
+            ]),
+            'action_url' => $todo instanceof Todo ? route('todos.show', $todo) : route('todos.index'),
+            'remind_at' => $this->reminder->remind_at?->toIso8601String(),
         ];
     }
 }

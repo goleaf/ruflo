@@ -80,6 +80,147 @@
         </div>
     </flux:card>
 
+    @if ($this->canManageMembers)
+        <flux:card class="space-y-4" data-test="project-invites">
+            <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                <div class="space-y-1">
+                    <flux:subheading>{{ __('todos.collaboration.invites.label') }}</flux:subheading>
+                    <flux:heading size="lg">{{ __('todos.collaboration.invites.heading') }}</flux:heading>
+                    <flux:text class="text-sm text-zinc-500 dark:text-zinc-400">
+                        {{ __('todos.collaboration.invites.description') }}
+                    </flux:text>
+                </div>
+
+                <flux:modal.trigger name="project-invite-create">
+                    <flux:button variant="primary" icon="link" class="w-full sm:w-auto">
+                        {{ __('todos.collaboration.invites.actions.create') }}
+                    </flux:button>
+                </flux:modal.trigger>
+            </div>
+
+            <flux:callout icon="exclamation-triangle" variant="secondary" data-test="project-invite-link-only-warning">
+                <flux:callout.heading>{{ __('todos.collaboration.invites.warning.heading') }}</flux:callout.heading>
+                <flux:callout.text>{{ __('todos.collaboration.invites.warning.description') }}</flux:callout.text>
+            </flux:callout>
+
+            <div class="space-y-3">
+                @forelse ($this->invitations as $invitation)
+                    <div
+                        wire:key="project-invite-{{ $invitation->id }}"
+                        class="space-y-3 rounded-lg border border-zinc-200 bg-zinc-50 p-3 dark:border-white/10 dark:bg-zinc-900"
+                        data-test="project-invite-{{ $invitation->status()->value }}"
+                    >
+                        <div class="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                            <div class="min-w-0 space-y-1">
+                                <div class="flex flex-wrap items-center gap-1.5">
+                                    <flux:badge size="sm" :color="$invitation->status()->color()">
+                                        {{ $invitation->status()->label() }}
+                                    </flux:badge>
+
+                                    <flux:badge size="sm" :color="$invitation->role->color()">
+                                        {{ $invitation->role->label() }}
+                                    </flux:badge>
+                                </div>
+
+                                <flux:text class="text-xs text-zinc-500 dark:text-zinc-400">
+                                    {{ __('todos.collaboration.invites.meta.expires_at', ['date' => $invitation->expires_at->isoFormat('MMM D, YYYY')]) }}
+                                </flux:text>
+
+                                @if ($invitation->acceptedBy)
+                                    <flux:text class="text-xs text-zinc-500 dark:text-zinc-400">
+                                        {{ __('todos.collaboration.invites.meta.accepted_by', ['name' => $invitation->acceptedBy->name]) }}
+                                    </flux:text>
+                                @endif
+                            </div>
+
+                            @if ($invitation->isPending())
+                                <flux:button
+                                    type="button"
+                                    variant="ghost"
+                                    icon="x-mark"
+                                    wire:click="cancelInvitation({{ $invitation->id }})"
+                                    wire:loading.attr="disabled"
+                                    wire:target="cancelInvitation({{ $invitation->id }})"
+                                    class="w-full sm:w-auto"
+                                >
+                                    {{ __('todos.collaboration.invites.actions.cancel') }}
+                                </flux:button>
+                            @endif
+                        </div>
+
+                        @if ($invitation->isPending())
+                            <div
+                                x-data="{ copied: false }"
+                                class="grid gap-2 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end"
+                                data-test="project-invite-copy"
+                            >
+                                <flux:input
+                                    x-ref="inviteLink"
+                                    readonly
+                                    :label="__('todos.collaboration.invites.fields.link')"
+                                    :value="$invitation->shareUrl()"
+                                />
+
+                                <flux:button
+                                    type="button"
+                                    variant="subtle"
+                                    icon="clipboard"
+                                    x-on:click="navigator.clipboard.writeText($refs.inviteLink.value).then(() => { copied = true; setTimeout(() => copied = false, 1500) })"
+                                >
+                                    <span x-show="! copied">{{ __('todos.collaboration.invites.actions.copy') }}</span>
+                                    <span x-show="copied" x-cloak>{{ __('todos.collaboration.invites.actions.copied') }}</span>
+                                </flux:button>
+                            </div>
+                        @endif
+                    </div>
+                @empty
+                    <x-ui.empty-state
+                        :title="__('todos.collaboration.invites.empty.title')"
+                        :description="__('todos.collaboration.invites.empty.description')"
+                    />
+                @endforelse
+            </div>
+        </flux:card>
+
+        <flux:modal name="project-invite-create" class="md:w-[28rem]">
+            <form wire:submit="createInvitation" class="space-y-5" data-test="project-invite-form">
+                <div>
+                    <flux:heading size="lg">{{ __('todos.collaboration.invites.create.heading') }}</flux:heading>
+                    <flux:text class="mt-2">{{ __('todos.collaboration.invites.create.description') }}</flux:text>
+                </div>
+
+                <flux:select wire:model="inviteRole" :label="__('todos.collaboration.invites.fields.role')">
+                    @foreach ($this->inviteRoleOptions as $option)
+                        <flux:select.option :value="$option['value']">{{ $option['label'] }}</flux:select.option>
+                    @endforeach
+                </flux:select>
+                <flux:error name="inviteRole" />
+
+                <flux:select wire:model="inviteExpiresInDays" :label="__('todos.collaboration.invites.fields.expires_in_days')">
+                    <flux:select.option value="1">{{ __('todos.collaboration.invites.expiration_options.one_day') }}</flux:select.option>
+                    <flux:select.option value="7">{{ __('todos.collaboration.invites.expiration_options.seven_days') }}</flux:select.option>
+                    <flux:select.option value="14">{{ __('todos.collaboration.invites.expiration_options.fourteen_days') }}</flux:select.option>
+                    <flux:select.option value="30">{{ __('todos.collaboration.invites.expiration_options.thirty_days') }}</flux:select.option>
+                </flux:select>
+                <flux:error name="inviteExpiresInDays" />
+
+                <flux:callout icon="link" variant="secondary">
+                    <flux:callout.text>{{ __('todos.collaboration.invites.create.warning') }}</flux:callout.text>
+                </flux:callout>
+
+                <div class="flex justify-end gap-2">
+                    <flux:modal.close>
+                        <flux:button type="button" variant="ghost">{{ __('todos.actions.cancel') }}</flux:button>
+                    </flux:modal.close>
+
+                    <flux:button type="submit" variant="primary" icon="link" wire:loading.attr="disabled" wire:target="createInvitation">
+                        {{ __('todos.collaboration.invites.actions.create') }}
+                    </flux:button>
+                </div>
+            </form>
+        </flux:modal>
+    @endif
+
     <flux:card class="space-y-4">
         <div class="flex flex-wrap items-center justify-between gap-3">
             <flux:heading size="lg">{{ __('todos.projects.show.tasks_heading') }}</flux:heading>

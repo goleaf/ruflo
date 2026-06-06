@@ -1,5 +1,36 @@
 # Changelog
 
+## 2026-06-06 - Step 069 Link-only invite system
+
+### Added
+
+- Added `project_invitations` with encrypted invite tokens, token hashes,
+  expiration, cancellation, acceptance, and accepted-user tracking.
+- Added link-only invite creation and cancellation on the existing project
+  detail page with translated Flux modal/form controls, copyable signed links,
+  manual-sharing warnings, and pending/accepted/cancelled/expired badges.
+- Added the protected signed invite accept route at
+  `https://ruflo.test/project-invitations/{token}` and a generic authenticated
+  accept page that does not reveal project details before acceptance.
+- Added invite role and expiration validation through a dedicated request
+  helper and reusable custom validation rules.
+- Added local/testing/demo invite factory states and seeding for all invite
+  lifecycle states.
+
+### Tests
+
+- Added `ProjectInvitationTest` coverage for signed link generation, no email
+  sending, valid acceptance, cancelled/expired/tampered role denial, pending
+  invite privacy, lifecycle status rendering, cancellation, validation, and
+  idempotent demo seeding.
+
+### Restricted Hosting
+
+- Invite creation, cancellation, and acceptance run during normal authenticated
+  web requests. No cron, queue worker, supervisor, terminal action, Artisan
+  command during normal usage, email provider, hosted service, or paid service
+  is required.
+
 ## 2026-06-06 - Step 068 Collaboration foundation
 
 ### Added

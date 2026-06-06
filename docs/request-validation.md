@@ -110,6 +110,14 @@ selection with `OwnedActiveTodo`, validate schedule shape with `RecurrenceRule`,
 normalize input through `RecurrenceRuleData`, and action classes repeat owner
 and active-task guards before saving, pausing, enabling, or deleting rules.
 
+Step 069 project invitations remain Livewire-only. No HTTP Form Request is
+introduced as a controller action because invites are created from the
+class-based project page, but `StoreProjectInvitationRequest` is still the
+canonical source for invite form rules, attributes, and messages. The Livewire
+component consumes its `baseRules()` and `attributeNames()` helpers, while
+`CreateProjectInvitation` repeats role, expiration, project, and authorization
+guards before a signed link-only invite is stored.
+
 ## Custom Business Rules
 
 Reusable business validation rules are documented in `docs/validation-rules.md`.

@@ -36,7 +36,7 @@ Without cron or workers, RuFlo cannot promise exact-time automation. Reminder, r
 
 ## Related Steps
 
-Step 007 added the protected setup status foundation. Step 008 added the protected maintenance center. Step 052 added feature-specific browser-triggered automation rule chunks. Step 053 added the reusable manual web-processing engine that feature-specific processors can reuse. Step 054 adds reminder processing as another authenticated web-triggered consumer. Step 055 adds database-backed in-app notification review and read-state controls. Step 056 adds the daily summary dashboard as an authenticated browser-rendered replacement for scheduled summary email. Step 057 adds recurrence rule management. Step 058 adds recurrence occurrence generation through the same authenticated web-processing engine.
+Step 007 added the protected setup status foundation. Step 008 added the protected maintenance center. Step 052 added feature-specific browser-triggered automation rule chunks. Step 053 added the reusable manual web-processing engine that feature-specific processors can reuse. Step 054 adds reminder processing as another authenticated web-triggered consumer. Step 055 adds database-backed in-app notification review and read-state controls. Step 056 adds the daily summary dashboard as an authenticated browser-rendered replacement for scheduled summary email. Step 057 adds recurrence rule management. Step 058 adds recurrence occurrence generation through the same authenticated web-processing engine. Step 069 adds email-free link-only project invites.
 
 ## 2026-06-06 Recheck
 
@@ -163,3 +163,13 @@ task-domain workflows and read through the protected `/activity` Livewire page.
 The feed uses bounded Load more requests and does not require cron, queue
 workers, supervisors, shell access, Artisan commands, hosted audit services,
 paid analytics, or external activity providers.
+
+## 2026-06-06 Step 069 Update
+
+Project invite links are created, copied, cancelled, and accepted through normal
+authenticated web requests. The accept route is signed and verified, and the
+pre-acceptance page does not reveal project details.
+
+Invite delivery is manual and link-only. There is no cron, queue worker,
+supervisor, shell access, Artisan command during normal usage, email provider,
+hosted invite service, or paid dependency.

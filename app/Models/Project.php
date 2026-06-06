@@ -58,6 +58,16 @@ class Project extends Model
     }
 
     /**
+     * Link-only invitations created for this project.
+     *
+     * @return HasMany<ProjectInvitation, $this>
+     */
+    public function invitations(): HasMany
+    {
+        return $this->hasMany(ProjectInvitation::class);
+    }
+
+    /**
      * Goals attached to this project.
      *
      * @return HasMany<Goal, $this>

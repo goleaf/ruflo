@@ -34,6 +34,7 @@ through policy and query boundaries.
 | Read boundary | `App\Queries\Todos\TodoListQuery` | The only place todos are read for the UI. Always owner-scoped. |
 | Project read boundary | `App\Queries\Projects\ProjectListQuery` | Owner-only project pickers use `visibleFor`; shared project pages use `accessibleFor` and `findAccessibleFor`. |
 | Project membership read boundary | `App\Queries\Projects\ProjectMembershipQuery` | Active membership listing and lookup for already authorized project access. |
+| Project invitation read boundary | `App\Queries\Projects\ProjectInvitationQuery` | Member managers list project invite lifecycle rows and accept signed links through token hashes without exposing project data first. |
 | Project access resolver | `App\Support\Projects\ProjectAccess` | Central role lookup for owner, manager, editor, and viewer permissions. |
 | Board read boundary | `App\Queries\Todos\TodoBoardQuery` | Owner-scoped Kanban columns for active, completed, and archived tasks. |
 | Checklist read boundary | `App\Queries\Todos\TodoChecklistItemListQuery` | Owner-scoped checklist rows for one already scoped parent task. |
@@ -148,6 +149,11 @@ The Livewire component authorizes **before** delegating to an action:
   through an accessible project, and updates/deletes are reserved for users who
   can manage the project members. The project owner is derived from
   `projects.user_id` and cannot be added as or removed as a membership row.
+- Project invitations use `ProjectInvitationPolicy`: invite lifecycle rows are
+  visible and cancellable only to users who can manage the project members.
+  Invite acceptance is a signed-link workflow that re-checks pending status,
+  expiration, project activity, assignable role, and inviter member-management
+  authority before reusing `AddProjectMember`.
 - Shared project tasks use `TodoPolicy` and `TodoListQuery`: owners keep all
   task abilities, managers can edit and manage shared project tasks, editors
   can edit shared project tasks, and viewers can read only. Shared access is
@@ -204,6 +210,13 @@ Livewire page behind `auth` and `verified`, accepts only a numeric project id,
 resolves the record through `ProjectListQuery::findVisibleFor()`, and locks the
 public `projectId` property. A guessed or foreign id returns not found without
 rendering the foreign project name or task list.
+
+Project invite accept pages are class-based Livewire pages behind `auth`,
+`verified`, and `signed` middleware. `projects.invitations.accept` accepts only
+an alphanumeric token, resolves the invite by token hash, and renders a generic
+pre-acceptance page that does not show the project name, tasks, or members.
+The accept action creates membership only after the same signed token still
+points at a pending, unexpired invite.
 
 Task template pages use the same private route boundary. `todos.templates` is a
 class-based Livewire page behind `auth` and `verified`, lists templates through

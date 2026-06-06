@@ -7,6 +7,7 @@ use App\Livewire\Goals\Index as GoalsIndex;
 use App\Livewire\Habits\Create as HabitsCreate;
 use App\Livewire\Habits\Index as HabitsIndex;
 use App\Livewire\Notifications\Inbox as NotificationsInbox;
+use App\Livewire\Projects\AcceptInvitation as ProjectInvitationAccept;
 use App\Livewire\Projects\Show as ProjectsShow;
 use App\Livewire\Reports\Overview as ReportsOverview;
 use App\Livewire\Todos\Automations as TodosAutomations;
@@ -56,6 +57,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::livewire('todos/focus', TodosFocus::class)->name('todos.focus');
     Route::livewire('todos/time', TodosTime::class)->name('todos.time');
     Route::livewire('todos/{todo}', TodosShow::class)->whereNumber('todo')->name('todos.show');
+    Route::livewire('project-invitations/{token}', ProjectInvitationAccept::class)
+        ->whereAlphaNumeric('token')
+        ->middleware('signed')
+        ->name('projects.invitations.accept');
     Route::livewire('projects/{project}', ProjectsShow::class)->whereNumber('project')->name('projects.show');
 });
 

@@ -4,13 +4,16 @@ RuFlo uses reusable Laravel rule objects for business validation that appears in
 
 ## Current Rules
 
-The current committed app has tag-name and todo workspace ownership rules:
+The current committed app has tag-name, project invite, and todo workspace
+ownership rules:
 
 - `App\Rules\Tags\TagName`
 - `App\Rules\Goals\GoalTitle`
 - `App\Rules\Goals\MilestoneTitle`
 - `App\Rules\Habits\HabitTargetCount`
 - `App\Rules\Habits\HabitTitle`
+- `App\Rules\Projects\ProjectInvitationExpiryDays`
+- `App\Rules\Projects\ProjectInviteRole`
 - `App\Rules\Reminders\ReminderAt`
 - `App\Rules\Todos\AcyclicTodoDependency`
 - `App\Rules\Todos\BoardStatus`
@@ -44,6 +47,14 @@ limit.
 
 `HabitTitle` validates that submitted habit titles contain visible text after
 whitespace normalization and stay within the current 120-character title limit.
+
+`ProjectInvitationExpiryDays` validates the bounded lifetime for link-only
+project invites. It accepts whole-day values from 1 to 30 and normalizes
+string inputs before `CreateProjectInvitation` stores a signed, expiring link.
+
+`ProjectInviteRole` validates assignable project invitation roles. It accepts
+only non-owner collaboration roles so forged Livewire payloads cannot create an
+owner invite.
 
 `ReminderAt` validates browser `datetime-local` reminder timestamps. It accepts
 canonical minute/second browser values in the configured app timezone and
@@ -118,13 +129,17 @@ The action layer still re-scopes ids to the current user before writing. The rul
 
 ## Translation
 
-Rule failure messages live in `lang/en/todos.php` under `todos.validation`,
+Rule failure messages live in `lang/en/todos.php` under `todos.validation` and
+feature sections such as `todos.collaboration.invites.validation`, in
 `lang/en/goals.php` under `goals.validation`, and feature-specific files such
 as `lang/en/automation.php` and `lang/en/reminders.php`.
 
 ## Future Domains
 
-Invite token, file upload, import/export, settings, and role validation rules should be added with their feature steps when the corresponding stable models and request surfaces exist. Do not create placeholder rules for future domains without a concrete caller and test.
+Invite token, file upload, import/export, settings, and future role validation
+rules should be added with their feature steps when the corresponding stable
+models and request surfaces exist. Do not create placeholder rules for future
+domains without a concrete caller and test.
 
 ## 2026-06-06 Recheck
 
@@ -259,3 +274,11 @@ Step 054 added `App\Rules\Reminders\ReminderAt` for reminder scheduling. The
 class-based reminders Livewire page uses it beside `OwnedTodo`, and
 `ReminderData` reuses the parser so direct action callers cannot bypass the
 same timestamp format.
+
+## 2026-06-06 Step 069 Update
+
+Step 069 added `App\Rules\Projects\ProjectInviteRole` and
+`App\Rules\Projects\ProjectInvitationExpiryDays` for the project invite form.
+`StoreProjectInvitationRequest` exposes the same rule set to Livewire, and
+`CreateProjectInvitation` repeats the backend guard so direct calls cannot
+create owner-role invites or unbounded links.

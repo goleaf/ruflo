@@ -2,15 +2,22 @@
 
 namespace App\Livewire\Projects;
 
+use App\Actions\Projects\CancelProjectInvitation;
+use App\Actions\Projects\CreateProjectInvitation;
 use App\Enums\ProjectRole;
+use App\Http\Requests\Projects\StoreProjectInvitationRequest;
 use App\Models\Project;
+use App\Models\ProjectInvitation;
 use App\Models\ProjectMembership;
 use App\Models\Todo;
 use App\Models\User;
+use App\Queries\Projects\ProjectInvitationQuery;
 use App\Queries\Projects\ProjectListQuery;
 use App\Queries\Projects\ProjectMembershipQuery;
 use App\Queries\Todos\TodoListQuery;
+use App\Rules\Projects\ProjectInvitationExpiryDays;
 use App\Support\Projects\ProjectAccess;
+use Flux\Flux;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -31,6 +38,10 @@ class Show extends Component
     #[Locked]
     public int $projectId;
 
+    public string $inviteRole = 'viewer';
+
+    public string $inviteExpiresInDays = '7';
+
     public function mount(int $project, ProjectListQuery $projects): void
     {
         $resolvedProject = $projects->findAccessibleFor($this->currentUser(), $project);
@@ -43,6 +54,50 @@ class Show extends Component
     public function render(): View
     {
         return view('livewire.projects.show');
+    }
+
+    public function createInvitation(CreateProjectInvitation $createInvitation): void
+    {
+        $this->authorize('manageMembers', $this->project);
+
+        $validated = $this->validate(
+            StoreProjectInvitationRequest::baseRules(),
+            attributes: StoreProjectInvitationRequest::attributeNames(),
+        );
+
+        $expiresInDays = ProjectInvitationExpiryDays::normalize($validated['inviteExpiresInDays']);
+
+        if ($expiresInDays === null) {
+            $this->addError('inviteExpiresInDays', __('todos.collaboration.invites.validation.expires_in_days'));
+
+            return;
+        }
+
+        $createInvitation->handle(
+            $this->currentUser(),
+            $this->project,
+            ProjectRole::from((string) $validated['inviteRole']),
+            $expiresInDays,
+        );
+
+        $this->inviteRole = ProjectRole::Viewer->value;
+        $this->inviteExpiresInDays = '7';
+        $this->clearInviteState();
+
+        Flux::modal('project-invite-create')->close();
+        Flux::toast(variant: 'success', text: __('todos.collaboration.invites.messages.created'));
+    }
+
+    public function cancelInvitation(int $invitationId, ProjectInvitationQuery $invitations, CancelProjectInvitation $cancelInvitation): void
+    {
+        $invitation = $invitations->findForProject($this->project, $invitationId);
+
+        $this->authorize('delete', $invitation);
+
+        $cancelInvitation->handle($this->currentUser(), $this->project, $invitation);
+        $this->clearInviteState();
+
+        Flux::toast(variant: 'success', text: __('todos.collaboration.invites.messages.cancelled'));
     }
 
     #[Computed]
@@ -84,6 +139,34 @@ class Show extends Component
         return app(ProjectMembershipQuery::class)->listForProject($this->project);
     }
 
+    /**
+     * @return Collection<int, ProjectInvitation>
+     */
+    #[Computed]
+    public function invitations(): Collection
+    {
+        if (! $this->canManageMembers) {
+            return new Collection;
+        }
+
+        return app(ProjectInvitationQuery::class)->listForProject($this->project);
+    }
+
+    /**
+     * @return array<int, array{value: string, label: string}>
+     */
+    #[Computed]
+    public function inviteRoleOptions(): array
+    {
+        return collect(ProjectRole::assignableValues())
+            ->map(fn (string $role): array => [
+                'value' => $role,
+                'label' => ProjectRole::from($role)->label(),
+            ])
+            ->values()
+            ->all();
+    }
+
     #[Computed]
     public function accessRole(): ProjectRole
     {
@@ -119,5 +202,10 @@ class Show extends Component
         abort_unless($user instanceof User, 403);
 
         return $user;
+    }
+
+    private function clearInviteState(): void
+    {
+        unset($this->invitations);
     }
 }

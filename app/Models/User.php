@@ -53,6 +53,16 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
     }
 
     /**
+     * Get project invitations created by the user.
+     *
+     * @return HasMany<ProjectInvitation, $this>
+     */
+    public function projectInvitations(): HasMany
+    {
+        return $this->hasMany(ProjectInvitation::class, 'invited_by_user_id');
+    }
+
+    /**
      * Get the user's tags.
      *
      * @return HasMany<Tag, $this>

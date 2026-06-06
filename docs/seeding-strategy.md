@@ -9,6 +9,7 @@ Step 012 covers the committed model set:
 - `HabitCheckIn`
 - `PomodoroSession`
 - `Project`
+- `ProjectInvitation`
 - `ProjectMembership`
 - `Reminder`
 - `SavedTodoView`
@@ -28,8 +29,10 @@ local/testing/demo rule definitions and generated occurrences. The tracked
 `TodoRecurrenceException` model is seeded with local/testing/demo skipped,
 edited, and moved occurrence examples. The tracked `ProjectMembership` model is
 seeded with local/testing/demo project sharing between the configured demo
-users. Future models for comments, attachments, invites, and settings are not
-seeded yet because those committed models do not exist yet.
+users. The tracked `ProjectInvitation` model is seeded with local/testing/demo
+pending, accepted, cancelled, and expired link-only invite examples. Future
+models for comments, attachments, and settings are not seeded yet because those
+committed models do not exist yet.
 
 ## Seeders
 
@@ -38,9 +41,10 @@ seeded yet because those committed models do not exist yet.
 1. `DemoUserSeeder`
 2. `TodoSeeder`
 3. `ProjectMembershipSeeder`
-4. `ExecutiveWorkspaceSeeder`
-5. `TodoRecurrenceRuleSeeder`
-6. `ActivityRecordSeeder`
+4. `ProjectInvitationSeeder`
+5. `ExecutiveWorkspaceSeeder`
+6. `TodoRecurrenceRuleSeeder`
+7. `ActivityRecordSeeder`
 
 `DemoUserSeeder` creates the configured demo users only when the app is running in a safe environment: `local`, `testing`, or `demo`, and when the demo login panel is enabled. The first configured demo user is seeded as an admin for protected local maintenance access; the second configured demo user is seeded as a normal account for denial and isolation checks.
 
@@ -108,6 +112,12 @@ after the configured demo users and their seeded projects exist. Avery shares
 Work with Morgan as editor and Home with Morgan as viewer; Morgan shares Work
 with Avery as manager. The seeder updates active rows by project and member and
 does not create owner membership rows.
+
+`ProjectInvitationSeeder` creates local/testing/demo link-only invite examples
+only after the configured demo users and seeded projects exist. It writes one
+pending, one accepted, one cancelled, and one expired invitation with
+deterministic tokens so repeated seed runs update the same rows. Invite seed
+data does not send email and does not create global access.
 
 Step 045's focus mode also reuses the current catalog. `Review the current
 flow` is high priority and due today, while `Send the overdue report` is urgent

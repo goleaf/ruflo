@@ -42,6 +42,7 @@ test('generated named routes use the configured https root', function () {
         ->and(route('todos.reminders'))->toBe('https://ruflo.test/todos/reminders')
         ->and(route('todos.recurring'))->toBe('https://ruflo.test/todos/recurring')
         ->and(route('todos.show', 123))->toBe('https://ruflo.test/todos/123')
+        ->and(route('projects.invitations.accept', ['token' => 'InviteToken123']))->toBe('https://ruflo.test/project-invitations/InviteToken123')
         ->and(route('setup.status'))->toBe('https://ruflo.test/settings/setup')
         ->and(route('maintenance.center'))->toBe('https://ruflo.test/settings/maintenance');
 });
@@ -59,5 +60,6 @@ test('signed and storage urls use the configured https root', function () {
     );
 
     expect($signedUrl)->toStartWith('https://ruflo.test/email/verify/1/')
+        ->and(URL::temporarySignedRoute('projects.invitations.accept', now()->addMinutes(10), ['token' => 'InviteToken123']))->toStartWith('https://ruflo.test/project-invitations/InviteToken123')
         ->and(Storage::disk('public')->url('exports/tasks.csv'))->toBe('https://ruflo.test/storage/exports/tasks.csv');
 });

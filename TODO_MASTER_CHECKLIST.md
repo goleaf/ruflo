@@ -16,7 +16,7 @@ Use this file as a persistent task tracker. Step detail lives in `TODO_MASTER_PR
 - [x] Login demo users panel complete
 - [x] Factory coverage complete
 - [x] Seeds/factories complete
-- [ ] Link-only invites complete
+- [x] Link-only invites complete
 - [x] Request classes complete
 - [x] Custom validation rules complete
 - [x] English translations complete
@@ -94,7 +94,7 @@ Use this file as a persistent task tracker. Step detail lives in `TODO_MASTER_PR
 - [x] Step 066 — Activity history
 - [x] Step 067 — Task timeline UI
 - [x] Step 068 — Collaboration foundation
-- [ ] Step 069 — Link-only invite system
+- [x] Step 069 — Link-only invite system
 - [ ] Step 070 — Member management
 - [ ] Step 071 — Shared dashboard search filter scope
 - [ ] Step 072 — Comments

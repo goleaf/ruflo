@@ -8,6 +8,7 @@ use App\Models\Habit;
 use App\Models\HabitCheckIn;
 use App\Models\PomodoroSession;
 use App\Models\Project;
+use App\Models\ProjectInvitation;
 use App\Models\ProjectMembership;
 use App\Models\Reminder;
 use App\Models\SavedTodoView;
@@ -27,6 +28,7 @@ use App\Policies\GoalPolicy;
 use App\Policies\HabitCheckInPolicy;
 use App\Policies\HabitPolicy;
 use App\Policies\PomodoroSessionPolicy;
+use App\Policies\ProjectInvitationPolicy;
 use App\Policies\ProjectMembershipPolicy;
 use App\Policies\ProjectPolicy;
 use App\Policies\ReminderPolicy;
@@ -44,6 +46,7 @@ test('tracked private resources resolve explicit policies', function () {
     expect(Gate::getPolicyFor(Todo::class))->toBeInstanceOf(TodoPolicy::class)
         ->and(Gate::getPolicyFor(Project::class))->toBeInstanceOf(ProjectPolicy::class)
         ->and(Gate::getPolicyFor(ProjectMembership::class))->toBeInstanceOf(ProjectMembershipPolicy::class)
+        ->and(Gate::getPolicyFor(ProjectInvitation::class))->toBeInstanceOf(ProjectInvitationPolicy::class)
         ->and(Gate::getPolicyFor(Goal::class))->toBeInstanceOf(GoalPolicy::class)
         ->and(Gate::getPolicyFor(GoalMilestone::class))->toBeInstanceOf(GoalMilestonePolicy::class)
         ->and(Gate::getPolicyFor(Habit::class))->toBeInstanceOf(HabitPolicy::class)

@@ -12,6 +12,7 @@ Step 011 covers the tracked application models:
 - `App\Models\HabitCheckIn`
 - `App\Models\PomodoroSession`
 - `App\Models\Project`
+- `App\Models\ProjectInvitation`
 - `App\Models\ProjectMembership`
 - `App\Models\Reminder`
 - `App\Models\SavedTodoView`
@@ -103,6 +104,19 @@ dependencies, checklist rows, time entries, and Pomodoro sessions.
 Project memberships are not owner rows. The project owner remains
 `projects.user_id`; memberships grant explicit manager, editor, or viewer access
 to another user.
+
+`ProjectInvitationFactory` covers:
+
+- default pending viewer invite links,
+- `forProject()` to attach the invite to a project and default the inviter to
+  the project owner,
+- `invitedBy()` to set the link creator,
+- deterministic `withToken()` state for signed-link tests and seeders,
+- manager, editor, and viewer role states,
+- expired, cancelled, and accepted lifecycle states.
+
+Project invitations are not memberships. Pending invite links grant no access
+until an authenticated user accepts a still-pending signed link.
 
 ## Goal And Milestone Factories
 

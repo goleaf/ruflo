@@ -4,6 +4,7 @@ Record changes after every step.
 
 ## Unreleased
 
+- Completed Step 069 by adding link-only project invitations with encrypted tokens, signed `https://ruflo.test` accept links, no email sending, cancellation, expiration, accepted/used state, a generic authenticated accept page, Flux create/copy/cancel UI, validation rules, factory/seeder states, docs, and focused privacy tests.
 - Completed Step 068 by adding explicit project memberships with manager/editor/viewer roles, central project-access resolution, project/task policy expansion, owner-plus-member project detail UI, local/testing/demo membership seeding, collaboration docs, and focused role/privacy tests.
 - Completed Step 067 by adding an owner-scoped task timeline to private task detail pages, sharing activity formatting with `/activity`, adding a task timeline activity index, bounded Load more behavior, hiding stale/deleted subject links, translating the Flux UI, and adding focused timeline privacy tests.
 - Completed Step 066 by adding owner-scoped activity history records, synchronous todo lifecycle/checklist/completed-clear activity logging with safe metadata snapshots, a protected `/activity` Flux timeline, demo factory/seeder support, docs, and focused activity/privacy regression tests.

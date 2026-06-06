@@ -2,19 +2,19 @@
 
 ## Current status
 
-Individual ledger rows for Steps 001 through 068 are complete. The requested recheck from Step 001 has been completed through Step 068. The tracker is expanded to one ledger line per step from 001 through 100 so later work cannot be hidden behind a range.
+Individual ledger rows for Steps 001 through 069 are complete. The requested recheck from Step 001 has been completed through Step 069. The tracker is expanded to one ledger line per step from 001 through 100 so later work cannot be hidden behind a range.
 
 ## Current step
 
-Step 069 — Link-only invite system
+Step 070 — Member management
 
 ## Last completed action
 
-Completed Step 068 by adding explicit project memberships with manager/editor/viewer roles, central project-access resolution, project/task policy expansion, owner-plus-member project detail UI, local/testing/demo membership seeding, collaboration docs, and focused role/privacy tests.
+Completed Step 069 by adding link-only project invitations with signed copyable links, cancellation, expiration, accepted/used state, a generic authenticated accept page, validation rules, factory/seeder states, docs, and focused privacy tests.
 
 ## Next action
 
-Begin `steps/step-069-link-only-invite-system.md`, then implement the next not-yet-completed plan step without grouping it with later work.
+Begin `steps/step-070-member-management.md`, then implement the next not-yet-completed plan step without grouping it with later work.
 
 ## Step ledger
 
@@ -88,7 +88,7 @@ Begin `steps/step-069-link-only-invite-system.md`, then implement the next not-y
 | 066 — Activity history | Complete | Added owner-scoped `activity_records`, synchronous todo/checklist/completed-clear event recording, safe allow-listed metadata snapshots, a protected `/activity` class-based Livewire/Flux timeline, navigation, translations, and demo factory/seeder support. | Boost app/docs/schema/URL/browser-log checks, PHP syntax, focused ActivityHistory tests, adjacent todo/localization/privacy suites, bulk/trash regression suite, route/localization checks, no-Volt source scan, Pint, Vite build, diff checks, and full-suite run recorded. Full suite remains blocked by unrelated dirty worktree drift after 691 passing tests. | Added `docs/activity-history.md`; updated authorization, factory coverage, restricted hosting, app changelog, checklist, progress, decisions, risks, and test report. | Partially loaded bulk-event todo snapshots lacked titles during verification; mitigated with a with-trashed snapshot fallback and bulk regression coverage. Unrelated full-suite blocker remains tracked. | 68948d5 |
 | 067 — Task timeline UI | Complete | Added class-based task detail timeline UI backed by `TodoListQuery`, `ActivityFeedQuery::forTodo()`, shared activity formatting, bounded Load more behavior, the task timeline composite index, and no stale subject links. | Boost runtime/docs/schema/URL/log checks, migration/schema verification, PHP syntax checks, focused timeline test pass with 4 tests/19 assertions, adjacent activity/private/detail tests with 20 tests/111 assertions, related todo suite with 41 tests/198 assertions, localization pass, no-Volt scan, Pint, Vite build, route check, diff checks, and full-suite result recorded in test report. | Updated activity history, authorization, lifecycle, changelog, root checklist, progress, decisions, risks, and test report. | Full-suite verification remains affected by unrelated dirty worktree drift; focused and related Step 067 checks pass. | be76871 |
 | 068 — Collaboration foundation | Complete | Added `project_memberships`, `ProjectRole`, `ProjectAccess`, membership actions/query/policy/factory/seeder, shared project/task policy expansion, accessible project lookup, shared project detail member summaries, and translated collaboration role/scope copy. Link-only invites and member-management forms remain reserved for Steps 069 and 070. | Boost runtime/docs/schema/browser-log checks, migration/status verification, PHP syntax checks, no-Volt/no-`@php` scan, focused collaboration pass with 6 tests/49 assertions, project/policy/factory suite pass with 61 tests/650 assertions, shared task suite pass with 40 tests/247 assertions, seeder/localization checks, Pint, Vite build, route check, diff checks, and full-suite result recorded in test report. | Added `docs/collaboration.md`; updated authorization, task organization, seeding strategy, factory coverage, app changelog, root checklist, changelog, decisions, risks, progress, and test report. | Full-suite verification remains affected by unrelated dirty worktree drift; focused and related Step 068 checks pass. | a6d9156 |
-| 069 — Link-only invite system | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 069 — Link-only invite system | Complete | Added `project_invitations`, encrypted invite tokens plus token hashes, signed `https://ruflo.test/project-invitations/{token}` accept links, no-email create/copy/cancel UI on project detail, a generic authenticated accept page, expiration/cancellation/accepted states, and role-safe membership creation through the existing member action. | Boost runtime/docs/schema/URL/browser-log checks, migration/schema verification, PHP syntax checks, invite route check, focused invite pass with 6 tests/42 assertions, adjacent invite/collaboration/policy/domain/route/factory/seeder pass with 156 tests/1183 assertions, localization pass, Pint, Vite build, no-Volt/no-`@php` scan, and diff check passed. Full suite remains blocked by unrelated dirty worktree drift after 710 passing tests. | Updated `docs/collaboration.md`, `docs/authorization.md`, `docs/domain-readiness.md`, `docs/factory-coverage.md`, `docs/request-validation.md`, `docs/validation-rules.md`, `docs/seeding-strategy.md`, app changelog, root checklist, changelog, decisions, risks, progress, and test report. | Link-only invite URLs can be forwarded before acceptance; mitigated with manual-sharing warnings, expiration, cancellation, signed URLs, generic pre-acceptance page, and no project data disclosure before acceptance. Unrelated `/goals` browser-log errors and unrelated full-suite failures remain outside this step. | Pending |
 | 070 — Member management | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
 | 071 — Shared dashboard search filter scope | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
 | 072 — Comments | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |

@@ -47,6 +47,39 @@ Step 068 intentionally does not create invite links or member-management forms.
 Those are reserved for Steps 069 and 070 so link-only invite and role-editing
 flows can have their own request classes, validation rules, tests, and docs.
 
+## Link-Only Invites
+
+Step 069 adds `project_invitations` for copyable, manually shared invite links.
+RuFlo does not send invite emails. Users with member-management access create a
+signed HTTPS link from the project detail page, copy it, and share it through
+their own trusted channel.
+
+Invite links store an encrypted token plus a token hash for lookup. Pending
+links can be copied until they expire or are cancelled. Accepted, cancelled,
+and expired links do not grant access.
+
+Invite acceptance uses the protected signed route:
+
+```text
+https://ruflo.test/project-invitations/{token}
+```
+
+The accept page is authenticated and verified. It intentionally shows only a
+generic invite screen, requested role, status, and expiration before acceptance;
+the project name, tasks, and members remain hidden until the invite creates an
+active membership for the accepting account.
+
+Acceptance re-checks that:
+
+- the invite is still pending,
+- the project is still active,
+- the stored role is still assignable,
+- the inviter can still manage project members,
+- the accepting user is not the project owner.
+
+The membership write reuses `AddProjectMember`, so owner-role and owner-member
+guards stay centralized.
+
 ## Seeding
 
 `ProjectMembershipSeeder` runs only in local, testing, or demo environments. It
@@ -56,9 +89,19 @@ creates an idempotent demo sharing graph between the configured demo users:
 - Avery shares Home with Morgan as viewer.
 - Morgan shares Work with Avery as manager.
 
+`ProjectInvitationSeeder` also runs only in local, testing, or demo
+environments. It creates deterministic pending, accepted, cancelled, and
+expired link-only invite examples for the configured demo users so the project
+detail page immediately shows every invite state after seeding.
+
 ## Restricted Hosting
 
 Collaboration reads and writes happen inside normal authenticated web requests.
 The foundation requires no cron, queue workers, supervisors, terminal access,
 Artisan commands during normal usage, emails, paid services, hosted services, or
 external identity provider.
+
+Link-only invites follow the same restricted-hosting contract. Creation,
+cancellation, and acceptance are normal web requests. There is no cron, queue
+worker, supervisor, terminal action, Artisan command during normal usage, email
+provider, hosted invite service, or paid dependency.

@@ -22,6 +22,7 @@ use App\Models\Habit;
 use App\Models\HabitCheckIn;
 use App\Models\PomodoroSession;
 use App\Models\Project;
+use App\Models\ProjectInvitation;
 use App\Models\ProjectMembership;
 use App\Models\Reminder;
 use App\Models\SavedTodoView;
@@ -41,6 +42,7 @@ test('tracked models can be created from their default factories', function () {
     $project = Project::factory()->for($user)->create();
     $projectMember = User::factory()->create();
     $projectMembership = ProjectMembership::factory()->forProject($project)->forMember($projectMember)->editor()->create();
+    $projectInvitation = ProjectInvitation::factory()->forProject($project)->invitedBy($user)->manager()->create();
     $goal = Goal::factory()->forProject($project)->create();
     $milestone = GoalMilestone::factory()->forGoal($goal)->completed()->position(1)->create();
     $habit = Habit::factory()->forGoal($goal)->daily()->create();
@@ -67,6 +69,11 @@ test('tracked models can be created from their default factories', function () {
         ->and($projectMembership->user->is($projectMember))->toBeTrue()
         ->and($projectMembership->role)->toBe(ProjectRole::Editor)
         ->and($projectMembership->isActive())->toBeTrue()
+        ->and($projectInvitation->project->is($project))->toBeTrue()
+        ->and($projectInvitation->invitedBy->is($user))->toBeTrue()
+        ->and($projectInvitation->role)->toBe(ProjectRole::Manager)
+        ->and($projectInvitation->isPending())->toBeTrue()
+        ->and($projectInvitation->shareUrl())->toStartWith('https://ruflo.test/project-invitations/')
         ->and($goal->isOwnedBy($user))->toBeTrue()
         ->and($goal->project_id)->toBe($project->id)
         ->and($milestone->isOwnedBy($user))->toBeTrue()

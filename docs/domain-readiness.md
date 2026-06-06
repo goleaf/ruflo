@@ -36,6 +36,8 @@ The current application surface covers these URL consumers:
 - Authenticated browser-triggered automation rules route at `/todos/automations`.
 - Authenticated browser-triggered reminders route at `/todos/reminders`.
 - Authenticated recurring task rules route at `/todos/recurring`.
+- Authenticated signed project invite accept route at
+  `/project-invitations/{token}`.
 - Authenticated todo route at `/todos`.
 - Authenticated Today route at `/todos/today`.
 - Authenticated Overdue route at `/todos/overdue`.
@@ -120,3 +122,11 @@ named routes, and task links still resolve through the existing owner-scoped
 Step 064 adds the protected `reports.overview` route at
 `https://ruflo.test/reports`. Report shortcut links use named routes for tasks,
 projects, habits, time tracking, overdue work, and the dashboard.
+
+## 2026-06-06 Step 069 Update
+
+Step 069 adds the protected signed `projects.invitations.accept` route at
+`https://ruflo.test/project-invitations/{token}`. Invite links are generated
+with `URL::temporarySignedRoute()` and the configured HTTPS `app.url`, then
+copied manually from the project detail page. There is no email invite
+dependency.

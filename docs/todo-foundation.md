@@ -161,6 +161,11 @@ badge colors, enum weights, Laravel enum validation, direct DTO invalid-value
 rejection, default Normal priority behavior, owner-scoped priority filtering,
 and enum-owned SQL sort expressions.
 
+Step 031 adds `TaskDueDateTest`, which locks date-only validation, direct DTO
+invalid-date rejection, missing-date normalization, app-timezone bucket logic,
+active-only today/overdue/upcoming filters, and due-query sanitization outside
+the Active tab.
+
 ## 2026-06-06 Recheck
 
 The Step 001 recheck confirmed the foundation still matches the current master-plan rules after Steps 002-016:

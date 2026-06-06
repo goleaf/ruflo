@@ -6,6 +6,7 @@ use App\Data\Todos\TodoData;
 use App\Enums\Priority;
 use App\Models\Todo;
 use App\Models\User;
+use App\Rules\Todos\DueDate;
 use App\Rules\Todos\OwnedActiveProject;
 use App\Rules\Todos\OwnedTag;
 use Illuminate\Support\Facades\Auth;
@@ -41,7 +42,7 @@ class TodoForm extends Form
         return [
             'title' => ['required', 'string', 'max:120'],
             'priority' => ['required', Rule::enum(Priority::class)],
-            'due_date' => ['nullable', 'date'],
+            'due_date' => ['nullable', 'string', new DueDate],
             'project_id' => ['nullable', 'integer', new OwnedActiveProject($user)],
             'tag_ids' => ['array'],
             'tag_ids.*' => ['integer', new OwnedTag($user)],

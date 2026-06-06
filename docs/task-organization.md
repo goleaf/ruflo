@@ -69,9 +69,23 @@ the enum.
 
 ## Due dates & date buckets
 
-Dates are compared in the **application timezone** (server) until per-user
-timezone arrives in a later step — documented here so the assumption is
-explicit. The buckets, all **active-only** (completed/archived tasks are never
+Dates are stored as date-only `Y-m-d` values in `todos.due_date` and compared in
+the configured **application timezone**. The current local/test configuration is
+UTC. Per-user timezone preferences are intentionally deferred to the later
+language/timezone settings step, so due-date buckets do not currently shift per
+account.
+
+Step 031 tightened due-date handling:
+
+- Livewire create/edit forms use the reusable `DueDate` validation rule so only
+  canonical `Y-m-d` date strings are accepted.
+- `TodoData::fromArray()` normalizes empty due dates to `null` and rejects
+  invalid provided dates with a translated validation error instead of relying
+  on broad PHP date parsing.
+- `Todo` exposes active-only `isOverdue()`, `isDueToday()`, and `isUpcoming()`
+  helpers that match the query scopes.
+
+The buckets, all **active-only** (completed/archived/deleted tasks are never
 overdue/today/upcoming):
 
 - **Due today** — `due_date == today`, active.
@@ -80,7 +94,7 @@ overdue/today/upcoming):
 - **Upcoming** — `due_date > today`, active.
 
 These live as model scopes (`scopeDueToday`/`scopeOverdue`/`scopeUpcoming`) plus
-`isOverdue()`/`isDueToday()` helpers, and feed the summary's `overdue` counter.
+the matching model helpers, and feed the summary's `overdue` counter.
 
 ## Search, filters, sorting
 

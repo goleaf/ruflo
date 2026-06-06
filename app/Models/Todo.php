@@ -162,6 +162,16 @@ class Todo extends Model
     }
 
     /**
+     * Whether the task is actionable and due after today.
+     */
+    public function isUpcoming(): bool
+    {
+        return $this->due_date !== null
+            && $this->isActive()
+            && $this->due_date->greaterThan(today());
+    }
+
+    /**
      * Scope to actionable tasks due today (app timezone).
      *
      * @param  Builder<static>  $query

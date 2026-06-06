@@ -7,6 +7,7 @@ RuFlo uses reusable Laravel rule objects for business validation that appears in
 The current committed app has tag-name and todo workspace ownership rules:
 
 - `App\Rules\Tags\TagName`
+- `App\Rules\Todos\DueDate`
 - `App\Rules\Todos\OwnedActiveProject`
 - `App\Rules\Todos\OwnedTag`
 - `App\Rules\Todos\OwnedTodo`
@@ -14,6 +15,10 @@ The current committed app has tag-name and todo workspace ownership rules:
 `TagName` validates that a submitted tag name still has visible content after
 normalization (`squish()` + lower-case). It prevents whitespace-only labels
 from being persisted if a form input contains only spaces.
+
+`DueDate` validates optional task due dates. Empty values are allowed so
+`nullable` form fields can clear a date, but provided values must be canonical
+`Y-m-d` date strings parsed in the configured app timezone.
 
 `OwnedActiveProject` validates that a project id belongs to the authenticated user and is not archived. It is used for task project assignment and bulk move targets.
 
@@ -48,3 +53,10 @@ Confirmed and updated:
 Step 029 added `App\Rules\Tags\TagName` and wired it into tag creation. The
 `CreateTag` action also rejects a normalized empty name so backend callers stay
 safe if Livewire validation is bypassed.
+
+## 2026-06-06 Step 031 Recheck
+
+Step 031 added `App\Rules\Todos\DueDate` and wired it into the shared task
+create/edit form. The `TodoData` DTO reuses the same parser so invalid direct
+due-date input fails with `todos.validation.due_date` instead of reaching the
+database cast.

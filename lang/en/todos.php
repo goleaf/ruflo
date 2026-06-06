@@ -238,6 +238,7 @@ return [
         'owned_deleted_todo' => 'Choose one of your deleted tasks.',
         'tag_name' => 'Enter a tag name with at least one letter or number.',
         'priority' => 'Choose a valid priority.',
+        'due_date' => 'Enter a valid due date.',
     ],
 
     'modals' => [

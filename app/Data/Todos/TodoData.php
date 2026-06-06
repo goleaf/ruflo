@@ -3,6 +3,7 @@
 namespace App\Data\Todos;
 
 use App\Enums\Priority;
+use App\Rules\Todos\DueDate;
 use Illuminate\Validation\ValidationException;
 
 /**
@@ -44,7 +45,7 @@ final readonly class TodoData
         return new self(
             title: trim($validated['title']),
             priority: self::priorityFrom($validated['priority'] ?? null),
-            dueDate: ($dueDate === null || $dueDate === '') ? null : $dueDate,
+            dueDate: self::dueDateFrom($dueDate),
             projectId: ($projectId === null || $projectId === '') ? null : (int) $projectId,
             tagIds: array_values(array_map('intval', $validated['tag_ids'] ?? [])),
         );
@@ -72,6 +73,21 @@ final readonly class TodoData
         return Priority::tryFrom((string) $priority)
             ?? throw ValidationException::withMessages([
                 'priority' => __('todos.validation.priority'),
+            ]);
+    }
+
+    /**
+     * @throws ValidationException
+     */
+    private static function dueDateFrom(mixed $dueDate): ?string
+    {
+        if ($dueDate === null || $dueDate === '') {
+            return null;
+        }
+
+        return DueDate::normalize($dueDate)
+            ?? throw ValidationException::withMessages([
+                'due_date' => __('todos.validation.due_date'),
             ]);
     }
 }

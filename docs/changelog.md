@@ -450,6 +450,33 @@
 
 - Added `docs/frontend-design-system.md` with Tailwind 4, Flux, and SCSS usage rules.
 
+## 2026-06-06 - Step 031 Due dates and date logic
+
+### Implemented
+
+- Added `App\Rules\Todos\DueDate` for canonical `Y-m-d` due-date validation.
+- Wired the due-date rule into the shared Livewire todo form used by create and
+  edit flows.
+- Hardened `TodoData::fromArray()` so direct callers normalize empty due dates
+  to `null` and invalid provided dates raise translated validation errors.
+- Added `Todo::isUpcoming()` so the model has explicit helper parity with the
+  today/overdue/upcoming query scopes.
+
+### Testing
+
+- Added `TaskDueDateTest` for strict date parsing, Livewire create/edit
+  rejection, direct DTO bypass protection, app-timezone buckets, active-only
+  exclusions, owner scoping, and due-filter tab sanitization.
+- Re-ran adjacent todo organization, creation, editing, dashboard, factory,
+  seeder, validation-rule, private-view, project-detail, and architecture
+  coverage.
+
+### Documentation
+
+- Updated `docs/task-organization.md`, `docs/validation-rules.md`, and
+  `docs/todo-foundation.md` with the date-only validation and timezone
+  contract.
+
 ## 2026-06-06 - Step 030 Priorities
 
 ### Implemented

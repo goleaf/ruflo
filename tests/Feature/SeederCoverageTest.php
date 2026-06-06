@@ -21,7 +21,8 @@ test('database seeder creates safe demo users and complete private workspaces', 
         ->and(Project::query()->count())->toBe(6)
         ->and(Reminder::query()->count())->toBe(0)
         ->and(Tag::query()->count())->toBe(4)
-        ->and(Todo::query()->count())->toBe(14);
+        ->and(Todo::query()->count())->toBe(14)
+        ->and(Todo::withTrashed()->count())->toBe(16);
 
     $users->each(function (User $user): void {
         expect($user->projects()->whereNull('archived_at')->count())->toBe(2)
@@ -30,6 +31,7 @@ test('database seeder creates safe demo users and complete private workspaces', 
             ->and($user->todos()->active()->count())->toBe(4)
             ->and($user->todos()->completed()->count())->toBe(1)
             ->and($user->todos()->archived()->count())->toBe(2)
+            ->and($user->todos()->onlyTrashed()->count())->toBe(1)
             ->and($user->todos()->overdue()->count())->toBe(1)
             ->and($user->todos()->dueToday()->count())->toBe(1)
             ->and($user->todos()->upcoming()->count())->toBe(1);
@@ -45,6 +47,7 @@ test('database seeder is idempotent for the current demo catalog', function () {
         ->and(Reminder::query()->count())->toBe(0)
         ->and(Tag::query()->count())->toBe(4)
         ->and(Todo::query()->count())->toBe(14)
+        ->and(Todo::withTrashed()->count())->toBe(16)
         ->and(Todo::query()->where('title', 'Review the current flow')->count())->toBe(2);
 });
 

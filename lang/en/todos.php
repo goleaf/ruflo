@@ -38,18 +38,21 @@ return [
         'overdue' => 'Overdue',
         'completed' => 'Completed',
         'archived' => 'Archived',
+        'trash' => 'Trash',
     ],
 
     'tabs' => [
         'active' => 'Active',
         'completed' => 'Completed',
         'archived' => 'Archived',
+        'trash' => 'Trash',
     ],
 
     'status' => [
         'active' => 'Active',
         'completed' => 'Completed',
         'archived' => 'Archived',
+        'trash' => 'Trash',
     ],
 
     'priority' => [
@@ -100,6 +103,7 @@ return [
         'archive' => 'Archive',
         'unarchive' => 'Unarchive',
         'restore' => 'Restore',
+        'restore_from_trash' => 'Restore from trash',
         'delete' => 'Delete',
         'more' => 'More actions',
         'back_to_list' => 'Back to tasks',
@@ -117,14 +121,15 @@ return [
         'complete' => 'Complete',
         'archive' => 'Archive',
         'unarchive' => 'Unarchive',
+        'restore' => 'Restore',
         'move_to' => 'Move to',
         'move' => 'Move',
         'delete' => 'Delete',
     ],
 
     'confirmations' => [
-        'delete' => 'Delete this task? You can no longer act on it from your lists.',
-        'bulk_delete' => 'Delete the selected tasks?',
+        'delete' => 'Move this task to Trash? You can restore it later.',
+        'bulk_delete' => 'Move the selected tasks to Trash?',
         'clear_completed' => 'Delete all completed tasks?',
         'delete_project' => 'Delete this project? Its tasks are kept and moved to "No project".',
         'delete_tag' => 'Delete this tag? It is removed from any tasks using it.',
@@ -142,6 +147,10 @@ return [
         'archived' => [
             'title' => 'Your archive is empty.',
             'description' => 'Archive a task to set it aside without deleting it.',
+        ],
+        'trash' => [
+            'title' => 'Trash is empty.',
+            'description' => 'Deleted tasks appear here until you restore them.',
         ],
         'search' => [
             'title' => 'No matching tasks.',
@@ -194,6 +203,7 @@ return [
         'archived' => 'Task archived.',
         'unarchived' => 'Task unarchived.',
         'deleted' => 'Task deleted.',
+        'restored_from_trash' => 'Task restored from trash.',
         'completed_cleared' => 'Completed tasks cleared.',
         'bulk_done' => 'Updated :count task(s).',
         'cannot_change_completion_archived' => 'Unarchive this task before completing or reopening it.',
@@ -209,6 +219,7 @@ return [
         'owned_active_project' => 'Choose one of your active projects.',
         'owned_tag' => 'Choose one of your tags.',
         'owned_todo' => 'Choose one of your tasks.',
+        'owned_deleted_todo' => 'Choose one of your deleted tasks.',
     ],
 
     'modals' => [

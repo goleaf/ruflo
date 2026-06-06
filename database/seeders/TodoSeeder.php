@@ -13,9 +13,10 @@ use Illuminate\Database\Seeder;
  * Seeds realistic, isolated todo workspaces.
  *
  * Every user gets projects, tags, and tasks across the full range of states
- * (active, due today, overdue, upcoming, high priority, completed, archived) so
- * that ownership, filters, due-date buckets, and bulk actions can be exercised
- * by hand and so permission bugs cannot hide behind thin single-user data.
+ * (active, due today, overdue, upcoming, high priority, completed, archived,
+ * trashed) so that ownership, filters, due-date buckets, and bulk actions can
+ * be exercised by hand and so permission bugs cannot hide behind thin
+ * single-user data.
  */
 class TodoSeeder extends Seeder
 {
@@ -75,6 +76,12 @@ class TodoSeeder extends Seeder
             'priority' => Priority::High,
             'archived_at' => now(),
         ], $waiting);
+
+        $this->upsertTodo($user, 'Removed duplicate task', [
+            'project_id' => $home->id,
+            'priority' => Priority::Low,
+            'deleted_at' => now()->subDays(2),
+        ]);
     }
 
     private function upsertProject(User $user, string $name, string $color, bool $archived = false): Project
@@ -111,11 +118,12 @@ class TodoSeeder extends Seeder
     }
 
     /**
-     * @param  array{project_id?: int, priority?: Priority, due_date?: string|null, is_completed?: bool, archived_at?: mixed}  $attributes
+     * @param  array{project_id?: int, priority?: Priority, due_date?: string|null, is_completed?: bool, archived_at?: mixed, deleted_at?: mixed}  $attributes
      */
     private function upsertTodo(User $user, string $title, array $attributes, Tag ...$tags): Todo
     {
         $todo = Todo::query()
+            ->withTrashed()
             ->where('user_id', $user->id)
             ->where('title', $title)
             ->first() ?? new Todo;
@@ -128,7 +136,7 @@ class TodoSeeder extends Seeder
             'due_date' => $attributes['due_date'] ?? null,
             'is_completed' => $attributes['is_completed'] ?? false,
             'archived_at' => $attributes['archived_at'] ?? null,
-            'deleted_at' => null,
+            'deleted_at' => $attributes['deleted_at'] ?? null,
         ])->save();
 
         $todo->tags()->sync(collect($tags)->pluck('id')->all());

@@ -34,7 +34,8 @@ it('allows the owner every per-record ability', function () {
         ->and($gate->allows('reopen', $todo))->toBeTrue()
         ->and($gate->allows('archive', $todo))->toBeTrue()
         ->and($gate->allows('delete', $todo))->toBeTrue()
-        ->and($gate->allows('unarchive', $todo))->toBeTrue();
+        ->and($gate->allows('unarchive', $todo))->toBeTrue()
+        ->and($gate->allows('restore', $todo))->toBeTrue();
 });
 
 it('denies every per-record ability to a non-owner', function () {
@@ -50,7 +51,8 @@ it('denies every per-record ability to a non-owner', function () {
         ->and($gate->denies('reopen', $todo))->toBeTrue()
         ->and($gate->denies('archive', $todo))->toBeTrue()
         ->and($gate->denies('delete', $todo))->toBeTrue()
-        ->and($gate->denies('unarchive', $todo))->toBeTrue();
+        ->and($gate->denies('unarchive', $todo))->toBeTrue()
+        ->and($gate->denies('restore', $todo))->toBeTrue();
 });
 
 it('denies cross-user access as not found so existence does not leak', function () {
@@ -138,5 +140,6 @@ it('lets any authenticated user act inside their own workspace', function () {
         ->and($gate->allows('bulkArchive', Todo::class))->toBeTrue()
         ->and($gate->allows('bulkUnarchive', Todo::class))->toBeTrue()
         ->and($gate->allows('bulkMove', Todo::class))->toBeTrue()
-        ->and($gate->allows('bulkDelete', Todo::class))->toBeTrue();
+        ->and($gate->allows('bulkDelete', Todo::class))->toBeTrue()
+        ->and($gate->allows('bulkRestoreDeleted', Todo::class))->toBeTrue();
 });

@@ -14,12 +14,14 @@ use App\Actions\Todos\BulkArchiveTodos;
 use App\Actions\Todos\BulkCompleteTodos;
 use App\Actions\Todos\BulkDeleteTodos;
 use App\Actions\Todos\BulkMoveTodos;
+use App\Actions\Todos\BulkRestoreDeletedTodos;
 use App\Actions\Todos\BulkUnarchiveTodos;
 use App\Actions\Todos\ClearCompletedTodos;
 use App\Actions\Todos\CompleteTodo;
 use App\Actions\Todos\CreateTodo;
 use App\Actions\Todos\DeleteTodo;
 use App\Actions\Todos\ReopenTodo;
+use App\Actions\Todos\RestoreDeletedTodo;
 use App\Actions\Todos\UnarchiveTodo;
 use App\Actions\Todos\UpdateTodo;
 use App\Data\Projects\ProjectData;
@@ -286,6 +288,17 @@ class Index extends Component
         Flux::toast(variant: 'success', text: __('todos.messages.deleted'));
     }
 
+    public function restoreDeletedTodo(int $todoId, TodoListQuery $query, RestoreDeletedTodo $restore): void
+    {
+        $todo = $query->findTrashedFor($this->currentUser(), $todoId);
+        $this->authorize('restore', $todo);
+
+        $restore->handle($todo);
+        $this->refreshLists();
+
+        Flux::toast(variant: 'success', text: __('todos.messages.restored_from_trash'));
+    }
+
     public function clearCompleted(ClearCompletedTodos $clearCompleted): void
     {
         $this->authorize('clearCompleted', Todo::class);
@@ -331,6 +344,15 @@ class Index extends Component
     {
         $this->validateBulkSelection();
         $this->authorize('bulkDelete', Todo::class);
+
+        $count = $bulk->handle($this->currentUser(), $this->selectedIds());
+        $this->afterBulk($count);
+    }
+
+    public function bulkRestoreDeleted(BulkRestoreDeletedTodos $bulk): void
+    {
+        $this->validateBulkSelection(onlyTrashed: true);
+        $this->authorize('bulkRestoreDeleted', Todo::class);
 
         $count = $bulk->handle($this->currentUser(), $this->selectedIds());
         $this->afterBulk($count);
@@ -476,7 +498,7 @@ class Index extends Component
     }
 
     /**
-     * @return array{active: int, completed: int, archived: int, overdue: int}
+     * @return array{active: int, completed: int, archived: int, trash: int, overdue: int}
      */
     #[Computed]
     public function summary(): array
@@ -597,14 +619,14 @@ class Index extends Component
         );
     }
 
-    private function validateBulkSelection(): void
+    private function validateBulkSelection(bool $onlyTrashed = false): void
     {
         $user = $this->currentUser();
 
         $this->validate(
             [
                 'selected' => ['required', 'array', 'min:1'],
-                'selected.*' => ['integer', 'min:1', new OwnedTodo($user)],
+                'selected.*' => ['integer', 'min:1', new OwnedTodo($user, onlyTrashed: $onlyTrashed)],
             ],
             attributes: [
                 'selected' => __('todos.bulk.selected_items'),

@@ -14,6 +14,10 @@ use Illuminate\Support\Facades\Gate;
  */
 final class BulkDeleteTodos
 {
+    public function __construct(
+        private readonly DeleteTodo $deleteTodo,
+    ) {}
+
     /**
      * @param  list<int>  $ids
      */
@@ -29,8 +33,8 @@ final class BulkDeleteTodos
 
         $todos->each(fn (Todo $todo) => Gate::forUser($user)->authorize('delete', $todo));
 
-        return $user->todos()
-            ->whereKey($todos->modelKeys())
-            ->delete();
+        $todos->each(fn (Todo $todo) => $this->deleteTodo->handle($todo));
+
+        return $todos->count();
     }
 }

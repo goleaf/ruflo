@@ -13,6 +13,7 @@ test('guests are redirected to the login page', function () {
 test('authenticated users can visit the dashboard', function () {
     $user = User::factory()->create();
     Todo::factory()->for($user)->overdue()->create();
+    Todo::factory()->for($user)->deleted()->create();
     Project::factory()->for($user)->create();
     Tag::factory()->for($user)->create();
 
@@ -22,6 +23,7 @@ test('authenticated users can visit the dashboard', function () {
         ->assertOk()
         ->assertSeeText('RuFlo Control Deck')
         ->assertSeeText('Private workspace')
+        ->assertSeeText('Trash')
         ->assertSeeText('Open todos')
         ->assertSeeText('npx ruflo@latest mcp start')
         ->assertSeeText('/plugin marketplace add ruvnet/ruflo');

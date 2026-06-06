@@ -15,12 +15,14 @@ field. {@see App\Models\Todo::status()} maps them to a display bucket.
 | **Active** | `archived_at` null, `is_completed` false | Active tab |
 | **Completed** | `archived_at` null, `is_completed` true | Completed tab |
 | **Archived** | `archived_at` set (any completion) | Archived tab |
-| **Trashed** | `deleted_at` set (soft delete) | Nowhere (recoverable by design) |
+| **Trashed** | `deleted_at` set (soft delete) | Trash tab |
 
-`App\Enums\TodoStatus` is the enum for the first three (user-facing) buckets.
-Archived takes precedence over completion: an archived task always reads as
-"Archived" and keeps its underlying completion flag untouched so it can return
-to the right bucket when unarchived.
+`App\Enums\TodoStatus` is the enum for the user-facing buckets. Trash takes
+precedence over archive and completion because soft-deleted tasks are not
+actionable in the main workspace. Archived still takes precedence over
+completion for non-deleted tasks: an archived task always reads as "Archived"
+and keeps its underlying completion flag untouched so it can return to the
+right bucket when unarchived.
 
 ## Allowed transitions
 
@@ -36,6 +38,9 @@ to the right bucket when unarchived.
  Completed ┘           (unarchive)  └─▶ Completed   (was completed)
 
    Active / Completed / Archived ──delete──▶ Trashed   (soft, recoverable)
+      ▲              ▲              ▲           │
+      └──────────────┴──────────────┴───────────┘
+                         restore from trash
 ```
 
 Explicit rules:
@@ -52,9 +57,12 @@ Explicit rules:
   completion is preserved, so the task returns to Completed if it was completed
   before archiving, otherwise Active. Idempotent. This is distinct from future
   soft-delete restore behavior.
-- **Any non-deleted → Trashed** — `DeleteTodo`. Soft delete. Recoverable at the
-  data layer; `forceDelete` is disabled by policy, and a trash-restore UI is
-  intentionally deferred.
+- **Any non-deleted → Trashed** — `DeleteTodo`. Soft delete. Recoverable in the
+  Trash tab. Idempotent direct action calls do not emit duplicate delete
+  events.
+- **Trashed → prior bucket** — `RestoreDeletedTodo`. Clears `deleted_at`;
+  completion and archive state are preserved, so restored tasks return to
+  Active, Completed, or Archived as they were before deletion. Idempotent.
 - **Edit details** — `UpdateTodo`. Changes editable details such as title,
   priority, due date, project, and tags; trims the title at the action write
   boundary; re-scopes project and tag ids to the owner; never alters
@@ -70,9 +78,16 @@ a leak:
   hides the checkbox for archived rows; the backend rejects it regardless.
 - **Edit an archived task** — must be unarchived first. The UI does not offer the
   edit action on archived rows; the backend rejects it regardless.
+- **Edit/complete/archive/unarchive/delete a trashed task** — must be restored
+  from Trash first. The UI offers restore only for trash rows; the backend
+  resolves trash records through `findTrashedFor()` so visible-record actions
+  cannot act on deleted IDs.
+- **Permanent deletion** — `forceDelete` is disabled by policy and no permanent
+  delete UI is exposed.
 
 Idempotent no-ops (archiving an archived task, unarchiving a non-archived task)
-return silently rather than erroring.
+return silently rather than erroring. Direct delete/restore action no-ops also
+avoid duplicate activity events.
 
 ## Where each concern lives
 
@@ -81,8 +96,8 @@ return silently rather than erroring.
 | State derivation & scopes | `App\Models\Todo` (`status()`, `isActive()`, `isArchived()`, `scopeActive/Completed/Archived`) |
 | Mutations | `App\Actions\Todos\*` (one action per transition) |
 | Invalid-transition guard | `App\Exceptions\InvalidTodoTransition` |
-| Owner-scoped reads & buckets | `App\Queries\Todos\TodoListQuery` (`forStatus`, `summaryFor`) |
-| Authorization | `App\Policies\TodoPolicy` (`complete`, `reopen`, `archive`, `unarchive`, `delete`, `update`, …) |
+| Owner-scoped reads & buckets | `App\Queries\Todos\TodoListQuery` (`forStatus`, `findVisibleFor`, `findTrashedFor`, `summaryFor`) |
+| Authorization | `App\Policies\TodoPolicy` (`complete`, `reopen`, `archive`, `unarchive`, `delete`, `restore`, `update`, `forceDelete`, …) |
 | UI state & feedback | `App\Livewire\Todos\Index` + `resources/views/livewire/todos/index.blade.php` |
 | Status badge | `resources/views/components/ui/status-badge.blade.php` |
 
@@ -97,7 +112,8 @@ Every state-changing transition dispatches a domain event so activity logging
 and reminders can be added later without touching the actions:
 
 `TodoCreated`, `TodoUpdated`, `TodoCompleted`, `TodoReopened`,
-`TodoArchived`, `TodoUnarchived`, `TodoDeleted`, `CompletedTodosCleared`.
+`TodoArchived`, `TodoUnarchived`, `TodoDeleted`,
+`TodoRestoredFromTrash`, `CompletedTodosCleared`.
 
 Step 024 replaces the former generic completion toggle with separate
 completion and reopening actions/events. The row checkbox still gives the same
@@ -108,10 +124,16 @@ Step 025 keeps archive reversal explicit as `UnarchiveTodo`,
 `TodoUnarchived`, and `unarchiveTodo`/`bulkUnarchive` UI methods. This avoids
 confusing "bring back from archive" with future soft-delete restore behavior.
 
+Step 026 adds the Trash tab with `RestoreDeletedTodo`,
+`TodoRestoredFromTrash`, and `restoreDeletedTodo`/`bulkRestoreDeleted` UI
+methods. Bulk delete now delegates to `DeleteTodo` so delete events are not
+skipped by a mass update. Permanent deletion remains disabled.
+
 Notification/reminder rules to honor when those features arrive: completed and
 archived tasks should not emit active reminders; deleted tasks emit none;
 unarchiving or reopening may re-enable them per the rules documented in the
-reminders step.
+reminders step. Restoring from Trash may also re-enable reminders according to
+those future reminder rules.
 
 ## Validation
 
@@ -125,25 +147,25 @@ reminders step.
 
 ## UI states covered
 
-Empty state per tab (active / completed / archived), inline validation errors,
+Empty state per tab (active / completed / archived / trash), inline validation errors,
 success/warning toasts for every action, `wire:confirm` on destructive actions
 (delete, clear completed), state-aware row actions (complete only on active
 rows, reopen only on completed rows, no complete/edit on archived rows,
-unarchive only on archived rows), and a status badge per row. All
-user-facing text is
+unarchive only on archived rows, restore only on trash rows), and a status
+badge per row. All user-facing text is
 translatable via `lang/en/todos.php`.
 
 ## Intentionally not built yet
 
-Projects/lists, tags, priorities, due dates, search, filters beyond the three
-lifecycle tabs, sorting, pagination (the per-user list is currently small and
-fully owner-scoped; pagination is the first thing to add when lists can grow),
-bulk actions, a trash/restore-from-deleted UI, reminders, recurring tasks,
-dashboard, and collaboration.
+Permanent delete controls, saved views, kanban/calendar views, subtasks,
+templates, reminders, recurring tasks, collaboration, comments, attachments,
+imports/exports, and automation processors remain scheduled for their own
+future steps. Permanent deletion needs a stricter product and authorization
+design before it should exist.
 
-## What Step 4 should build next
+## What Step 027 should build next
 
-Task organization: projects/lists, tags, priorities, due dates, and the
-today/overdue/upcoming/search/filter/sort/bulk-action layer — all reusing the
-ownership scope, the action/query/policy split, and the translation structure
-established here.
+The next step should recheck the full lifecycle state machine now that Active,
+Completed, Archived, and Trash are all visible buckets. It should keep using
+the ownership scope, action/query/policy split, event boundaries, and
+translation structure established here.

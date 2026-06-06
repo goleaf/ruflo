@@ -61,6 +61,7 @@ test('dashboard summary counts only the authenticated users private workspace', 
     Todo::factory()->for($user)->overdue()->create();
     Todo::factory()->for($user)->completed()->create();
     Todo::factory()->for($user)->archived()->create();
+    Todo::factory()->for($user)->deleted()->create();
     Project::factory()->for($user)->create();
     Project::factory()->for($user)->archived()->create();
     Tag::factory()->for($user)->create();
@@ -73,6 +74,7 @@ test('dashboard summary counts only the authenticated users private workspace', 
         'active' => 2,
         'completed' => 1,
         'archived' => 1,
+        'trash' => 1,
         'overdue' => 1,
         'projects' => 1,
         'tags' => 1,
@@ -88,6 +90,7 @@ test('dashboard Livewire component renders the scoped private summary', function
     Livewire::actingAs($user)->test(DashboardIndex::class)
         ->assertSee(__('dashboard.heading'))
         ->assertSee(__('dashboard.summary.active'))
+        ->assertSee(__('dashboard.summary.trash'))
         ->assertSee(__('dashboard.summary.projects'))
         ->assertSee(__('dashboard.workspace.action'));
 });

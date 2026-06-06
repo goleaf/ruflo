@@ -89,6 +89,7 @@ test('todo factory covers priority date and lifecycle states', function () {
         ->and($archived->status())->toBe(TodoStatus::Archived)
         ->and($archivedCompleted->status())->toBe(TodoStatus::Archived)
         ->and($archivedCompleted->is_completed)->toBeTrue()
+        ->and($deleted->status())->toBe(TodoStatus::Trash)
         ->and($deleted->trashed())->toBeTrue()
         ->and($dueToday->isDueToday())->toBeTrue()
         ->and($overdue->isOverdue())->toBeTrue()

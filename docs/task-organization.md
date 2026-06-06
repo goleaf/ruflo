@@ -91,7 +91,7 @@ page and clears the bulk selection.
 ## Bulk actions
 
 `BulkCompleteTodos`, `BulkArchiveTodos`, `BulkUnarchiveTodos`, `BulkMoveTodos`,
-and `BulkDeleteTodos` each take the user plus a list of selected ids and
+`BulkDeleteTodos`, and `BulkRestoreDeletedTodos` each take the user plus a list of selected ids and
 **re-scope the selection to the user's own tasks inside the query**
 (`$user->todos()->…->whereKey($ids)`). Consequences:
 
@@ -103,12 +103,16 @@ and `BulkDeleteTodos` each take the user plus a list of selected ids and
 - Bulk unarchive only affects archived tasks and preserves completion state.
 - Bulk move updates only owned tasks and only accepts an owned, active target
   project; an empty target moves tasks back to "No project".
-- Bulk delete is soft (recoverable) and confirmed in the UI.
+- Bulk delete is soft (recoverable), confirmed in the UI, and delegates to the
+  eventful single-task delete action.
+- Bulk restore from Trash only affects owned deleted tasks and preserves
+  completion/archive state.
 
 ## UI
 
 - Reusable `x-ui.stat` (summary counters) and `x-ui.status-badge` components;
-  the lifecycle segmented control (Flux Free has no `tabs`).
+  the lifecycle segmented control (Flux Free has no `tabs`) now covers Active,
+  Completed, Archived, and Trash.
 - The create form renders validation feedback beside the Flux title, priority,
   due date, project, and tag controls so failed input stays visible and
   recoverable.
@@ -119,7 +123,8 @@ and `BulkDeleteTodos` each take the user plus a list of selected ids and
   (red overdue / amber today / zinc upcoming), project, and tags.
 - Task titles link to `todos.show`, a private detail page that reuses the same
   status, priority, due-date, project, and tag badges after resolving the task
-  through the owner-scoped query boundary.
+  through the owner-scoped query boundary. Trash rows do not link to detail
+  pages until restored.
 - A filter toolbar (search, project, tag, priority, due, sort, direction,
   reset), a bulk toolbar that appears on selection, and a "Manage" modal for
   creating/renaming/archiving/restoring/deleting projects and creating/deleting
@@ -131,7 +136,7 @@ and `BulkDeleteTodos` each take the user plus a list of selected ids and
 
 - `TodoListQuery::filtered()` eager-loads `project` and `tags` to avoid N+1
   when rendering badges.
-- The summary (active/completed/archived/overdue) is one aggregate query.
+- The summary (active/completed/archived/trash/overdue) is one aggregate query.
 - Composite indexes back the common filters: `(user_id, project_id)`,
   `(user_id, due_date)`, `(user_id, priority)`, `(user_id, archived_at)`,
   `(user_id, is_completed)`.

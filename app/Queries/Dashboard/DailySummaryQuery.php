@@ -16,7 +16,7 @@ final class DailySummaryQuery
     /**
      * Current user's private workspace summary for dashboard counters.
      *
-     * @return array{active: int, overdue: int, completed: int, archived: int, projects: int, tags: int}
+     * @return array{active: int, overdue: int, completed: int, archived: int, trash: int, projects: int, tags: int}
      */
     public function for(User $user): array
     {

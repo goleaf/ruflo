@@ -51,7 +51,7 @@ Use this file as a persistent task tracker. Step detail lives in `TODO_MASTER_PR
 - [x] Step 023 — Task editing
 - [x] Step 024 — Task completion and reopening
 - [x] Step 025 — Task archive and restore
-- [ ] Step 026 — Task deletion and trash behavior
+- [x] Step 026 — Task deletion and trash behavior
 - [ ] Step 027 — Task lifecycle state machine
 - [ ] Step 028 — Projects and lists
 - [ ] Step 029 — Tags and labels

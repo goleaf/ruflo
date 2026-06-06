@@ -1,10 +1,11 @@
 <section class="space-y-8">
     <x-ui.page-header :title="__('dashboard.heading')" :description="__('dashboard.description')">
-        <div class="grid grid-cols-2 gap-3 text-sm sm:grid-cols-3 sm:min-w-[28rem]">
+        <div class="grid grid-cols-2 gap-3 text-sm sm:grid-cols-4 sm:min-w-[34rem]">
             <x-ui.stat :label="__('dashboard.summary.active')" :value="$this->summary['active']" />
             <x-ui.stat :label="__('dashboard.summary.overdue')" :value="$this->summary['overdue']" tone="danger" />
             <x-ui.stat :label="__('dashboard.summary.completed')" :value="$this->summary['completed']" tone="success" />
             <x-ui.stat :label="__('dashboard.summary.archived')" :value="$this->summary['archived']" tone="muted" />
+            <x-ui.stat :label="__('dashboard.summary.trash')" :value="$this->summary['trash']" tone="danger" />
             <x-ui.stat :label="__('dashboard.summary.projects')" :value="$this->summary['projects']" />
             <x-ui.stat :label="__('dashboard.summary.tags')" :value="$this->summary['tags']" />
         </div>

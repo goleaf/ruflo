@@ -23,7 +23,8 @@ The tracked `Reminder` model is currently a placeholder with no ownership, sched
 - active `Work` and `Home` projects,
 - archived `Old plans` project,
 - `urgent` and `waiting` tags,
-- active, due-today, overdue, upcoming, completed, archived, and archived-completed tasks.
+- active, due-today, overdue, upcoming, completed, archived,
+  archived-completed, and trashed tasks.
 
 ## Idempotency
 

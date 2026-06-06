@@ -98,6 +98,7 @@ class Todo extends Model
     public function status(): TodoStatus
     {
         return match (true) {
+            $this->trashed() => TodoStatus::Trash,
             $this->isArchived() => TodoStatus::Archived,
             $this->is_completed => TodoStatus::Completed,
             default => TodoStatus::Active,

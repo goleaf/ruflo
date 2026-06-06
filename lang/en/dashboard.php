@@ -11,6 +11,7 @@ return [
         'overdue' => 'Overdue',
         'completed' => 'Completed',
         'archived' => 'Archived',
+        'trash' => 'Trash',
         'projects' => 'Projects',
         'tags' => 'Tags',
     ],

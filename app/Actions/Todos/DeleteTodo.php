@@ -9,6 +9,10 @@ final class DeleteTodo
 {
     public function handle(Todo $todo): void
     {
+        if ($todo->trashed()) {
+            return;
+        }
+
         $todo->delete();
 
         TodoDeleted::dispatch($todo);

@@ -8,7 +8,7 @@ If a change cannot satisfy these rules, the change is wrong, not the rules.
 ## Core invariant
 
 > One user must never view, search, count, create-for, edit, complete, reopen,
-> archive, unarchive, delete, or otherwise infer another user's private todo
+> archive, unarchive, delete, restore from trash, or otherwise infer another user's private todo
 > data — unless a future collaboration feature grants it through an explicit,
 > authorized, tested permission.
 
@@ -36,7 +36,7 @@ scope) rather than across the whole codebase.
 | Per-action decisions | `App\Policies\TodoPolicy` | The only place "may this user do this?" is answered. |
 | Policy binding | `#[UsePolicy(...Policy::class)]` on current private models | Explicit, greppable mapping — not naming-convention magic. |
 | Mutations | `App\Actions\Todos\*` | Assign ownership from the authenticated user; never from request input. |
-| Dashboard summary | `App\Queries\Dashboard\DailySummaryQuery` | Counts tasks, active projects, and tags through owner-scoped queries only. |
+| Dashboard summary | `App\Queries\Dashboard\DailySummaryQuery` | Counts tasks, trash, active projects, and tags through owner-scoped queries only. |
 
 Do not scatter authorization across components, views, or query callers.
 Reuse these.
@@ -58,10 +58,11 @@ Ownership is assigned by backend logic only:
 Every read of todo data must start from `TodoListQuery` (or apply `ownedBy`
 directly). Consequences that are mandatory, not optional:
 
-- Lists, single-record lookups, and counters are all owner-scoped.
-- Client-supplied IDs are untrusted. `findVisibleFor()` resolves them through
-  the owner-scoped query, so another user's ID returns **not found** — the
-  record's existence never leaks.
+- Lists, single-record lookups, trash lookups, and counters are all
+  owner-scoped.
+- Client-supplied IDs are untrusted. `findVisibleFor()` and `findTrashedFor()`
+  resolve them through owner-scoped queries, so another user's ID returns **not
+  found** — the record's existence never leaks.
 - Aggregates (the remaining/completed summary) are computed inside the scope,
   so counters can never include another user's tasks.
 - URL filter IDs are re-checked against the owner before they become query
@@ -80,7 +81,8 @@ The Livewire component authorizes **before** delegating to an action:
 - `viewAny` / `create` / `clearCompleted` / `bulk*` — class-level abilities,
   allowed for any authenticated user (they only ever touch that user's own
   workspace).
-- `view` / `update` / `complete` / `reopen` / `archive` / `unarchive` / `delete`
+- `view` / `update` / `complete` / `reopen` / `archive` / `unarchive` /
+  `delete` / `restore`
   — per-record abilities, owner-only, returning `denyAsNotFound()` so forbidden
   access is indistinguishable from a missing record.
 - `complete` and `reopen` are separate policy abilities. Step 024 also gives
@@ -88,6 +90,8 @@ The Livewire component authorizes **before** delegating to an action:
   checkbox remains a compact UI affordance.
 - `forceDelete` — disabled for everyone. Permanent deletion is not a feature
   yet; when designed it must be protected more strictly than soft delete.
+- `bulkRestoreDeleted` — class-level ability for restoring selected trash rows
+  after each selected id validates as one of the current user's deleted tasks.
 
 Backend authorization is the real security. Frontend hiding of buttons is UX
 only and is never sufficient.
@@ -141,7 +145,9 @@ it on:
   empty state.
 - **Bulk actions** — never trust a submitted set of IDs. Re-scope every
   selected ID to the owner and authorize each before acting; a foreign ID in
-  the payload is silently excluded, not processed.
+  the payload is rejected at validation or silently excluded inside direct
+  action classes, not processed. Trash bulk restore uses the trashed-owner
+  validation path.
 - **Activity history** — visible only to users who can access the related
   record; scoped exactly like the record itself.
 - **Notifications/reminders** — target only the owning user; a notification is
@@ -201,3 +207,9 @@ explicit action classes, events, policy checks, translated labels, and
 owner-scoped Livewire methods; completion state is preserved; idempotent calls
 do not duplicate activity; bulk archive/unarchive reuses the same single-task
 transitions.
+
+`TaskDeletionTrashTest` locks the Step 026 contract: delete and restore from
+Trash use explicit action classes, events, policy checks, translated labels,
+owner-scoped visible/trash query methods, and custom selected-id validation;
+bulk delete/restore reuse single-task transitions; foreign trash ids are hidden
+as not found; permanent delete remains denied and absent from the UI.

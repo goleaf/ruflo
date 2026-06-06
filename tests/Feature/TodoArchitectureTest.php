@@ -5,6 +5,7 @@ use App\Actions\Todos\CompleteTodo;
 use App\Actions\Todos\CreateTodo;
 use App\Actions\Todos\DeleteTodo;
 use App\Actions\Todos\ReopenTodo;
+use App\Actions\Todos\RestoreDeletedTodo;
 use App\Data\Todos\TodoData;
 use App\Livewire\Forms\Todos\TodoForm;
 use App\Policies\TodoPolicy;
@@ -19,6 +20,7 @@ test('todo foundation classes exist', function () {
         ->and(class_exists(CompleteTodo::class))->toBeTrue()
         ->and(class_exists(ReopenTodo::class))->toBeTrue()
         ->and(class_exists(DeleteTodo::class))->toBeTrue()
+        ->and(class_exists(RestoreDeletedTodo::class))->toBeTrue()
         ->and(class_exists(ClearCompletedTodos::class))->toBeTrue();
 });
 

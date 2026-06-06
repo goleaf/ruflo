@@ -47,7 +47,7 @@ Demo user factory states read from `config/demo.php` so the login panel, seeders
 
 `TodoFactory` covers:
 
-- active, completed, archived, archived-completed, and soft-deleted lifecycle states,
+- active, completed, archived, archived-completed, and soft-deleted Trash lifecycle states,
 - low, normal, high, and urgent priority shortcuts,
 - due today, overdue, upcoming, no due date, explicit due date, and max-length title states,
 - project ownership helper through `forProject()`,

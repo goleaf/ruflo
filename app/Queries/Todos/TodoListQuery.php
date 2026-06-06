@@ -28,7 +28,7 @@ final class TodoListQuery
     public function visibleFor(User $user): Builder
     {
         return Todo::query()
-            ->select(['id', 'user_id', 'project_id', 'title', 'priority', 'due_date', 'is_completed', 'archived_at', 'created_at', 'updated_at'])
+            ->select(['id', 'user_id', 'project_id', 'title', 'priority', 'due_date', 'is_completed', 'archived_at', 'deleted_at', 'created_at', 'updated_at'])
             ->ownedBy($user)
             ->latest();
     }
@@ -54,7 +54,7 @@ final class TodoListQuery
     {
         $query = $this->withWorkspaceRelations(
             Todo::query()
-                ->select(['id', 'user_id', 'project_id', 'title', 'priority', 'due_date', 'is_completed', 'archived_at', 'created_at', 'updated_at'])
+                ->select(['id', 'user_id', 'project_id', 'title', 'priority', 'due_date', 'is_completed', 'archived_at', 'deleted_at', 'created_at', 'updated_at'])
                 ->ownedBy($user),
             $user,
         );
@@ -115,24 +115,40 @@ final class TodoListQuery
     }
 
     /**
+     * Resolve a single trashed todo the user is allowed to restore.
+     *
+     * Foreign, active, archived, completed, or unknown ids yield not-found.
+     */
+    public function findTrashedFor(User $user, int $todoId): Todo
+    {
+        return $this->withWorkspaceRelations(
+            Todo::query()->onlyTrashed()->ownedBy($user),
+            $user,
+        )->findOrFail($todoId);
+    }
+
+    /**
      * Aggregate lifecycle counts for the user's workspace in one scoped query.
      *
-     * @return array{active: int, completed: int, archived: int, overdue: int}
+     * @return array{active: int, completed: int, archived: int, trash: int, overdue: int}
      */
     public function summaryFor(User $user): array
     {
         $summary = Todo::query()
+            ->withTrashed()
             ->ownedBy($user)
-            ->selectRaw('sum(case when archived_at is null and is_completed = 0 then 1 else 0 end) as active_count')
-            ->selectRaw('sum(case when archived_at is null and is_completed = 1 then 1 else 0 end) as completed_count')
-            ->selectRaw('sum(case when archived_at is not null then 1 else 0 end) as archived_count')
-            ->selectRaw('sum(case when archived_at is null and is_completed = 0 and due_date is not null and due_date < ? then 1 else 0 end) as overdue_count', [today()->toDateString()])
+            ->selectRaw('sum(case when deleted_at is null and archived_at is null and is_completed = 0 then 1 else 0 end) as active_count')
+            ->selectRaw('sum(case when deleted_at is null and archived_at is null and is_completed = 1 then 1 else 0 end) as completed_count')
+            ->selectRaw('sum(case when deleted_at is null and archived_at is not null then 1 else 0 end) as archived_count')
+            ->selectRaw('sum(case when deleted_at is not null then 1 else 0 end) as trash_count')
+            ->selectRaw('sum(case when deleted_at is null and archived_at is null and is_completed = 0 and due_date is not null and due_date < ? then 1 else 0 end) as overdue_count', [today()->toDateString()])
             ->first();
 
         return [
             'active' => (int) $summary->active_count,
             'completed' => (int) $summary->completed_count,
             'archived' => (int) $summary->archived_count,
+            'trash' => (int) $summary->trash_count,
             'overdue' => (int) $summary->overdue_count,
         ];
     }
@@ -146,6 +162,7 @@ final class TodoListQuery
             TodoStatus::Active => $query->active(),
             TodoStatus::Completed => $query->completed(),
             TodoStatus::Archived => $query->archived(),
+            TodoStatus::Trash => $query->onlyTrashed(),
         };
     }
 

@@ -1,5 +1,25 @@
 # Changelog
 
+## 2026-06-06 - Step 026 Task deletion and trash behavior
+
+### Implemented
+
+- Added a user-facing Trash lifecycle bucket backed by soft-deleted `todos.deleted_at` records.
+- Added `RestoreDeletedTodo`, `BulkRestoreDeletedTodos`, and `TodoRestoredFromTrash` for explicit restore-from-trash behavior.
+- Added `TodoListQuery::findTrashedFor()` and trash counts in `summaryFor()`/dashboard summaries while keeping all reads owner-scoped.
+- Changed `BulkDeleteTodos` to reuse `DeleteTodo` so delete events are not skipped by a mass update.
+- Kept permanent deletion disabled through `TodoPolicy::forceDelete` and omitted force-delete UI.
+- Seeded one trashed demo task per local/demo user workspace.
+
+### Testing
+
+- Added `TaskDeletionTrashTest` for delete/restore actions, event dispatch, idempotency, Trash tab privacy, foreign-id denial, bulk delete/restore, selected deleted-task validation, force-delete denial, and trash query boundaries.
+- Updated lifecycle, organization, ownership, authorization, factory, seeder, dashboard, private-workspace, architecture, archive/unarchive, and completion/reopening tests for the Trash bucket.
+
+### Documentation
+
+- Updated `docs/task-lifecycle.md`, `docs/authorization.md`, `docs/task-organization.md`, `docs/todo-foundation.md`, `docs/seeding-strategy.md`, and `docs/factory-coverage.md` with the Step 026 deletion/trash contract.
+
 ## 2026-06-06 - Step 025 Task archive and restore
 
 ### Implemented

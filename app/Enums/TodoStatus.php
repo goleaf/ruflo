@@ -9,15 +9,16 @@ use App\Models\Todo;
  *
  * This is a derived view of the underlying columns, not a stored field. The
  * authoritative state lives in `is_completed`, `archived_at`, and `deleted_at`;
- * {@see Todo::status()} maps those to one of these cases. Archived
- * takes precedence over completion so an archived task always reads as
- * "Archived" regardless of whether it was completed first.
+ * {@see Todo::status()} maps those to one of these cases. Trash takes
+ * precedence over archived/completed because soft-deleted tasks are no longer
+ * actionable in the main workspace.
  */
 enum TodoStatus: string
 {
     case Active = 'active';
     case Completed = 'completed';
     case Archived = 'archived';
+    case Trash = 'trash';
 
     /**
      * Translatable label for the status.
@@ -36,6 +37,7 @@ enum TodoStatus: string
             self::Active => 'blue',
             self::Completed => 'green',
             self::Archived => 'zinc',
+            self::Trash => 'red',
         };
     }
 

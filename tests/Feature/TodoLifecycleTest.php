@@ -29,11 +29,13 @@ it('derives the display status from the underlying columns', function () {
     $completed = Todo::factory()->completed()->make();
     $archived = Todo::factory()->archived()->make();
     $archivedCompleted = Todo::factory()->completed()->archived()->make();
+    $deleted = Todo::factory()->deleted()->make();
 
     expect($active->status())->toBe(TodoStatus::Active)
         ->and($completed->status())->toBe(TodoStatus::Completed)
         ->and($archived->status())->toBe(TodoStatus::Archived)
-        ->and($archivedCompleted->status())->toBe(TodoStatus::Archived);
+        ->and($archivedCompleted->status())->toBe(TodoStatus::Archived)
+        ->and($deleted->status())->toBe(TodoStatus::Trash);
 });
 
 it('shows only the selected lifecycle bucket', function () {
@@ -41,6 +43,7 @@ it('shows only the selected lifecycle bucket', function () {
     Todo::factory()->for($user)->create(['title' => 'Active task']);
     Todo::factory()->for($user)->completed()->create(['title' => 'Completed task']);
     Todo::factory()->for($user)->archived()->create(['title' => 'Archived task']);
+    Todo::factory()->for($user)->deleted()->create(['title' => 'Deleted task']);
 
     Livewire::actingAs($user)->test(Index::class)
         ->assertSet('tab', 'active')
@@ -50,6 +53,10 @@ it('shows only the selected lifecycle bucket', function () {
         ->set('tab', 'completed')
         ->assertSee('Completed task')
         ->assertDontSee('Active task')
+        ->set('tab', 'trash')
+        ->assertSee('Deleted task')
+        ->assertDontSee('Active task')
+        ->assertDontSee('Archived task')
         ->set('tab', 'archived')
         ->assertSee('Archived task')
         ->assertDontSee('Active task');
@@ -60,11 +67,13 @@ it('reports an accurate per-bucket summary', function () {
     Todo::factory()->for($user)->count(2)->create();
     Todo::factory()->for($user)->completed()->create();
     Todo::factory()->for($user)->archived()->count(3)->create();
+    Todo::factory()->for($user)->deleted()->count(2)->create();
 
     Livewire::actingAs($user)->test(Index::class)
         ->assertSet('summary.active', 2)
         ->assertSet('summary.completed', 1)
-        ->assertSet('summary.archived', 3);
+        ->assertSet('summary.archived', 3)
+        ->assertSet('summary.trash', 2);
 });
 
 it('archives an active task without deleting or completing it', function () {
@@ -185,7 +194,8 @@ it('soft deletes a task so it can be recovered by design', function () {
         ->call('deleteTodo', $todo->id);
 
     expect(Todo::query()->find($todo->id))->toBeNull()
-        ->and(Todo::withTrashed()->find($todo->id))->not->toBeNull();
+        ->and(Todo::withTrashed()->find($todo->id))->not->toBeNull()
+        ->and(Todo::withTrashed()->find($todo->id)->status())->toBe(TodoStatus::Trash);
 });
 
 it('clears completed tasks without touching archived ones', function () {
@@ -234,6 +244,7 @@ it('forbids acting on another users task for every lifecycle action', function (
     'archiveTodo',
     'unarchiveTodo',
     'deleteTodo',
+    'restoreDeletedTodo',
 ]);
 
 it('does not let an intruder change another users task', function () {

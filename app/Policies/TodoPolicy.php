@@ -92,6 +92,11 @@ final class TodoPolicy
         return true;
     }
 
+    public function bulkRestoreDeleted(User $user): bool
+    {
+        return true;
+    }
+
     public function bulkMove(User $user): bool
     {
         return true;
@@ -109,6 +114,14 @@ final class TodoPolicy
      * Determine whether the user can unarchive the model.
      */
     public function unarchive(User $user, Todo $todo): Response
+    {
+        return $this->ownerOnly($user, $todo);
+    }
+
+    /**
+     * Determine whether the user can restore a soft-deleted model.
+     */
+    public function restore(User $user, Todo $todo): Response
     {
         return $this->ownerOnly($user, $todo);
     }

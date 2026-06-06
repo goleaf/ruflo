@@ -431,5 +431,7 @@ it('shows the correct empty state per tab via filtering', function () {
     Livewire::actingAs($user)->test(Index::class)
         ->assertSee(__('todos.empty.active.title'))
         ->set('tab', TodoStatus::Archived->value)
-        ->assertSee(__('todos.empty.archived.title'));
+        ->assertSee(__('todos.empty.archived.title'))
+        ->set('tab', TodoStatus::Trash->value)
+        ->assertSee(__('todos.empty.trash.title'));
 });

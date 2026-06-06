@@ -157,7 +157,7 @@ test('archive tab UI uses unarchive language and never delete language for archi
         ->toContain('todos.actions.unarchive')
         ->toContain('todos.bulk.unarchive')
         ->not->toContain('restoreTodo')
-        ->not->toContain('bulkRestore');
+        ->not->toContain('wire:click="bulkRestore"');
 });
 
 test('owner scoped lookups reflect archive and unarchive status changes', function () {

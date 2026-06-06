@@ -76,7 +76,10 @@ Deleting user work should be safe by default.
 - Restore and force-delete abilities must be explicit in policies.
 - Important state changes should emit events so future activity history and notification listeners can be added without rewriting actions.
 
-Step 1 adds soft deletes to `todos` and keeps permanent deletion disabled in `TodoPolicy::forceDelete`.
+Step 1 adds soft deletes to `todos` and keeps permanent deletion disabled in
+`TodoPolicy::forceDelete`. Step 026 exposes a private Trash tab, restores
+deleted tasks through `RestoreDeletedTodo`, and keeps force delete disabled and
+absent from the UI.
 
 ## Query And Performance Rules
 
@@ -134,6 +137,11 @@ Step 021 adds `CoreTaskCreationTest`, which locks direct action creation,
 event dispatch, bypassed-validation organization scoping, mass-assignment
 guards, lifecycle-action completion, long-title validation, form-state
 preservation, and create-form error placement.
+
+Step 026 adds `TaskDeletionTrashTest`, which locks soft delete, restore from
+Trash, event dispatch, idempotency, owner-scoped trash lookups, selected
+deleted-task validation, bulk delete/restore behavior, dashboard trash counts,
+and force-delete denial.
 
 ## 2026-06-06 Recheck
 

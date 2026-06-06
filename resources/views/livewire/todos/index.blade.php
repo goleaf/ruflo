@@ -1,10 +1,11 @@
 <section class="mx-auto flex w-full max-w-5xl flex-col gap-6">
     <x-ui.page-header :title="__('todos.pages.index.title')" :description="__('todos.pages.index.description')">
-        <div class="grid grid-cols-2 gap-3 text-sm sm:grid-cols-4 sm:min-w-[26rem]">
+        <div class="grid grid-cols-2 gap-3 text-sm sm:grid-cols-5 sm:min-w-[32rem]">
             <x-ui.stat :label="__('todos.summary.active')" :value="$this->summary['active']" />
             <x-ui.stat :label="__('todos.summary.overdue')" :value="$this->summary['overdue']" tone="danger" />
             <x-ui.stat :label="__('todos.summary.completed')" :value="$this->summary['completed']" tone="success" />
             <x-ui.stat :label="__('todos.summary.archived')" :value="$this->summary['archived']" tone="muted" />
+            <x-ui.stat :label="__('todos.summary.trash')" :value="$this->summary['trash']" tone="danger" />
         </div>
     </x-ui.page-header>
 
@@ -77,7 +78,7 @@
         {{-- Lifecycle tabs (segmented control; Flux Free has no tabs component) --}}
         <div class="flex flex-wrap items-center justify-between gap-3">
             <div role="tablist" class="flex flex-wrap gap-1 rounded-lg border border-zinc-200 bg-zinc-50 p-1 dark:border-white/10 dark:bg-zinc-900">
-                @foreach (['active' => $this->summary['active'], 'completed' => $this->summary['completed'], 'archived' => $this->summary['archived']] as $tabValue => $tabCount)
+                @foreach (['active' => $this->summary['active'], 'completed' => $this->summary['completed'], 'archived' => $this->summary['archived'], 'trash' => $this->summary['trash']] as $tabValue => $tabCount)
                     <button
                         type="button"
                         role="tab"
@@ -171,27 +172,31 @@
                     {{ __('todos.bulk.selected', ['count' => count($selected)]) }}
                 </span>
                 <flux:spacer />
-                <div class="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
-                    <flux:select wire:model="bulkProject" :label="__('todos.bulk.move_to')" size="sm" class="min-w-48">
-                        <flux:select.option value="">{{ __('todos.fields.no_project') }}</flux:select.option>
-                        @foreach ($this->projects as $project)
-                            <flux:select.option value="{{ $project->id }}">{{ $project->name }}</flux:select.option>
-                        @endforeach
-                    </flux:select>
-                    <flux:button size="sm" variant="ghost" icon="folder-arrow-down" wire:click="bulkMove">{{ __('todos.bulk.move') }}</flux:button>
-                    <flux:error name="bulkProject" />
-                </div>
-                @if ($tab === 'active')
-                    <flux:button size="sm" variant="ghost" icon="check" wire:click="bulkComplete">{{ __('todos.bulk.complete') }}</flux:button>
-                @endif
-                @if ($tab !== 'archived')
-                    <flux:button size="sm" variant="ghost" icon="archive-box" wire:click="bulkArchive">{{ __('todos.bulk.archive') }}</flux:button>
+                @if ($tab === 'trash')
+                    <flux:button size="sm" variant="ghost" icon="arrow-uturn-left" wire:click="bulkRestoreDeleted">{{ __('todos.bulk.restore') }}</flux:button>
                 @else
-                    <flux:button size="sm" variant="ghost" icon="archive-box-x-mark" wire:click="bulkUnarchive">{{ __('todos.bulk.unarchive') }}</flux:button>
+                    <div class="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
+                        <flux:select wire:model="bulkProject" :label="__('todos.bulk.move_to')" size="sm" class="min-w-48">
+                            <flux:select.option value="">{{ __('todos.fields.no_project') }}</flux:select.option>
+                            @foreach ($this->projects as $project)
+                                <flux:select.option value="{{ $project->id }}">{{ $project->name }}</flux:select.option>
+                            @endforeach
+                        </flux:select>
+                        <flux:button size="sm" variant="ghost" icon="folder-arrow-down" wire:click="bulkMove">{{ __('todos.bulk.move') }}</flux:button>
+                        <flux:error name="bulkProject" />
+                    </div>
+                    @if ($tab === 'active')
+                        <flux:button size="sm" variant="ghost" icon="check" wire:click="bulkComplete">{{ __('todos.bulk.complete') }}</flux:button>
+                    @endif
+                    @if ($tab !== 'archived')
+                        <flux:button size="sm" variant="ghost" icon="archive-box" wire:click="bulkArchive">{{ __('todos.bulk.archive') }}</flux:button>
+                    @else
+                        <flux:button size="sm" variant="ghost" icon="archive-box-x-mark" wire:click="bulkUnarchive">{{ __('todos.bulk.unarchive') }}</flux:button>
+                    @endif
+                    <flux:button size="sm" variant="danger" icon="trash" wire:click="bulkDelete" wire:confirm="{{ __('todos.confirmations.bulk_delete') }}">
+                        {{ __('todos.bulk.delete') }}
+                    </flux:button>
                 @endif
-                <flux:button size="sm" variant="danger" icon="trash" wire:click="bulkDelete" wire:confirm="{{ __('todos.confirmations.bulk_delete') }}">
-                    {{ __('todos.bulk.delete') }}
-                </flux:button>
             </div>
         @endif
 
@@ -210,29 +215,37 @@
                         aria-label="{{ __('todos.bulk.select_one') }}"
                     />
 
-                    @unless ($todo->isArchived())
+                    @if (! $todo->isArchived() && ! $todo->trashed())
                         <flux:checkbox
                             :checked="$todo->is_completed"
                             wire:click="{{ $todo->is_completed ? 'reopenTodo' : 'completeTodo' }}({{ $todo->id }})"
                             :aria-label="$todo->is_completed ? __('todos.actions.reopen') : __('todos.actions.complete')"
                             class="mt-0.5"
                         />
+                    @elseif ($todo->trashed())
+                        <flux:icon.trash variant="micro" class="mt-1 text-red-400" />
                     @else
                         <flux:icon.archive-box variant="micro" class="mt-1 text-zinc-400" />
-                    @endunless
+                    @endif
 
                     <div class="min-w-0 flex-1 space-y-1">
-                        <a
-                            href="{{ route('todos.show', $todo) }}"
-                            wire:navigate
-                            @class([
-                            'text-sm font-medium break-words',
-                            'text-zinc-950 dark:text-white' => $todo->isActive(),
-                            'text-zinc-500 line-through dark:text-zinc-400' => $todo->is_completed && ! $todo->isArchived(),
-                            'text-zinc-500 dark:text-zinc-400' => $todo->isArchived(),
-                        ])>
-                            {{ $todo->title }}
-                        </a>
+                        @if ($todo->trashed())
+                            <span class="text-sm font-medium break-words text-zinc-500 dark:text-zinc-400">
+                                {{ $todo->title }}
+                            </span>
+                        @else
+                            <a
+                                href="{{ route('todos.show', $todo) }}"
+                                wire:navigate
+                                @class([
+                                'text-sm font-medium break-words',
+                                'text-zinc-950 dark:text-white' => $todo->isActive(),
+                                'text-zinc-500 line-through dark:text-zinc-400' => $todo->is_completed && ! $todo->isArchived(),
+                                'text-zinc-500 dark:text-zinc-400' => $todo->isArchived(),
+                            ])>
+                                {{ $todo->title }}
+                            </a>
+                        @endif
 
                         <div class="flex flex-wrap items-center gap-1.5">
                             @if ($todo->priority->value !== 'normal')
@@ -259,18 +272,22 @@
                         <flux:button variant="ghost" size="sm" square icon="ellipsis-horizontal" :aria-label="__('todos.actions.more')" />
 
                         <flux:menu>
-                            @unless ($todo->isArchived())
+                            @if ($todo->trashed())
+                                <flux:menu.item icon="arrow-uturn-left" wire:click="restoreDeletedTodo({{ $todo->id }})">{{ __('todos.actions.restore_from_trash') }}</flux:menu.item>
+                            @elseif (! $todo->isArchived())
                                 <flux:menu.item icon="pencil-square" wire:click="startEdit({{ $todo->id }})">{{ __('todos.actions.edit') }}</flux:menu.item>
                                 <flux:menu.item icon="archive-box" wire:click="archiveTodo({{ $todo->id }})">{{ __('todos.actions.archive') }}</flux:menu.item>
                             @else
                                 <flux:menu.item icon="archive-box-x-mark" wire:click="unarchiveTodo({{ $todo->id }})">{{ __('todos.actions.unarchive') }}</flux:menu.item>
+                            @endif
+
+                            @unless ($todo->trashed())
+                                <flux:menu.separator />
+
+                                <flux:menu.item icon="trash" variant="danger" wire:click="deleteTodo({{ $todo->id }})" wire:confirm="{{ __('todos.confirmations.delete') }}">
+                                    {{ __('todos.actions.delete') }}
+                                </flux:menu.item>
                             @endunless
-
-                            <flux:menu.separator />
-
-                            <flux:menu.item icon="trash" variant="danger" wire:click="deleteTodo({{ $todo->id }})" wire:confirm="{{ __('todos.confirmations.delete') }}">
-                                {{ __('todos.actions.delete') }}
-                            </flux:menu.item>
                         </flux:menu>
                     </flux:dropdown>
                 </div>

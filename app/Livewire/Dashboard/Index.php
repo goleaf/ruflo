@@ -19,7 +19,7 @@ class Index extends Component
     }
 
     /**
-     * @return array{active: int, overdue: int, completed: int, archived: int, trash: int, projects: int, tags: int, goals: int, milestones: int}
+     * @return array{active: int, overdue: int, completed: int, archived: int, trash: int, projects: int, tags: int, goals: int, milestones: int, habits: int, habit_check_ins: int}
      */
     #[Computed]
     public function summary(): array

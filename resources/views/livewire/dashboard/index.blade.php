@@ -10,6 +10,8 @@
             <x-ui.stat :label="__('dashboard.summary.tags')" :value="$this->summary['tags']" />
             <x-ui.stat :label="__('dashboard.summary.goals')" :value="$this->summary['goals']" />
             <x-ui.stat :label="__('dashboard.summary.milestones')" :value="$this->summary['milestones']" />
+            <x-ui.stat :label="__('dashboard.summary.habits')" :value="$this->summary['habits']" />
+            <x-ui.stat :label="__('dashboard.summary.habit_check_ins')" :value="$this->summary['habit_check_ins']" tone="success" />
         </div>
     </x-ui.page-header>
 
@@ -41,6 +43,10 @@
 
                     <flux:button :href="route('goals.index')" wire:navigate variant="subtle" icon="flag">
                         {{ __('dashboard.workspace.goals_action') }}
+                    </flux:button>
+
+                    <flux:button :href="route('habits.index')" wire:navigate variant="subtle" icon="arrow-path">
+                        {{ __('dashboard.workspace.habits_action') }}
                     </flux:button>
 
                     <flux:button :href="route('todos.index')" wire:navigate variant="ghost" icon="list-bullet">

@@ -1,5 +1,42 @@
 # Changelog
 
+## 2026-06-06 - Step 047 Habits tracker
+
+### Implemented
+
+- Added owner-scoped `habits` and `habit_check_ins` tables plus nullable habit
+  links on tasks.
+- Added `Habit`, `HabitCheckIn`, policies, factories, data objects,
+  `HabitListQuery`, `HabitProgress`, translated habit rules, and actions for
+  creating habits, toggling today's check-in, and linking tasks.
+- Added a protected class-based Livewire Habits page at `habits.index` with
+  Flux habit cards, progress bars with text alternatives, daily/weekly streak
+  counters, today check-in buttons, task-link controls, dashboard shortcuts, and
+  app navigation.
+- Added seeded demo habits and real check-ins that link existing seeded tasks
+  for real progress on `https://ruflo.test/habits`.
+
+### Testing
+
+- Added `HabitTrackerTest` for route protection, owner-only rendering, honest
+  daily/weekly progress and streak calculation, habit validation, check-in
+  toggles, task linking, foreign-id denial, and component/view guardrails.
+- Expanded route-protection, domain, policy, private workspace, architecture,
+  factory, seeder, validation-rule, dashboard, and localization coverage.
+
+### Documentation
+
+- Updated task organization, authorization, validation, request validation,
+  factory coverage, seeding, domain readiness, and todo foundation docs with the
+  Step 047 Habits contract.
+
+### Restricted Hosting
+
+- Habits are synchronous Livewire workflows. They require no cron, queue worker,
+  supervisor, terminal access, Artisan command, paid service, chunk processor,
+  retry loop, or resume state during normal usage. Check-ins are web-triggered
+  and today-only in this step.
+
 ## 2026-06-06 - Step 046 Goals and milestones
 
 ### Implemented

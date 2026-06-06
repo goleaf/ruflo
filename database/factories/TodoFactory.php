@@ -5,6 +5,7 @@ namespace Database\Factories;
 use App\Enums\Priority;
 use App\Models\Goal;
 use App\Models\GoalMilestone;
+use App\Models\Habit;
 use App\Models\Project;
 use App\Models\Tag;
 use App\Models\Todo;
@@ -217,6 +218,15 @@ class TodoFactory extends Factory
             ->for($milestone, 'goalMilestone')
             ->state(fn (array $attributes) => [
                 'user_id' => $milestone->user_id,
+            ]);
+    }
+
+    public function forHabit(Habit $habit): static
+    {
+        return $this
+            ->for($habit, 'habit')
+            ->state(fn (array $attributes) => [
+                'user_id' => $habit->user_id,
             ]);
     }
 

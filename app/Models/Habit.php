@@ -2,9 +2,10 @@
 
 namespace App\Models;
 
+use App\Enums\HabitFrequency;
 use App\Models\Concerns\BelongsToUser;
-use App\Policies\GoalPolicy;
-use Database\Factories\GoalFactory;
+use App\Policies\HabitPolicy;
+use Database\Factories\HabitFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Builder;
@@ -13,44 +14,32 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['title', 'description', 'target_date'])]
-#[UsePolicy(GoalPolicy::class)]
-class Goal extends Model
+#[Fillable(['title', 'description', 'frequency', 'target_count', 'starts_on'])]
+#[UsePolicy(HabitPolicy::class)]
+class Habit extends Model
 {
-    /** @use HasFactory<GoalFactory> */
+    /** @use HasFactory<HabitFactory> */
     use BelongsToUser, HasFactory;
 
     /**
-     * @return BelongsTo<Project, $this>
+     * @return BelongsTo<Goal, $this>
      */
-    public function project(): BelongsTo
+    public function goal(): BelongsTo
     {
-        return $this->belongsTo(Project::class);
+        return $this->belongsTo(Goal::class);
     }
 
     /**
-     * @return HasMany<GoalMilestone, $this>
+     * @return HasMany<HabitCheckIn, $this>
      */
-    public function milestones(): HasMany
+    public function checkIns(): HasMany
     {
-        return $this->hasMany(GoalMilestone::class)
-            ->orderBy('position')
-            ->orderBy('id');
+        return $this->hasMany(HabitCheckIn::class)
+            ->orderByDesc('occurred_on')
+            ->orderByDesc('id');
     }
 
     /**
-     * Habits supporting this goal.
-     *
-     * @return HasMany<Habit, $this>
-     */
-    public function habits(): HasMany
-    {
-        return $this->hasMany(Habit::class);
-    }
-
-    /**
-     * Tasks directly linked to this goal.
-     *
      * @return HasMany<Todo, $this>
      */
     public function todos(): HasMany
@@ -61,11 +50,6 @@ class Goal extends Model
     public function isArchived(): bool
     {
         return $this->archived_at !== null;
-    }
-
-    public function isCompleted(): bool
-    {
-        return $this->completed_at !== null;
     }
 
     /**
@@ -83,8 +67,9 @@ class Goal extends Model
     protected function casts(): array
     {
         return [
-            'target_date' => 'immutable_date',
-            'completed_at' => 'immutable_datetime',
+            'frequency' => HabitFrequency::class,
+            'target_count' => 'integer',
+            'starts_on' => 'immutable_date',
             'archived_at' => 'immutable_datetime',
         ];
     }

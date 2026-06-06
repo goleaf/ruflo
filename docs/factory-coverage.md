@@ -5,6 +5,8 @@ Step 011 covers the tracked application models:
 - `App\Models\User`
 - `App\Models\Goal`
 - `App\Models\GoalMilestone`
+- `App\Models\Habit`
+- `App\Models\HabitCheckIn`
 - `App\Models\Project`
 - `App\Models\Reminder`
 - `App\Models\SavedTodoView`
@@ -64,6 +66,26 @@ Demo user factory states read from `config/demo.php` so the login panel, seeders
 - target dates,
 - pending and completed check-in states.
 
+## Habit And Check-In Factories
+
+`HabitFactory` covers:
+
+- default user-owned daily habits,
+- `forGoal()` to attach a habit to an owned goal while preserving the owner
+  boundary,
+- explicit titles through `titled()`,
+- daily and weekly frequency states,
+- target-count states,
+- archived habits.
+
+`HabitCheckInFactory` covers:
+
+- default check-in rows,
+- `forHabit()` to attach a check-in to an owned habit while preserving the owner
+  boundary,
+- explicit check-in dates through `occurredOn()`,
+- `today()` and `yesterday()` states for progress and streak tests.
+
 ## Reminder Factory
 
 `ReminderFactory` covers valid placeholder record creation for the current reminder schema. It does not define active, due, sent, failed, retry, or processed states yet because the table has no columns for those concepts.
@@ -92,6 +114,7 @@ shared/global visibility and remain owner-scoped through `user_id`.
 - due today, overdue, upcoming, no due date, explicit due date, and max-length title states,
 - project ownership helper through `forProject()`,
 - goal ownership helpers through `forGoal()` and `forMilestone()`,
+- habit ownership helper through `forHabit()`,
 - tag ownership helpers through `forTag()` and `withTags()`.
 
 The tag helpers avoid cross-user attachment by attaching only tags that share the todo owner.

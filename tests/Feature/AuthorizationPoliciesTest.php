@@ -2,6 +2,8 @@
 
 use App\Models\Goal;
 use App\Models\GoalMilestone;
+use App\Models\Habit;
+use App\Models\HabitCheckIn;
 use App\Models\Project;
 use App\Models\Reminder;
 use App\Models\SavedTodoView;
@@ -12,6 +14,8 @@ use App\Models\TodoTemplate;
 use App\Models\User;
 use App\Policies\GoalMilestonePolicy;
 use App\Policies\GoalPolicy;
+use App\Policies\HabitCheckInPolicy;
+use App\Policies\HabitPolicy;
 use App\Policies\ProjectPolicy;
 use App\Policies\ReminderPolicy;
 use App\Policies\SavedTodoViewPolicy;
@@ -26,6 +30,8 @@ test('tracked private resources resolve explicit policies', function () {
         ->and(Gate::getPolicyFor(Project::class))->toBeInstanceOf(ProjectPolicy::class)
         ->and(Gate::getPolicyFor(Goal::class))->toBeInstanceOf(GoalPolicy::class)
         ->and(Gate::getPolicyFor(GoalMilestone::class))->toBeInstanceOf(GoalMilestonePolicy::class)
+        ->and(Gate::getPolicyFor(Habit::class))->toBeInstanceOf(HabitPolicy::class)
+        ->and(Gate::getPolicyFor(HabitCheckIn::class))->toBeInstanceOf(HabitCheckInPolicy::class)
         ->and(Gate::getPolicyFor(Tag::class))->toBeInstanceOf(TagPolicy::class)
         ->and(Gate::getPolicyFor(TodoChecklistItem::class))->toBeInstanceOf(TodoChecklistItemPolicy::class)
         ->and(Gate::getPolicyFor(TodoTemplate::class))->toBeInstanceOf(TodoTemplatePolicy::class)
@@ -78,6 +84,53 @@ test('goal milestone policy covers owner check in abilities', function () {
         ->and($ownerGate->allows('create', GoalMilestone::class))->toBeTrue()
         ->and($ownerGate->denies('restore', $milestone))->toBeTrue()
         ->and($ownerGate->denies('forceDelete', $milestone))->toBeTrue();
+});
+
+test('habit policy covers owner lifecycle abilities', function () {
+    $owner = User::factory()->create();
+    $intruder = User::factory()->create();
+    $habit = Habit::factory()->for($owner)->create();
+
+    $ownerGate = Gate::forUser($owner);
+    $intruderGate = Gate::forUser($intruder);
+
+    foreach (['view', 'update', 'delete'] as $ability) {
+        expect($ownerGate->allows($ability, $habit))->toBeTrue();
+
+        $response = $intruderGate->inspect($ability, $habit);
+
+        expect($response->denied())->toBeTrue()
+            ->and($response->status())->toBe(404);
+    }
+
+    expect($ownerGate->allows('viewAny', Habit::class))->toBeTrue()
+        ->and($ownerGate->allows('create', Habit::class))->toBeTrue()
+        ->and($ownerGate->denies('restore', $habit))->toBeTrue()
+        ->and($ownerGate->denies('forceDelete', $habit))->toBeTrue();
+});
+
+test('habit check in policy covers owner check in abilities', function () {
+    $owner = User::factory()->create();
+    $intruder = User::factory()->create();
+    $habit = Habit::factory()->for($owner)->create();
+    $checkIn = HabitCheckIn::factory()->forHabit($habit)->create();
+
+    $ownerGate = Gate::forUser($owner);
+    $intruderGate = Gate::forUser($intruder);
+
+    foreach (['view', 'update', 'delete'] as $ability) {
+        expect($ownerGate->allows($ability, $checkIn))->toBeTrue();
+
+        $response = $intruderGate->inspect($ability, $checkIn);
+
+        expect($response->denied())->toBeTrue()
+            ->and($response->status())->toBe(404);
+    }
+
+    expect($ownerGate->allows('viewAny', HabitCheckIn::class))->toBeTrue()
+        ->and($ownerGate->allows('create', HabitCheckIn::class))->toBeTrue()
+        ->and($ownerGate->denies('restore', $checkIn))->toBeTrue()
+        ->and($ownerGate->denies('forceDelete', $checkIn))->toBeTrue();
 });
 
 test('todo template policy covers owner template abilities', function () {

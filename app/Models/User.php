@@ -83,6 +83,26 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
     }
 
     /**
+     * Get the user's habits.
+     *
+     * @return HasMany<Habit, $this>
+     */
+    public function habits(): HasMany
+    {
+        return $this->hasMany(Habit::class);
+    }
+
+    /**
+     * Get the user's habit check-ins.
+     *
+     * @return HasMany<HabitCheckIn, $this>
+     */
+    public function habitCheckIns(): HasMany
+    {
+        return $this->hasMany(HabitCheckIn::class);
+    }
+
+    /**
      * Get the user's contained task checklist rows.
      *
      * @return HasMany<TodoChecklistItem, $this>

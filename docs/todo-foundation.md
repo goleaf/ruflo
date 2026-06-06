@@ -234,6 +234,11 @@ owner-scoped goal and milestone rendering, honest progress calculation from real
 tasks and check-ins, goal/milestone validation, milestone check-in toggles,
 task-to-goal linking, and foreign-id spoofing denial.
 
+Step 047 adds `HabitTrackerTest`, which locks the protected Habits route,
+owner-scoped daily and weekly habit rendering, honest progress and streak
+calculation from real check-ins, habit validation, today check-in toggles,
+task-to-habit linking, and foreign-id spoofing denial.
+
 ## 2026-06-06 Recheck
 
 The Step 001 recheck confirmed the foundation still matches the current master-plan rules after Steps 002-016:

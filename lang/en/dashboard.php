@@ -16,6 +16,8 @@ return [
         'tags' => 'Tags',
         'goals' => 'Goals',
         'milestones' => 'Milestones',
+        'habits' => 'Habits',
+        'habit_check_ins' => 'Habit check-ins',
     ],
 
     'cards' => [
@@ -58,5 +60,6 @@ return [
         'upcoming_action' => 'Plan upcoming',
         'focus_action' => 'Focus',
         'goals_action' => 'Goals',
+        'habits_action' => 'Habits',
     ],
 ];

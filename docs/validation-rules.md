@@ -159,3 +159,12 @@ Step 046 added `App\Rules\Goals\GoalTitle` and
 backend guards so direct calls cannot persist blank goal/milestone titles,
 foreign projects, foreign milestones, mismatched milestones, or archived/trashed
 task links.
+
+## 2026-06-06 Step 047 Recheck
+
+Step 047 added `App\Rules\Habits\HabitTitle` and
+`App\Rules\Habits\HabitTargetCount` for the habits page create form.
+`CreateHabit`, `ToggleHabitCheckIn`, and `LinkTodoToHabit` repeat backend
+guards so direct calls cannot persist blank habit titles, invalid daily/weekly
+targets, foreign goals, archived habit check-ins, or archived/trashed task
+links.

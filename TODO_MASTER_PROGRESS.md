@@ -2,19 +2,19 @@
 
 ## Current status
 
-Individual ledger rows for Steps 001 through 046 are complete. The requested recheck from Step 001 has been completed through Step 046. The tracker is expanded to one ledger line per step from 001 through 100 so later work cannot be hidden behind a range.
+Individual ledger rows for Steps 001 through 047 are complete. The requested recheck from Step 001 has been completed through Step 047. The tracker is expanded to one ledger line per step from 001 through 100 so later work cannot be hidden behind a range.
 
 ## Current step
 
-Step 047 — Habits tracker
+Step 048 — Pomodoro focus timer
 
 ## Last completed action
 
-Completed Step 046 by adding owner-scoped goals and milestones, honest linked-task/milestone progress, private goal cards, milestone check-ins, task-to-goal linking, factories, seeders, translations, docs, and privacy tests.
+Completed Step 047 by adding owner-scoped habits and habit check-ins, honest daily/weekly progress and streaks from real check-in rows, task-to-habit linking, a protected Livewire/Flux Habits page, factories, seeders, translations, docs, and privacy tests.
 
 ## Next action
 
-Begin `steps/step-047-habits-tracker.md`, then implement the next not-yet-completed plan step without grouping it with later work.
+Begin `steps/step-048-pomodoro-focus-timer.md`, then implement the next not-yet-completed plan step without grouping it with later work.
 
 ## Step ledger
 
@@ -66,7 +66,7 @@ Begin `steps/step-047-habits-tracker.md`, then implement the next not-yet-comple
 | 044 — Quick capture inbox | Complete | Added an explicit owner-scoped Inbox marker on tasks, capture and triage actions, `TodoInboxQuery`, `InboxCaptureTitle`, a protected class-based Livewire/Flux Inbox page, task-list shortcut, factory states, and two seeded inbox tasks per demo user. | Boost app/docs/schema checks, migration, syntax checks, focused `TaskInboxTest`, adjacent 118-test suite, Pint, route checks, local seed/database verification, scans, browser logs, diff check, and full suite recorded in test report. | `docs/task-organization.md`, `docs/authorization.md`, `docs/validation-rules.md`, `docs/request-validation.md`, `docs/factory-coverage.md`, `docs/seeding-strategy.md`, `docs/domain-readiness.md`, `docs/todo-foundation.md`, `docs/changelog.md`, root progress, checklist, changelog, decisions, risks, and test report updated. | Manual-only Inbox triage limitation logged; feature remains safe because capture/triage are bounded synchronous Livewire actions with no worker/cron dependency. | e3f4d00 |
 | 045 — Focus mode | Complete | Added an owner-scoped Focus mode that prioritizes active urgent, overdue, due-today, and high-priority tasks through `TodoFocusQuery`, added quick complete/defer/snooze actions, rendered a distraction-light class-based Livewire/Flux page with browser-only timer and keyboard shortcuts, and added task-list/dashboard shortcuts plus factory/seeder support. | Boost app/docs/schema checks, syntax checks, focused `FocusModeTest`, adjacent 94-test suite, Pint, route checks, local seed/query verification, URL/browser-log checks, static scans, diff check, and full suite recorded in test report. | `docs/task-organization.md`, `docs/authorization.md`, `docs/request-validation.md`, `docs/factory-coverage.md`, `docs/seeding-strategy.md`, `docs/domain-readiness.md`, `docs/todo-foundation.md`, `docs/changelog.md`, root progress, checklist, changelog, decisions, risks, and test report updated. | Browser-only Focus timer persistence limitation logged; urgent tasks are always included before normal focus-fill tasks so important work is not hidden dangerously. | 2e997a9 |
 | 046 — Goals and milestones | Complete | Added owner-scoped goals and milestones linked to tasks/projects, honest progress from completed linked tasks plus checked-in milestones, private Flux goal cards, milestone check-in/reopen controls, task linking, dashboard counts, and factory/seeder support. | Boost app/docs/schema checks, migration, syntax checks, focused `GoalMilestoneTest`, adjacent 117-test suite, Pint, local seed/database verification, route/URL/browser-log checks, static scans, diff check, and full suite recorded in test report. | `docs/task-organization.md`, `docs/authorization.md`, `docs/request-validation.md`, `docs/validation-rules.md`, `docs/factory-coverage.md`, `docs/seeding-strategy.md`, `docs/domain-readiness.md`, `docs/todo-foundation.md`, `docs/changelog.md`, root progress, checklist, changelog, decisions, risks, and test report updated. | Full habit streak tracking is deferred to Step 047; goal edit/delete/archive UI remains intentionally narrow after Step 046. | f83741b |
-| 047 — Habits tracker | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 047 — Habits tracker | Complete | Added owner-scoped habits and habit check-ins with optional goal links, nullable task links, today-only check-in toggles, honest daily/weekly progress, current/best streak math from real check-in rows, dashboard counts, navigation, and factory/seeder support. | Boost app/docs/schema checks, migration, syntax checks, focused `HabitTrackerTest`, adjacent 126-test suite, Pint, local seed/database verification, route/URL/browser-log checks, static scans, diff check, and full suite recorded in test report. | `docs/task-organization.md`, `docs/authorization.md`, `docs/request-validation.md`, `docs/validation-rules.md`, `docs/factory-coverage.md`, `docs/seeding-strategy.md`, `docs/domain-readiness.md`, `docs/todo-foundation.md`, `docs/changelog.md`, root progress, checklist, changelog, decisions, risks, and test report updated. | Habit history editing/backfill remains intentionally unavailable; Step 046 habit-deferral risk is mitigated by Step 047. | Pending |
 | 048 — Pomodoro focus timer | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
 | 049 — Time tracking | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
 | 050 — Waiting blocker dependency system | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |

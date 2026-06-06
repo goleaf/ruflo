@@ -4,6 +4,8 @@ namespace App\Queries\Dashboard;
 
 use App\Models\Goal;
 use App\Models\GoalMilestone;
+use App\Models\Habit;
+use App\Models\HabitCheckIn;
 use App\Models\Project;
 use App\Models\Tag;
 use App\Models\User;
@@ -18,7 +20,7 @@ final class DailySummaryQuery
     /**
      * Current user's private workspace summary for dashboard counters.
      *
-     * @return array{active: int, overdue: int, completed: int, archived: int, trash: int, projects: int, tags: int, goals: int, milestones: int}
+     * @return array{active: int, overdue: int, completed: int, archived: int, trash: int, projects: int, tags: int, goals: int, milestones: int, habits: int, habit_check_ins: int}
      */
     public function for(User $user): array
     {
@@ -30,6 +32,8 @@ final class DailySummaryQuery
             'tags' => Tag::query()->ownedBy($user)->count(),
             'goals' => Goal::query()->ownedBy($user)->active()->count(),
             'milestones' => GoalMilestone::query()->ownedBy($user)->count(),
+            'habits' => Habit::query()->ownedBy($user)->active()->count(),
+            'habit_check_ins' => HabitCheckIn::query()->ownedBy($user)->count(),
         ];
     }
 }

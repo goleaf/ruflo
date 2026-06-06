@@ -21,6 +21,10 @@
                 <flux:navbar.item icon="flag" :href="route('goals.index')" :current="request()->routeIs('goals.*')" wire:navigate>
                     {{ __('goals.navigation.label') }}
                 </flux:navbar.item>
+
+                <flux:navbar.item icon="arrow-path" :href="route('habits.index')" :current="request()->routeIs('habits.*')" wire:navigate>
+                    {{ __('habits.navigation.label') }}
+                </flux:navbar.item>
             </flux:navbar>
 
             <flux:spacer />
@@ -71,6 +75,10 @@
 
                     <flux:sidebar.item icon="flag" :href="route('goals.index')" :current="request()->routeIs('goals.*')" wire:navigate>
                         {{ __('goals.navigation.label') }}
+                    </flux:sidebar.item>
+
+                    <flux:sidebar.item icon="arrow-path" :href="route('habits.index')" :current="request()->routeIs('habits.*')" wire:navigate>
+                        {{ __('habits.navigation.label') }}
                     </flux:sidebar.item>
                 </flux:sidebar.group>
             </flux:sidebar.nav>

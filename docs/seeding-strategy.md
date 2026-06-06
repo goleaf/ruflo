@@ -5,6 +5,8 @@ Step 012 covers the committed model set:
 - `User`
 - `Goal`
 - `GoalMilestone`
+- `Habit`
+- `HabitCheckIn`
 - `Project`
 - `SavedTodoView`
 - `Tag`
@@ -42,6 +44,9 @@ The tracked `Reminder` model is currently a placeholder with no ownership, sched
   `Plan a calmer weekend`.
 - three milestones per user, with one checked in, linked to existing seeded
   tasks so `/goals` shows real progress immediately.
+- two habits per user: `Plan the day` and `Run the weekly review`.
+- six real habit check-ins per user, linked to seeded habits so `/habits` shows
+  current progress and streaks immediately.
 
 Step 041's calendar view reuses that catalog: the seeded due-today, overdue,
 upcoming, and no-due-date tasks give the local `/todos/calendar` page immediate
@@ -57,6 +62,10 @@ seeding without adding another table or a focus-specific seed model.
 Step 046's goals page links existing seeded tasks into seeded goals and
 milestones. It does not create extra task rows for fake progress; progress comes
 from real task completion and milestone check-ins.
+
+Step 047's habits page links existing seeded tasks into seeded habits and
+creates real check-in rows for today and recent periods. It does not create
+fake streak counters; progress and streaks are derived from `habit_check_ins`.
 
 ## Idempotency
 
@@ -77,6 +86,10 @@ global or shared access.
 Goals and milestones are upserted per user/title and per goal/title. Task links
 are refreshed on reseed so the local demo remains useful after prior manual
 testing without duplicating goal rows.
+
+Habits are upserted per user/title and check-ins are upserted per habit/date.
+Task links are refreshed on reseed so the local demo remains useful after prior
+manual testing without duplicating habit rows or check-in dates.
 
 Placeholder reminder rows are intentionally excluded from the current catalog because they would not be owned by a user or connected to a task.
 

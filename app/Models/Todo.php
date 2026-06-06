@@ -89,6 +89,16 @@ class Todo extends Model
     }
 
     /**
+     * The habit this task supports, if any.
+     *
+     * @return BelongsTo<Habit, $this>
+     */
+    public function habit(): BelongsTo
+    {
+        return $this->belongsTo(Habit::class);
+    }
+
+    /**
      * The tags attached to this task.
      *
      * @return BelongsToMany<Tag, $this>

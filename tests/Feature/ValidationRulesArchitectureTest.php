@@ -11,6 +11,8 @@ test('custom validation rules are implemented and use translated failure message
         ->toBe([
             'Goals/GoalTitle.php',
             'Goals/MilestoneTitle.php',
+            'Habits/HabitTargetCount.php',
+            'Habits/HabitTitle.php',
             'Tags/TagName.php',
             'Todos/BoardStatus.php',
             'Todos/CalendarMonth.php',

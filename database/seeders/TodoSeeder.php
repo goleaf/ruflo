@@ -3,9 +3,12 @@
 namespace Database\Seeders;
 
 use App\Data\Todos\SavedTodoViewData;
+use App\Enums\HabitFrequency;
 use App\Enums\Priority;
 use App\Models\Goal;
 use App\Models\GoalMilestone;
+use App\Models\Habit;
+use App\Models\HabitCheckIn;
 use App\Models\Project;
 use App\Models\SavedTodoView;
 use App\Models\Tag;
@@ -209,6 +212,31 @@ class TodoSeeder extends Seeder
             'completed' => false,
             'target_date' => today()->addDays(3)->toDateString(),
         ]));
+
+        $dailyPlanning = $this->upsertHabit($user, 'Plan the day', [
+            'goal_id' => $commandCenterGoal->id,
+            'description' => 'Choose the first useful action before the day gets noisy.',
+            'frequency' => HabitFrequency::Daily,
+            'target_count' => 1,
+        ]);
+
+        foreach ([today(), today()->subDay(), today()->subDays(2)] as $date) {
+            $this->upsertHabitCheckIn($dailyPlanning, $date->toDateString());
+        }
+
+        $weeklyReview = $this->upsertHabit($user, 'Run the weekly review', [
+            'goal_id' => $commandCenterGoal->id,
+            'description' => 'Review active goals, waiting work, and next-week commitments.',
+            'frequency' => HabitFrequency::Weekly,
+            'target_count' => 1,
+        ]);
+
+        foreach ([today(), today()->subWeek(), today()->subWeeks(2)] as $date) {
+            $this->upsertHabitCheckIn($weeklyReview, $date->toDateString());
+        }
+
+        $this->linkTodoToHabit($reviewFlow, $dailyPlanning);
+        $this->linkTodoToHabit($overdueReport, $weeklyReview);
     }
 
     private function upsertProject(User $user, string $name, string $color, bool $archived = false): Project
@@ -393,6 +421,54 @@ class TodoSeeder extends Seeder
         $todo->forceFill([
             'goal_id' => $goal->id,
             'goal_milestone_id' => $milestone?->id,
+        ])->save();
+    }
+
+    /**
+     * @param  array{goal_id?: int|null, description?: string|null, frequency: HabitFrequency, target_count: int, archived?: bool}  $attributes
+     */
+    private function upsertHabit(User $user, string $title, array $attributes): Habit
+    {
+        $habit = Habit::query()
+            ->where('user_id', $user->id)
+            ->where('title', $title)
+            ->first() ?? new Habit;
+
+        $habit->forceFill([
+            'user_id' => $user->id,
+            'goal_id' => $attributes['goal_id'] ?? null,
+            'title' => $title,
+            'description' => $attributes['description'] ?? null,
+            'frequency' => $attributes['frequency'],
+            'target_count' => $attributes['target_count'],
+            'starts_on' => $habit->starts_on ?? today()->toDateString(),
+            'archived_at' => ($attributes['archived'] ?? false) ? ($habit->archived_at ?? now()) : null,
+        ])->save();
+
+        return $habit;
+    }
+
+    private function upsertHabitCheckIn(Habit $habit, string $occurredOn): HabitCheckIn
+    {
+        $checkIn = HabitCheckIn::query()
+            ->where('habit_id', $habit->id)
+            ->whereDate('occurred_on', $occurredOn)
+            ->first() ?? new HabitCheckIn;
+
+        $checkIn->forceFill([
+            'user_id' => $habit->user_id,
+            'habit_id' => $habit->id,
+            'occurred_on' => $occurredOn,
+            'checked_at' => $checkIn->checked_at ?? now(),
+        ])->save();
+
+        return $checkIn;
+    }
+
+    private function linkTodoToHabit(Todo $todo, Habit $habit): void
+    {
+        $todo->forceFill([
+            'habit_id' => $habit->id,
         ])->save();
     }
 }

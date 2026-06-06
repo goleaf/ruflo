@@ -323,3 +323,10 @@ owner goals render without foreign goals, progress counts only real linked
 tasks and checked-in milestones, goal creation accepts only owned active
 projects, milestone check-ins cannot be spoofed for another user, and task links
 are resolved through owner-scoped goals, milestones, and active/completed tasks.
+
+`HabitTrackerTest` locks the Step 047 contract: the habits page is protected,
+owner habits render without foreign habits, daily and weekly progress/streaks
+come from real check-in rows, habit creation accepts only owned active goals,
+today check-ins cannot be spoofed for another user, archived habits reject
+check-ins, and task links are resolved through owner-scoped habits and
+active/completed tasks.

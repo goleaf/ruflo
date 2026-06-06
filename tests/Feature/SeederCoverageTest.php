@@ -2,6 +2,8 @@
 
 use App\Models\Goal;
 use App\Models\GoalMilestone;
+use App\Models\Habit;
+use App\Models\HabitCheckIn;
 use App\Models\Project;
 use App\Models\Reminder;
 use App\Models\SavedTodoView;
@@ -27,6 +29,8 @@ test('database seeder creates safe demo users and complete private workspaces', 
         ->and(Project::query()->count())->toBe(6)
         ->and(Goal::query()->count())->toBe(4)
         ->and(GoalMilestone::query()->count())->toBe(6)
+        ->and(Habit::query()->count())->toBe(4)
+        ->and(HabitCheckIn::query()->count())->toBe(12)
         ->and(Reminder::query()->count())->toBe(0)
         ->and(SavedTodoView::query()->count())->toBe(6)
         ->and(Tag::query()->count())->toBe(4)
@@ -44,6 +48,11 @@ test('database seeder creates safe demo users and complete private workspaces', 
             ])
             ->and($user->goalMilestones()->count())->toBe(3)
             ->and($user->goalMilestones()->whereNotNull('completed_at')->count())->toBe(1)
+            ->and($user->habits()->pluck('title')->sort()->values()->all())->toBe([
+                'Plan the day',
+                'Run the weekly review',
+            ])
+            ->and($user->habitCheckIns()->count())->toBe(6)
             ->and($user->tags()->pluck('name')->sort()->values()->all())->toBe(['urgent', 'waiting'])
             ->and($user->todos()->active()->count())->toBe(5)
             ->and($user->todos()->completed()->count())->toBe(1)
@@ -78,6 +87,8 @@ test('database seeder is idempotent for the current demo catalog', function () {
         ->and(Project::query()->count())->toBe(6)
         ->and(Goal::query()->count())->toBe(4)
         ->and(GoalMilestone::query()->count())->toBe(6)
+        ->and(Habit::query()->count())->toBe(4)
+        ->and(HabitCheckIn::query()->count())->toBe(12)
         ->and(Reminder::query()->count())->toBe(0)
         ->and(SavedTodoView::query()->count())->toBe(6)
         ->and(Tag::query()->count())->toBe(4)
@@ -97,6 +108,8 @@ test('database seeder does not create known demo credentials in production envir
         ->and(Project::query()->count())->toBe(0)
         ->and(Goal::query()->count())->toBe(0)
         ->and(GoalMilestone::query()->count())->toBe(0)
+        ->and(Habit::query()->count())->toBe(0)
+        ->and(HabitCheckIn::query()->count())->toBe(0)
         ->and(Reminder::query()->count())->toBe(0)
         ->and(SavedTodoView::query()->count())->toBe(0)
         ->and(Tag::query()->count())->toBe(0)

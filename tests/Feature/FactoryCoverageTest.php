@@ -5,6 +5,8 @@ use App\Enums\TaskTemplateKind;
 use App\Enums\TodoStatus;
 use App\Models\Goal;
 use App\Models\GoalMilestone;
+use App\Models\Habit;
+use App\Models\HabitCheckIn;
 use App\Models\Project;
 use App\Models\Reminder;
 use App\Models\SavedTodoView;
@@ -20,8 +22,10 @@ test('tracked models can be created from their default factories', function () {
     $project = Project::factory()->for($user)->create();
     $goal = Goal::factory()->forProject($project)->create();
     $milestone = GoalMilestone::factory()->forGoal($goal)->completed()->position(1)->create();
+    $habit = Habit::factory()->forGoal($goal)->daily()->create();
+    $checkIn = HabitCheckIn::factory()->forHabit($habit)->today()->create();
     $tag = Tag::factory()->for($user)->create();
-    $todo = Todo::factory()->for($user)->forProject($project)->forMilestone($milestone)->withTags($tag)->create();
+    $todo = Todo::factory()->for($user)->forProject($project)->forMilestone($milestone)->forHabit($habit)->withTags($tag)->create();
     $checklistItem = TodoChecklistItem::factory()->forTodo($todo)->completed()->position(1)->create();
     $template = TodoTemplate::factory()->for($user)->routine()->create();
     $savedView = SavedTodoView::factory()->for($user)->create();
@@ -34,11 +38,16 @@ test('tracked models can be created from their default factories', function () {
         ->and($milestone->isOwnedBy($user))->toBeTrue()
         ->and($milestone->goal_id)->toBe($goal->id)
         ->and($milestone->isCompleted())->toBeTrue()
+        ->and($habit->isOwnedBy($user))->toBeTrue()
+        ->and($habit->goal_id)->toBe($goal->id)
+        ->and($checkIn->isOwnedBy($user))->toBeTrue()
+        ->and($checkIn->habit_id)->toBe($habit->id)
         ->and($tag->isOwnedBy($user))->toBeTrue()
         ->and($todo->isOwnedBy($user))->toBeTrue()
         ->and($todo->project_id)->toBe($project->id)
         ->and($todo->goal_id)->toBe($goal->id)
         ->and($todo->goal_milestone_id)->toBe($milestone->id)
+        ->and($todo->habit_id)->toBe($habit->id)
         ->and($todo->tags()->pluck('tags.id')->all())->toBe([$tag->id])
         ->and($checklistItem->isOwnedBy($user))->toBeTrue()
         ->and($checklistItem->todo->is($todo))->toBeTrue()
@@ -49,6 +58,24 @@ test('tracked models can be created from their default factories', function () {
         ->and($savedView->isOwnedBy($user))->toBeTrue()
         ->and($savedView->criteria['sort'])->toBe('created')
         ->and($reminder->exists)->toBeTrue();
+});
+
+test('habit factories cover frequency goal check in and archive states', function () {
+    $goal = Goal::factory()->create();
+    $daily = Habit::factory()->forGoal($goal)->daily()->titled('Plan every day')->create();
+    $weekly = Habit::factory()->for($goal->user)->weekly(3)->create();
+    $archived = Habit::factory()->archived()->create();
+    $checkIn = HabitCheckIn::factory()->forHabit($daily)->yesterday()->create();
+
+    expect($daily->isOwnedBy($goal->user))->toBeTrue()
+        ->and($daily->goal_id)->toBe($goal->id)
+        ->and($daily->frequency->value)->toBe('daily')
+        ->and($daily->target_count)->toBe(1)
+        ->and($weekly->frequency->value)->toBe('weekly')
+        ->and($weekly->target_count)->toBe(3)
+        ->and($archived->isArchived())->toBeTrue()
+        ->and($checkIn->isOwnedBy($goal->user))->toBeTrue()
+        ->and($checkIn->occurred_on->isSameDay(today()->subDay()))->toBeTrue();
 });
 
 test('goal and milestone factories cover ownership project and lifecycle states', function () {

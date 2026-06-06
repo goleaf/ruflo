@@ -46,6 +46,13 @@ endpoint. The component validates goal and milestone form state, reuses
 objects into action classes that repeat ownership and spoofing guards for direct
 calls.
 
+Step 047 habits remain Livewire-only. No HTTP Form Request is introduced
+because `/habits` is a class-based Livewire page, not a controller endpoint.
+The component validates habit form state, uses `HabitTitle` and
+`HabitTargetCount` for repeated business rules, and passes normalized data into
+action classes that repeat owned-goal, check-in, and task-link guards for direct
+calls.
+
 ## Custom Business Rules
 
 Reusable business validation rules are documented in `docs/validation-rules.md`.

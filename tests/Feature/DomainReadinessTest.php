@@ -20,6 +20,7 @@ test('generated named routes use the configured https root', function () {
         ->and(route('login'))->toBe('https://ruflo.test/login')
         ->and(route('dashboard'))->toBe('https://ruflo.test/dashboard')
         ->and(route('goals.index'))->toBe('https://ruflo.test/goals')
+        ->and(route('habits.index'))->toBe('https://ruflo.test/habits')
         ->and(route('todos.index'))->toBe('https://ruflo.test/todos')
         ->and(route('todos.today'))->toBe('https://ruflo.test/todos/today')
         ->and(route('todos.overdue'))->toBe('https://ruflo.test/todos/overdue')

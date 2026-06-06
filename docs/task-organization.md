@@ -434,8 +434,35 @@ Step 046 adds private goals and milestones as real, owner-scoped records:
 - `CreateGoal`, `CreateGoalMilestone`, `CheckInGoalMilestone`, and
   `LinkTodoToGoal` repeat policy checks and owner scoping at the action layer.
 - Milestone "check in" is a synchronous Livewire action that toggles
-  `completed_at`; it is not a habit streak system. Full habit tracking remains
-  scheduled for Step 047.
+  `completed_at`; full habit streak tracking lives in the separate Step 047
+  habits tracker.
+- The workflow is web-only and bounded. It requires no cron, queue worker,
+  supervisor, terminal access, Artisan command, external service, paid feature,
+  chunk processor, retry loop, or resume state during normal usage.
+
+## Habits tracker
+
+Step 047 adds private habits and habit check-ins as real, owner-scoped records:
+
+- `habits` are owned by one user, can optionally support one active goal, and
+  store a `daily` or `weekly` frequency plus a period target count.
+- `habit_check_ins` are owned by the same user and belong to one habit. A unique
+  `(habit_id, occurred_on)` constraint prevents duplicate check-ins for the
+  same habit day.
+- `todos.habit_id` links existing tasks to one habit. The task is preserved and
+  the link nulls if a habit is removed later.
+- `HabitListQuery` is the read boundary for `/habits`. It eager-loads current
+  user goals, check-ins, and linked tasks while constraining every relation to
+  the same owner.
+- `HabitProgress` calculates current-period progress and current/best streaks
+  from actual check-in dates only. Daily progress counts today's check-in;
+  weekly progress counts unique check-in days in the current week against the
+  stored target. Empty habits show 0% and zero streaks.
+- The check-in UI only toggles today's check-in. It does not backfill arbitrary
+  dates from the browser, which keeps spoofing and fake historical streaks out
+  of the first habit implementation.
+- `CreateHabit`, `ToggleHabitCheckIn`, and `LinkTodoToHabit` repeat policy
+  checks and owner scoping at the action layer.
 - The workflow is web-only and bounded. It requires no cron, queue worker,
   supervisor, terminal access, Artisan command, external service, paid feature,
   chunk processor, retry loop, or resume state during normal usage.
@@ -469,6 +496,9 @@ Step 046 adds private goals and milestones as real, owner-scoped records:
 - The goals page renders Flux goal cards, translated create/add/link forms,
   progress bars with text alternatives, milestone check-in buttons, task-link
   controls, and empty states.
+- The habits page renders Flux habit cards, translated create/link forms,
+  progress bars with text alternatives, today check-in buttons, current/best
+  streak counters, task-link controls, and empty states.
 - Project badges in task lists and task detail pages link to the private
   project detail page. The detail page renders the project status, scoped
   lifecycle counts, a paginated task list, and a translated empty state.
@@ -497,6 +527,11 @@ Step 046 adds private goals and milestones as real, owner-scoped records:
   ordered by updated timestamp/name. `(user_id, name)` prevents duplicate
   names, while `(user_id, kind)` and `(user_id, visibility)` support owner-scoped
   template listing and future filters.
+- Habits are loaded through `HabitListQuery` by current user and ordered by
+  title. `(user_id, archived_at)`, `(user_id, frequency)`, `(user_id, goal_id)`,
+  `(user_id, occurred_on)`, `(user_id, habit_id)`, and `(habit_id, occurred_on)`
+  support owner-scoped habit cards, progress calculations, and check-in
+  uniqueness.
 - Inbox reads are backed by `(user_id, inbox_captured_at)` and stay paginated
   through `TodoInboxQuery`.
 - Focus reads reuse existing task indexes for owner, priority, and due-date

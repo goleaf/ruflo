@@ -1,6 +1,7 @@
 <?php
 
 use App\Livewire\Goals\Index as GoalsIndex;
+use App\Livewire\Habits\Index as HabitsIndex;
 use App\Livewire\Projects\Show as ProjectsShow;
 use App\Livewire\Todos\Board as TodosBoard;
 use App\Livewire\Todos\Calendar as TodosCalendar;
@@ -20,6 +21,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::view('dashboard', 'dashboard')->name('dashboard');
 
     Route::livewire('goals', GoalsIndex::class)->name('goals.index');
+    Route::livewire('habits', HabitsIndex::class)->name('habits.index');
     Route::livewire('todos', TodosIndex::class)->name('todos.index');
     Route::livewire('todos/today', TodosToday::class)->name('todos.today');
     Route::livewire('todos/overdue', TodosOverdue::class)->name('todos.overdue');

@@ -73,6 +73,16 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
     }
 
     /**
+     * Get the user's reusable task templates.
+     *
+     * @return HasMany<TodoTemplate, $this>
+     */
+    public function todoTemplates(): HasMany
+    {
+        return $this->hasMany(TodoTemplate::class);
+    }
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>

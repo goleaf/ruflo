@@ -6,6 +6,7 @@ use App\Livewire\Todos\Calendar as TodosCalendar;
 use App\Livewire\Todos\Index as TodosIndex;
 use App\Livewire\Todos\Overdue as TodosOverdue;
 use App\Livewire\Todos\Show as TodosShow;
+use App\Livewire\Todos\Templates as TodosTemplates;
 use App\Livewire\Todos\Today as TodosToday;
 use App\Livewire\Todos\Upcoming as TodosUpcoming;
 use Illuminate\Support\Facades\Route;
@@ -21,6 +22,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::livewire('todos/upcoming', TodosUpcoming::class)->name('todos.upcoming');
     Route::livewire('todos/board', TodosBoard::class)->name('todos.board');
     Route::livewire('todos/calendar', TodosCalendar::class)->name('todos.calendar');
+    Route::livewire('todos/templates', TodosTemplates::class)->name('todos.templates');
     Route::livewire('todos/{todo}', TodosShow::class)->whereNumber('todo')->name('todos.show');
     Route::livewire('projects/{project}', ProjectsShow::class)->whereNumber('project')->name('projects.show');
 });

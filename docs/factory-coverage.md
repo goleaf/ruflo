@@ -9,6 +9,7 @@ Step 011 covers the tracked application models:
 - `App\Models\Tag`
 - `App\Models\Todo`
 - `App\Models\TodoChecklistItem`
+- `App\Models\TodoTemplate`
 
 `App\Models\Reminder` is currently a placeholder model with only an `id` and timestamps. Its default factory creates a valid record, but named reminder states are intentionally deferred until the reminder feature steps add owned reminder fields, lifecycle columns, and processing status.
 
@@ -83,6 +84,20 @@ The tag helpers avoid cross-user attachment by attaching only tags that share th
 
 Checklist rows are private resources and use the same `BelongsToUser` concern as
 todos, projects, tags, and saved views.
+
+## Todo Template Factory
+
+`TodoTemplateFactory` covers:
+
+- default user-owned private task templates,
+- `task()`, `project()`, `checklist()`, and `routine()` template kinds,
+- `private()` and `shared()` visibility states,
+- due-offset defaults through `dueIn()`,
+- 10-item checklist edge coverage through `heavyChecklist()`,
+- max-length template names through `longName()`.
+
+Shared template visibility is seed/test data for the later collaboration steps;
+templates remain owner-scoped until member roles exist.
 
 ## Verification
 

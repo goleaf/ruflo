@@ -35,6 +35,7 @@ scope) rather than across the whole codebase.
 | Read boundary | `App\Queries\Todos\TodoListQuery` | The only place todos are read for the UI. Always owner-scoped. |
 | Board read boundary | `App\Queries\Todos\TodoBoardQuery` | Owner-scoped Kanban columns for active, completed, and archived tasks. |
 | Checklist read boundary | `App\Queries\Todos\TodoChecklistItemListQuery` | Owner-scoped checklist rows for one already scoped parent task. |
+| Template read boundary | `App\Queries\Todos\TodoTemplateListQuery` | Owner-scoped reusable task/project/checklist/routine templates. |
 | Saved view read boundary | `App\Queries\Todos\SavedTodoViewListQuery` | Owner-scoped saved task-view listing and lookup. |
 | Per-action decisions | `App\Policies\TodoPolicy` | The only place "may this user do this?" is answered. |
 | Policy binding | `#[UsePolicy(...Policy::class)]` on current private models | Explicit, greppable mapping — not naming-convention magic. |
@@ -103,6 +104,11 @@ The Livewire component authorizes **before** delegating to an action:
   `delete` are owner-only and hide foreign ids as not found. Checklist actions
   also authorize the parent task update before mutating, so a malformed row
   cannot use one user's `user_id` to change another user's task.
+- Templates use `TodoTemplatePolicy`: `viewAny` and `create` are available to
+  authenticated users for their own workspace; `view`, `update`, `delete`, and
+  `instantiate` are owner-only and hide foreign ids as not found. Shared
+  visibility is currently a label stored for future collaboration; it does not
+  grant access to another user before memberships and roles exist.
 
 Backend authorization is the real security. Frontend hiding of buttons is UX
 only and is never sufficient.
@@ -139,6 +145,11 @@ resolves the record through `ProjectListQuery::findVisibleFor()`, and locks the
 public `projectId` property. A guessed or foreign id returns not found without
 rendering the foreign project name or task list.
 
+Task template pages use the same private route boundary. `todos.templates` is a
+class-based Livewire page behind `auth` and `verified`, lists templates through
+`TodoTemplateListQuery`, and resolves every submitted template id through
+`findFor($user, $id)` before edit, delete, or instantiate actions run.
+
 ## Error behavior (no leakage)
 
 - Forbidden private records resolve as **not found** (404-style), never
@@ -170,6 +181,11 @@ it on:
   `TodoChecklistItemListQuery::findFor($user, $todo, $itemId)`. That means a
   submitted checklist id must belong to both the current user and the current
   task before it can be toggled, edited, moved, or deleted.
+- **Templates** — template create/edit/delete/use flows stay owner-scoped.
+  Instantiation creates a normal task through `CreateTodo`, resolves or creates
+  an owner-scoped active project by template project name, and adds contained
+  checklist rows through `CreateTodoChecklistItem`. A foreign private or
+  shared-labeled template cannot be used.
 - **Bulk actions** — never trust a submitted set of IDs. Re-scope every
   selected ID to the owner and authorize each actionable record before acting;
   a foreign ID in the Livewire payload is rejected at validation, while direct
@@ -272,3 +288,9 @@ the current task's checklist rows, progress is owner-scoped, Livewire checklist
 actions re-resolve submitted item ids against the current task, action-layer
 validation rejects invalid direct calls, archived parent tasks keep checklists
 visible but locked, and invalid movement directions cannot mutate ordering.
+
+`TaskTemplateTest` locks the Step 043 contract: template pages are protected,
+owner templates render without foreign templates, create/edit/delete/use flows
+are owner-scoped, invalid template data is rejected in Livewire and direct DTO
+calls, foreign and missing template ids resolve as not found, and direct
+instantiation of another user's template is denied.

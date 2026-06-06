@@ -34,6 +34,10 @@ return [
             'title' => 'Task board',
             'description' => 'Move private tasks between lifecycle columns and active projects.',
         ],
+        'templates' => [
+            'title' => 'Task templates',
+            'description' => 'Turn repeatable tasks, projects, checklists, and routines into one-click private workspace items.',
+        ],
     ],
 
     'fields' => [
@@ -176,6 +180,7 @@ return [
         'delete_tag' => 'Delete this tag? It is removed from any tasks using it.',
         'delete_saved_view' => 'Delete this saved view?',
         'delete_checklist_item' => 'Delete this checklist item?',
+        'delete_template' => 'Delete this template? Existing tasks created from it are kept.',
     ],
 
     'checklist' => [
@@ -305,6 +310,10 @@ return [
         'checklist_item_deleted' => 'Checklist item deleted.',
         'checklist_item_moved' => 'Checklist item moved.',
         'cannot_change_checklist_archived' => 'Unarchive this task before changing its checklist.',
+        'template_created' => 'Template ":name" saved.',
+        'template_updated' => 'Template updated.',
+        'template_deleted' => 'Template deleted.',
+        'template_instantiated' => 'Created ":title" from template.',
     ],
 
     'today' => [
@@ -355,8 +364,74 @@ return [
         'calendar_month' => 'Enter a valid calendar month.',
         'checklist_item_title' => 'Enter a checklist item with visible text.',
         'checklist_item_direction' => 'Choose a valid checklist movement.',
+        'template_name' => 'Enter text with visible characters.',
+        'template_name_unique' => 'Use a template name you have not already used.',
+        'template_kind' => 'Choose a valid template type.',
+        'template_visibility' => 'Choose a valid template visibility.',
+        'template_due_offset' => 'Enter a due offset from 0 to 365 days.',
+        'template_project_name_required' => 'Enter the project this template should create or reuse.',
+        'template_checklist_items' => 'Use up to 10 checklist items, each with visible text up to 120 characters.',
+        'template_checklist_items_required' => 'Checklist and routine templates need at least one checklist item.',
         'priority' => 'Choose a valid priority.',
         'due_date' => 'Enter a valid due date.',
+    ],
+
+    'templates' => [
+        'create' => [
+            'heading' => 'Create template',
+            'description' => 'Save a reusable setup that creates real owner-scoped tasks, projects, and checklist rows.',
+        ],
+        'edit' => [
+            'heading' => 'Edit template',
+            'description' => 'Change the reusable defaults without changing tasks already created from this template.',
+        ],
+        'fields' => [
+            'name' => 'Template name',
+            'kind' => 'Template type',
+            'visibility' => 'Visibility',
+            'description' => 'Description',
+            'project_name' => 'Project name',
+            'due_offset_days' => 'Due in days',
+            'checklist_items' => 'Checklist items',
+        ],
+        'placeholders' => [
+            'name' => 'Weekly planning',
+            'description' => 'What this template is best for',
+            'title' => 'Task title created from this template',
+            'project_name' => 'Project to create or reuse',
+            'due_offset_days' => '0 for today',
+        ],
+        'kinds' => [
+            'task' => 'Task',
+            'project' => 'Project',
+            'checklist' => 'Checklist',
+            'routine' => 'Routine',
+        ],
+        'kind_descriptions' => [
+            'task' => 'Create one task with saved defaults.',
+            'project' => 'Create or reuse a project and add the task to it.',
+            'checklist' => 'Create one task with contained checklist items.',
+            'routine' => 'Create a repeatable manual routine without a scheduler.',
+        ],
+        'visibility' => [
+            'private' => 'Private',
+            'shared' => 'Shared',
+        ],
+        'preview' => [
+            'due_offset' => 'Due in :days day(s)',
+            'no_checklist' => 'No checklist items.',
+        ],
+        'actions' => [
+            'create' => 'Save template',
+            'use' => 'Create task',
+            'open_templates' => 'Templates',
+            'open_tasks' => 'Task list',
+            'remove_checklist_item' => 'Remove checklist item',
+        ],
+        'empty' => [
+            'title' => 'No templates yet.',
+            'description' => 'Create a template to reuse task, project, checklist, and routine defaults.',
+        ],
     ],
 
     'modals' => [

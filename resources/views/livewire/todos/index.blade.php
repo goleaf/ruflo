@@ -104,6 +104,10 @@
                     {{ __('todos.board.open_board') }}
                 </flux:button>
 
+                <flux:button size="sm" variant="ghost" icon="document-duplicate" :href="route('todos.templates')" wire:navigate>
+                    {{ __('todos.templates.actions.open_templates') }}
+                </flux:button>
+
                 <flux:button size="sm" variant="ghost" icon="adjustments-horizontal" wire:click="$set('showManageModal', true)">
                     {{ __('todos.actions.manage') }}
                 </flux:button>

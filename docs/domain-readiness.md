@@ -23,6 +23,7 @@ The current application surface covers these URL consumers:
 - Authenticated dashboard route at `/dashboard`.
 - Authenticated task board route at `/todos/board`.
 - Authenticated task calendar route at `/todos/calendar`.
+- Authenticated task templates route at `/todos/templates`.
 - Authenticated todo route at `/todos`.
 - Authenticated Today route at `/todos/today`.
 - Authenticated Overdue route at `/todos/overdue`.

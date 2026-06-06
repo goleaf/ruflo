@@ -337,6 +337,30 @@ ordering.
   ids; they require no queue, cron, worker, terminal, or Artisan command during
   normal usage.
 
+## Templates
+
+Step 043 adds reusable task templates at `todos.templates`.
+
+- Templates are stored in `todo_templates` with `user_id`, per-user unique
+  `name`, `kind` (`task`, `project`, `checklist`, `routine`), `visibility`,
+  generated task title, priority, due offset, optional project name, optional
+  description, and checklist item titles.
+- `TaskTemplateKind` owns labels, colors, and icons for Flux badges.
+- Template reads flow through `TodoTemplateListQuery`, and every submitted
+  template id is resolved through `findFor($user, $id)` before mutation.
+- Template creation and edits use `TodoTemplateData`, `TemplateName`, and
+  `TemplateChecklistItems`. Action classes repeat backend validation and
+  per-user duplicate-name checks.
+- Instantiation creates a real task through `CreateTodo`, resolves or creates
+  an owner-scoped active project by `project_name`, and creates contained
+  checklist rows through `CreateTodoChecklistItem`.
+- Template deletion removes only the reusable template; tasks already created
+  from it stay intact.
+- Shared visibility is stored and rendered, but no collaboration access is
+  granted yet because workspace memberships and roles do not exist.
+- Template workflows are synchronous Livewire actions. They require no cron,
+  queue worker, supervisor, terminal, or Artisan command during normal usage.
+
 ## UI
 
 - Reusable `x-ui.stat` (summary counters) and `x-ui.status-badge` components;
@@ -359,7 +383,10 @@ ordering.
   a bulk selection row, a bulk toolbar that appears on selection, a Flux bulk
   delete confirmation modal, a Kanban board shortcut, and a "Manage" modal for
   creating/renaming/archiving/restoring/deleting projects and creating/deleting
-  tags.
+  tags, plus a Templates shortcut for reusable task setups.
+- The templates page renders a Flux create form, radio-card template type
+  controls, status/priority/due/project/checklist previews, per-template quick
+  actions, an edit modal, field-level errors, and a translated empty state.
 - Project badges in task lists and task detail pages link to the private
   project detail page. The detail page renders the project status, scoped
   lifecycle counts, a paginated task list, and a translated empty state.
@@ -384,12 +411,16 @@ ordering.
 - Saved views are loaded through `SavedTodoViewListQuery` by current user and
   ordered by name/id; `(user_id, name)` prevents duplicate names per user and
   `(user_id, updated_at)` supports owner-scoped listing.
+- Templates are loaded through `TodoTemplateListQuery` by current user and
+  ordered by updated timestamp/name. `(user_id, name)` prevents duplicate
+  names, while `(user_id, kind)` and `(user_id, visibility)` support owner-scoped
+  template listing and future filters.
 
 ## Intentionally not implemented
 
-Manual drag ordering, sub-projects, tag colors editing UI, recurring tasks,
-reminders, dashboard, collaboration. Manual ordering, when added, should store
-a per-user position and only apply when no sort/filter overrides it.
+Manual drag ordering, sub-projects, tag colors editing UI, automatic recurring
+tasks, reminders, dashboard, collaboration. Manual ordering, when added, should
+store a per-user position and only apply when no sort/filter overrides it.
 
 ## Later steps
 

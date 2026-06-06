@@ -1,5 +1,38 @@
 # Changelog
 
+## 2026-06-06 - Step 043 Task templates
+
+### Implemented
+
+- Added owner-scoped `todo_templates` with kind, visibility, generated task
+  defaults, project-name defaults, due-offset defaults, and checklist previews.
+- Added a protected class-based Livewire templates page at `todos.templates`
+  with Flux create/edit/use/delete controls and a shortcut from the task list.
+- Added template action classes, data normalization, custom validation rules,
+  policy, query object, factory states, seed templates, and translations.
+- Template instantiation creates normal tasks, owner-scoped projects, and
+  contained checklist rows synchronously through existing action classes.
+
+### Testing
+
+- Added `TaskTemplateTest` for route protection, owner-only rendering,
+  create/edit/delete/use workflows, invalid input, invalid ids, and direct
+  action authorization.
+- Expanded factory, seeder, policy, private-workspace, architecture,
+  validation-rule, route-protection, domain, localization, and restricted
+  hosting coverage for templates.
+
+### Documentation
+
+- Updated task organization, authorization, validation, request validation,
+  factory coverage, seeding, domain readiness, and changelog docs with the
+  Step 043 template contract.
+
+### Limitation
+
+- Shared template visibility is stored for future collaboration, but templates
+  remain owner-only until member roles exist.
+
 ## 2026-06-06 - Step 042 Subtasks and checklists
 
 ### Implemented

@@ -18,6 +18,8 @@ test('custom validation rules are implemented and use translated failure message
             'Todos/OwnedTag.php',
             'Todos/OwnedTodo.php',
             'Todos/SavedViewName.php',
+            'Todos/TemplateChecklistItems.php',
+            'Todos/TemplateName.php',
         ]);
 
     $ruleFiles->each(function (string $path): void {

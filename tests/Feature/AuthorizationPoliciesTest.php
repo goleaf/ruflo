@@ -6,6 +6,7 @@ use App\Models\SavedTodoView;
 use App\Models\Tag;
 use App\Models\Todo;
 use App\Models\TodoChecklistItem;
+use App\Models\TodoTemplate;
 use App\Models\User;
 use App\Policies\ProjectPolicy;
 use App\Policies\ReminderPolicy;
@@ -13,6 +14,7 @@ use App\Policies\SavedTodoViewPolicy;
 use App\Policies\TagPolicy;
 use App\Policies\TodoChecklistItemPolicy;
 use App\Policies\TodoPolicy;
+use App\Policies\TodoTemplatePolicy;
 use Illuminate\Support\Facades\Gate;
 
 test('tracked private resources resolve explicit policies', function () {
@@ -20,8 +22,32 @@ test('tracked private resources resolve explicit policies', function () {
         ->and(Gate::getPolicyFor(Project::class))->toBeInstanceOf(ProjectPolicy::class)
         ->and(Gate::getPolicyFor(Tag::class))->toBeInstanceOf(TagPolicy::class)
         ->and(Gate::getPolicyFor(TodoChecklistItem::class))->toBeInstanceOf(TodoChecklistItemPolicy::class)
+        ->and(Gate::getPolicyFor(TodoTemplate::class))->toBeInstanceOf(TodoTemplatePolicy::class)
         ->and(Gate::getPolicyFor(SavedTodoView::class))->toBeInstanceOf(SavedTodoViewPolicy::class)
         ->and(Gate::getPolicyFor(Reminder::class))->toBeInstanceOf(ReminderPolicy::class);
+});
+
+test('todo template policy covers owner template abilities', function () {
+    $owner = User::factory()->create();
+    $intruder = User::factory()->create();
+    $template = TodoTemplate::factory()->for($owner)->shared()->create();
+
+    $ownerGate = Gate::forUser($owner);
+    $intruderGate = Gate::forUser($intruder);
+
+    foreach (['view', 'update', 'delete', 'instantiate'] as $ability) {
+        expect($ownerGate->allows($ability, $template))->toBeTrue();
+
+        $response = $intruderGate->inspect($ability, $template);
+
+        expect($response->denied())->toBeTrue()
+            ->and($response->status())->toBe(404);
+    }
+
+    expect($ownerGate->allows('viewAny', TodoTemplate::class))->toBeTrue()
+        ->and($ownerGate->allows('create', TodoTemplate::class))->toBeTrue()
+        ->and($ownerGate->denies('restore', $template))->toBeTrue()
+        ->and($ownerGate->denies('forceDelete', $template))->toBeTrue();
 });
 
 test('todo policy covers lifecycle and bulk abilities', function () {
@@ -181,6 +207,14 @@ test('todo Livewire actions use policy abilities before mutation', function () {
         ->toContain("\$this->authorize('create', SavedTodoView::class);")
         ->toContain("\$this->authorize('view', \$savedView);")
         ->toContain("\$this->authorize('delete', \$savedView);");
+});
+
+test('template Livewire actions use policy abilities before mutation', function () {
+    $source = file_get_contents(app_path('Livewire/Todos/Templates.php'));
+
+    expect($source)
+        ->toContain("\$this->authorize('viewAny', TodoTemplate::class);")
+        ->toContain("\$this->authorize('update', \$template);");
 });
 
 test('task detail checklist Livewire actions use policy abilities before mutation', function () {

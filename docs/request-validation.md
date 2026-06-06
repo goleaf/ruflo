@@ -19,6 +19,12 @@ Livewire component-only forms should continue to use Livewire form objects or co
 
 When a future feature adds a traditional controller or route action that accepts request input, create a dedicated Form Request and consume `$request->validated()` or `$request->safe()` instead of reading unvalidated payloads.
 
+Step 043 task templates remain a Livewire-only workflow. No controller request
+class is introduced because `/todos/templates` is a class-based Livewire page;
+the component validates request shape, custom rule objects handle reusable
+business rules, and `TodoTemplateData` plus action classes repeat the backend
+guards for direct calls.
+
 ## Custom Business Rules
 
 Reusable business validation rules are documented in `docs/validation-rules.md`.

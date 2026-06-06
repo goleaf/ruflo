@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\Priority;
+use App\Enums\TaskTemplateKind;
 use App\Enums\TodoStatus;
 use App\Models\Project;
 use App\Models\Reminder;
@@ -8,6 +9,7 @@ use App\Models\SavedTodoView;
 use App\Models\Tag;
 use App\Models\Todo;
 use App\Models\TodoChecklistItem;
+use App\Models\TodoTemplate;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 
@@ -17,6 +19,7 @@ test('tracked models can be created from their default factories', function () {
     $tag = Tag::factory()->for($user)->create();
     $todo = Todo::factory()->for($user)->forProject($project)->withTags($tag)->create();
     $checklistItem = TodoChecklistItem::factory()->forTodo($todo)->completed()->position(1)->create();
+    $template = TodoTemplate::factory()->for($user)->routine()->create();
     $savedView = SavedTodoView::factory()->for($user)->create();
     $reminder = Reminder::factory()->create();
 
@@ -30,9 +33,32 @@ test('tracked models can be created from their default factories', function () {
         ->and($checklistItem->todo->is($todo))->toBeTrue()
         ->and($checklistItem->is_completed)->toBeTrue()
         ->and($checklistItem->position)->toBe(1)
+        ->and($template->isOwnedBy($user))->toBeTrue()
+        ->and($template->checklist_items)->toHaveCount(3)
         ->and($savedView->isOwnedBy($user))->toBeTrue()
         ->and($savedView->criteria['sort'])->toBe('created')
         ->and($reminder->exists)->toBeTrue();
+});
+
+test('todo template factory covers kind visibility checklist and edge states', function () {
+    $task = TodoTemplate::factory()->task()->private()->create();
+    $project = TodoTemplate::factory()->project()->shared()->create();
+    $checklist = TodoTemplate::factory()->checklist()->create();
+    $routine = TodoTemplate::factory()->routine()->dueIn(1)->create();
+    $heavy = TodoTemplate::factory()->heavyChecklist()->create();
+    $longName = TodoTemplate::factory()->longName()->create();
+
+    expect($task->kind)->toBe(TaskTemplateKind::Task)
+        ->and($task->visibility)->toBe('private')
+        ->and($project->kind)->toBe(TaskTemplateKind::Project)
+        ->and($project->visibility)->toBe('shared')
+        ->and($project->project_name)->toBe('Project launch')
+        ->and($checklist->kind)->toBe(TaskTemplateKind::Checklist)
+        ->and($checklist->checklist_items)->toHaveCount(2)
+        ->and($routine->kind)->toBe(TaskTemplateKind::Routine)
+        ->and($routine->due_offset_days)->toBe(1)
+        ->and($heavy->checklist_items)->toHaveCount(10)
+        ->and(strlen($longName->name))->toBe(80);
 });
 
 test('user factory covers authentication and demo states', function () {

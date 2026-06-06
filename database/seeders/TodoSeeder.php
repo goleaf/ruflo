@@ -9,6 +9,7 @@ use App\Models\SavedTodoView;
 use App\Models\Tag;
 use App\Models\Todo;
 use App\Models\TodoChecklistItem;
+use App\Models\TodoTemplate;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -121,6 +122,51 @@ class TodoSeeder extends Seeder
             'sort' => 'updated',
             'direction' => 'desc',
         ]);
+
+        $this->upsertTemplate($user, 'Daily planning routine', [
+            'kind' => 'routine',
+            'visibility' => 'private',
+            'title' => 'Plan today',
+            'description' => 'A short routine for picking the next useful tasks.',
+            'priority' => Priority::High,
+            'due_offset_days' => 0,
+            'project_name' => 'Work',
+            'checklist_items' => [
+                'Review overdue tasks',
+                'Pick three priorities',
+                'Block one focused session',
+            ],
+        ]);
+
+        $this->upsertTemplate($user, 'Project kickoff', [
+            'kind' => 'project',
+            'visibility' => 'shared',
+            'title' => 'Start the project kickoff',
+            'description' => 'Creates a project-backed kickoff task with starter checklist items.',
+            'priority' => Priority::Normal,
+            'due_offset_days' => 3,
+            'project_name' => 'Project kickoff',
+            'checklist_items' => [
+                'Confirm the goal',
+                'List the first milestones',
+                'Choose the next owner action',
+            ],
+        ]);
+
+        $this->upsertTemplate($user, 'Bug triage checklist', [
+            'kind' => 'checklist',
+            'visibility' => 'private',
+            'title' => 'Triage a bug report',
+            'description' => 'A repeatable checklist for turning an issue into clear next work.',
+            'priority' => Priority::Urgent,
+            'due_offset_days' => null,
+            'project_name' => 'Work',
+            'checklist_items' => [
+                'Reproduce the report',
+                'Capture expected behavior',
+                'Decide fix or backlog',
+            ],
+        ]);
     }
 
     private function upsertProject(User $user, string $name, string $color, bool $archived = false): Project
@@ -205,6 +251,32 @@ class TodoSeeder extends Seeder
                 'position' => $index + 1,
             ])->save();
         }
+    }
+
+    /**
+     * @param  array{kind: string, visibility: string, title: string, description: string, priority: Priority, due_offset_days?: int|null, project_name?: string|null, checklist_items: list<string>}  $attributes
+     */
+    private function upsertTemplate(User $user, string $name, array $attributes): TodoTemplate
+    {
+        $template = TodoTemplate::query()
+            ->where('user_id', $user->id)
+            ->where('name', $name)
+            ->first() ?? new TodoTemplate;
+
+        $template->forceFill([
+            'user_id' => $user->id,
+            'name' => $name,
+            'kind' => $attributes['kind'],
+            'visibility' => $attributes['visibility'],
+            'title' => $attributes['title'],
+            'description' => $attributes['description'],
+            'priority' => $attributes['priority'],
+            'due_offset_days' => $attributes['due_offset_days'] ?? null,
+            'project_name' => $attributes['project_name'] ?? null,
+            'checklist_items' => $attributes['checklist_items'],
+        ])->save();
+
+        return $template;
     }
 
     /**

@@ -8,6 +8,7 @@ Step 012 covers the committed model set:
 - `Tag`
 - `Todo`
 - `TodoChecklistItem`
+- `TodoTemplate`
 
 The tracked `Reminder` model is currently a placeholder with no ownership, schedule, lifecycle, or message columns, so it is not seeded yet. Seeder coverage asserts the placeholder table stays empty until the reminder domain exists. Future models for recurrence, comments, attachments, activity, invites, settings, and collaboration are not seeded yet because those committed models do not exist yet.
 
@@ -31,6 +32,8 @@ The tracked `Reminder` model is currently a placeholder with no ownership, sched
   so task detail pages show progress and locked archived checklist behavior.
 - three saved views per user: `Today focus`, `Urgent work`, and
   `Waiting on others`.
+- three reusable templates per user: `Daily planning routine`,
+  `Project kickoff`, and `Bug triage checklist`.
 
 Step 041's calendar view reuses that catalog: the seeded due-today, overdue,
 upcoming, and no-due-date tasks give the local `/todos/calendar` page immediate
@@ -44,6 +47,11 @@ Seeders are idempotent for the current demo catalog. Re-running them updates exi
 
 Checklist rows are upserted per seeded task/title and keep positions stable when
 the seeder is run again.
+
+Templates are upserted per user/name and keep private data isolated. The
+`Project kickoff` template is marked shared so the UI can show the visibility
+state, but it is still owner-only until the collaboration/member steps add real
+role rules.
 
 Placeholder reminder rows are intentionally excluded from the current catalog because they would not be owned by a user or connected to a task.
 

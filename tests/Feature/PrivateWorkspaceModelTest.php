@@ -8,6 +8,7 @@ use App\Models\SavedTodoView;
 use App\Models\Tag;
 use App\Models\Todo;
 use App\Models\TodoChecklistItem;
+use App\Models\TodoTemplate;
 use App\Models\User;
 use App\Policies\ProjectPolicy;
 use App\Policies\ReminderPolicy;
@@ -15,6 +16,7 @@ use App\Policies\SavedTodoViewPolicy;
 use App\Policies\TagPolicy;
 use App\Policies\TodoChecklistItemPolicy;
 use App\Policies\TodoPolicy;
+use App\Policies\TodoTemplatePolicy;
 use App\Queries\Dashboard\DailySummaryQuery;
 use App\Queries\Todos\TodoFilters;
 use App\Queries\Todos\TodoListQuery;
@@ -24,7 +26,7 @@ use Illuminate\Support\Facades\Gate;
 use Livewire\Livewire;
 
 test('private workspace resources share the owning user boundary', function () {
-    $privateModels = [Todo::class, Project::class, Tag::class, SavedTodoView::class, TodoChecklistItem::class];
+    $privateModels = [Todo::class, Project::class, Tag::class, SavedTodoView::class, TodoChecklistItem::class, TodoTemplate::class];
 
     foreach ($privateModels as $modelClass) {
         /** @var Model $model */
@@ -40,6 +42,7 @@ test('private workspace models resolve explicit policies', function () {
         ->and(Gate::getPolicyFor(Project::class))->toBeInstanceOf(ProjectPolicy::class)
         ->and(Gate::getPolicyFor(Tag::class))->toBeInstanceOf(TagPolicy::class)
         ->and(Gate::getPolicyFor(TodoChecklistItem::class))->toBeInstanceOf(TodoChecklistItemPolicy::class)
+        ->and(Gate::getPolicyFor(TodoTemplate::class))->toBeInstanceOf(TodoTemplatePolicy::class)
         ->and(Gate::getPolicyFor(SavedTodoView::class))->toBeInstanceOf(SavedTodoViewPolicy::class)
         ->and(Gate::getPolicyFor(Reminder::class))->toBeInstanceOf(ReminderPolicy::class);
 });
@@ -59,6 +62,7 @@ test('foreign private records are denied as not found', function (string $modelC
     'tag' => Tag::class,
     'saved todo view' => SavedTodoView::class,
     'todo checklist item' => TodoChecklistItem::class,
+    'todo template' => TodoTemplate::class,
 ]);
 
 test('dashboard summary counts only the authenticated users private workspace', function () {

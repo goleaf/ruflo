@@ -15,6 +15,8 @@ The current committed app has tag-name and todo workspace ownership rules:
 - `App\Rules\Todos\OwnedTag`
 - `App\Rules\Todos\OwnedTodo`
 - `App\Rules\Todos\SavedViewName`
+- `App\Rules\Todos\TemplateChecklistItems`
+- `App\Rules\Todos\TemplateName`
 
 `TagName` validates that a submitted tag name still has visible content after
 normalization (`squish()` + lower-case). It prevents whitespace-only labels
@@ -45,6 +47,14 @@ layer also rejects empty or overlong direct calls before writing.
 `SavedViewName` validates that a saved task-view name contains visible text
 after whitespace normalization. Per-user uniqueness is enforced at the
 Livewire validation boundary and by the database unique index.
+
+`TemplateName` validates template names, generated task titles, and project
+template names for visible text after whitespace normalization.
+
+`TemplateChecklistItems` validates reusable template checklist arrays. It
+normalizes blank rows away, allows at most 10 visible checklist items, caps
+each item at 120 characters, and requires at least one item for checklist and
+routine templates.
 
 The action layer still re-scopes ids to the current user before writing. The rule objects improve request feedback; the action layer remains the defense-in-depth boundary.
 
@@ -107,3 +117,12 @@ Step 042 added `App\Rules\Todos\ChecklistItemTitle` and wired it into the task
 detail checklist add/edit flows. `CreateTodoChecklistItem` and
 `UpdateTodoChecklistItem` repeat the backend guard so direct action calls cannot
 persist blank or overlong checklist titles if Livewire validation is bypassed.
+
+## 2026-06-06 Step 043 Recheck
+
+Step 043 added `App\Rules\Todos\TemplateName` and
+`App\Rules\Todos\TemplateChecklistItems` for reusable task templates.
+`TodoTemplateData`, `CreateTodoTemplate`, and `UpdateTodoTemplate` repeat the
+backend guards so direct action calls cannot persist blank template names,
+invalid kinds, invalid visibility, invalid due offsets, project templates
+without a project name, or malformed checklist arrays.

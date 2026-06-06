@@ -134,6 +134,14 @@ return [
         'clear_filters' => 'Reset',
     ],
 
+    'saved_views' => [
+        'label' => 'Saved views',
+        'name' => 'View name',
+        'name_placeholder' => 'Name this view',
+        'save' => 'Save view',
+        'delete' => 'Delete :name',
+    ],
+
     'bulk' => [
         'selected' => ':count selected',
         'selected_items' => 'selected tasks',
@@ -154,6 +162,7 @@ return [
         'clear_completed' => 'Delete all completed tasks?',
         'delete_project' => 'Delete this project? Its tasks are kept and moved to "No project".',
         'delete_tag' => 'Delete this tag? It is removed from any tasks using it.',
+        'delete_saved_view' => 'Delete this saved view?',
     ],
 
     'empty' => [
@@ -239,6 +248,9 @@ return [
         'project_deleted' => 'Project deleted.',
         'tag_created' => 'Tag created.',
         'tag_deleted' => 'Tag deleted.',
+        'saved_view_created' => 'Saved view ":name".',
+        'saved_view_applied' => 'Applied saved view ":name".',
+        'saved_view_deleted' => 'Saved view deleted.',
     ],
 
     'today' => [
@@ -283,6 +295,8 @@ return [
         'owned_todo' => 'Choose one of your tasks.',
         'owned_deleted_todo' => 'Choose one of your deleted tasks.',
         'tag_name' => 'Enter a tag name with at least one letter or number.',
+        'saved_view_name' => 'Enter a saved view name with visible text.',
+        'saved_view_name_unique' => 'Use a saved view name you have not already used.',
         'priority' => 'Choose a valid priority.',
         'due_date' => 'Enter a valid due date.',
     ],

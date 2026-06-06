@@ -4,6 +4,7 @@ Step 012 covers the committed model set:
 
 - `User`
 - `Project`
+- `SavedTodoView`
 - `Tag`
 - `Todo`
 
@@ -25,10 +26,12 @@ The tracked `Reminder` model is currently a placeholder with no ownership, sched
 - `urgent` and `waiting` tags,
 - active, due-today, overdue, upcoming, completed, archived,
   archived-completed, and trashed tasks.
+- three saved views per user: `Today focus`, `Urgent work`, and
+  `Waiting on others`.
 
 ## Idempotency
 
-Seeders are idempotent for the current demo catalog. Re-running them updates existing demo records instead of creating duplicate users, tags, projects, or seeded task titles.
+Seeders are idempotent for the current demo catalog. Re-running them updates existing demo records instead of creating duplicate users, tags, projects, saved views, or seeded task titles.
 
 Placeholder reminder rows are intentionally excluded from the current catalog because they would not be owned by a user or connected to a task.
 

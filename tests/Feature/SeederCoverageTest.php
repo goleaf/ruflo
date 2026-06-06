@@ -2,6 +2,7 @@
 
 use App\Models\Project;
 use App\Models\Reminder;
+use App\Models\SavedTodoView;
 use App\Models\Tag;
 use App\Models\Todo;
 use App\Models\User;
@@ -20,6 +21,7 @@ test('database seeder creates safe demo users and complete private workspaces', 
         ->and(Hash::check('password', $users->firstWhere('email', 'test@example.com')->password))->toBeTrue()
         ->and(Project::query()->count())->toBe(6)
         ->and(Reminder::query()->count())->toBe(0)
+        ->and(SavedTodoView::query()->count())->toBe(6)
         ->and(Tag::query()->count())->toBe(4)
         ->and(Todo::query()->count())->toBe(14)
         ->and(Todo::withTrashed()->count())->toBe(16);
@@ -34,7 +36,12 @@ test('database seeder creates safe demo users and complete private workspaces', 
             ->and($user->todos()->onlyTrashed()->count())->toBe(1)
             ->and($user->todos()->overdue()->count())->toBe(1)
             ->and($user->todos()->dueToday()->count())->toBe(1)
-            ->and($user->todos()->upcoming()->count())->toBe(1);
+            ->and($user->todos()->upcoming()->count())->toBe(1)
+            ->and($user->savedTodoViews()->pluck('name')->sort()->values()->all())->toBe([
+                'Today focus',
+                'Urgent work',
+                'Waiting on others',
+            ]);
     });
 });
 
@@ -45,6 +52,7 @@ test('database seeder is idempotent for the current demo catalog', function () {
     expect(User::query()->count())->toBe(2)
         ->and(Project::query()->count())->toBe(6)
         ->and(Reminder::query()->count())->toBe(0)
+        ->and(SavedTodoView::query()->count())->toBe(6)
         ->and(Tag::query()->count())->toBe(4)
         ->and(Todo::query()->count())->toBe(14)
         ->and(Todo::withTrashed()->count())->toBe(16)
@@ -59,6 +67,7 @@ test('database seeder does not create known demo credentials in production envir
     expect(User::query()->count())->toBe(0)
         ->and(Project::query()->count())->toBe(0)
         ->and(Reminder::query()->count())->toBe(0)
+        ->and(SavedTodoView::query()->count())->toBe(0)
         ->and(Tag::query()->count())->toBe(0)
         ->and(Todo::query()->count())->toBe(0);
 });

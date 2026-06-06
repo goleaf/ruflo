@@ -2,8 +2,10 @@
 
 namespace Database\Seeders;
 
+use App\Data\Todos\SavedTodoViewData;
 use App\Enums\Priority;
 use App\Models\Project;
+use App\Models\SavedTodoView;
 use App\Models\Tag;
 use App\Models\Todo;
 use App\Models\User;
@@ -82,6 +84,25 @@ class TodoSeeder extends Seeder
             'priority' => Priority::Low,
             'deleted_at' => now()->subDays(2),
         ]);
+
+        $this->upsertSavedView($user, 'Today focus', [
+            'due' => 'today',
+            'sort' => 'due',
+            'direction' => 'asc',
+        ]);
+
+        $this->upsertSavedView($user, 'Urgent work', [
+            'project' => (string) $work->id,
+            'priorityFilter' => Priority::Urgent->value,
+            'sort' => 'priority',
+            'direction' => 'desc',
+        ]);
+
+        $this->upsertSavedView($user, 'Waiting on others', [
+            'tag' => (string) $waiting->id,
+            'sort' => 'updated',
+            'direction' => 'desc',
+        ]);
     }
 
     private function upsertProject(User $user, string $name, string $color, bool $archived = false): Project
@@ -142,5 +163,24 @@ class TodoSeeder extends Seeder
         $todo->tags()->sync(collect($tags)->pluck('id')->all());
 
         return $todo;
+    }
+
+    /**
+     * @param  array<string, mixed>  $criteria
+     */
+    private function upsertSavedView(User $user, string $name, array $criteria): SavedTodoView
+    {
+        $savedView = SavedTodoView::query()
+            ->where('user_id', $user->id)
+            ->where('name', $name)
+            ->first() ?? new SavedTodoView;
+
+        $savedView->forceFill([
+            'user_id' => $user->id,
+            'name' => $name,
+            'criteria' => SavedTodoViewData::normalizeCriteria($criteria),
+        ])->save();
+
+        return $savedView;
     }
 }

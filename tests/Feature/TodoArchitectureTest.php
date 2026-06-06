@@ -2,17 +2,23 @@
 
 use App\Actions\Todos\ClearCompletedTodos;
 use App\Actions\Todos\CompleteTodo;
+use App\Actions\Todos\CreateSavedTodoView;
 use App\Actions\Todos\CreateTodo;
+use App\Actions\Todos\DeleteSavedTodoView;
 use App\Actions\Todos\DeleteTodo;
 use App\Actions\Todos\ReopenTodo;
 use App\Actions\Todos\RestoreDeletedTodo;
 use App\Actions\Todos\TodoLifecycleStateMachine;
+use App\Data\Todos\SavedTodoViewData;
 use App\Data\Todos\TodoData;
 use App\Enums\TodoTransition;
 use App\Livewire\Forms\Todos\TodoForm;
 use App\Livewire\Projects\Show as ProjectShow;
+use App\Policies\SavedTodoViewPolicy;
 use App\Policies\TodoPolicy;
+use App\Queries\Todos\SavedTodoViewListQuery;
 use App\Queries\Todos\TodoListQuery;
+use App\Rules\Todos\SavedViewName;
 
 test('todo foundation classes exist', function () {
     expect(class_exists(TodoPolicy::class))->toBeTrue()
@@ -25,6 +31,12 @@ test('todo foundation classes exist', function () {
         ->and(class_exists(DeleteTodo::class))->toBeTrue()
         ->and(class_exists(RestoreDeletedTodo::class))->toBeTrue()
         ->and(class_exists(TodoLifecycleStateMachine::class))->toBeTrue()
+        ->and(class_exists(CreateSavedTodoView::class))->toBeTrue()
+        ->and(class_exists(DeleteSavedTodoView::class))->toBeTrue()
+        ->and(class_exists(SavedTodoViewData::class))->toBeTrue()
+        ->and(class_exists(SavedTodoViewListQuery::class))->toBeTrue()
+        ->and(class_exists(SavedViewName::class))->toBeTrue()
+        ->and(class_exists(SavedTodoViewPolicy::class))->toBeTrue()
         ->and(class_exists(ProjectShow::class))->toBeTrue()
         ->and(enum_exists(TodoTransition::class))->toBeTrue()
         ->and(class_exists(ClearCompletedTodos::class))->toBeTrue();
@@ -37,6 +49,7 @@ test('todo livewire page delegates domain responsibilities', function () {
         ->toContain('TodoForm')
         ->toContain('CreateTodo')
         ->toContain('TodoListQuery')
+        ->toContain('SavedTodoViewListQuery')
         ->toContain('$this->authorize')
         ->not->toContain('Todo::query()')
         ->not->toContain('->create([');

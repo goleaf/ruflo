@@ -11,6 +11,7 @@ The current committed app has tag-name and todo workspace ownership rules:
 - `App\Rules\Todos\OwnedActiveProject`
 - `App\Rules\Todos\OwnedTag`
 - `App\Rules\Todos\OwnedTodo`
+- `App\Rules\Todos\SavedViewName`
 
 `TagName` validates that a submitted tag name still has visible content after
 normalization (`squish()` + lower-case). It prevents whitespace-only labels
@@ -25,6 +26,10 @@ from being persisted if a form input contains only spaces.
 `OwnedTag` validates that a tag id belongs to the authenticated user. It is used for task tag assignment.
 
 `OwnedTodo` validates that a selected todo id belongs to the authenticated user. It is used by bulk task actions before any mutation runs.
+
+`SavedViewName` validates that a saved task-view name contains visible text
+after whitespace normalization. Per-user uniqueness is enforced at the
+Livewire validation boundary and by the database unique index.
 
 The action layer still re-scopes ids to the current user before writing. The rule objects improve request feedback; the action layer remains the defense-in-depth boundary.
 
@@ -60,3 +65,10 @@ Step 031 added `App\Rules\Todos\DueDate` and wired it into the shared task
 create/edit form. The `TodoData` DTO reuses the same parser so invalid direct
 due-date input fails with `todos.validation.due_date` instead of reaching the
 database cast.
+
+## 2026-06-06 Step 038 Recheck
+
+Step 038 added `App\Rules\Todos\SavedViewName` and wired it into the saved-view
+Livewire action. `SavedTodoViewData` also normalizes saved filter criteria so
+unsafe tab, project, tag, priority, due, sort, and direction values cannot
+persist as executable query state.

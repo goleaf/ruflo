@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-06-06 - Step 038 Saved views
+
+### Implemented
+
+- Added private saved task views backed by `saved_todo_views`, storing only normalized search, filter, sort, direction, and lifecycle tab criteria.
+- Added owner-scoped saved-view actions, data normalization, query lookup, policy, factory states, and demo seeder rows.
+- Added a translated Flux saved-views strip to the main Todos workspace for saving, applying, and deleting views without cron, workers, external services, or terminal dependency.
+
+### Testing
+
+- Added `SavedTodoViewTest` for save/apply/delete behavior, validation, duplicate rejection, pagination reset, selection reset, stale criteria, and cross-user privacy.
+- Expanded factory, seeder, policy, private-workspace, architecture, and localization coverage for the new saved-view model and validation rule.
+
+### Documentation
+
+- Updated task organization, authorization, validation, factory coverage, seeding, and todo foundation docs with the Step 038 saved-view contract.
+
 ## 2026-06-06 - Step 037 Sorting
 
 ### Implemented

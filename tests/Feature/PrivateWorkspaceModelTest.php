@@ -4,11 +4,13 @@ use App\Livewire\Dashboard\Index as DashboardIndex;
 use App\Models\Concerns\BelongsToUser;
 use App\Models\Project;
 use App\Models\Reminder;
+use App\Models\SavedTodoView;
 use App\Models\Tag;
 use App\Models\Todo;
 use App\Models\User;
 use App\Policies\ProjectPolicy;
 use App\Policies\ReminderPolicy;
+use App\Policies\SavedTodoViewPolicy;
 use App\Policies\TagPolicy;
 use App\Policies\TodoPolicy;
 use App\Queries\Dashboard\DailySummaryQuery;
@@ -20,7 +22,7 @@ use Illuminate\Support\Facades\Gate;
 use Livewire\Livewire;
 
 test('private workspace resources share the owning user boundary', function () {
-    $privateModels = [Todo::class, Project::class, Tag::class];
+    $privateModels = [Todo::class, Project::class, Tag::class, SavedTodoView::class];
 
     foreach ($privateModels as $modelClass) {
         /** @var Model $model */
@@ -35,6 +37,7 @@ test('private workspace models resolve explicit policies', function () {
     expect(Gate::getPolicyFor(Todo::class))->toBeInstanceOf(TodoPolicy::class)
         ->and(Gate::getPolicyFor(Project::class))->toBeInstanceOf(ProjectPolicy::class)
         ->and(Gate::getPolicyFor(Tag::class))->toBeInstanceOf(TagPolicy::class)
+        ->and(Gate::getPolicyFor(SavedTodoView::class))->toBeInstanceOf(SavedTodoViewPolicy::class)
         ->and(Gate::getPolicyFor(Reminder::class))->toBeInstanceOf(ReminderPolicy::class);
 });
 
@@ -51,6 +54,7 @@ test('foreign private records are denied as not found', function (string $modelC
     'todo' => Todo::class,
     'project' => Project::class,
     'tag' => Tag::class,
+    'saved todo view' => SavedTodoView::class,
 ]);
 
 test('dashboard summary counts only the authenticated users private workspace', function () {

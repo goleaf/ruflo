@@ -33,6 +33,7 @@ scope) rather than across the whole codebase.
 | --- | --- | --- |
 | Ownership scoping | `App\Models\Concerns\BelongsToUser` (`scopeOwnedBy`, `isOwnedBy`) | The only way to scope a query or check ownership. |
 | Read boundary | `App\Queries\Todos\TodoListQuery` | The only place todos are read for the UI. Always owner-scoped. |
+| Saved view read boundary | `App\Queries\Todos\SavedTodoViewListQuery` | Owner-scoped saved task-view listing and lookup. |
 | Per-action decisions | `App\Policies\TodoPolicy` | The only place "may this user do this?" is answered. |
 | Policy binding | `#[UsePolicy(...Policy::class)]` on current private models | Explicit, greppable mapping — not naming-convention magic. |
 | Mutations | `App\Actions\Todos\*` | Assign ownership from the authenticated user; never from request input. |
@@ -92,6 +93,9 @@ The Livewire component authorizes **before** delegating to an action:
   yet; when designed it must be protected more strictly than soft delete.
 - `bulkRestoreDeleted` — class-level ability for restoring selected trash rows
   after each selected id validates as one of the current user's deleted tasks.
+- Saved task views use `SavedTodoViewPolicy`: `viewAny` and `create` are
+  available to authenticated users for their own workspace, while `view`,
+  `update`, and `delete` are owner-only and hide foreign ids as not found.
 
 Backend authorization is the real security. Frontend hiding of buttons is UX
 only and is never sufficient.
@@ -148,7 +152,8 @@ it on:
 - **Search & filters** — ownership is applied at the query level before any
   text/status/priority filtering; invalid filter input is validated and must
   never widen the scope. Tampered numeric project/tag filters return a safe
-  empty state.
+  empty state. Saved views store only normalized filter/sort criteria and
+  applying them still flows through the same owner-scoped query boundary.
 - **Bulk actions** — never trust a submitted set of IDs. Re-scope every
   selected ID to the owner and authorize each before acting; a foreign ID in
   the payload is rejected at validation or silently excluded inside direct
@@ -225,3 +230,8 @@ guest/verification protected, project ids are owner-scoped before rendering,
 foreign project names and tasks are hidden as not found, archived projects
 remain readable, project badge links are scoped to current-user data, and empty
 project states are translated.
+
+`SavedTodoViewTest` locks the Step 038 contract: saved views are listed,
+created, applied, and deleted only for their owner; blank and duplicate names
+are rejected; stale foreign project criteria cannot leak names or widen task
+results; and foreign saved-view ids resolve as not found.

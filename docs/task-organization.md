@@ -1,6 +1,6 @@
 # Task Organization
 
-Step 028 rechecks and extends the private task lifecycle into a usable productivity system:
+Step 038 rechecks and extends the private task lifecycle into a usable productivity system:
 projects, tags, priorities, due dates, search, filters, sorting, and bulk
 actions. Everything here is owner-scoped on top of the model in
 [`authorization.md`](authorization.md) and the lifecycle in
@@ -14,6 +14,7 @@ actions. Everything here is owner-scoped on top of the model in
 | **Tag** | `tags` table; `tag_todo` pivot | `tags.user_id`, private, unique name per user |
 | **Priority** | `todos.priority` (enum string) | n/a — `App\Enums\Priority` (low/normal/high/urgent) |
 | **Due date** | `todos.due_date` (date) | n/a |
+| **Saved view** | `saved_todo_views` table; normalized criteria JSON | `saved_todo_views.user_id`, private |
 
 ## Projects
 
@@ -136,6 +137,14 @@ the (sanitized) filter object.
   and reset it with the rest of the filter panel.
 - **Pagination** — the list is paginated (15/page) via `WithPagination`; it
   never loads an unbounded result set.
+- **Saved views** — Step 038 stores a user's current tab, search, project, tag,
+  priority, due bucket, sort, and direction as normalized criteria on
+  `saved_todo_views`. The payload never stores task results or another user's
+  resource names. Applying a saved view writes the bounded criteria back through
+  the same Livewire URL state and `TodoListQuery` sanitizer used by normal
+  filtering, so stale or foreign project/tag ids produce the existing empty
+  owner-scoped result instead of widening the list. Saved view names are unique
+  per user and validated by `SavedViewName`.
 
 Filters, search, sort, and pagination compose: changing any of them resets the
 page and clears the bulk selection. Active filters render as translated Flux
@@ -245,9 +254,9 @@ full Todo workspace shortcuts.
   through the owner-scoped query boundary. Trash rows do not link to detail
   pages until restored.
 - A filter toolbar (search, project, tag, priority, due, sort, direction,
-  reset), a bulk toolbar that appears on selection, and a "Manage" modal for
-  creating/renaming/archiving/restoring/deleting projects and creating/deleting
-  tags.
+  reset), a saved-views strip for saving/applying/deleting named view criteria,
+  a bulk toolbar that appears on selection, and a "Manage" modal for creating/
+  renaming/archiving/restoring/deleting projects and creating/deleting tags.
 - Project badges in task lists and task detail pages link to the private
   project detail page. The detail page renders the project status, scoped
   lifecycle counts, a paginated task list, and a translated empty state.
@@ -267,13 +276,15 @@ full Todo workspace shortcuts.
 - Composite indexes back the common filters: `(user_id, project_id)`,
   `(user_id, due_date)`, `(user_id, priority)`, `(user_id, archived_at)`,
   `(user_id, is_completed)`.
+- Saved views are loaded through `SavedTodoViewListQuery` by current user and
+  ordered by name/id; `(user_id, name)` prevents duplicate names per user and
+  `(user_id, updated_at)` supports owner-scoped listing.
 
 ## Intentionally not implemented
 
-Manual drag ordering, saved/named filter views, sub-projects, tag colors
-editing UI, recurring tasks, reminders, dashboard, collaboration. Manual
-ordering, when added, should store a per-user position and only apply when no
-sort/filter overrides it.
+Manual drag ordering, sub-projects, tag colors editing UI, recurring tasks,
+reminders, dashboard, collaboration. Manual ordering, when added, should store
+a per-user position and only apply when no sort/filter overrides it.
 
 ## Later steps
 

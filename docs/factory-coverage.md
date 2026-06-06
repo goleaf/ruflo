@@ -5,6 +5,7 @@ Step 011 covers the tracked application models:
 - `App\Models\User`
 - `App\Models\Project`
 - `App\Models\Reminder`
+- `App\Models\SavedTodoView`
 - `App\Models\Tag`
 - `App\Models\Todo`
 
@@ -42,6 +43,19 @@ Demo user factory states read from `config/demo.php` so the login panel, seeders
 ## Reminder Factory
 
 `ReminderFactory` covers valid placeholder record creation for the current reminder schema. It does not define active, due, sent, failed, retry, or processed states yet because the table has no columns for those concepts.
+
+## Saved Todo View Factory
+
+`SavedTodoViewFactory` covers:
+
+- default user-owned saved task views with normalized empty criteria,
+- `dueToday()` views for the active due-today bucket,
+- `urgent()` views for urgent priority focus,
+- `completed()` views for the completed lifecycle tab,
+- explicit `criteria()` overrides for edge-case and stale-criteria tests.
+
+Saved-view criteria stores only bounded URL state. Factory states do not create
+shared/global visibility and remain owner-scoped through `user_id`.
 
 ## Todo Factory
 

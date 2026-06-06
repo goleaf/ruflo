@@ -63,7 +63,7 @@ Use this file as a persistent task tracker. Step detail lives in `TODO_MASTER_PR
 - [x] Step 035 — Search
 - [x] Step 036 — Filters
 - [x] Step 037 — Sorting
-- [ ] Step 038 — Saved views
+- [x] Step 038 — Saved views
 - [ ] Step 039 — Bulk selection and actions
 - [ ] Step 040 — Kanban board
 - [ ] Step 041 — Calendar view

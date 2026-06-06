@@ -100,6 +100,49 @@
             </flux:button>
         </div>
 
+        <div class="flex flex-col gap-3 rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-3 dark:border-white/10 dark:bg-zinc-900">
+            <form wire:submit="saveCurrentView" class="flex flex-col gap-3 sm:flex-row sm:items-start">
+                <div class="min-w-0 flex-1">
+                    <flux:input
+                        wire:model="savedViewName"
+                        :label="__('todos.saved_views.name')"
+                        :placeholder="__('todos.saved_views.name_placeholder')"
+                        maxlength="80"
+                        autocomplete="off"
+                    />
+                    <flux:error name="savedViewName" />
+                </div>
+
+                <flux:button type="submit" size="sm" variant="subtle" icon="plus" class="sm:mt-6">
+                    {{ __('todos.saved_views.save') }}
+                </flux:button>
+            </form>
+
+            @if ($this->savedViews->isNotEmpty())
+                <div class="flex flex-wrap items-center gap-2">
+                    <flux:text class="text-xs font-medium uppercase text-zinc-500 dark:text-zinc-400">{{ __('todos.saved_views.label') }}</flux:text>
+
+                    @foreach ($this->savedViews as $savedView)
+                        <div wire:key="saved-todo-view-{{ $savedView->id }}" class="flex min-w-0 items-center gap-1">
+                            <flux:button size="xs" variant="ghost" icon="adjustments-horizontal" wire:click="applySavedView({{ $savedView->id }})" class="max-w-52 truncate">
+                                {{ $savedView->name }}
+                            </flux:button>
+
+                            <flux:button
+                                size="xs"
+                                variant="ghost"
+                                icon="trash"
+                                square
+                                wire:click="deleteSavedView({{ $savedView->id }})"
+                                wire:confirm="{{ __('todos.confirmations.delete_saved_view') }}"
+                                :aria-label="__('todos.saved_views.delete', ['name' => $savedView->name])"
+                            />
+                        </div>
+                    @endforeach
+                </div>
+            @endif
+        </div>
+
         {{-- Filter toolbar --}}
         <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
             <flux:input

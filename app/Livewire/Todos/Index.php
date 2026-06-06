@@ -18,7 +18,9 @@ use App\Actions\Todos\BulkRestoreDeletedTodos;
 use App\Actions\Todos\BulkUnarchiveTodos;
 use App\Actions\Todos\ClearCompletedTodos;
 use App\Actions\Todos\CompleteTodo;
+use App\Actions\Todos\CreateSavedTodoView;
 use App\Actions\Todos\CreateTodo;
+use App\Actions\Todos\DeleteSavedTodoView;
 use App\Actions\Todos\DeleteTodo;
 use App\Actions\Todos\ReopenTodo;
 use App\Actions\Todos\RestoreDeletedTodo;
@@ -26,21 +28,25 @@ use App\Actions\Todos\UnarchiveTodo;
 use App\Actions\Todos\UpdateTodo;
 use App\Data\Projects\ProjectData;
 use App\Data\Tags\TagData;
+use App\Data\Todos\SavedTodoViewData;
 use App\Enums\Priority;
 use App\Enums\TodoStatus;
 use App\Exceptions\InvalidTodoTransition;
 use App\Livewire\Forms\Todos\TodoForm;
 use App\Models\Project;
+use App\Models\SavedTodoView;
 use App\Models\Tag;
 use App\Models\Todo;
 use App\Models\User;
 use App\Queries\Projects\ProjectListQuery;
 use App\Queries\Tags\TagListQuery;
+use App\Queries\Todos\SavedTodoViewListQuery;
 use App\Queries\Todos\TodoFilters;
 use App\Queries\Todos\TodoListQuery;
 use App\Rules\Tags\TagName;
 use App\Rules\Todos\OwnedActiveProject;
 use App\Rules\Todos\OwnedTodo;
+use App\Rules\Todos\SavedViewName;
 use Flux\Flux;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
@@ -48,6 +54,7 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\Title;
@@ -99,6 +106,8 @@ class Index extends Component
 
     #[Url]
     public string $direction = 'desc';
+
+    public string $savedViewName = '';
 
     // --- Edit modal ---
     #[Locked]
@@ -158,6 +167,77 @@ class Index extends Component
         $this->resetPage();
         $this->selected = [];
         unset($this->todos);
+    }
+
+    // --- Saved views ---
+
+    public function saveCurrentView(CreateSavedTodoView $createSavedTodoView): void
+    {
+        $this->authorize('create', SavedTodoView::class);
+
+        $user = $this->currentUser();
+
+        $this->validate(
+            [
+                'savedViewName' => [
+                    'required',
+                    'string',
+                    'max:80',
+                    new SavedViewName,
+                    Rule::unique('saved_todo_views', 'name')->where(fn ($query) => $query->where('user_id', $user->id)),
+                ],
+            ],
+            messages: [
+                'savedViewName.unique' => __('todos.validation.saved_view_name_unique'),
+            ],
+            attributes: [
+                'savedViewName' => __('todos.saved_views.name'),
+            ],
+        );
+
+        $savedView = $createSavedTodoView->handle($user, SavedTodoViewData::fromArray([
+            'name' => $this->savedViewName,
+            'criteria' => $this->currentSavedViewCriteria(),
+        ]));
+
+        $this->savedViewName = '';
+        unset($this->savedViews);
+
+        Flux::toast(variant: 'success', text: __('todos.messages.saved_view_created', ['name' => $savedView->name]));
+    }
+
+    public function applySavedView(int $savedViewId, SavedTodoViewListQuery $query): void
+    {
+        $savedView = $query->findFor($this->currentUser(), $savedViewId);
+        $this->authorize('view', $savedView);
+
+        $criteria = SavedTodoViewData::normalizeCriteria($savedView->criteria ?? []);
+
+        $this->tab = $criteria['tab'];
+        $this->search = $criteria['search'];
+        $this->project = $criteria['project'];
+        $this->tag = $criteria['tag'];
+        $this->priorityFilter = $criteria['priorityFilter'];
+        $this->due = $criteria['due'];
+        $this->sort = $criteria['sort'];
+        $this->direction = $criteria['direction'];
+        $this->selected = [];
+        $this->resetPage();
+        unset($this->todos);
+
+        Flux::toast(variant: 'success', text: __('todos.messages.saved_view_applied', ['name' => $savedView->name]));
+    }
+
+    public function deleteSavedView(int $savedViewId, SavedTodoViewListQuery $query, DeleteSavedTodoView $deleteSavedTodoView): void
+    {
+        $savedView = $query->findFor($this->currentUser(), $savedViewId);
+        $this->authorize('delete', $savedView);
+
+        $deleteSavedTodoView->handle($savedView);
+
+        unset($this->savedViews);
+
+        Flux::toast(variant: 'success', text: __('todos.messages.saved_view_deleted'));
     }
 
     // --- Create / edit ---
@@ -535,6 +615,15 @@ class Index extends Component
     }
 
     /**
+     * @return Collection<int, SavedTodoView>
+     */
+    #[Computed]
+    public function savedViews(): Collection
+    {
+        return app(SavedTodoViewListQuery::class)->for($this->currentUser());
+    }
+
+    /**
      * @return list<Priority>
      */
     public function priorityOptions(): array
@@ -733,6 +822,23 @@ class Index extends Component
         };
     }
 
+    /**
+     * @return array{tab: string, search: string, project: string, tag: string, priorityFilter: string, due: string, sort: string, direction: string}
+     */
+    private function currentSavedViewCriteria(): array
+    {
+        return SavedTodoViewData::normalizeCriteria([
+            'tab' => $this->tab,
+            'search' => $this->search,
+            'project' => $this->project,
+            'tag' => $this->tag,
+            'priorityFilter' => $this->priorityFilter,
+            'due' => $this->due,
+            'sort' => $this->sort,
+            'direction' => $this->direction,
+        ]);
+    }
+
     private function hasInvalidScalarFilter(): bool
     {
         $status = TodoStatus::tryFrom($this->tab);
@@ -840,7 +946,7 @@ class Index extends Component
 
     private function refreshLists(): void
     {
-        unset($this->todos, $this->summary, $this->projects, $this->allProjects, $this->tags);
+        unset($this->todos, $this->summary, $this->projects, $this->allProjects, $this->tags, $this->savedViews);
     }
 
     private function currentUser(): User

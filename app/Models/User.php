@@ -53,6 +53,16 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
     }
 
     /**
+     * Get the user's saved todo views.
+     *
+     * @return HasMany<SavedTodoView, $this>
+     */
+    public function savedTodoViews(): HasMany
+    {
+        return $this->hasMany(SavedTodoView::class);
+    }
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>

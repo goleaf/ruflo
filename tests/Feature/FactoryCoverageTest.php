@@ -4,6 +4,7 @@ use App\Enums\Priority;
 use App\Enums\TodoStatus;
 use App\Models\Project;
 use App\Models\Reminder;
+use App\Models\SavedTodoView;
 use App\Models\Tag;
 use App\Models\Todo;
 use App\Models\User;
@@ -14,6 +15,7 @@ test('tracked models can be created from their default factories', function () {
     $project = Project::factory()->for($user)->create();
     $tag = Tag::factory()->for($user)->create();
     $todo = Todo::factory()->for($user)->forProject($project)->withTags($tag)->create();
+    $savedView = SavedTodoView::factory()->for($user)->create();
     $reminder = Reminder::factory()->create();
 
     expect($user->exists)->toBeTrue()
@@ -22,6 +24,8 @@ test('tracked models can be created from their default factories', function () {
         ->and($todo->isOwnedBy($user))->toBeTrue()
         ->and($todo->project_id)->toBe($project->id)
         ->and($todo->tags()->pluck('tags.id')->all())->toBe([$tag->id])
+        ->and($savedView->isOwnedBy($user))->toBeTrue()
+        ->and($savedView->criteria['sort'])->toBe('created')
         ->and($reminder->exists)->toBeTrue();
 });
 
@@ -66,6 +70,30 @@ test('project and tag factories cover named color and archive states', function 
         ->and($waitingTag->color)->toBe('amber')
         ->and($customTag->name)->toBe('deep-work')
         ->and($customTag->color)->toBe('purple');
+});
+
+test('saved todo view factory covers common saved view states', function () {
+    $today = SavedTodoView::factory()->dueToday()->create();
+    $urgent = SavedTodoView::factory()->urgent()->create();
+    $completed = SavedTodoView::factory()->completed()->create();
+    $custom = SavedTodoView::factory()->criteria([
+        'tab' => 'active',
+        'search' => 'alpha',
+        'project' => 'none',
+        'tag' => '',
+        'priorityFilter' => '',
+        'due' => '',
+        'sort' => 'title',
+        'direction' => 'asc',
+    ])->create();
+
+    expect($today->name)->toBe('Due today')
+        ->and($today->criteria['due'])->toBe('today')
+        ->and($today->criteria['sort'])->toBe('due')
+        ->and($urgent->criteria['priorityFilter'])->toBe(Priority::Urgent->value)
+        ->and($completed->criteria['tab'])->toBe(TodoStatus::Completed->value)
+        ->and($custom->criteria['search'])->toBe('alpha')
+        ->and($custom->criteria['direction'])->toBe('asc');
 });
 
 test('todo factory covers priority date and lifecycle states', function () {

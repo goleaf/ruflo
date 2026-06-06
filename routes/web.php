@@ -1,5 +1,6 @@
 <?php
 
+use App\Livewire\Activity\Index as ActivityIndex;
 use App\Livewire\Goals\Create as GoalsCreate;
 use App\Livewire\Goals\CreateMilestone as GoalsCreateMilestone;
 use App\Livewire\Goals\Index as GoalsIndex;
@@ -31,6 +32,7 @@ Route::view('/', 'welcome')->name('home');
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::view('dashboard', 'dashboard')->name('dashboard');
     Route::livewire('reports', ReportsOverview::class)->name('reports.overview');
+    Route::livewire('activity', ActivityIndex::class)->name('activity.index');
 
     Route::livewire('goals/create', GoalsCreate::class)->name('goals.create');
     Route::livewire('goals/milestones/create', GoalsCreateMilestone::class)->name('goals.milestones.create');

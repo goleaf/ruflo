@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
                 TodoSeeder::class,
                 ExecutiveWorkspaceSeeder::class,
                 TodoRecurrenceRuleSeeder::class,
+                ActivityRecordSeeder::class,
             ]);
         });
     }

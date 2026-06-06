@@ -44,6 +44,7 @@ scope) rather than across the whole codebase.
 | Dashboard foundation read boundary | `App\Queries\Dashboard\DashboardFoundationQuery` | Owner-scoped widget counters across today, overdue, upcoming, priorities, reminders, recurrence, goals, habits, projects, and time. |
 | Project progress dashboard read boundary | `App\Queries\Dashboard\ProjectProgressDashboardQuery` | Owner-scoped active project, no-project, completion, overdue, undated, and stale cleanup counters. |
 | Reports read boundary | `App\Queries\Reports\ReportsOverviewQuery` | Owner-scoped productivity, habit, project, time, and overdue report aggregates. |
+| Activity read boundary | `App\Queries\Activity\ActivityFeedQuery` | Owner-scoped activity timeline, summary counts, and safe task-link prechecks. |
 | Recurrence read boundary | `App\Queries\Todos\TodoRecurrenceRuleQuery` | Owner-scoped recurrence rules, generated occurrences, exceptions, and active task options. |
 | Template read boundary | `App\Queries\Todos\TodoTemplateListQuery` | Owner-scoped reusable task/project/checklist/routine templates. |
 | Inbox read boundary | `App\Queries\Todos\TodoInboxQuery` | Owner-scoped active captured tasks waiting for triage. |
@@ -111,6 +112,10 @@ The Livewire component authorizes **before** delegating to an action:
 - Saved task views use `SavedTodoViewPolicy`: `viewAny` and `create` are
   available to authenticated users for their own workspace, while `view`,
   `update`, and `delete` are owner-only and hide foreign ids as not found.
+- Activity records use `ActivityRecordPolicy`: `viewAny` is available to
+  authenticated users, while per-record `view` is owner-only. The activity page
+  reads through `ActivityFeedQuery` and links task subjects only after an
+  owner-scoped visibility precheck.
 - Checklist rows use `TodoChecklistItemPolicy`: `viewAny` and `create` are
   available to authenticated users, while per-row `view`, `update`, and
   `delete` are owner-only and hide foreign ids as not found. Checklist actions
@@ -352,8 +357,10 @@ it on:
   action calls re-scope and report skipped ids through `BulkActionResult`
   instead of processing them. Trash bulk restore uses the trashed-owner
   validation path.
-- **Activity history** — visible only to users who can access the related
-  record; scoped exactly like the record itself.
+- **Activity history** — visible only to the activity owner through
+  `ActivityFeedQuery::for($user)`. Related task links are rendered only when
+  the task still resolves inside the same private workspace, and the destination
+  route still re-checks owner scope.
 - **Notifications/reminders** — Step 054 stores due reminder notifications in
   the database for the owning user only. A notification is a message, not a
   permission, so opening its link re-checks authorization.

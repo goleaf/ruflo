@@ -27,6 +27,8 @@ final class UpdateTodo
     {
         $this->stateMachine->assertCan($todo, TodoTransition::Update);
 
+        $originalActivityValues = $this->activityValues($todo);
+
         $todo->fill([
             'title' => trim($data->title),
             'priority' => $data->priority,
@@ -39,8 +41,56 @@ final class UpdateTodo
 
         $todo->tags()->sync($this->resolveTagIds($user, $data->tagIds));
 
-        TodoUpdated::dispatch($todo);
+        TodoUpdated::dispatch($todo, $this->activityChanges($originalActivityValues, $this->activityValues($todo)));
 
         return $todo;
+    }
+
+    /**
+     * @return array{
+     *     title: string,
+     *     priority: string,
+     *     due_date: ?string,
+     *     project_id: ?int,
+     *     tag_ids: list<int>
+     * }
+     */
+    private function activityValues(Todo $todo): array
+    {
+        return [
+            'title' => trim($todo->title),
+            'priority' => $todo->priority->value,
+            'due_date' => $todo->due_date?->toDateString(),
+            'project_id' => $todo->project_id === null ? null : (int) $todo->project_id,
+            'tag_ids' => $todo->tags()
+                ->pluck('tags.id')
+                ->map(fn (mixed $id): int => (int) $id)
+                ->sort()
+                ->values()
+                ->all(),
+        ];
+    }
+
+    /**
+     * @param  array<string, mixed>  $oldValues
+     * @param  array<string, mixed>  $newValues
+     * @return array<string, array{old: mixed, new: mixed}>
+     */
+    private function activityChanges(array $oldValues, array $newValues): array
+    {
+        $changes = [];
+
+        foreach ($newValues as $field => $newValue) {
+            $oldValue = $oldValues[$field] ?? null;
+
+            if ($oldValue !== $newValue) {
+                $changes[$field] = [
+                    'old' => $oldValue,
+                    'new' => $newValue,
+                ];
+            }
+        }
+
+        return $changes;
     }
 }

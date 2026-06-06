@@ -3,6 +3,7 @@
 Step 011 covers the tracked application models:
 
 - `App\Models\User`
+- `App\Models\ActivityRecord`
 - `App\Models\AutomationRule`
 - `App\Models\AutomationRuleRun`
 - `App\Models\Goal`
@@ -59,6 +60,20 @@ Demo user factory states read from `config/demo.php` so the login panel, seeders
 Automation rules and run logs are private resources. They use the same
 `BelongsToUser` concern as todos, projects, saved views, dependencies, checklist
 rows, time entries, and Pomodoro sessions.
+
+## Activity Factory
+
+`ActivityRecordFactory` covers:
+
+- default private activity records,
+- `forUser()` owner/actor alignment,
+- task-created, task-updated, and task-deleted states through `forTodo()`,
+- completed-clear records,
+- safe update-change metadata through `withChanges()`.
+
+Activity records are private resources. They store a safe subject snapshot and
+use the same `BelongsToUser` concern as todos, projects, saved views,
+dependencies, checklist rows, time entries, and Pomodoro sessions.
 
 ## Project And Tag Factories
 

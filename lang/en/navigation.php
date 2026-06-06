@@ -7,6 +7,7 @@ return [
 
     'items' => [
         'dashboard' => 'Dashboard',
+        'activity' => 'Activity',
         'notifications' => 'Notifications',
         'search' => 'Search',
         'settings' => 'Settings',

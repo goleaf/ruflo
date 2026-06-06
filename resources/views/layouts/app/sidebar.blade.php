@@ -20,6 +20,10 @@
                         {{ __('reports.navigation.label') }}
                     </flux:sidebar.item>
 
+                    <flux:sidebar.item icon="clock" :href="route('activity.index')" :current="request()->routeIs('activity.*')" wire:navigate>
+                        {{ __('navigation.items.activity') }}
+                    </flux:sidebar.item>
+
                     <flux:sidebar.item icon="check-circle" :href="route('todos.index')" :current="request()->routeIs('todos.*')" wire:navigate>
                         {{ __('todos.navigation.label') }}
                     </flux:sidebar.item>

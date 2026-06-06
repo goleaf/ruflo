@@ -155,3 +155,11 @@ shell access, Artisan command, hosted automation service, paid calendar API,
 email provider, or external notification provider during normal usage. Users
 retry by reopening the edit modal and submitting the same translated browser
 form again.
+
+## 2026-06-06 Step 066 Update
+
+Activity history records are written synchronously by existing authenticated
+task-domain workflows and read through the protected `/activity` Livewire page.
+The feed uses bounded Load more requests and does not require cron, queue
+workers, supervisors, shell access, Artisan commands, hosted audit services,
+paid analytics, or external activity providers.

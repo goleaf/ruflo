@@ -1,5 +1,33 @@
 # Changelog
 
+## 2026-06-06 - Step 066 Activity history
+
+### Added
+
+- Added owner-scoped `activity_records` with safe actor, subject snapshot, and
+  metadata fields for meaningful task-domain history.
+- Added synchronous todo activity recording for create, update, complete,
+  reopen, archive, unarchive, delete, restore, checklist, and completed-clear
+  events.
+- Added the protected `/activity` class-based Livewire page with translated
+  Flux summary stats, timeline items, deleted-task fallbacks, and bounded Load
+  more behavior.
+- Added local/testing/demo activity factories and seed data.
+
+### Tests
+
+- Added `ActivityHistoryTest` coverage for event recording, safe update
+  changes, no-op update suppression, owner privacy, deleted-subject rendering,
+  hidden stale task links, route protection, Load more behavior, factories, and
+  seeding.
+
+### Restricted Hosting
+
+- Activity records are written during the same authenticated web request that
+  triggers the domain event. No cron, queue worker, supervisor, terminal action,
+  Artisan command, paid service, hosted analytics, or external activity service
+  is required.
+
 ## 2026-06-06 - Step 065 Charts without paid services
 
 ### Added

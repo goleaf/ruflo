@@ -16,6 +16,8 @@ final class TodoUpdated
 
     public function __construct(
         public Todo $todo,
+        /** @var array<string, array{old: mixed, new: mixed}> */
+        public array $changes = [],
     ) {
         //
     }

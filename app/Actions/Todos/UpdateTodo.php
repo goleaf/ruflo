@@ -3,8 +3,8 @@
 namespace App\Actions\Todos;
 
 use App\Data\Todos\TodoData;
+use App\Enums\TodoTransition;
 use App\Events\TodoUpdated;
-use App\Exceptions\InvalidTodoTransition;
 use App\Models\Todo;
 use App\Models\User;
 
@@ -19,11 +19,13 @@ final class UpdateTodo
 {
     use ResolvesTodoOrganization;
 
+    public function __construct(
+        private readonly TodoLifecycleStateMachine $stateMachine,
+    ) {}
+
     public function handle(User $user, Todo $todo, TodoData $data): Todo
     {
-        if ($todo->isArchived()) {
-            throw InvalidTodoTransition::cannotEditArchived();
-        }
+        $this->stateMachine->assertCan($todo, TodoTransition::Update);
 
         $todo->fill([
             'title' => trim($data->title),

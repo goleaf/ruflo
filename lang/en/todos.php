@@ -215,6 +215,18 @@ return [
         'tag_deleted' => 'Tag deleted.',
     ],
 
+    'exceptions' => [
+        'cannot_complete_archived' => 'Archived tasks must be unarchived before they can be completed.',
+        'cannot_reopen_archived' => 'Archived tasks must be unarchived before they can be reopened.',
+        'cannot_edit_archived' => 'Archived tasks must be unarchived before they can be edited.',
+        'cannot_complete_trashed' => 'Deleted tasks must be restored from Trash before they can be completed.',
+        'cannot_reopen_trashed' => 'Deleted tasks must be restored from Trash before they can be reopened.',
+        'cannot_archive_trashed' => 'Deleted tasks must be restored from Trash before they can be archived.',
+        'cannot_unarchive_trashed' => 'Deleted tasks must be restored from Trash before they can be unarchived.',
+        'cannot_edit_trashed' => 'Deleted tasks must be restored from Trash before they can be edited.',
+        'invalid_transition' => 'Cannot :transition a task while it is :status.',
+    ],
+
     'validation' => [
         'owned_active_project' => 'Choose one of your active projects.',
         'owned_tag' => 'Choose one of your tags.',

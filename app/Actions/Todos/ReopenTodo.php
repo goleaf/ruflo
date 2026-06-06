@@ -2,8 +2,8 @@
 
 namespace App\Actions\Todos;
 
+use App\Enums\TodoTransition;
 use App\Events\TodoReopened;
-use App\Exceptions\InvalidTodoTransition;
 use App\Models\Todo;
 
 /**
@@ -15,11 +15,13 @@ use App\Models\Todo;
  */
 final class ReopenTodo
 {
+    public function __construct(
+        private readonly TodoLifecycleStateMachine $stateMachine,
+    ) {}
+
     public function handle(Todo $todo): Todo
     {
-        if ($todo->isArchived()) {
-            throw InvalidTodoTransition::cannotReopenArchived();
-        }
+        $this->stateMachine->assertCan($todo, TodoTransition::Reopen);
 
         if (! $todo->is_completed) {
             return $todo;

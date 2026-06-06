@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026-06-06 - Step 027 Task lifecycle state machine
+
+### Implemented
+
+- Added `TodoTransition` to name every lifecycle transition explicitly.
+- Added `TodoLifecycleStateMachine` as the single accepted-source-state and target-bucket map.
+- Routed complete, reopen, archive, unarchive, delete, restore-from-trash, and update actions through the state machine before lifecycle mutation.
+- Added language-backed trash-specific invalid-transition exceptions so direct action calls cannot complete, reopen, archive, unarchive, or edit deleted tasks.
+
+### Testing
+
+- Added `TaskLifecycleStateMachineTest` for accepted states, target buckets, idempotent no-ops, direct-action rejection for trashed tasks, and translated exception messages.
+- Rechecked adjacent completion/reopening, archive/unarchive, deletion/trash, editing, lifecycle, organization, ownership, policy, and architecture suites.
+
+### Documentation
+
+- Updated `docs/task-lifecycle.md` and `docs/todo-foundation.md` with the centralized Step 027 state-machine contract.
+
 ## 2026-06-06 - Step 026 Task deletion and trash behavior
 
 ### Implemented

@@ -2,6 +2,7 @@
 
 namespace App\Actions\Todos;
 
+use App\Enums\TodoTransition;
 use App\Events\TodoUnarchived;
 use App\Models\Todo;
 
@@ -14,8 +15,14 @@ use App\Models\Todo;
  */
 final class UnarchiveTodo
 {
+    public function __construct(
+        private readonly TodoLifecycleStateMachine $stateMachine,
+    ) {}
+
     public function handle(Todo $todo): Todo
     {
+        $this->stateMachine->assertCan($todo, TodoTransition::Unarchive);
+
         if (! $todo->isArchived()) {
             return $todo;
         }

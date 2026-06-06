@@ -94,7 +94,8 @@ avoid duplicate activity events.
 | Concern | Location |
 | --- | --- |
 | State derivation & scopes | `App\Models\Todo` (`status()`, `isActive()`, `isArchived()`, `scopeActive/Completed/Archived`) |
-| Mutations | `App\Actions\Todos\*` (one action per transition) |
+| Transition map | `App\Enums\TodoTransition` + `App\Actions\Todos\TodoLifecycleStateMachine` |
+| Mutations | `App\Actions\Todos\*` (one action per transition, guarded by the state machine) |
 | Invalid-transition guard | `App\Exceptions\InvalidTodoTransition` |
 | Owner-scoped reads & buckets | `App\Queries\Todos\TodoListQuery` (`forStatus`, `findVisibleFor`, `findTrashedFor`, `summaryFor`) |
 | Authorization | `App\Policies\TodoPolicy` (`complete`, `reopen`, `archive`, `unarchive`, `delete`, `restore`, `update`, `forceDelete`, …) |
@@ -128,6 +129,12 @@ Step 026 adds the Trash tab with `RestoreDeletedTodo`,
 `TodoRestoredFromTrash`, and `restoreDeletedTodo`/`bulkRestoreDeleted` UI
 methods. Bulk delete now delegates to `DeleteTodo` so delete events are not
 skipped by a mass update. Permanent deletion remains disabled.
+
+Step 027 centralizes accepted source states and target buckets in
+`TodoLifecycleStateMachine`. The transition actions now call that state machine
+before changing lifecycle columns, so direct action calls and Livewire calls
+share the same valid-transition contract. Invalid transition exception messages
+are stored under `lang/en/todos.php`.
 
 Notification/reminder rules to honor when those features arrive: completed and
 archived tasks should not emit active reminders; deleted tasks emit none;

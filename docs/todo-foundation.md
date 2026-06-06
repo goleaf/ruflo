@@ -143,6 +143,11 @@ Trash, event dispatch, idempotency, owner-scoped trash lookups, selected
 deleted-task validation, bulk delete/restore behavior, dashboard trash counts,
 and force-delete denial.
 
+Step 027 adds `TaskLifecycleStateMachineTest`, which locks the accepted source
+states, target buckets, idempotent no-ops, and direct-action invalid transition
+guards for the centralized todo state machine, including language-backed
+exception messages.
+
 ## 2026-06-06 Recheck
 
 The Step 001 recheck confirmed the foundation still matches the current master-plan rules after Steps 002-016:

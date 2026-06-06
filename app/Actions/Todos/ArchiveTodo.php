@@ -2,6 +2,7 @@
 
 namespace App\Actions\Todos;
 
+use App\Enums\TodoTransition;
 use App\Events\TodoArchived;
 use App\Models\Todo;
 
@@ -12,8 +13,14 @@ use App\Models\Todo;
  */
 final class ArchiveTodo
 {
+    public function __construct(
+        private readonly TodoLifecycleStateMachine $stateMachine,
+    ) {}
+
     public function handle(Todo $todo): Todo
     {
+        $this->stateMachine->assertCan($todo, TodoTransition::Archive);
+
         if ($todo->isArchived()) {
             return $todo;
         }

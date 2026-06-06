@@ -2,8 +2,8 @@
 
 namespace App\Actions\Todos;
 
+use App\Enums\TodoTransition;
 use App\Events\TodoCompleted;
-use App\Exceptions\InvalidTodoTransition;
 use App\Models\Todo;
 
 /**
@@ -15,11 +15,13 @@ use App\Models\Todo;
  */
 final class CompleteTodo
 {
+    public function __construct(
+        private readonly TodoLifecycleStateMachine $stateMachine,
+    ) {}
+
     public function handle(Todo $todo): Todo
     {
-        if ($todo->isArchived()) {
-            throw InvalidTodoTransition::cannotCompleteArchived();
-        }
+        $this->stateMachine->assertCan($todo, TodoTransition::Complete);
 
         if ($todo->is_completed) {
             return $todo;

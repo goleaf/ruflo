@@ -4,6 +4,7 @@ Record changes after every step.
 
 ## Unreleased
 
+- Completed Step 065 by adding a reusable local browser bar-chart helper and Blade component, wiring dashboard foundation and reports trend charts through local CSS/Blade rendering, documenting the no-paid/no-CDN chart contract, and adding focused local chart rendering tests.
 - Completed Step 062 by adding session-backed dashboard foundation widget show/hide and reordering controls, translated Flux customization UI, reset/all-hidden states, server-side tamper validation, docs, and focused Livewire tests.
 - Completed Step 061 by adding owner-scoped dashboard foundation widgets for Today, Overdue, Upcoming, Priorities, Reminders, Recurring, Goals, Habits, Projects, and Time with a dedicated aggregate query, compact/details preference, accessible browser-rendered chart, translations, docs, and dashboard privacy tests.
 - Published the local `flux/flux-pro` Blade stubs into `resources/views/flux`, upgraded task/dashboard/goal/habit/notification Blade surfaces to Pro date picker, combobox, autocomplete, pillbox, tabs, command, and Kanban components where the current state shape supports them, and updated the UI docs/prompt pack to prefer local Flux Pro components before custom controls.

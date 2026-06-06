@@ -90,7 +90,7 @@ Use this file as a persistent task tracker. Step detail lives in `TODO_MASTER_PR
 - [x] Step 062 — Dashboard customization
 - [x] Step 063 — Project progress dashboard
 - [x] Step 064 — Reports overview
-- [ ] Step 065 — Charts without paid services
+- [x] Step 065 — Charts without paid services
 - [ ] Step 066 — Activity history
 - [ ] Step 067 — Task timeline UI
 - [ ] Step 068 — Collaboration foundation

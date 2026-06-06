@@ -2,19 +2,19 @@
 
 ## Current status
 
-Individual ledger rows for Steps 001 through 063 are complete. The requested recheck from Step 001 has been completed through Step 063. The tracker is expanded to one ledger line per step from 001 through 100 so later work cannot be hidden behind a range.
+Individual ledger rows for Steps 001 through 064 are complete. The requested recheck from Step 001 has been completed through Step 064. The tracker is expanded to one ledger line per step from 001 through 100 so later work cannot be hidden behind a range.
 
 ## Current step
 
-Step 064 — Reports overview
+Step 065 — Charts without paid services
 
 ## Last completed action
 
-Completed Step 063 by adding an owner-scoped project progress dashboard query, translated Flux project/list health widgets, no-project cleanup signals, docs, and focused dashboard/privacy tests.
+Completed Step 064 by adding an owner-scoped reports overview route, request-time productivity, overdue, habit, project, and time aggregates, browser-native chart data, translated Flux UI, docs, and focused privacy/report tests.
 
 ## Next action
 
-Begin `steps/step-064-reports-overview.md`, then implement the next not-yet-completed plan step without grouping it with later work.
+Begin `steps/step-065-charts-without-paid-services.md`, then implement the next not-yet-completed plan step without grouping it with later work.
 
 ## Step ledger
 
@@ -83,7 +83,7 @@ Begin `steps/step-064-reports-overview.md`, then implement the next not-yet-comp
 | 061 — Dashboard foundation | Complete | Added `DashboardFoundationQuery`, a translated Flux dashboard widget grid for Today, Overdue, Upcoming, Priorities, Reminders, Recurring, Goals, Habits, Projects, and Time, compact/details session state, and an accessible browser-rendered comparison chart. Existing seeders/factories already cover the widget domains, so no new model data scaffolding was needed. | Boost app/docs/schema checks, supported route inventory, PHP syntax checks, no-Volt/no-dashboard-`@php` scans, Vite build, focused `DashboardTest` pass with 8 tests/162 assertions, adjacent dashboard/privacy/localization/architecture/restricted-hosting pass with 65 tests/807 assertions, Pint, and diff checks recorded in test report. Full suite is blocked by unrelated dirty executive-seeder and untracked Flux Pro chart-test drift after 664 passing tests. | Updated `docs/dashboard.md`, `docs/authorization.md`, `docs/changelog.md`, root checklist, changelog, decisions, risks, progress, and test report. | Request-time snapshot limitation logged; widgets refresh on authenticated dashboard render rather than a background scheduler or push stream. Full-suite blocker from unrelated dirty worktree state is recorded in risks and the test report. | 04b592f |
 | 062 — Dashboard customization | Complete | Added session-backed foundation widget ordering and visibility preferences, a translated Flux widget settings panel, reset controls, all-hidden empty state, visible-order chart behavior, and server-side validation for tampered widget keys or directions. | Boost app/docs/URL/browser-log checks, dashboard route checks, PHP syntax checks, focused `DashboardTest` pass with 12 tests/193 assertions, adjacent dashboard/privacy/localization/architecture/restricted-hosting suite passed with 69 tests/838 assertions, Pint, Vite build, no-Volt/no-dashboard-`@php` scans, and diff checks recorded in test report. Full suite remains blocked by unrelated dirty executive-seeder and Flux Pro chart-test drift after 668 passing tests. | Updated `docs/dashboard.md`, `docs/authorization.md`, `docs/changelog.md`, root checklist, changelog, decisions, risks, progress, and test report. | No new open Step 062 risk; customization stores only small session arrays and changes presentation, not aggregate query scope or private counters. Full-suite blocker from unrelated dirty worktree state remains tracked. | d2a4de2 |
 | 063 — Project progress dashboard | Complete | Added `ProjectProgressDashboardQuery`, translated dashboard project/list health cards, completion progress, cleanup signals, no-project review, and protected project/task links. | Boost app/docs/schema/URL/browser-log checks, PHP syntax checks, no-Volt/no-dashboard-`@php` scans, focused `DashboardTest` pass with 16 tests/361 assertions, localization pass, project/detail pass, adjacent dashboard/privacy/localization/restricted-hosting/project suite pass with 91 tests/1085 assertions, Pint, Vite build, route check, and diff checks recorded. Full suite remains blocked by unrelated dirty executive-seeder and Flux Pro chart-test drift after 672 passing tests. | Updated `docs/dashboard.md`, `docs/authorization.md`, `docs/changelog.md`, root checklist, changelog, decisions, risks, progress, and test report. | No new project-progress data risk; owner-scoped query excludes foreign/deleted/archived-project data. Full-suite blocker from unrelated dirty worktree state remains tracked. | c97481e |
-| 064 — Reports overview | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 064 — Reports overview | Complete | Added protected `/reports`, `ReportsOverviewQuery`, a class-based reports Livewire page, translated Flux overview widgets, project cards, privacy notes, and browser-native chart sections for productivity, overdue, habits, and time. | Boost app/docs/schema/URL/browser-log checks, syntax checks, route checks, no-Volt/no-report-`@php`/paid-service scan, focused report/localization/dashboard/project/habit/time suites, Pint, Vite build, and diff checks passed. Full suite remains blocked by unrelated dirty executive-seeder and Flux Pro chart-test drift after 681 passing tests. | Added `docs/reports.md` and updated domain readiness, authorization, app changelog, root checklist, changelog, decisions, risks, progress, and test report. | No new reports privacy risk; reports are owner-scoped request-time reads. Full-suite blocker from unrelated dirty worktree state remains tracked. | 4a53c9b |
 | 065 — Charts without paid services | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
 | 066 — Activity history | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
 | 067 — Task timeline UI | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |

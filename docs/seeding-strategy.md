@@ -28,6 +28,8 @@ The tracked `Reminder` model is currently a placeholder with no ownership, sched
 - `urgent` and `waiting` tags,
 - active, due-today, overdue, upcoming, completed, archived,
   archived-completed, and trashed tasks.
+- two quick-capture inbox tasks per user, backed by `todos.inbox_captured_at`,
+  so `/todos/inbox` is useful immediately after seeding.
 - contained checklist rows on due-today, overdue, upcoming, and archived tasks
   so task detail pages show progress and locked archived checklist behavior.
 - three saved views per user: `Today focus`, `Urgent work`, and
@@ -52,6 +54,10 @@ Templates are upserted per user/name and keep private data isolated. The
 `Project kickoff` template is marked shared so the UI can show the visibility
 state, but it is still owner-only until the collaboration/member steps add real
 role rules.
+
+Inbox demo tasks are upserted per user/title and keep their captured timestamp
+fresh on reseed. They remain normal owner-scoped todos and do not grant any
+global or shared access.
 
 Placeholder reminder rows are intentionally excluded from the current catalog because they would not be owned by a user or connected to a task.
 

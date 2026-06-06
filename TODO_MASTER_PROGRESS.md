@@ -2,19 +2,19 @@
 
 ## Current status
 
-Steps 001-043 are complete. The requested recheck from Step 001 has been completed through Step 043. The tracker is expanded to one ledger line per step from 001 through 100 so later work cannot be hidden behind a range.
+Steps 001-044 are complete. The requested recheck from Step 001 has been completed through Step 044. The tracker is expanded to one ledger line per step from 001 through 100 so later work cannot be hidden behind a range.
 
 ## Current step
 
-Step 044 — Quick capture inbox
+Step 045 — Focus mode
 
 ## Last completed action
 
-Completed Step 043 by adding owner-scoped reusable task templates, a protected class-based Livewire templates page, validation/action/query/policy/model support, synchronous instantiation into real tasks/projects/checklists, seed data, factories, translations, and privacy tests.
+Completed Step 044 by adding an explicit owner-scoped quick-capture Inbox, `inbox_captured_at` task state, capture/triage actions, validation, class-based Livewire/Flux UI, factory/seeder support, translations, docs, and privacy tests.
 
 ## Next action
 
-Begin `steps/step-044-quick-capture-inbox.md`, then implement the next not-yet-completed plan step without grouping it with later work.
+Begin `steps/step-045-focus-mode.md`, then implement the next not-yet-completed plan step without grouping it with later work.
 
 ## Step ledger
 
@@ -63,7 +63,7 @@ Begin `steps/step-044-quick-capture-inbox.md`, then implement the next not-yet-c
 | 041 — Calendar view | Complete | Added protected `todos.calendar` class-based Livewire page with URL-backed month navigation, `TodoCalendarQuery` for owner-scoped active due-date grid data, `CalendarMonth` validation, no-due-date task section, and translated reminder/recurrence placeholders. | Boost app/schema/docs checks, Artisan scaffolds, failed-then-fixed Carbon namespace, `CalendarViewTest`, related 134-test calendar suite, static scans, route/URL/browser checks, and full suite passed with 368 tests/1767 assertions. | `docs/task-organization.md`, `docs/todo-foundation.md`, `docs/authorization.md`, `docs/validation-rules.md`, `docs/domain-readiness.md`, `docs/seeding-strategy.md`, changelogs, checklist, decisions, risks, and test report updated. | Reminder/recurrence placeholder limitation logged; per-user timezone remains deferred to Step 083. | 3e6388b |
 | 042 — Subtasks and checklists | Complete | Added contained owner-scoped checklist items with ordered positions, completion progress, add/edit/toggle/move/delete actions, translated task-detail Flux UI, demo seed data, and checklist change events for future activity history. | Boost app/schema/docs checks, Artisan scaffolds, migration, `TaskChecklistTest`, related 56-test suite, static scans, route/URL/browser checks, local seed/database verification, and full suite passed with 379 tests/1861 assertions. | `docs/task-organization.md`, `docs/task-lifecycle.md`, `docs/authorization.md`, `docs/validation-rules.md`, `docs/factory-coverage.md`, `docs/seeding-strategy.md`, `docs/todo-foundation.md`, `docs/changelog.md`, changelogs, checklist, decisions, risks, and test report updated. | Checklist item direct-delete recovery limitation logged and mitigated by treating checklist rows as contained details while parent task trash preserves rows. | d03f2c4 |
 | 043 — Task templates | Complete | Added owner-scoped reusable templates for task, project, checklist, and routine defaults. Templates can create real tasks, create or reuse owner-scoped active projects by name, and add contained checklist rows through existing actions. Shared visibility is stored but remains owner-only until collaboration/member roles exist. | Boost docs/schema checks, migration, focused template tests, adjacent architecture/factory/seeder/policy/private-workspace/validation/localization/route/domain/restricted-hosting suite, route checks, Pint, seed/database checks, scans, browser logs, and full suite recorded in test report. | `docs/task-organization.md`, `docs/authorization.md`, `docs/validation-rules.md`, `docs/request-validation.md`, `docs/factory-coverage.md`, `docs/seeding-strategy.md`, `docs/domain-readiness.md`, `docs/changelog.md`, root progress, checklist, changelog, decisions, risks, and test report updated. | Shared-template role limitation logged; no data leak because policies and queries remain owner-only. | 2f29ec1 |
-| 044 — Quick capture inbox | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 044 — Quick capture inbox | Complete | Added an explicit owner-scoped Inbox marker on tasks, capture and triage actions, `TodoInboxQuery`, `InboxCaptureTitle`, a protected class-based Livewire/Flux Inbox page, task-list shortcut, factory states, and two seeded inbox tasks per demo user. | Boost app/docs/schema checks, migration, syntax checks, focused `TaskInboxTest`, adjacent 118-test suite, Pint, route checks, local seed/database verification, scans, browser logs, diff check, and full suite recorded in test report. | `docs/task-organization.md`, `docs/authorization.md`, `docs/validation-rules.md`, `docs/request-validation.md`, `docs/factory-coverage.md`, `docs/seeding-strategy.md`, `docs/domain-readiness.md`, `docs/todo-foundation.md`, `docs/changelog.md`, root progress, checklist, changelog, decisions, risks, and test report updated. | Manual-only Inbox triage limitation logged; feature remains safe because capture/triage are bounded synchronous Livewire actions with no worker/cron dependency. | Pending stable commit |
 | 045 — Focus mode | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
 | 046 — Goals and milestones | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
 | 047 — Habits tracker | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |

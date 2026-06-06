@@ -36,6 +36,7 @@ scope) rather than across the whole codebase.
 | Board read boundary | `App\Queries\Todos\TodoBoardQuery` | Owner-scoped Kanban columns for active, completed, and archived tasks. |
 | Checklist read boundary | `App\Queries\Todos\TodoChecklistItemListQuery` | Owner-scoped checklist rows for one already scoped parent task. |
 | Template read boundary | `App\Queries\Todos\TodoTemplateListQuery` | Owner-scoped reusable task/project/checklist/routine templates. |
+| Inbox read boundary | `App\Queries\Todos\TodoInboxQuery` | Owner-scoped active captured tasks waiting for triage. |
 | Saved view read boundary | `App\Queries\Todos\SavedTodoViewListQuery` | Owner-scoped saved task-view listing and lookup. |
 | Per-action decisions | `App\Policies\TodoPolicy` | The only place "may this user do this?" is answered. |
 | Policy binding | `#[UsePolicy(...Policy::class)]` on current private models | Explicit, greppable mapping — not naming-convention magic. |
@@ -150,6 +151,13 @@ class-based Livewire page behind `auth` and `verified`, lists templates through
 `TodoTemplateListQuery`, and resolves every submitted template id through
 `findFor($user, $id)` before edit, delete, or instantiate actions run.
 
+The quick capture Inbox uses the same private route boundary. `todos.inbox` is
+a class-based Livewire page behind `auth` and `verified`, lists active captured
+tasks through `TodoInboxQuery`, and resolves every submitted task id through
+`findFor($user, $id)` before triage actions run. A foreign, completed,
+archived, trashed, or already-triaged task id returns not found from the Inbox
+surface.
+
 ## Error behavior (no leakage)
 
 - Forbidden private records resolve as **not found** (404-style), never
@@ -186,6 +194,10 @@ it on:
   an owner-scoped active project by template project name, and adds contained
   checklist rows through `CreateTodoChecklistItem`. A foreign private or
   shared-labeled template cannot be used.
+- **Inbox** — capture creates a normal owned todo through `CreateTodo`; triage
+  resolves through `TodoInboxQuery`, authorizes update, delegates organization
+  changes to `UpdateTodo`, and clears `inbox_captured_at` only for an active
+  owner-scoped inbox row.
 - **Bulk actions** — never trust a submitted set of IDs. Re-scope every
   selected ID to the owner and authorize each actionable record before acting;
   a foreign ID in the Livewire payload is rejected at validation, while direct

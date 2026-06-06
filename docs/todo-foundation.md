@@ -219,6 +219,11 @@ on task detail pages, checklist progress, Livewire create/edit/toggle/move/delet
 flows, direct action validation, archived-task locked behavior, and invalid
 movement rejection.
 
+Step 044 adds `TaskInboxTest`, which locks the protected Inbox route,
+owner-scoped active captured-task rendering, Livewire quick capture, action
+validation, triage into normal organization fields, foreign-id denial, and
+non-inbox task denial.
+
 ## 2026-06-06 Recheck
 
 The Step 001 recheck confirmed the foundation still matches the current master-plan rules after Steps 002-016:

@@ -27,17 +27,18 @@ test('database seeder creates safe demo users and complete private workspaces', 
         ->and(Tag::query()->count())->toBe(4)
         ->and(TodoChecklistItem::query()->count())->toBe(18)
         ->and(TodoTemplate::query()->count())->toBe(6)
-        ->and(Todo::query()->count())->toBe(14)
-        ->and(Todo::withTrashed()->count())->toBe(16);
+        ->and(Todo::query()->count())->toBe(16)
+        ->and(Todo::withTrashed()->count())->toBe(18);
 
     $users->each(function (User $user): void {
         expect($user->projects()->whereNull('archived_at')->count())->toBe(2)
             ->and($user->projects()->whereNotNull('archived_at')->count())->toBe(1)
             ->and($user->tags()->pluck('name')->sort()->values()->all())->toBe(['urgent', 'waiting'])
-            ->and($user->todos()->active()->count())->toBe(4)
+            ->and($user->todos()->active()->count())->toBe(5)
             ->and($user->todos()->completed()->count())->toBe(1)
             ->and($user->todos()->archived()->count())->toBe(2)
             ->and($user->todos()->onlyTrashed()->count())->toBe(1)
+            ->and($user->todos()->inInbox()->count())->toBe(2)
             ->and($user->todoChecklistItems()->count())->toBe(9)
             ->and($user->todoChecklistItems()->where('is_completed', true)->count())->toBe(3)
             ->and($user->todoTemplates()->pluck('name')->sort()->values()->all())->toBe([
@@ -67,8 +68,8 @@ test('database seeder is idempotent for the current demo catalog', function () {
         ->and(Tag::query()->count())->toBe(4)
         ->and(TodoChecklistItem::query()->count())->toBe(18)
         ->and(TodoTemplate::query()->count())->toBe(6)
-        ->and(Todo::query()->count())->toBe(14)
-        ->and(Todo::withTrashed()->count())->toBe(16)
+        ->and(Todo::query()->count())->toBe(16)
+        ->and(Todo::withTrashed()->count())->toBe(18)
         ->and(Todo::query()->where('title', 'Review the current flow')->count())->toBe(2);
 });
 

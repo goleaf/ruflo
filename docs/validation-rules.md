@@ -11,6 +11,7 @@ The current committed app has tag-name and todo workspace ownership rules:
 - `App\Rules\Todos\CalendarMonth`
 - `App\Rules\Todos\ChecklistItemTitle`
 - `App\Rules\Todos\DueDate`
+- `App\Rules\Todos\InboxCaptureTitle`
 - `App\Rules\Todos\OwnedActiveProject`
 - `App\Rules\Todos\OwnedTag`
 - `App\Rules\Todos\OwnedTodo`
@@ -37,6 +38,12 @@ layer also rejects empty or overlong direct calls before writing.
 `DueDate` validates optional task due dates. Empty values are allowed so
 `nullable` form fields can clear a date, but provided values must be canonical
 `Y-m-d` date strings parsed in the configured app timezone.
+
+`InboxCaptureTitle` validates quick-captured task titles. It squishes
+whitespace, rejects non-string or whitespace-only values, and caps normalized
+captured text at 120 characters. `CaptureInboxTodo` and `TriageInboxTodo`
+repeat the guard so direct action calls cannot persist blank or overlong inbox
+titles when Livewire validation is bypassed.
 
 `OwnedActiveProject` validates that a project id belongs to the authenticated user and is not archived. It is used for task project assignment and bulk move targets.
 
@@ -126,3 +133,10 @@ Step 043 added `App\Rules\Todos\TemplateName` and
 backend guards so direct action calls cannot persist blank template names,
 invalid kinds, invalid visibility, invalid due offsets, project templates
 without a project name, or malformed checklist arrays.
+
+## 2026-06-06 Step 044 Recheck
+
+Step 044 added `App\Rules\Todos\InboxCaptureTitle` and wired it into the
+quick-capture Livewire form plus `CaptureInboxTodo` and `TriageInboxTodo`.
+The rule keeps captured titles visible-text-only, normalized, translated, and
+bounded before a captured task can be written or triaged.

@@ -108,6 +108,10 @@
                     {{ __('todos.templates.actions.open_templates') }}
                 </flux:button>
 
+                <flux:button size="sm" variant="ghost" icon="inbox" :href="route('todos.inbox')" wire:navigate>
+                    {{ __('todos.inbox.actions.open_inbox') }}
+                </flux:button>
+
                 <flux:button size="sm" variant="ghost" icon="adjustments-horizontal" wire:click="$set('showManageModal', true)">
                     {{ __('todos.actions.manage') }}
                 </flux:button>

@@ -69,7 +69,7 @@ Use this file as a persistent task tracker. Step detail lives in `TODO_MASTER_PR
 - [x] Step 041 — Calendar view
 - [x] Step 042 — Subtasks and checklists
 - [x] Step 043 — Task templates
-- [ ] Step 044 — Quick capture inbox
+- [x] Step 044 — Quick capture inbox
 - [ ] Step 045 — Focus mode
 - [ ] Step 046 — Goals and milestones
 - [ ] Step 047 — Habits tracker

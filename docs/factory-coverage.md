@@ -64,12 +64,17 @@ shared/global visibility and remain owner-scoped through `user_id`.
 `TodoFactory` covers:
 
 - active, completed, archived, archived-completed, and soft-deleted Trash lifecycle states,
+- inbox and triaged states through `inbox()` and `triaged()`,
 - low, normal, high, and urgent priority shortcuts,
 - due today, overdue, upcoming, no due date, explicit due date, and max-length title states,
 - project ownership helper through `forProject()`,
 - tag ownership helpers through `forTag()` and `withTags()`.
 
 The tag helpers avoid cross-user attachment by attaching only tags that share the todo owner.
+
+Inbox factory state marks active, unprojected, unscheduled tasks with
+`inbox_captured_at`; `triaged()` clears that marker for tests that need normal
+active tasks that have left the Inbox.
 
 ## Todo Checklist Item Factory
 

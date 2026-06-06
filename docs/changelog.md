@@ -1,5 +1,40 @@
 # Changelog
 
+## 2026-06-06 - Step 044 Quick capture inbox
+
+### Implemented
+
+- Added `todos.inbox_captured_at` to make Inbox state explicit instead of
+  inferring it from "No project".
+- Added `TodoInboxQuery`, `CaptureInboxTodo`, `TriageInboxTodo`, and
+  `InboxCaptureTitle` so quick capture and triage stay owner-scoped,
+  translated, and guarded at the action boundary.
+- Added a protected class-based Livewire Inbox page at `todos.inbox` with Flux
+  capture form, captured-task list, triage modal, field errors, empty state,
+  and a shortcut from the task list.
+- Added inbox and triaged factory states plus two idempotent seeded inbox tasks
+  per demo user.
+
+### Testing
+
+- Added `TaskInboxTest` for route protection, owner-only rendering, quick
+  capture, invalid input, triage, foreign-id denial, non-inbox denial, and
+  component guardrails.
+- Expanded factory, seeder, route-protection, domain, architecture, and
+  validation-rule coverage for the Inbox.
+
+### Documentation
+
+- Updated task organization, authorization, validation, request validation,
+  factory coverage, seeding, domain readiness, and todo foundation docs with the
+  Step 044 Inbox contract.
+
+### Restricted Hosting
+
+- Inbox capture and triage are single-task synchronous Livewire actions. They
+  require no cron, queue worker, supervisor, shell access, Artisan command, paid
+  service, chunk processor, retry loop, or resume state during normal usage.
+
 ## 2026-06-06 - Step 043 Task templates
 
 ### Implemented

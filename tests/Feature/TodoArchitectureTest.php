@@ -1,5 +1,6 @@
 <?php
 
+use App\Actions\Todos\CaptureInboxTodo;
 use App\Actions\Todos\ClearCompletedTodos;
 use App\Actions\Todos\CompleteTodo;
 use App\Actions\Todos\CreateSavedTodoView;
@@ -17,6 +18,7 @@ use App\Actions\Todos\ReopenTodo;
 use App\Actions\Todos\RestoreDeletedTodo;
 use App\Actions\Todos\TodoLifecycleStateMachine;
 use App\Actions\Todos\ToggleTodoChecklistItem;
+use App\Actions\Todos\TriageInboxTodo;
 use App\Actions\Todos\UpdateTodoChecklistItem;
 use App\Actions\Todos\UpdateTodoTemplate;
 use App\Data\Todos\BulkActionResult;
@@ -30,6 +32,7 @@ use App\Livewire\Forms\Todos\TodoForm;
 use App\Livewire\Projects\Show as ProjectShow;
 use App\Livewire\Todos\Board as TodoBoard;
 use App\Livewire\Todos\Calendar as TodoCalendar;
+use App\Livewire\Todos\Inbox as TodoInbox;
 use App\Livewire\Todos\Show as TodoShow;
 use App\Livewire\Todos\Templates as TodoTemplates;
 use App\Policies\SavedTodoViewPolicy;
@@ -40,11 +43,13 @@ use App\Queries\Todos\SavedTodoViewListQuery;
 use App\Queries\Todos\TodoBoardQuery;
 use App\Queries\Todos\TodoCalendarQuery;
 use App\Queries\Todos\TodoChecklistItemListQuery;
+use App\Queries\Todos\TodoInboxQuery;
 use App\Queries\Todos\TodoListQuery;
 use App\Queries\Todos\TodoTemplateListQuery;
 use App\Rules\Todos\BoardStatus;
 use App\Rules\Todos\CalendarMonth;
 use App\Rules\Todos\ChecklistItemTitle;
+use App\Rules\Todos\InboxCaptureTitle;
 use App\Rules\Todos\SavedViewName;
 use App\Rules\Todos\TemplateChecklistItems;
 use App\Rules\Todos\TemplateName;
@@ -69,6 +74,8 @@ test('todo foundation classes exist', function () {
         ->and(class_exists(UpdateTodoTemplate::class))->toBeTrue()
         ->and(class_exists(DeleteTodoTemplate::class))->toBeTrue()
         ->and(class_exists(CreateTodoFromTemplate::class))->toBeTrue()
+        ->and(class_exists(CaptureInboxTodo::class))->toBeTrue()
+        ->and(class_exists(TriageInboxTodo::class))->toBeTrue()
         ->and(class_exists(TodoLifecycleStateMachine::class))->toBeTrue()
         ->and(class_exists(CreateSavedTodoView::class))->toBeTrue()
         ->and(class_exists(DeleteSavedTodoView::class))->toBeTrue()
@@ -79,9 +86,11 @@ test('todo foundation classes exist', function () {
         ->and(class_exists(TodoCalendarQuery::class))->toBeTrue()
         ->and(class_exists(TodoChecklistItemListQuery::class))->toBeTrue()
         ->and(class_exists(TodoTemplateListQuery::class))->toBeTrue()
+        ->and(class_exists(TodoInboxQuery::class))->toBeTrue()
         ->and(class_exists(BoardStatus::class))->toBeTrue()
         ->and(class_exists(CalendarMonth::class))->toBeTrue()
         ->and(class_exists(ChecklistItemTitle::class))->toBeTrue()
+        ->and(class_exists(InboxCaptureTitle::class))->toBeTrue()
         ->and(class_exists(TemplateChecklistItems::class))->toBeTrue()
         ->and(class_exists(TemplateName::class))->toBeTrue()
         ->and(class_exists(SavedViewName::class))->toBeTrue()
@@ -93,6 +102,7 @@ test('todo foundation classes exist', function () {
         ->and(class_exists(TodoCalendar::class))->toBeTrue()
         ->and(class_exists(TodoShow::class))->toBeTrue()
         ->and(class_exists(TodoTemplates::class))->toBeTrue()
+        ->and(class_exists(TodoInbox::class))->toBeTrue()
         ->and(class_exists(ProjectShow::class))->toBeTrue()
         ->and(class_exists(TodoChecklistChanged::class))->toBeTrue()
         ->and(enum_exists(TodoTransition::class))->toBeTrue()
@@ -167,6 +177,20 @@ test('todo templates page delegates template responsibilities', function () {
         ->toContain('TemplateName')
         ->toContain('$this->authorize')
         ->not->toContain('TodoTemplate::query()')
+        ->not->toContain('Todo::query()')
+        ->not->toContain('->save()');
+});
+
+test('todo inbox page delegates capture and triage responsibilities', function () {
+    $source = file_get_contents(app_path('Livewire/Todos/Inbox.php'));
+
+    expect($source)
+        ->toContain('TodoInboxQuery')
+        ->toContain('CaptureInboxTodo')
+        ->toContain('TriageInboxTodo')
+        ->toContain('InboxCaptureTitle')
+        ->toContain('TodoForm')
+        ->toContain('$this->authorize')
         ->not->toContain('Todo::query()')
         ->not->toContain('->save()');
 });

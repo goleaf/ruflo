@@ -25,6 +25,12 @@ the component validates request shape, custom rule objects handle reusable
 business rules, and `TodoTemplateData` plus action classes repeat the backend
 guards for direct calls.
 
+Step 044 quick capture Inbox also remains a Livewire-only workflow. No HTTP
+Form Request is introduced because `/todos/inbox` has no controller action;
+the component validates `captureTitle`, `InboxCaptureTitle` handles reusable
+visible-text rules, and `CaptureInboxTodo` plus `TriageInboxTodo` repeat the
+backend guards for direct action calls.
+
 ## Custom Business Rules
 
 Reusable business validation rules are documented in `docs/validation-rules.md`.

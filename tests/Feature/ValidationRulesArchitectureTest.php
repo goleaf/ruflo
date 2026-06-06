@@ -14,6 +14,7 @@ test('custom validation rules are implemented and use translated failure message
             'Todos/CalendarMonth.php',
             'Todos/ChecklistItemTitle.php',
             'Todos/DueDate.php',
+            'Todos/InboxCaptureTitle.php',
             'Todos/OwnedActiveProject.php',
             'Todos/OwnedTag.php',
             'Todos/OwnedTodo.php',

@@ -38,6 +38,10 @@ return [
             'title' => 'Task templates',
             'description' => 'Turn repeatable tasks, projects, checklists, and routines into one-click private workspace items.',
         ],
+        'inbox' => [
+            'title' => 'Inbox',
+            'description' => 'Capture loose tasks quickly and triage them into projects, dates, priorities, and tags later.',
+        ],
     ],
 
     'fields' => [
@@ -314,6 +318,8 @@ return [
         'template_updated' => 'Template updated.',
         'template_deleted' => 'Template deleted.',
         'template_instantiated' => 'Created ":title" from template.',
+        'inbox_captured' => 'Captured ":title".',
+        'inbox_triaged' => 'Task removed from inbox.',
     ],
 
     'today' => [
@@ -372,8 +378,38 @@ return [
         'template_project_name_required' => 'Enter the project this template should create or reuse.',
         'template_checklist_items' => 'Use up to 10 checklist items, each with visible text up to 120 characters.',
         'template_checklist_items_required' => 'Checklist and routine templates need at least one checklist item.',
+        'inbox_capture_title' => 'Enter a captured task with visible text up to 120 characters.',
+        'inbox_todo' => 'Choose a captured inbox task.',
         'priority' => 'Choose a valid priority.',
         'due_date' => 'Enter a valid due date.',
+    ],
+
+    'inbox' => [
+        'label' => 'Quick capture',
+        'heading' => 'Captured tasks',
+        'count' => 'Inbox tasks',
+        'badge' => 'Needs triage',
+        'captured_at' => 'Captured :time',
+        'fields' => [
+            'capture_title' => 'Capture task',
+        ],
+        'placeholders' => [
+            'capture_title' => 'Type the task before it gets lost',
+        ],
+        'actions' => [
+            'capture' => 'Capture',
+            'triage' => 'Triage',
+            'save_triage' => 'Save and remove from inbox',
+            'open_inbox' => 'Inbox',
+        ],
+        'triage' => [
+            'heading' => 'Triage captured task',
+            'description' => 'Organize this task and remove it from the inbox.',
+        ],
+        'empty' => [
+            'title' => 'Inbox is clear.',
+            'description' => 'Quick captures will appear here until you triage them.',
+        ],
     ],
 
     'templates' => [

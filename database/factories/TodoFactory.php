@@ -28,6 +28,7 @@ class TodoFactory extends Factory
             'is_completed' => false,
             'priority' => Priority::Normal,
             'due_date' => null,
+            'inbox_captured_at' => null,
         ];
     }
 
@@ -142,6 +143,34 @@ class TodoFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'deleted_at' => now(),
+        ]);
+    }
+
+    /**
+     * Indicate the task was quickly captured and still needs triage.
+     */
+    public function inbox(DateTimeInterface|string|null $capturedAt = null): static
+    {
+        $capturedAt ??= now();
+
+        return $this->state(fn (array $attributes) => [
+            'is_completed' => false,
+            'archived_at' => null,
+            'deleted_at' => null,
+            'project_id' => null,
+            'due_date' => null,
+            'priority' => Priority::Normal,
+            'inbox_captured_at' => $capturedAt,
+        ]);
+    }
+
+    /**
+     * Indicate the task has already been organized out of the inbox.
+     */
+    public function triaged(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'inbox_captured_at' => null,
         ]);
     }
 

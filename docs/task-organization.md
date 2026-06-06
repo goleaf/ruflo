@@ -1,8 +1,9 @@
 # Task Organization
 
-Through Step 042, the private task lifecycle is extended into a usable productivity system:
+Through Step 044, the private task lifecycle is extended into a usable productivity system:
 projects, tags, priorities, due dates, search, filters, sorting, and bulk
-actions, calendar/board views, and contained checklists. Everything here is owner-scoped on top of the model in
+actions, calendar/board views, contained checklists, templates, and a quick
+capture Inbox. Everything here is owner-scoped on top of the model in
 [`authorization.md`](authorization.md) and the lifecycle in
 [`task-lifecycle.md`](task-lifecycle.md).
 
@@ -16,6 +17,7 @@ actions, calendar/board views, and contained checklists. Everything here is owne
 | **Due date** | `todos.due_date` (date) | n/a |
 | **Saved view** | `saved_todo_views` table; normalized criteria JSON | `saved_todo_views.user_id`, private |
 | **Checklist item** | `todo_checklist_items` table; `todo_id`, ordered `position`, completion fields | `todo_checklist_items.user_id`, private, contained by parent task |
+| **Inbox capture** | `todos.inbox_captured_at` nullable timestamp | `todos.user_id`, private |
 
 ## Subtasks and checklists
 
@@ -254,6 +256,32 @@ The Upcoming page:
 The dashboard workspace card links to Upcoming beside Today, Overdue, and the
 full Todo workspace shortcuts.
 
+## Inbox
+
+Step 044 adds a dedicated `todos.inbox` Livewire page for fast, unsorted task
+capture and later triage.
+
+- Captured tasks are normal private `todos` rows with an
+  `inbox_captured_at` timestamp. They are not inferred from "No project", so a
+  legitimate no-project task is not automatically treated as inbox work.
+- Inbox reads use `TodoInboxQuery`, which scopes to the current user, active
+  tasks only, and `inbox_captured_at is not null`. Completed, archived, trashed,
+  triaged, and foreign tasks are excluded.
+- Quick capture uses `CaptureInboxTodo`, which creates a normal task through
+  `CreateTodo`, assigns the timestamp, and defaults to Normal priority with no
+  project or due date.
+- Triage uses `TriageInboxTodo`, which delegates organization updates to
+  `UpdateTodo` and clears `inbox_captured_at` only after validation and
+  authorization pass.
+- Captured titles are normalized with `InboxCaptureTitle`, limited to 120
+  characters, and rejected if they contain no visible text. Both the Livewire
+  form and action layer enforce this.
+- The workflow is single-task and synchronous. It needs no cron, queue worker,
+  supervisor, shell, Artisan command, paid service, retry loop, resume token, or
+  chunk processor during normal hosted usage.
+- Demo seeding gives every local/testing/demo user two inbox tasks so
+  `https://ruflo.test/todos/inbox` has immediate data after seeding.
+
 ## Calendar view
 
 Step 041 adds `todos.calendar`, a protected class-based Livewire page for a
@@ -415,6 +443,8 @@ Step 043 adds reusable task templates at `todos.templates`.
   ordered by updated timestamp/name. `(user_id, name)` prevents duplicate
   names, while `(user_id, kind)` and `(user_id, visibility)` support owner-scoped
   template listing and future filters.
+- Inbox reads are backed by `(user_id, inbox_captured_at)` and stay paginated
+  through `TodoInboxQuery`.
 
 ## Intentionally not implemented
 

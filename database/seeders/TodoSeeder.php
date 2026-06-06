@@ -73,6 +73,12 @@ class TodoSeeder extends Seeder
 
         $this->upsertTodo($user, 'Capture a loose idea', [
             'priority' => Priority::Low,
+            'inbox_captured_at' => now()->subMinutes(45),
+        ]);
+
+        $this->upsertTodo($user, 'Review the quick note', [
+            'priority' => Priority::Normal,
+            'inbox_captured_at' => now()->subMinutes(15),
         ]);
 
         $this->upsertTodo($user, 'Ship one small improvement', [
@@ -203,7 +209,7 @@ class TodoSeeder extends Seeder
     }
 
     /**
-     * @param  array{project_id?: int, priority?: Priority, due_date?: string|null, is_completed?: bool, archived_at?: mixed, deleted_at?: mixed}  $attributes
+     * @param  array{project_id?: int, priority?: Priority, due_date?: string|null, is_completed?: bool, archived_at?: mixed, deleted_at?: mixed, inbox_captured_at?: mixed}  $attributes
      */
     private function upsertTodo(User $user, string $title, array $attributes, Tag ...$tags): Todo
     {
@@ -222,6 +228,7 @@ class TodoSeeder extends Seeder
             'is_completed' => $attributes['is_completed'] ?? false,
             'archived_at' => $attributes['archived_at'] ?? null,
             'deleted_at' => $attributes['deleted_at'] ?? null,
+            'inbox_captured_at' => $attributes['inbox_captured_at'] ?? null,
         ])->save();
 
         $todo->tags()->sync(collect($tags)->pluck('id')->all());

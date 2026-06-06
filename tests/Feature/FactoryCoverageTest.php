@@ -134,6 +134,8 @@ test('todo factory covers priority date and lifecycle states', function () {
     $archived = Todo::factory()->archived()->create();
     $archivedCompleted = Todo::factory()->completed()->archived()->create();
     $deleted = Todo::factory()->deleted()->create();
+    $inbox = Todo::factory()->inbox()->create();
+    $triaged = Todo::factory()->inbox()->triaged()->create();
     $dueToday = Todo::factory()->dueToday()->create();
     $overdue = Todo::factory()->overdue()->create();
     $upcoming = Todo::factory()->upcoming()->create();
@@ -151,6 +153,9 @@ test('todo factory covers priority date and lifecycle states', function () {
         ->and($archivedCompleted->is_completed)->toBeTrue()
         ->and($deleted->status())->toBe(TodoStatus::Trash)
         ->and($deleted->trashed())->toBeTrue()
+        ->and($inbox->isInInbox())->toBeTrue()
+        ->and($inbox->isActive())->toBeTrue()
+        ->and($triaged->isInInbox())->toBeFalse()
         ->and($dueToday->isDueToday())->toBeTrue()
         ->and($overdue->isOverdue())->toBeTrue()
         ->and($upcoming->due_date->isFuture())->toBeTrue()

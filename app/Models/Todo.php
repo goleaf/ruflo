@@ -52,6 +52,7 @@ class Todo extends Model
         return [
             'is_completed' => 'boolean',
             'archived_at' => 'immutable_datetime',
+            'inbox_captured_at' => 'immutable_datetime',
             'priority' => Priority::class,
             'due_date' => 'immutable_date',
         ];
@@ -106,6 +107,14 @@ class Todo extends Model
     }
 
     /**
+     * Whether the task is waiting in the quick-capture inbox.
+     */
+    public function isInInbox(): bool
+    {
+        return $this->inbox_captured_at !== null;
+    }
+
+    /**
      * The derived lifecycle bucket for display. Archived wins over completed.
      */
     public function status(): TodoStatus
@@ -127,6 +136,17 @@ class Todo extends Model
     public function scopeActive(Builder $query): Builder
     {
         return $query->whereNull('archived_at')->where('is_completed', false);
+    }
+
+    /**
+     * Scope to captured tasks that still need triage.
+     *
+     * @param  Builder<static>  $query
+     * @return Builder<static>
+     */
+    public function scopeInInbox(Builder $query): Builder
+    {
+        return $query->whereNotNull('inbox_captured_at');
     }
 
     /**

@@ -14,6 +14,10 @@ return [
             'title' => 'Task details',
             'description' => 'Review one private task without exposing another workspace.',
         ],
+        'today' => [
+            'title' => 'Today',
+            'description' => 'Focus on active tasks due today in your private workspace.',
+        ],
     ],
 
     'fields' => [
@@ -217,6 +221,14 @@ return [
         'project_deleted' => 'Project deleted.',
         'tag_created' => 'Tag created.',
         'tag_deleted' => 'Tag deleted.',
+    ],
+
+    'today' => [
+        'label' => 'Due today',
+        'date' => 'Today, :date',
+        'count' => 'Due today',
+        'open_filtered' => 'Filtered list',
+        'empty_description' => 'Tasks with today as their due date will appear here while they are active.',
     ],
 
     'exceptions' => [

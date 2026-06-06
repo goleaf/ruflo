@@ -450,6 +450,32 @@
 
 - Added `docs/frontend-design-system.md` with Tailwind 4, Flux, and SCSS usage rules.
 
+## 2026-06-06 - Step 032 Today view
+
+### Implemented
+
+- Added a protected class-based Livewire Today page at `todos.today`
+  (`/todos/today`) for active tasks due today.
+- Added `TodoListQuery::todayFor()` and `findTodayFor()` so Today reads and
+  actions stay owner-scoped and limited to active due-today tasks.
+- Added a dashboard shortcut to the Today page while preserving the existing
+  full todo workspace link.
+- Added translated Today page copy, empty-state copy, count labels, and filtered
+  list action text.
+
+### Testing
+
+- Added `TodayViewTest` for guest/unverified redirects, owner-only due-today
+  rendering, active-only exclusions, translated empty state, due-today-only
+  completion, route middleware, and URL contract.
+- Re-ran adjacent date, organization, private-view, project-detail, dashboard,
+  domain, route-protection, and architecture coverage.
+
+### Documentation
+
+- Updated `docs/task-organization.md`, `docs/domain-readiness.md`, and
+  `docs/todo-foundation.md` for the dedicated Today view and route contract.
+
 ## 2026-06-06 - Step 031 Due dates and date logic
 
 ### Implemented

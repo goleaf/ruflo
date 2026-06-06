@@ -3,6 +3,7 @@
 use App\Livewire\Projects\Show as ProjectsShow;
 use App\Livewire\Todos\Index as TodosIndex;
 use App\Livewire\Todos\Show as TodosShow;
+use App\Livewire\Todos\Today as TodosToday;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome')->name('home');
@@ -11,6 +12,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::view('dashboard', 'dashboard')->name('dashboard');
 
     Route::livewire('todos', TodosIndex::class)->name('todos.index');
+    Route::livewire('todos/today', TodosToday::class)->name('todos.today');
     Route::livewire('todos/{todo}', TodosShow::class)->whereNumber('todo')->name('todos.show');
     Route::livewire('projects/{project}', ProjectsShow::class)->whereNumber('project')->name('projects.show');
 });

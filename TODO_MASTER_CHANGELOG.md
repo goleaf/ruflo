@@ -52,3 +52,4 @@ Record changes after every step.
 - Completed Step 029 by adding normalized tag-name validation, hardening direct tag creation against empty normalized labels, linking tag badges to the owner-scoped tag filter, and expanding tag isolation/assignment/filter tests.
 - Completed Step 030 by tightening priority validation with Laravel enum rules, rejecting invalid direct DTO priority data, centralizing priority sort SQL on the enum weights, and adding priority validation/filter/sort regression tests.
 - Completed Step 031 by adding a reusable date-only due-date rule, hardening direct DTO due-date parsing, documenting app-timezone bucket behavior, and adding due-date validation/filter/timezone regression tests.
+- Completed Step 032 by adding a protected Today Livewire page, owner-scoped due-today query/action boundaries, a dashboard shortcut, translated Today copy, and Today route/privacy tests.

@@ -20,9 +20,15 @@
                     <flux:text>{{ __('dashboard.workspace.description') }}</flux:text>
                 </div>
 
-                <flux:button :href="route('todos.index')" wire:navigate variant="primary" icon="list-bullet">
-                    {{ __('dashboard.workspace.action') }}
-                </flux:button>
+                <div class="flex flex-wrap gap-2">
+                    <flux:button :href="route('todos.today')" wire:navigate variant="primary" icon="calendar">
+                        {{ __('dashboard.workspace.today_action') }}
+                    </flux:button>
+
+                    <flux:button :href="route('todos.index')" wire:navigate variant="ghost" icon="list-bullet">
+                        {{ __('dashboard.workspace.action') }}
+                    </flux:button>
+                </div>
             </div>
         </flux:card>
 

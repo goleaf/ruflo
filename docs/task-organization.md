@@ -124,6 +124,26 @@ the (sanitized) filter object.
 Filters, search, sort, and pagination compose: changing any of them resets the
 page and clears the bulk selection.
 
+## Today view
+
+Step 032 adds a dedicated `todos.today` Livewire page for active tasks due
+today. It is protected by the same `auth` and `verified` middleware as the main
+todo workspace and uses `TodoListQuery::todayFor()` so reads stay owner-scoped,
+active-only, and eager-loaded for project/tag badges.
+
+The Today page:
+
+- displays only active current-user tasks where `due_date` is today in the app
+  timezone,
+- excludes overdue, upcoming, completed, archived, trashed, and foreign tasks,
+- links each task to its private detail page,
+- includes project/tag badges that reuse existing owner-scoped links,
+- offers a complete action limited through `TodoListQuery::findTodayFor()`,
+- links back to the main task workspace with the equivalent `due=today` filter.
+
+The dashboard workspace card now links directly to Today for quick review while
+keeping the full task workspace one click away.
+
 ## Bulk actions
 
 `BulkCompleteTodos`, `BulkArchiveTodos`, `BulkUnarchiveTodos`, `BulkMoveTodos`,

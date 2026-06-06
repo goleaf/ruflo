@@ -51,5 +51,6 @@ return [
         'heading' => 'Todos stay owner-scoped',
         'description' => 'Lists, project filters, tag filters, and dashboard counters use the same authenticated owner boundary.',
         'action' => 'Open todos',
+        'today_action' => 'Open today',
     ],
 ];

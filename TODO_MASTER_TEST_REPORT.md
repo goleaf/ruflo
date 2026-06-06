@@ -424,3 +424,20 @@ Record test/build/check results here.
 | 2026-06-06 | `git diff --check` | Passed | No whitespace errors after Step 031 changes. |
 | 2026-06-06 | `mcp__laravel_boost.browser_logs entries=20` | Passed | Only an old Vite reconnect message from 2026-06-05 was present; no current due-date UI browser/runtime error was found. |
 | 2026-06-06 | `php artisan test --compact` | Passed | Full suite passed with 304 tests and 1324 assertions after Step 031 due-date changes. |
+| 2026-06-06 | `mcp__laravel_boost.application_info` | Passed | Confirmed Step 032 runtime context: Laravel 13.14.0, Livewire 4.3.1, Flux 2.14.1, Tailwind 4.3.0, Pest 4.7.2, PHP CLI 8.4, SQLite. |
+| 2026-06-06 | `mcp__laravel_boost.search_docs` | Passed | Reviewed Livewire full-page routing, computed properties, pagination, property security, redirect/query guidance, Flux button docs, and Laravel route redirect assertions before Step 032 changes. |
+| 2026-06-06 | `mcp__laravel_boost.database_schema todos` | Passed | Reconfirmed `todos.due_date` and owner/date indexes before adding the dedicated Today view. |
+| 2026-06-06 | `rg today-view inventory` | Passed | Inspected due-today filters, date scopes, dashboard summary, route layout, translations, docs, and existing date/private-view tests before Step 032 changes. |
+| 2026-06-06 | `php artisan make:livewire Todos/Today --class --no-interaction` | Passed | Created the class-based Step 032 Today page. |
+| 2026-06-06 | `php artisan make:test --pest TodayViewTest --no-interaction` | Passed | Created the Step 032 Today view regression test. |
+| 2026-06-06 | `php artisan test --compact tests/Feature/TodayViewTest.php` | Passed | 5 tests, 32 assertions for protected Today routing, owner-only active due-today rendering, translated empty state, due-today-only completion, route middleware, and URL contract. |
+| 2026-06-06 | `php artisan test --compact tests/Feature/TodayViewTest.php tests/Feature/TaskDueDateTest.php tests/Feature/TodoOrganizationTest.php tests/Feature/TaskPrivateViewsTest.php tests/Feature/ProjectDetailTest.php tests/Feature/DashboardTest.php tests/Feature/DomainReadinessTest.php tests/Feature/GuestRouteProtectionTest.php tests/Feature/TodoArchitectureTest.php` | Passed | 97 tests, 360 assertions across Today view, due-date logic, organization, private task views, project detail, dashboard, domain readiness, route protection, and architecture guards. |
+| 2026-06-06 | `vendor/bin/pint --dirty --format agent` | Passed | PHP style passed after Step 032 Today page, route, query, dashboard, translation, test, and documentation updates. |
+| 2026-06-06 | `php artisan test --compact tests/Feature/TodayViewTest.php tests/Feature/TaskDueDateTest.php tests/Feature/TodoOrganizationTest.php tests/Feature/TaskPrivateViewsTest.php tests/Feature/ProjectDetailTest.php tests/Feature/DashboardTest.php tests/Feature/DomainReadinessTest.php tests/Feature/GuestRouteProtectionTest.php tests/Feature/TodoArchitectureTest.php` | Passed | 97 tests, 360 assertions after Pint formatting. |
+| 2026-06-06 | `rg Volt scan` | Passed | No Volt usage found in app, resources, routes, config, tests, Composer, or package files after Step 032. |
+| 2026-06-06 | `rg hardcoded Today copy scan` | Passed | No hardcoded visible Today page copy remains in app/resource surfaces outside English language files. |
+| 2026-06-06 | `rg compressed-progress scan` | Passed | Mutable root progress files contain no compressed grouped-step placeholder lines after Step 032. |
+| 2026-06-06 | `php artisan route:list --no-interaction -vv --path=todos` | Passed | Confirmed `todos.index`, `todos.today`, and `todos.show` are all registered behind auth and verified middleware. |
+| 2026-06-06 | `git diff --check` | Passed | No whitespace errors after Step 032 changes. |
+| 2026-06-06 | `mcp__laravel_boost.browser_logs entries=20` | Passed | Only an old Vite reconnect message from 2026-06-05 was present; no current Today page browser/runtime error was found. |
+| 2026-06-06 | `php artisan test --compact` | Passed | Full suite passed with 309 tests and 1357 assertions after Step 032 Today view changes. |

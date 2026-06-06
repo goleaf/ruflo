@@ -122,6 +122,32 @@ final class TodoListQuery
     }
 
     /**
+     * Owner-scoped active tasks due today.
+     *
+     * @return Builder<Todo>
+     */
+    public function todayFor(User $user): Builder
+    {
+        return $this->withWorkspaceRelations(
+            Todo::query()
+                ->select(['id', 'user_id', 'project_id', 'title', 'priority', 'due_date', 'is_completed', 'archived_at', 'deleted_at', 'created_at', 'updated_at'])
+                ->ownedBy($user)
+                ->dueToday(),
+            $user,
+        )
+            ->orderByRaw(Priority::sortCaseSql().' desc')
+            ->orderByDesc('created_at');
+    }
+
+    /**
+     * Resolve one due-today task for a focused Today action.
+     */
+    public function findTodayFor(User $user, int $todoId): Todo
+    {
+        return $this->todayFor($user)->findOrFail($todoId);
+    }
+
+    /**
      * Resolve a single todo the user is allowed to see.
      *
      * Foreign or unknown ids yield not-found rather than leaking existence.

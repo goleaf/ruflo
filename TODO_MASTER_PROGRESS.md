@@ -2,19 +2,19 @@
 
 ## Current status
 
-Steps 001-031 are complete. The requested recheck from Step 001 has been completed through Step 031. The tracker is expanded to one ledger line per step from 001 through 100 so later work cannot be hidden behind a range.
+Steps 001-032 are complete. The requested recheck from Step 001 has been completed through Step 032. The tracker is expanded to one ledger line per step from 001 through 100 so later work cannot be hidden behind a range.
 
 ## Current step
 
-Step 032 — Today view
+Step 033 — Overdue view
 
 ## Last completed action
 
-Completed Step 031 by adding canonical date-only due-date validation, hardening direct DTO date parsing, documenting app-timezone bucket behavior, and adding due-date validation/filter/timezone regression tests.
+Completed Step 032 by adding a protected Today Livewire page, owner-scoped due-today query/action boundaries, a dashboard shortcut, translated Today copy, and Today route/privacy tests.
 
 ## Next action
 
-Begin `steps/step-032-today-view.md`, then implement the next not-yet-completed plan step without grouping it with later work.
+Begin `steps/step-033-overdue-view.md`, then implement the next not-yet-completed plan step without grouping it with later work.
 
 ## Step ledger
 
@@ -51,7 +51,7 @@ Begin `steps/step-032-today-view.md`, then implement the next not-yet-completed 
 | 029 — Tags and labels | Complete | Added `App\Rules\Tags\TagName`, wired it into tag creation, and hardened `CreateTag` so whitespace-only names cannot persist after normalization. Rendered tag badges now link to the existing `todos.index` tag filter from task list, task detail, and project detail pages. Existing scoped tag creation, duplicate handling, assignment/removal, deletion, filtering, factories, and seeders were rechecked. | Boost app info/docs search/schema inspection, tag model/action/query/policy/UI/test inventory, make:rule, focused `TagTest`, adjacent tag/organization/create/edit/privacy/validation/policy/factory/seeder suite, plus scans and full-suite checks recorded in test report. | `docs/task-organization.md`, `docs/validation-rules.md`, `docs/todo-foundation.md`, `docs/changelog.md`, `lang/en/todos.php`, root changelog, decisions, risks, and test report updated. | Whitespace-only normalized tag-name risk logged and mitigated with a reusable rule, action-level guard, translation key, and regression tests. | f8f5d9c |
 | 030 — Priorities | Complete | Tightened Livewire create/edit priority validation with Laravel backed-enum rules, made direct DTO parsing reject invalid provided values instead of silently falling back to Normal, centralized priority sort SQL on enum weights, and rechecked existing badges, filters, factories, and seeders. | Boost app info/docs/schema checks, focused `TaskPriorityTest`, and adjacent todo organization/creation/editing/private-view/project-detail/factory/seeder/architecture suite passed; final scans and full-suite checks recorded in test report. | `docs/task-organization.md`, `docs/todo-foundation.md`, `docs/changelog.md`, root changelog, decisions, risks, and test report updated. | Invalid direct priority fallback risk logged and mitigated. | a590341 |
 | 031 — Due dates and date logic | Complete | Added `DueDate` canonical `Y-m-d` validation, wired it into create/edit Livewire forms, reused it in direct DTO parsing, added `Todo::isUpcoming()`, and rechecked current date badges, filters, factories, seeders, and dashboard summary. | Boost app info/docs/schema checks, app timezone check, due-date inventory scan, focused `TaskDueDateTest`, and adjacent due-date/organization/creation/editing/dashboard/factory/seeder/rule/private-view/project-detail/architecture suite passed; final scans and full-suite checks recorded in test report. | `docs/task-organization.md`, `docs/validation-rules.md`, `docs/todo-foundation.md`, `docs/changelog.md`, root changelog, decisions, risks, and test report updated. | Direct invalid due-date risk mitigated; per-user timezone support remains a documented future settings risk. | 285f27d |
-| 032 — Today view | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 032 — Today view | Complete | Added protected class-based `App\Livewire\Todos\Today` at `todos.today`, added `TodoListQuery::todayFor()` and `findTodayFor()`, rendered a focused Flux Today list with owner-scoped project/tag badges and complete action, and linked the dashboard to Today. | Boost app info/docs/schema checks, today inventory scan, focused `TodayViewTest`, and adjacent date/list/private-view/project-detail/dashboard/domain/route-protection/architecture suite passed; final scans and full-suite checks recorded in test report. | `docs/task-organization.md`, `docs/domain-readiness.md`, `docs/todo-foundation.md`, `docs/changelog.md`, root changelog, decisions, risks, and test report updated. | Today action scope risk logged and mitigated with `findTodayFor()`. | Pending |
 | 033 — Overdue view | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
 | 034 — Upcoming view | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
 | 035 — Search | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |

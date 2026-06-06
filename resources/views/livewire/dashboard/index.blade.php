@@ -261,6 +261,161 @@
         </flux:callout>
     </flux:card>
 
+    <flux:card class="space-y-5" data-test="dashboard-project-progress" aria-labelledby="dashboard-project-progress-heading" role="region" wire:loading.class="opacity-70" wire:loading.attr="aria-busy">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+            <div class="min-w-0 max-w-2xl space-y-1">
+                <flux:subheading>{{ __('dashboard.projects.label') }}</flux:subheading>
+                <flux:heading id="dashboard-project-progress-heading" size="lg">{{ __('dashboard.projects.heading') }}</flux:heading>
+                <flux:text>{{ __('dashboard.projects.description') }}</flux:text>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2 sm:justify-end" aria-label="{{ $this->projectProgressAria }}">
+                <flux:badge color="indigo" icon="folder" class="w-fit">
+                    {{ __('dashboard.projects.badges.active_projects', ['count' => $this->projectProgress['totals']['active_projects']]) }}
+                </flux:badge>
+
+                <flux:badge color="{{ $this->projectProgress['totals']['cleanup_signals'] > 0 ? 'amber' : 'lime' }}" icon="sparkles" class="w-fit">
+                    {{ __('dashboard.projects.badges.cleanup_signals', ['count' => $this->projectProgress['totals']['cleanup_signals']]) }}
+                </flux:badge>
+
+                <flux:badge color="zinc" class="w-fit">
+                    {{ __('dashboard.projects.generated', ['date' => $this->projectProgress['generated_on']]) }}
+                </flux:badge>
+            </div>
+        </div>
+
+        @if ($this->projectProgress['totals']['cleanup_signals'] > 0)
+            <flux:callout icon="sparkles" variant="secondary" data-test="dashboard-project-progress-cleanup">
+                <flux:callout.heading>{{ __('dashboard.projects.cleanup.heading', ['count' => $this->projectProgress['totals']['cleanup_signals']]) }}</flux:callout.heading>
+                <flux:callout.text>{{ __('dashboard.projects.cleanup.description', ['overdue' => $this->projectProgress['totals']['overdue'], 'undated' => $this->projectProgress['totals']['undated'], 'stale' => $this->projectProgress['totals']['stale'], 'no_project' => $this->projectProgress['totals']['no_project_active']]) }}</flux:callout.text>
+            </flux:callout>
+
+            <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                <flux:button href="{{ route('todos.cleanup') }}" wire:navigate size="sm" variant="primary" icon="sparkles" align="start" data-test="dashboard-project-progress-cleanup-action">
+                    {{ __('dashboard.projects.actions.open_cleanup') }}
+                </flux:button>
+
+                <flux:button href="{{ route('todos.index') }}" wire:navigate size="sm" variant="ghost" icon="list-bullet" align="start">
+                    {{ __('dashboard.projects.actions.open_tasks') }}
+                </flux:button>
+            </div>
+        @endif
+
+        @if (! $this->hasProjectProgress)
+            <flux:callout icon="folder-open" variant="secondary" data-test="dashboard-project-progress-empty">
+                <flux:callout.heading>{{ __('dashboard.projects.empty.heading') }}</flux:callout.heading>
+                <flux:callout.text>{{ __('dashboard.projects.empty.description') }}</flux:callout.text>
+            </flux:callout>
+        @else
+            <div class="grid grid-cols-1 gap-3 lg:grid-cols-2 xl:grid-cols-3" aria-label="{{ __('dashboard.projects.cards_label') }}" data-test="dashboard-project-progress-grid">
+                @foreach ($this->projectProgress['projects'] as $project)
+                    <div wire:key="dashboard-project-progress-card-{{ $project['id'] }}" class="flex min-w-0 flex-col justify-between rounded-lg border border-zinc-200 bg-white p-4 dark:border-white/10 dark:bg-zinc-950" data-test="dashboard-project-progress-card-{{ $project['id'] }}">
+                        <div class="space-y-4">
+                            <div class="flex flex-wrap items-start justify-between gap-2">
+                                <flux:badge size="sm" :color="$project['color']" icon="folder">{{ $project['name'] }}</flux:badge>
+                                <flux:badge size="sm" color="{{ $project['attention'] > 0 ? 'amber' : 'lime' }}">
+                                    {{ __('dashboard.projects.badges.attention', ['count' => $project['attention']]) }}
+                                </flux:badge>
+                            </div>
+
+                            <div class="space-y-2" data-test="dashboard-project-progress-card-progress-{{ $project['id'] }}">
+                                <div class="flex flex-wrap items-center justify-between gap-2">
+                                    <span class="text-sm font-medium text-zinc-700 dark:text-zinc-200">{{ __('dashboard.projects.metrics.progress') }}</span>
+                                    <span class="text-sm tabular-nums text-zinc-500 dark:text-zinc-400">{{ __('dashboard.projects.percent', ['percent' => $project['completion_percent']]) }}</span>
+                                </div>
+
+                                <flux:progress :value="$project['completion_percent']" color="blue" aria-label="{{ __('dashboard.projects.progress_aria', ['project' => $project['name'], 'percent' => $project['completion_percent']]) }}" />
+                            </div>
+
+                            <dl class="grid grid-cols-2 gap-2 sm:grid-cols-3">
+                                <div class="rounded-lg border border-zinc-200 bg-zinc-50 p-3 dark:border-white/10 dark:bg-zinc-900">
+                                    <dt class="text-xs font-medium uppercase text-zinc-500 dark:text-zinc-400">{{ __('dashboard.projects.metrics.active') }}</dt>
+                                    <dd class="mt-1 text-sm font-semibold text-zinc-950 dark:text-white">{{ $project['active'] }}</dd>
+                                </div>
+
+                                <div class="rounded-lg border border-zinc-200 bg-zinc-50 p-3 dark:border-white/10 dark:bg-zinc-900">
+                                    <dt class="text-xs font-medium uppercase text-zinc-500 dark:text-zinc-400">{{ __('dashboard.projects.metrics.completed') }}</dt>
+                                    <dd class="mt-1 text-sm font-semibold text-zinc-950 dark:text-white">{{ $project['completed'] }}</dd>
+                                </div>
+
+                                <div class="rounded-lg border border-zinc-200 bg-zinc-50 p-3 dark:border-white/10 dark:bg-zinc-900">
+                                    <dt class="text-xs font-medium uppercase text-zinc-500 dark:text-zinc-400">{{ __('dashboard.projects.metrics.overdue') }}</dt>
+                                    <dd class="mt-1 text-sm font-semibold text-red-700 dark:text-red-300">{{ $project['overdue'] }}</dd>
+                                </div>
+
+                                <div class="rounded-lg border border-zinc-200 bg-zinc-50 p-3 dark:border-white/10 dark:bg-zinc-900">
+                                    <dt class="text-xs font-medium uppercase text-zinc-500 dark:text-zinc-400">{{ __('dashboard.projects.metrics.due_soon') }}</dt>
+                                    <dd class="mt-1 text-sm font-semibold text-sky-700 dark:text-sky-300">{{ $project['due_soon'] }}</dd>
+                                </div>
+
+                                <div class="rounded-lg border border-zinc-200 bg-zinc-50 p-3 dark:border-white/10 dark:bg-zinc-900">
+                                    <dt class="text-xs font-medium uppercase text-zinc-500 dark:text-zinc-400">{{ __('dashboard.projects.metrics.undated') }}</dt>
+                                    <dd class="mt-1 text-sm font-semibold text-amber-700 dark:text-amber-300">{{ $project['undated'] }}</dd>
+                                </div>
+
+                                <div class="rounded-lg border border-zinc-200 bg-zinc-50 p-3 dark:border-white/10 dark:bg-zinc-900">
+                                    <dt class="text-xs font-medium uppercase text-zinc-500 dark:text-zinc-400">{{ __('dashboard.projects.metrics.stale') }}</dt>
+                                    <dd class="mt-1 text-sm font-semibold text-zinc-950 dark:text-white">{{ $project['stale'] }}</dd>
+                                </div>
+                            </dl>
+                        </div>
+
+                        <div class="mt-5 grid grid-cols-1 gap-2 sm:grid-cols-2">
+                            <flux:button href="{{ route('projects.show', $project['id']) }}" wire:navigate size="sm" align="start" icon="folder-open" data-test="dashboard-project-progress-open-{{ $project['id'] }}">
+                                {{ __('dashboard.projects.actions.open_project') }}
+                            </flux:button>
+
+                            <flux:button href="{{ route('todos.index', ['project' => $project['id']]) }}" wire:navigate size="sm" align="start" variant="ghost" icon="funnel" data-test="dashboard-project-progress-filter-{{ $project['id'] }}">
+                                {{ __('dashboard.projects.actions.filter_project') }}
+                            </flux:button>
+                        </div>
+                    </div>
+                @endforeach
+
+                @if ($this->projectProgress['totals']['no_project_active'] > 0)
+                    <div class="flex min-w-0 flex-col justify-between rounded-lg border border-dashed border-zinc-300 bg-zinc-50 p-4 dark:border-white/15 dark:bg-zinc-900" data-test="dashboard-project-progress-no-project">
+                        <div class="space-y-4">
+                            <div class="flex flex-wrap items-start justify-between gap-2">
+                                <flux:badge size="sm" color="zinc" icon="folder">{{ __('dashboard.projects.no_project.label') }}</flux:badge>
+                                <flux:badge size="sm" color="{{ $this->projectProgress['no_project']['attention'] > 0 ? 'amber' : 'lime' }}">
+                                    {{ __('dashboard.projects.badges.attention', ['count' => $this->projectProgress['no_project']['attention']]) }}
+                                </flux:badge>
+                            </div>
+
+                            <flux:text>{{ __('dashboard.projects.no_project.description') }}</flux:text>
+
+                            <dl class="grid grid-cols-2 gap-2">
+                                <div class="rounded-lg border border-zinc-200 bg-white p-3 dark:border-white/10 dark:bg-zinc-950">
+                                    <dt class="text-xs font-medium uppercase text-zinc-500 dark:text-zinc-400">{{ __('dashboard.projects.metrics.active') }}</dt>
+                                    <dd class="mt-1 text-sm font-semibold text-zinc-950 dark:text-white">{{ $this->projectProgress['no_project']['active'] }}</dd>
+                                </div>
+
+                                <div class="rounded-lg border border-zinc-200 bg-white p-3 dark:border-white/10 dark:bg-zinc-950">
+                                    <dt class="text-xs font-medium uppercase text-zinc-500 dark:text-zinc-400">{{ __('dashboard.projects.metrics.overdue') }}</dt>
+                                    <dd class="mt-1 text-sm font-semibold text-red-700 dark:text-red-300">{{ $this->projectProgress['no_project']['overdue'] }}</dd>
+                                </div>
+
+                                <div class="rounded-lg border border-zinc-200 bg-white p-3 dark:border-white/10 dark:bg-zinc-950">
+                                    <dt class="text-xs font-medium uppercase text-zinc-500 dark:text-zinc-400">{{ __('dashboard.projects.metrics.undated') }}</dt>
+                                    <dd class="mt-1 text-sm font-semibold text-amber-700 dark:text-amber-300">{{ $this->projectProgress['no_project']['undated'] }}</dd>
+                                </div>
+
+                                <div class="rounded-lg border border-zinc-200 bg-white p-3 dark:border-white/10 dark:bg-zinc-950">
+                                    <dt class="text-xs font-medium uppercase text-zinc-500 dark:text-zinc-400">{{ __('dashboard.projects.metrics.stale') }}</dt>
+                                    <dd class="mt-1 text-sm font-semibold text-zinc-950 dark:text-white">{{ $this->projectProgress['no_project']['stale'] }}</dd>
+                                </div>
+                            </dl>
+                        </div>
+
+                        <flux:button href="{{ route('todos.index', ['project' => 'none']) }}" wire:navigate size="sm" align="start" variant="ghost" icon="funnel" class="mt-5 w-full" data-test="dashboard-project-progress-review-no-project">
+                            {{ __('dashboard.projects.actions.review_no_project') }}
+                        </flux:button>
+                    </div>
+                @endif
+            </div>
+        @endif
+    </flux:card>
+
     <div class="overflow-x-auto pb-2" data-test="dashboard-summary-widgets">
         <div class="grid min-w-[78rem] grid-cols-11 gap-2">
             <x-ui.stat :label="__('dashboard.summary.active')" :value="$this->summary['active']" variant="colored" />

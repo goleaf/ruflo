@@ -195,6 +195,50 @@ return [
         ],
     ],
 
+    'projects' => [
+        'label' => 'Project progress',
+        'heading' => 'Project and list health',
+        'description' => 'Active lists are summarized with completion, overdue, undated, stale, and no-project cleanup signals.',
+        'cards_label' => 'Project progress cards',
+        'generated' => 'Generated :date',
+        'percent' => ':percent%',
+        'aria' => ':projects active projects with :active active project tasks, :completed completed project tasks, and :cleanup cleanup signals.',
+        'progress_aria' => ':project is :percent% complete.',
+        'badges' => [
+            'active_projects' => ':count active projects',
+            'attention' => ':count signals',
+            'cleanup_signals' => ':count cleanup signals',
+        ],
+        'metrics' => [
+            'active' => 'Active',
+            'completed' => 'Completed',
+            'due_soon' => 'Due soon',
+            'overdue' => 'Overdue',
+            'progress' => 'Progress',
+            'stale' => 'Stale',
+            'undated' => 'Undated',
+        ],
+        'actions' => [
+            'filter_project' => 'Filter tasks',
+            'open_cleanup' => 'Open cleanup',
+            'open_project' => 'Open project',
+            'open_tasks' => 'Open tasks',
+            'review_no_project' => 'Review no-project tasks',
+        ],
+        'cleanup' => [
+            'heading' => ':count project signals need review',
+            'description' => ':overdue overdue, :undated undated, :stale stale, and :no_project no-project active tasks are counted from your private workspace only.',
+        ],
+        'empty' => [
+            'heading' => 'No project work yet',
+            'description' => 'Create a project or assign tasks to a list to see private project progress here.',
+        ],
+        'no_project' => [
+            'label' => 'No project',
+            'description' => 'Active tasks without a project stay visible so they can be organized without leaking into another workspace.',
+        ],
+    ],
+
     'workspace' => [
         'label' => 'Private workspace',
         'tabs_label' => 'Workspace tabs',

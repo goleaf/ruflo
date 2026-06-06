@@ -1,5 +1,28 @@
 # Changelog
 
+## 2026-06-06 - Step 063 Project progress dashboard
+
+### Added
+
+- Added `ProjectProgressDashboardQuery` as the owner-scoped dashboard read
+  boundary for active project progress, no-project work, completion rates,
+  overdue tasks, due-soon tasks, undated tasks, and stale cleanup signals.
+- Added a translated Flux project progress section to `/dashboard` with
+  project cards, progress bars, cleanup callouts, no-project review, and an
+  empty state.
+
+### Tests
+
+- Expanded `DashboardTest` to cover owner-scoped project progress aggregate
+  accuracy, archived/deleted exclusions, multi-user privacy, dashboard links,
+  no-project signals, and translated empty-state rendering.
+
+### Restricted Hosting
+
+- Project progress is calculated during authenticated dashboard requests. It
+  requires no migration, cron, queue worker, supervisor, terminal action,
+  Artisan command, paid API, hosted charting service, or background job.
+
 ## 2026-06-06 - Step 062 Dashboard customization
 
 ### Added

@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Queries\Dashboard\DailyDashboardQuery;
 use App\Queries\Dashboard\DailySummaryQuery;
 use App\Queries\Dashboard\DashboardFoundationQuery;
+use App\Queries\Dashboard\ProjectProgressDashboardQuery;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
@@ -180,6 +181,29 @@ class Index extends Component
     public function foundation(): array
     {
         return app(DashboardFoundationQuery::class)->for($this->currentUser());
+    }
+
+    /**
+     * @return array{
+     *     generated_on: string,
+     *     projects: list<array{id: int, name: string, color: string, active: int, completed: int, overdue: int, due_soon: int, undated: int, stale: int, total: int, attention: int, completion_percent: int}>,
+     *     no_project: array{active: int, overdue: int, due_soon: int, undated: int, stale: int, attention: int},
+     *     totals: array{active_projects: int, archived_projects: int, displayed_projects: int, active_tasks: int, completed_tasks: int, total_tasks: int, completion_percent: int, overdue: int, due_soon: int, undated: int, stale: int, no_project_active: int, cleanup_signals: int}
+     * }
+     */
+    #[Computed]
+    public function projectProgress(): array
+    {
+        return app(ProjectProgressDashboardQuery::class)->for($this->currentUser());
+    }
+
+    #[Computed]
+    public function hasProjectProgress(): bool
+    {
+        return $this->projectProgress['totals']['active_projects'] > 0
+            || $this->projectProgress['totals']['active_tasks'] > 0
+            || $this->projectProgress['totals']['completed_tasks'] > 0
+            || $this->projectProgress['totals']['no_project_active'] > 0;
     }
 
     /**
@@ -460,6 +484,17 @@ class Index extends Component
     {
         return __('dashboard.foundation.chart.aria', [
             'count' => count($this->foundationChart),
+        ]);
+    }
+
+    #[Computed]
+    public function projectProgressAria(): string
+    {
+        return __('dashboard.projects.aria', [
+            'projects' => $this->projectProgress['totals']['active_projects'],
+            'active' => $this->projectProgress['totals']['active_tasks'],
+            'completed' => $this->projectProgress['totals']['completed_tasks'],
+            'cleanup' => $this->projectProgress['totals']['cleanup_signals'],
         ]);
     }
 

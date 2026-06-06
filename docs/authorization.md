@@ -42,6 +42,7 @@ scope) rather than across the whole codebase.
 | Notification read boundary | `App\Queries\Notifications\NotificationInboxQuery` | Owner-scoped database notifications, read-state filters, and scoped mutation lookup. |
 | Daily dashboard read boundary | `App\Queries\Dashboard\DailyDashboardQuery` | Owner-scoped daily counts for due work, reminders, unread notifications, and tracked time. |
 | Dashboard foundation read boundary | `App\Queries\Dashboard\DashboardFoundationQuery` | Owner-scoped widget counters across today, overdue, upcoming, priorities, reminders, recurrence, goals, habits, projects, and time. |
+| Project progress dashboard read boundary | `App\Queries\Dashboard\ProjectProgressDashboardQuery` | Owner-scoped active project, no-project, completion, overdue, undated, and stale cleanup counters. |
 | Recurrence read boundary | `App\Queries\Todos\TodoRecurrenceRuleQuery` | Owner-scoped recurrence rules, generated occurrences, exceptions, and active task options. |
 | Template read boundary | `App\Queries\Todos\TodoTemplateListQuery` | Owner-scoped reusable task/project/checklist/routine templates. |
 | Inbox read boundary | `App\Queries\Todos\TodoInboxQuery` | Owner-scoped active captured tasks waiting for triage. |
@@ -264,6 +265,12 @@ session. Show/hide/reorder actions validate submitted keys and directions
 against the server-owned dashboard allow-list before changing presentation, and
 they never change the query scope or aggregate source data.
 
+The project progress dashboard section uses `ProjectProgressDashboardQuery`.
+It starts from active projects owned by the current user, counts only same-user
+task rows, excludes deleted task rows, excludes tasks attached to archived
+projects from progress totals, and keeps no-project tasks in an owner-scoped
+separate panel.
+
 Recurring task rules use the same private route and owner boundary.
 `todos.recurring` is a class-based Livewire page behind `auth` and `verified`.
 Rules are listed through `TodoRecurrenceRuleQuery`, task selection validates
@@ -295,6 +302,7 @@ it on:
 
 - **Dashboard** — every current widget/counter uses
   `DailyDashboardQuery::for($user)`, `DashboardFoundationQuery::for($user)`,
+  `ProjectProgressDashboardQuery::for($user)`,
   `DailySummaryQuery::for($user)`, or `TodoListQuery::summaryFor($user)`; if
   cached later, cache keys must be per-user so data never mixes.
 - **Search & filters** — ownership is applied at the query level before any

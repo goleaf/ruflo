@@ -111,3 +111,31 @@ No model, migration, factory, seeder, queue, cron job, worker, supervisor,
 Artisan command, paid API, or hosted charting service is required for this
 step. Existing dashboard seed data continues to show realistic widget states at
 `https://ruflo.test/dashboard`.
+
+## Step 063 Project Progress Dashboard
+
+The dashboard now includes a project and list health section between the
+foundation widgets and the older summary counters. It shows active owner
+projects with completion percentage, active and completed task counts, overdue
+tasks, next-seven-day tasks, undated tasks, stale tasks, and attention signals.
+Active tasks without a project are shown in a separate no-project panel so
+users can organize loose work without losing privacy boundaries.
+
+`App\Queries\Dashboard\ProjectProgressDashboardQuery` is the read boundary for
+this section. It reads only active projects owned by the authenticated user,
+counts only tasks owned by the same user, excludes soft-deleted tasks, and
+excludes tasks attached to archived projects from project totals. The dashboard
+view never receives foreign project names, archived project names, or foreign
+task titles.
+
+The UI uses Flux card, badge, progress, callout, and button components with
+translated labels, empty states, action labels, and screen-reader summaries. It
+links each project card to the protected project detail page and the owner
+scoped task-list filter, while no-project work links to the task list's
+`project=none` filter.
+
+Project progress recalculates when the authenticated dashboard renders. It
+requires no cron, queue worker, supervisor, terminal access, Artisan command,
+paid charting service, hosted API, email provider, or background job. No model,
+migration, factory, or seeder was added because existing project and task
+models already contain the state needed for this browser-triggered summary.

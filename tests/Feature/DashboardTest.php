@@ -15,6 +15,7 @@ use App\Models\TodoRecurrenceRule;
 use App\Models\User;
 use App\Queries\Dashboard\DailyDashboardQuery;
 use App\Queries\Dashboard\DashboardFoundationQuery;
+use App\Queries\Dashboard\ProjectProgressDashboardQuery;
 use Illuminate\Support\Str;
 use Livewire\Livewire;
 
@@ -161,6 +162,119 @@ test('authenticated users can visit the dashboard', function () {
         ->assertDontSeeText('daily email')
         ->assertDontSeeText('npx ruflo@latest mcp start')
         ->assertDontSeeText('/plugin marketplace add ruvnet/ruflo');
+});
+
+test('project progress dashboard counts owner active projects cleanup and no-project signals', function () {
+    $this->travelTo('2026-06-06 09:00:00');
+
+    $user = User::factory()->create();
+    $other = User::factory()->create();
+    $project = Project::factory()->for($user)->active()->create(['name' => 'Launch plan', 'color' => 'blue']);
+    $emptyProject = Project::factory()->for($user)->active()->create(['name' => 'Empty plan', 'color' => 'green']);
+    $archivedProject = Project::factory()->for($user)->archived()->create(['name' => 'Archived plan']);
+    $foreignProject = Project::factory()->for($other)->active()->create(['name' => 'Foreign plan']);
+
+    Todo::factory()->forProject($project)->overdue()->create(['title' => 'Fix launch blocker']);
+    Todo::factory()->forProject($project)->upcoming()->create(['title' => 'Prepare launch notes']);
+    Todo::factory()->forProject($project)->withoutDueDate()->create([
+        'title' => 'Stale launch task',
+        'created_at' => now()->subDays(20),
+        'updated_at' => now()->subDays(20),
+    ]);
+    Todo::factory()->forProject($project)->completed()->create(['title' => 'Closed launch task']);
+    Todo::factory()->forProject($project)->archived()->create(['title' => 'Archived launch task']);
+    Todo::factory()->forProject($project)->deleted()->create(['title' => 'Deleted launch task']);
+    Todo::factory()->forProject($archivedProject)->overdue()->create(['title' => 'Archived project task']);
+    Todo::factory()->forProject($foreignProject)->overdue()->create(['title' => 'Foreign project task']);
+    Todo::factory()->for($other)->overdue()->create(['title' => 'Foreign loose task']);
+
+    Todo::factory()->for($user)->overdue()->create(['title' => 'Loose deadline task']);
+    Todo::factory()->for($user)->withoutDueDate()->create([
+        'title' => 'Loose stale task',
+        'created_at' => now()->subDays(21),
+        'updated_at' => now()->subDays(21),
+    ]);
+
+    $progress = app(ProjectProgressDashboardQuery::class)->for($user);
+    $projectNames = collect($progress['projects'])->pluck('name')->all();
+    $launchProject = collect($progress['projects'])->firstWhere('name', 'Launch plan');
+    $emptyProjectCard = collect($progress['projects'])->firstWhere('name', 'Empty plan');
+
+    expect($progress['projects'])->toHaveCount(2)
+        ->and($launchProject)->toMatchArray([
+            'id' => $project->id,
+            'active' => 3,
+            'completed' => 1,
+            'overdue' => 1,
+            'due_soon' => 1,
+            'undated' => 1,
+            'stale' => 1,
+            'total' => 4,
+            'attention' => 3,
+            'completion_percent' => 25,
+        ])
+        ->and($emptyProjectCard)->toMatchArray([
+            'id' => $emptyProject->id,
+            'active' => 0,
+            'completed' => 0,
+            'attention' => 0,
+            'completion_percent' => 0,
+        ])
+        ->and($projectNames)->not->toContain('Archived plan')
+        ->and($projectNames)->not->toContain('Foreign plan')
+        ->and($progress['no_project'])->toMatchArray([
+            'active' => 2,
+            'overdue' => 1,
+            'due_soon' => 0,
+            'undated' => 1,
+            'stale' => 1,
+            'attention' => 3,
+        ])
+        ->and($progress['totals'])->toMatchArray([
+            'active_projects' => 2,
+            'displayed_projects' => 2,
+            'active_tasks' => 3,
+            'completed_tasks' => 1,
+            'overdue' => 1,
+            'due_soon' => 1,
+            'undated' => 1,
+            'stale' => 1,
+            'no_project_active' => 2,
+            'cleanup_signals' => 6,
+        ]);
+
+    $this->actingAs($user)
+        ->get(route('dashboard'))
+        ->assertOk()
+        ->assertSee('data-test="dashboard-project-progress"', false)
+        ->assertSee('data-test="dashboard-project-progress-cleanup"', false)
+        ->assertSee('data-test="dashboard-project-progress-grid"', false)
+        ->assertSee('data-test="dashboard-project-progress-card-'.$project->id.'"', false)
+        ->assertSee('data-test="dashboard-project-progress-no-project"', false)
+        ->assertSee(route('projects.show', $project), false)
+        ->assertSee(route('todos.index', ['project' => $project->id]), false)
+        ->assertSee(route('todos.index', ['project' => 'none']), false)
+        ->assertSeeText('Launch plan')
+        ->assertSeeText('Empty plan')
+        ->assertSeeText(__('dashboard.projects.no_project.label'))
+        ->assertDontSeeText('Archived plan')
+        ->assertDontSeeText('Archived project task')
+        ->assertDontSeeText('Foreign plan')
+        ->assertDontSeeText('Foreign project task')
+        ->assertDontSeeText('Foreign loose task');
+});
+
+test('project progress dashboard renders translated empty state when no project work exists', function () {
+    $user = User::factory()->create();
+
+    $this->actingAs($user)
+        ->get(route('dashboard'))
+        ->assertOk()
+        ->assertSee('data-test="dashboard-project-progress"', false)
+        ->assertSee('data-test="dashboard-project-progress-empty"', false)
+        ->assertDontSee('data-test="dashboard-project-progress-grid"', false)
+        ->assertSeeText(__('dashboard.projects.empty.heading'))
+        ->assertSeeText(__('dashboard.projects.empty.description'));
 });
 
 test('dashboard foundation query counts every widget domain through the authenticated owner scope', function () {

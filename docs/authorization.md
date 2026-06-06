@@ -41,6 +41,7 @@ scope) rather than across the whole codebase.
 | Reminder read boundary | `App\Queries\Reminders\ReminderListQuery` | Owner-scoped reminders, task options, and summary counts. |
 | Notification read boundary | `App\Queries\Notifications\NotificationInboxQuery` | Owner-scoped database notifications, read-state filters, and scoped mutation lookup. |
 | Daily dashboard read boundary | `App\Queries\Dashboard\DailyDashboardQuery` | Owner-scoped daily counts for due work, reminders, unread notifications, and tracked time. |
+| Dashboard foundation read boundary | `App\Queries\Dashboard\DashboardFoundationQuery` | Owner-scoped widget counters across today, overdue, upcoming, priorities, reminders, recurrence, goals, habits, projects, and time. |
 | Recurrence read boundary | `App\Queries\Todos\TodoRecurrenceRuleQuery` | Owner-scoped recurrence rules, generated occurrences, exceptions, and active task options. |
 | Template read boundary | `App\Queries\Todos\TodoTemplateListQuery` | Owner-scoped reusable task/project/checklist/routine templates. |
 | Inbox read boundary | `App\Queries\Todos\TodoInboxQuery` | Owner-scoped active captured tasks waiting for triage. |
@@ -254,6 +255,11 @@ task, reminder, time-entry, and notification queries before rendering counters.
 It never reads another user's due tasks, blockers, reminders, unread
 notifications, or tracked time.
 
+The dashboard foundation widgets use `DashboardFoundationQuery` for the same
+route and owner boundary. Widget counters for priorities, recurrence, goals,
+habits, projects, and time are aggregated after user scoping, and widget
+links route to already protected owner-scoped pages.
+
 Recurring task rules use the same private route and owner boundary.
 `todos.recurring` is a class-based Livewire page behind `auth` and `verified`.
 Rules are listed through `TodoRecurrenceRuleQuery`, task selection validates
@@ -284,9 +290,9 @@ These are documented now so later steps inherit the model instead of bolting
 it on:
 
 - **Dashboard** — every current widget/counter uses
-  `DailyDashboardQuery::for($user)`, `DailySummaryQuery::for($user)`, or
-  `TodoListQuery::summaryFor($user)`; if cached later, cache keys must be
-  per-user so data never mixes.
+  `DailyDashboardQuery::for($user)`, `DashboardFoundationQuery::for($user)`,
+  `DailySummaryQuery::for($user)`, or `TodoListQuery::summaryFor($user)`; if
+  cached later, cache keys must be per-user so data never mixes.
 - **Search & filters** — ownership is applied at the query level before any
   text/status/priority filtering; invalid filter input is validated and must
   never widen the scope. Tampered numeric project/tag filters return a safe

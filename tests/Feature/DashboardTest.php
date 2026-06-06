@@ -1,14 +1,22 @@
 <?php
 
+use App\Livewire\Dashboard\Index as DashboardIndex;
+use App\Models\Goal;
+use App\Models\GoalMilestone;
+use App\Models\Habit;
+use App\Models\HabitCheckIn;
 use App\Models\Project;
 use App\Models\Reminder;
 use App\Models\Tag;
 use App\Models\TimeEntry;
 use App\Models\Todo;
 use App\Models\TodoDependency;
+use App\Models\TodoRecurrenceRule;
 use App\Models\User;
 use App\Queries\Dashboard\DailyDashboardQuery;
+use App\Queries\Dashboard\DashboardFoundationQuery;
 use Illuminate\Support\Str;
+use Livewire\Livewire;
 
 test('guests are redirected to the login page', function () {
     $response = $this->get(route('dashboard'));
@@ -52,6 +60,20 @@ test('authenticated users can visit the dashboard', function () {
         ->assertSee('data-test="dashboard-daily-settings"', false)
         ->assertSee('data-test="dashboard-daily-schedule-coverage"', false)
         ->assertSee('data-test="dashboard-daily-details"', false)
+        ->assertSee('data-test="dashboard-foundation-widgets"', false)
+        ->assertSee('data-test="dashboard-foundation-settings"', false)
+        ->assertSee('data-test="dashboard-foundation-chart"', false)
+        ->assertSee('data-test="dashboard-foundation-privacy-note"', false)
+        ->assertSee('data-test="dashboard-foundation-widget-today"', false)
+        ->assertSee('data-test="dashboard-foundation-widget-overdue"', false)
+        ->assertSee('data-test="dashboard-foundation-widget-upcoming"', false)
+        ->assertSee('data-test="dashboard-foundation-widget-priorities"', false)
+        ->assertSee('data-test="dashboard-foundation-widget-reminders"', false)
+        ->assertSee('data-test="dashboard-foundation-widget-recurrence"', false)
+        ->assertSee('data-test="dashboard-foundation-widget-goals"', false)
+        ->assertSee('data-test="dashboard-foundation-widget-habits"', false)
+        ->assertSee('data-test="dashboard-foundation-widget-projects"', false)
+        ->assertSee('data-test="dashboard-foundation-widget-time"', false)
         ->assertSee('data-test="dashboard-workspace-tabs"', false)
         ->assertSee('data-test="dashboard-owner-tab"', false)
         ->assertSee('data-test="dashboard-workspace-tab-link"', false)
@@ -89,6 +111,22 @@ test('authenticated users can visit the dashboard', function () {
             __('dashboard.daily.details.signals'),
         ])
         ->assertSeeInOrder([
+            __('dashboard.foundation.label'),
+            __('dashboard.foundation.heading'),
+            __('dashboard.foundation.widgets.today.label'),
+            __('dashboard.foundation.widgets.overdue.label'),
+            __('dashboard.foundation.widgets.upcoming.label'),
+            __('dashboard.foundation.widgets.priorities.label'),
+            __('dashboard.foundation.widgets.reminders.label'),
+            __('dashboard.foundation.widgets.recurrence.label'),
+            __('dashboard.foundation.widgets.goals.label'),
+            __('dashboard.foundation.widgets.habits.label'),
+            __('dashboard.foundation.widgets.projects.label'),
+            __('dashboard.foundation.widgets.time.label'),
+            __('dashboard.foundation.chart.label'),
+            __('dashboard.foundation.privacy.heading'),
+        ])
+        ->assertSeeInOrder([
             __('dashboard.workspace.label'),
             __('dashboard.workspace.heading'),
             __('dashboard.workspace.today_action'),
@@ -123,6 +161,108 @@ test('authenticated users can visit the dashboard', function () {
         ->assertDontSeeText('daily email')
         ->assertDontSeeText('npx ruflo@latest mcp start')
         ->assertDontSeeText('/plugin marketplace add ruvnet/ruflo');
+});
+
+test('dashboard foundation query counts every widget domain through the authenticated owner scope', function () {
+    $this->travelTo('2026-06-06 09:00:00');
+
+    $user = User::factory()->create();
+    $other = User::factory()->create();
+    $project = Project::factory()->for($user)->active()->create();
+    $archivedProject = Project::factory()->for($user)->archived()->create();
+
+    $todayTodo = Todo::factory()->forProject($project)->dueToday()->urgentPriority()->create();
+    $overdueTodo = Todo::factory()->for($user)->overdue()->highPriority()->create();
+    $upcomingTodo = Todo::factory()->for($user)->upcoming()->normalPriority()->create();
+    $recurringSource = Todo::factory()->for($user)->lowPriority()->create();
+    Todo::factory()->forProject($archivedProject)->normalPriority()->create();
+    Todo::factory()->for($user)->dueToday()->urgentPriority()->completed()->create();
+    Todo::factory()->for($user)->overdue()->highPriority()->archived()->create();
+    $deletedTodo = Todo::factory()->for($user)->upcoming()->normalPriority()->deleted()->create();
+
+    Reminder::factory()->forTodo($todayTodo)->due()->create();
+    Reminder::factory()->forTodo($overdueTodo)->future()->create();
+    Reminder::factory()->forTodo($upcomingTodo)->processed()->create();
+    Reminder::factory()->forTodo(Todo::factory()->for($user)->archived()->create())->due()->create();
+    Reminder::factory()->forTodo($deletedTodo)->due()->create();
+
+    $enabledRule = TodoRecurrenceRule::factory()->forTodo($recurringSource)->create();
+    Todo::factory()->generatedOccurrence($enabledRule, '2026-06-07')->create();
+    Todo::factory()->generatedOccurrence($enabledRule, '2026-06-08')->completed()->create();
+    Todo::factory()->generatedOccurrence($enabledRule, '2026-06-09')->archived()->create();
+    TodoRecurrenceRule::factory()->forTodo($upcomingTodo)->paused()->create();
+    TodoRecurrenceRule::factory()->forTodo(Todo::factory()->for($user)->archived()->create())->create();
+
+    $goal = Goal::factory()->for($user)->targetDate('2026-06-09')->create();
+    Goal::factory()->for($user)->targetDate('2026-06-09')->completed()->create();
+    $archivedGoal = Goal::factory()->for($user)->targetDate('2026-06-09')->archived()->create();
+    GoalMilestone::factory()->forGoal($goal)->pending()->create();
+    GoalMilestone::factory()->forGoal($goal)->completed()->create();
+    GoalMilestone::factory()->forGoal($archivedGoal)->pending()->create();
+
+    $habit = Habit::factory()->for($user)->daily()->create();
+    $archivedHabit = Habit::factory()->for($user)->archived()->create();
+    HabitCheckIn::factory()->forHabit($habit)->today()->create();
+    HabitCheckIn::factory()->forHabit($archivedHabit)->today()->create();
+
+    TimeEntry::factory()->forTodo($todayTodo)->manual(45)->create([
+        'entry_date' => '2026-06-06',
+    ]);
+    TimeEntry::factory()->forTodo($overdueTodo)->manual(30)->create([
+        'entry_date' => '2026-06-05',
+    ]);
+    TimeEntry::factory()->forTodo($upcomingTodo)->running()->create();
+    TimeEntry::factory()->forTodo($upcomingTodo)->discarded(15)->create([
+        'entry_date' => '2026-06-06',
+    ]);
+
+    Todo::factory()->for($other)->dueToday()->urgentPriority()->create();
+    Reminder::factory()->forTodo(Todo::factory()->for($other)->create())->due()->create();
+    $foreignRule = TodoRecurrenceRule::factory()->forTodo(Todo::factory()->for($other)->create())->create();
+    Todo::factory()->generatedOccurrence($foreignRule, '2026-06-07')->create();
+    Goal::factory()->for($other)->targetDate('2026-06-09')->create();
+    HabitCheckIn::factory()->forHabit(Habit::factory()->for($other)->create())->today()->create();
+    Project::factory()->for($other)->create();
+    TimeEntry::factory()->forTodo(Todo::factory()->for($other)->create())->manual(60)->create([
+        'entry_date' => '2026-06-06',
+    ]);
+
+    expect(app(DashboardFoundationQuery::class)->for($user))->toMatchArray([
+        'today' => 1,
+        'overdue' => 1,
+        'upcoming' => 2,
+        'priority_urgent' => 1,
+        'priority_high' => 1,
+        'priority_normal' => 2,
+        'priority_low' => 2,
+        'reminders_due' => 1,
+        'reminders_pending' => 2,
+        'recurrence_enabled' => 1,
+        'recurrence_paused' => 1,
+        'recurrence_generated' => 1,
+        'goals_open' => 1,
+        'goals_due_soon' => 1,
+        'milestones_open' => 1,
+        'habits_active' => 1,
+        'habits_checked_today' => 1,
+        'projects_active' => 1,
+        'projects_with_active_tasks' => 1,
+        'time_today_seconds' => 2700,
+        'time_week_seconds' => 4500,
+        'active_timers' => 1,
+    ]);
+});
+
+test('dashboard foundation details can be toggled without mutating dashboard data', function () {
+    $user = User::factory()->create();
+
+    Livewire::actingAs($user)
+        ->test(DashboardIndex::class)
+        ->assertSet('showFoundationDetails', true)
+        ->call('toggleFoundationDetails')
+        ->assertSet('showFoundationDetails', false)
+        ->assertSee(__('dashboard.foundation.heading'))
+        ->assertSee(__('dashboard.foundation.widgets.today.label'));
 });
 
 test('daily dashboard summary counts only the authenticated users private actionable records', function () {

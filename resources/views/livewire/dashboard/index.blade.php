@@ -131,6 +131,80 @@
         </div>
     </flux:card>
 
+    <flux:card class="space-y-5" data-test="dashboard-foundation-widgets" aria-labelledby="dashboard-foundation-heading" wire:loading.class="opacity-70" wire:loading.attr="aria-busy">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+            <div class="min-w-0 max-w-2xl space-y-1">
+                <flux:subheading>{{ __('dashboard.foundation.label') }}</flux:subheading>
+                <flux:heading id="dashboard-foundation-heading" size="lg">{{ __('dashboard.foundation.heading') }}</flux:heading>
+                <flux:text>{{ __('dashboard.foundation.description') }}</flux:text>
+            </div>
+
+            <flux:button type="button" size="sm" variant="ghost" :icon="$showFoundationDetails ? 'eye-slash' : 'eye'" wire:click="toggleFoundationDetails" wire:loading.attr="disabled" data-test="dashboard-foundation-settings">
+                {{ $showFoundationDetails ? __('dashboard.foundation.settings.compact') : __('dashboard.foundation.settings.details') }}
+            </flux:button>
+        </div>
+
+        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4" aria-label="{{ __('dashboard.foundation.widgets_label') }}">
+            @foreach ($this->foundationWidgets as $widget)
+                <div wire:key="dashboard-foundation-widget-{{ $widget['key'] }}" class="flex min-h-56 min-w-0 flex-col justify-between rounded-lg border border-zinc-200 bg-white p-4 dark:border-white/10 dark:bg-zinc-950" data-test="dashboard-foundation-widget-{{ $widget['key'] }}">
+                    <div class="space-y-4">
+                        <div class="flex flex-wrap items-start justify-between gap-2">
+                            <flux:badge size="sm" :color="$widget['color']">{{ $widget['badge'] }}</flux:badge>
+                            <span class="text-xs font-medium uppercase text-zinc-500 dark:text-zinc-400">{{ $widget['label'] }}</span>
+                        </div>
+
+                        <div class="space-y-2">
+                            <div class="break-words text-3xl font-semibold text-zinc-950 dark:text-white">{{ $widget['value'] }}</div>
+                            <flux:text size="sm">{{ $widget['description'] }}</flux:text>
+                        </div>
+
+                        @if ($showFoundationDetails)
+                            <dl class="grid grid-cols-1 gap-2 sm:grid-cols-2" data-test="dashboard-foundation-widget-metrics-{{ $widget['key'] }}">
+                                @foreach ($widget['metrics'] as $metric)
+                                    <div wire:key="dashboard-foundation-widget-{{ $widget['key'] }}-metric-{{ $metric['key'] }}" class="rounded-lg border border-zinc-200 bg-zinc-50 p-3 dark:border-white/10 dark:bg-zinc-900">
+                                        <dt class="text-xs font-medium uppercase text-zinc-500 dark:text-zinc-400">{{ $metric['label'] }}</dt>
+                                        <dd class="mt-1 break-words text-sm font-semibold text-zinc-950 dark:text-white">{{ $metric['value'] }}</dd>
+                                    </div>
+                                @endforeach
+                            </dl>
+                        @endif
+                    </div>
+
+                    <flux:button href="{{ $widget['href'] }}" wire:navigate size="sm" align="start" class="mt-5 w-full" data-test="dashboard-foundation-widget-action-{{ $widget['key'] }}">
+                        {{ $widget['action'] }}
+                    </flux:button>
+                </div>
+            @endforeach
+        </div>
+
+        <div class="space-y-4 rounded-lg border border-zinc-200 p-4 dark:border-white/10" data-test="dashboard-foundation-chart" role="img" aria-label="{{ $this->foundationChartAria }}">
+            <div class="space-y-1">
+                <flux:subheading>{{ __('dashboard.foundation.chart.label') }}</flux:subheading>
+                <flux:text size="sm">{{ __('dashboard.foundation.chart.description') }}</flux:text>
+            </div>
+
+            <div class="space-y-3">
+                @foreach ($this->foundationChart as $bar)
+                    <div wire:key="dashboard-foundation-chart-{{ $bar['key'] }}" class="space-y-1">
+                        <div class="flex flex-wrap items-center justify-between gap-2">
+                            <span class="text-sm font-medium text-zinc-700 dark:text-zinc-200">{{ $bar['label'] }}</span>
+                            <span class="text-sm tabular-nums text-zinc-500 dark:text-zinc-400">{{ $bar['value'] }}</span>
+                        </div>
+                        <div class="h-2 overflow-hidden rounded-full bg-zinc-100 dark:bg-white/10">
+                            <span class="block h-full rounded-full bg-blue-600 dark:bg-blue-400" style="width: {{ $bar['percent'] }}%"></span>
+                        </div>
+                        <span class="sr-only">{{ $bar['summary'] }}</span>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+
+        <flux:callout icon="lock-closed" variant="secondary" data-test="dashboard-foundation-privacy-note">
+            <flux:callout.heading>{{ __('dashboard.foundation.privacy.heading') }}</flux:callout.heading>
+            <flux:callout.text>{{ __('dashboard.foundation.privacy.description') }}</flux:callout.text>
+        </flux:callout>
+    </flux:card>
+
     <div class="overflow-x-auto pb-2" data-test="dashboard-summary-widgets">
         <div class="grid min-w-[78rem] grid-cols-11 gap-2">
             <x-ui.stat :label="__('dashboard.summary.active')" :value="$this->summary['active']" variant="colored" />

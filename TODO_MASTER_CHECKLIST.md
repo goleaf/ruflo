@@ -86,7 +86,7 @@ Use this file as a persistent task tracker. Step detail lives in `TODO_MASTER_PR
 - [x] Step 058 — Recurring occurrence generation
 - [x] Step 059 — Recurring exceptions
 - [x] Step 060 — Recurring edit occurrence versus series
-- [ ] Step 061 — Dashboard foundation
+- [x] Step 061 — Dashboard foundation
 - [ ] Step 062 — Dashboard customization
 - [ ] Step 063 — Project progress dashboard
 - [ ] Step 064 — Reports overview

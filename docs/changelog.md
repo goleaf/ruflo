@@ -1,5 +1,28 @@
 # Changelog
 
+## 2026-06-06 - Step 061 Dashboard foundation
+
+### Added
+
+- Added owner-scoped dashboard foundation widgets for Today, Overdue, Upcoming,
+  Priorities, Reminders, Recurring, Goals, Habits, Projects, and Time.
+- Added `DashboardFoundationQuery` as the dashboard read boundary for aggregate
+  widget counters.
+- Added a compact/details widget setting and a browser-rendered accessible
+  comparison chart.
+
+### Tests
+
+- Expanded `DashboardTest` to cover widget rendering, owner-scoped aggregate
+  accuracy, archived/deleted exclusions, multi-user privacy, and the Livewire
+  details toggle.
+
+### Restricted Hosting
+
+- Foundation widgets render during authenticated dashboard requests and require
+  no cron, workers, supervisor, terminal access, Artisan command, paid charting
+  service, hosted API, or email provider.
+
 ## 2026-06-06 - Step 060 Recurring edit occurrence versus series
 
 ### Added

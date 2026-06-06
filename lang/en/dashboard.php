@@ -75,6 +75,109 @@ return [
         'time_hours_minutes' => ':hoursh :minutesm',
     ],
 
+    'foundation' => [
+        'label' => 'Dashboard foundation',
+        'heading' => 'Workspace widgets',
+        'description' => 'Private widgets summarize the main work systems without jobs, external services, or shared data.',
+        'widgets_label' => 'Dashboard foundation widgets',
+        'widget_aria' => ':label widget with value :value',
+        'badges' => [
+            'active' => 'Active',
+            'due_now' => 'Due now',
+            'enabled' => 'Enabled',
+            'important' => 'Important',
+            'open' => 'Open',
+            'tasks' => 'Tasks',
+            'today' => 'Today',
+        ],
+        'metrics' => [
+            'active_timers' => 'Active timers',
+            'checked_today' => 'Checked today',
+            'due_soon' => 'Due soon',
+            'generated' => 'Generated',
+            'high' => 'High',
+            'low' => 'Low',
+            'milestones' => 'Milestones',
+            'normal' => 'Normal',
+            'overdue' => 'Overdue',
+            'paused' => 'Paused',
+            'pending' => 'Pending',
+            'today' => 'Today',
+            'this_week' => 'This week',
+            'upcoming' => 'Upcoming',
+            'urgent' => 'Urgent',
+            'with_active_tasks' => 'With active tasks',
+        ],
+        'actions' => [
+            'open_goals' => 'Open goals',
+            'open_habits' => 'Open habits',
+            'open_overdue' => 'Review overdue',
+            'open_projects' => 'Review projects',
+            'open_recurrence' => 'Open recurrence',
+            'open_time' => 'Open time',
+            'open_today' => 'Open today',
+            'open_upcoming' => 'Open upcoming',
+            'process_reminders' => 'Process reminders',
+            'review_priorities' => 'Review priorities',
+        ],
+        'chart' => [
+            'label' => 'Widget comparison',
+            'description' => 'A browser-rendered bar summary compares private widget signals without a paid charting service.',
+            'aria' => 'Dashboard foundation comparison chart with :count private widget signals.',
+            'item_summary' => ':label chart value is :value.',
+        ],
+        'settings' => [
+            'compact' => 'Compact',
+            'details' => 'Details',
+        ],
+        'privacy' => [
+            'heading' => 'Owner-scoped counters',
+            'description' => 'Each widget is calculated from the authenticated account before the dashboard renders, so foreign tasks, reminders, goals, habits, projects, recurrence rules, and time entries are not counted.',
+        ],
+        'widgets' => [
+            'today' => [
+                'label' => 'Today',
+                'description' => 'Active tasks due today, with overdue and upcoming context nearby.',
+            ],
+            'overdue' => [
+                'label' => 'Overdue',
+                'description' => 'Active tasks past their due date that need private owner review.',
+            ],
+            'upcoming' => [
+                'label' => 'Upcoming',
+                'description' => 'Active tasks due in the next seven days after today.',
+            ],
+            'priorities' => [
+                'label' => 'Priorities',
+                'description' => 'Urgent and high-priority active tasks stay visible before lower-priority work.',
+            ],
+            'reminders' => [
+                'label' => 'Reminders',
+                'description' => 'Actionable pending reminders attached to active tasks.',
+            ],
+            'recurrence' => [
+                'label' => 'Recurring',
+                'description' => 'Enabled rules and generated active occurrences that still belong to live tasks.',
+            ],
+            'goals' => [
+                'label' => 'Goals',
+                'description' => 'Open goals, due-soon targets, and incomplete milestones.',
+            ],
+            'habits' => [
+                'label' => 'Habits',
+                'description' => 'Active routines and today check-ins from the private habit tracker.',
+            ],
+            'projects' => [
+                'label' => 'Projects',
+                'description' => 'Active lists plus projects currently carrying active tasks.',
+            ],
+            'time' => [
+                'label' => 'Time',
+                'description' => 'Completed time logged today and this week with active timers.',
+            ],
+        ],
+    ],
+
     'workspace' => [
         'label' => 'Private workspace',
         'tabs_label' => 'Workspace tabs',

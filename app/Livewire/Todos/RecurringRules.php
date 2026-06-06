@@ -9,15 +9,22 @@ use App\Actions\Todos\RecordRecurringOccurrenceEdit;
 use App\Actions\Todos\SaveTodoRecurrenceRule;
 use App\Actions\Todos\SkipRecurringOccurrence;
 use App\Actions\Todos\ToggleTodoRecurrenceRule;
+use App\Actions\Todos\UpdateRecurringOccurrenceDetails;
+use App\Actions\Todos\UpdateRecurringSeriesDetails;
 use App\Data\Todos\RecurrenceGenerationResult;
 use App\Data\Todos\RecurrenceRuleData;
+use App\Data\Todos\RecurringOccurrenceDetailsData;
+use App\Enums\Priority;
+use App\Enums\RecurrenceEditScope;
 use App\Enums\RecurrenceEndType;
 use App\Enums\RecurrenceFrequency;
 use App\Enums\RecurrenceWeekday;
+use App\Exceptions\InvalidTodoTransition;
 use App\Models\Todo;
 use App\Models\TodoRecurrenceRule;
 use App\Models\User;
 use App\Queries\Todos\TodoRecurrenceRuleQuery;
+use App\Rules\Todos\DueDate;
 use App\Rules\Todos\OwnedActiveTodo;
 use App\Rules\Todos\RecurrenceRule;
 use Carbon\CarbonImmutable;
@@ -83,6 +90,21 @@ class RecurringRules extends Component
     public string $moveTo = '';
 
     public string $exceptionNote = '';
+
+    #[Locked]
+    public ?int $editingOccurrenceId = null;
+
+    public string $editScope = 'occurrence';
+
+    public string $occurrenceEditTitle = '';
+
+    public string $occurrenceEditPriority = 'normal';
+
+    public string $occurrenceEditDueDate = '';
+
+    public string $seriesEditTitle = '';
+
+    public string $seriesEditPriority = 'normal';
 
     public function mount(): void
     {
@@ -259,6 +281,76 @@ class RecurringRules extends Component
         Flux::toast(variant: 'success', text: __('todos.recurrence.exceptions.messages.edited'));
     }
 
+    public function startEditOccurrence(int $occurrenceId): void
+    {
+        try {
+            $occurrence = $this->findGeneratedOccurrence($occurrenceId)->loadMissing('recurrenceSource');
+        } catch (ValidationException $exception) {
+            $this->copyValidationErrors($exception);
+
+            return;
+        }
+
+        $this->authorize('update', $occurrence);
+
+        $source = $occurrence->recurrenceSource instanceof Todo && $occurrence->recurrenceSource->isOwnedBy($this->currentUser())
+            ? $occurrence->recurrenceSource
+            : $occurrence;
+
+        $this->editingOccurrenceId = $occurrence->id;
+        $this->editScope = RecurrenceEditScope::Occurrence->value;
+        $this->occurrenceEditTitle = $occurrence->title;
+        $this->occurrenceEditPriority = $occurrence->priority->value;
+        $this->occurrenceEditDueDate = $occurrence->due_date?->toDateString() ?? $occurrence->recurrence_occurs_on?->toDateString() ?? today()->toDateString();
+        $this->seriesEditTitle = $source->title;
+        $this->seriesEditPriority = $source->priority->value;
+        $this->resetValidation($this->recurringEditValidationFields());
+
+        Flux::modal('edit-recurring-occurrence')->show();
+    }
+
+    public function saveRecurringEdit(UpdateRecurringOccurrenceDetails $updateOccurrence, UpdateRecurringSeriesDetails $updateSeries): void
+    {
+        if ($this->editingOccurrenceId === null) {
+            return;
+        }
+
+        $scope = $this->validatedEditScope();
+
+        if (! $scope instanceof RecurrenceEditScope) {
+            return;
+        }
+
+        try {
+            if ($scope === RecurrenceEditScope::Occurrence) {
+                $updateOccurrence->handle($this->currentUser(), $this->editingOccurrenceId, $this->occurrenceEditData());
+                $message = __('todos.recurrence.edit_scope.messages.occurrence_updated');
+            } else {
+                $updated = $updateSeries->handle($this->currentUser(), $this->editingOccurrenceId, $this->seriesEditData());
+                $message = trans_choice('todos.recurrence.edit_scope.messages.series_updated', $updated, ['count' => $updated]);
+            }
+        } catch (InvalidTodoTransition) {
+            $this->addError('recurrenceOccurrence', __('todos.recurrence.edit_scope.validation.locked'));
+
+            return;
+        } catch (ValidationException $exception) {
+            $this->copyValidationErrors($exception);
+
+            return;
+        }
+
+        $this->resetRecurringEdit();
+        $this->refreshRecurringState();
+
+        Flux::modal('edit-recurring-occurrence')->close();
+        Flux::toast(variant: 'success', text: $message);
+    }
+
+    public function updatedEditScope(): void
+    {
+        $this->resetValidation($this->recurringEditValidationFields());
+    }
+
     public function updatedFrequency(): void
     {
         if ($this->frequency === RecurrenceFrequency::Weekly->value && $this->weekdays === []) {
@@ -339,6 +431,22 @@ class RecurringRules extends Component
         return RecurrenceEndType::cases();
     }
 
+    /**
+     * @return list<Priority>
+     */
+    public function priorityOptions(): array
+    {
+        return Priority::cases();
+    }
+
+    /**
+     * @return list<RecurrenceEditScope>
+     */
+    public function editScopeOptions(): array
+    {
+        return RecurrenceEditScope::cases();
+    }
+
     public function showWeekdays(): bool
     {
         return $this->frequency === RecurrenceFrequency::Weekly->value;
@@ -384,6 +492,7 @@ class RecurringRules extends Component
         $this->movingOccurrenceId = null;
         $this->moveTo = '';
         $this->exceptionNote = '';
+        $this->resetRecurringEdit();
         $this->resetValidation();
     }
 
@@ -468,6 +577,81 @@ class RecurringRules extends Component
     private function findGeneratedOccurrence(int $occurrenceId): Todo
     {
         return app(TodoRecurrenceRuleQuery::class)->findGeneratedOccurrenceFor($this->currentUser(), $occurrenceId);
+    }
+
+    private function occurrenceEditData(): RecurringOccurrenceDetailsData
+    {
+        $this->validate([
+            'occurrenceEditTitle' => ['required', 'string', 'max:120'],
+            'occurrenceEditPriority' => ['required', Rule::enum(Priority::class)],
+            'occurrenceEditDueDate' => ['required', 'date_format:Y-m-d', new DueDate],
+        ], attributes: [
+            'occurrenceEditTitle' => __('todos.recurrence.edit_scope.fields.occurrence_title'),
+            'occurrenceEditPriority' => __('todos.recurrence.edit_scope.fields.occurrence_priority'),
+            'occurrenceEditDueDate' => __('todos.recurrence.edit_scope.fields.occurrence_due_date'),
+        ]);
+
+        return RecurringOccurrenceDetailsData::occurrence(
+            $this->occurrenceEditTitle,
+            $this->occurrenceEditPriority,
+            $this->occurrenceEditDueDate,
+        );
+    }
+
+    private function seriesEditData(): RecurringOccurrenceDetailsData
+    {
+        $this->validate([
+            'seriesEditTitle' => ['required', 'string', 'max:120'],
+            'seriesEditPriority' => ['required', Rule::enum(Priority::class)],
+        ], attributes: [
+            'seriesEditTitle' => __('todos.recurrence.edit_scope.fields.series_title'),
+            'seriesEditPriority' => __('todos.recurrence.edit_scope.fields.series_priority'),
+        ]);
+
+        return RecurringOccurrenceDetailsData::series(
+            $this->seriesEditTitle,
+            $this->seriesEditPriority,
+        );
+    }
+
+    private function validatedEditScope(): ?RecurrenceEditScope
+    {
+        $this->validate([
+            'editingOccurrenceId' => ['required', 'integer'],
+            'editScope' => ['required', Rule::enum(RecurrenceEditScope::class)],
+        ], attributes: [
+            'editScope' => __('todos.recurrence.edit_scope.fields.scope'),
+        ]);
+
+        return RecurrenceEditScope::tryFrom($this->editScope);
+    }
+
+    private function resetRecurringEdit(): void
+    {
+        $this->editingOccurrenceId = null;
+        $this->editScope = RecurrenceEditScope::Occurrence->value;
+        $this->occurrenceEditTitle = '';
+        $this->occurrenceEditPriority = Priority::Normal->value;
+        $this->occurrenceEditDueDate = '';
+        $this->seriesEditTitle = '';
+        $this->seriesEditPriority = Priority::Normal->value;
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function recurringEditValidationFields(): array
+    {
+        return [
+            'editingOccurrenceId',
+            'editScope',
+            'occurrenceEditTitle',
+            'occurrenceEditPriority',
+            'occurrenceEditDueDate',
+            'seriesEditTitle',
+            'seriesEditPriority',
+            'recurrenceOccurrence',
+        ];
     }
 
     /**

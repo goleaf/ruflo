@@ -497,6 +497,7 @@ return [
         'template_checklist_items_required' => 'Checklist and routine templates need at least one checklist item.',
         'inbox_capture_title' => 'Enter a captured task with visible text up to 120 characters.',
         'inbox_todo' => 'Choose a captured inbox task.',
+        'title' => 'Enter a task title with visible text up to 120 characters.',
         'priority' => 'Choose a valid priority.',
         'due_date' => 'Enter a valid due date.',
         'pomodoro_duration' => 'Choose a focus duration of 15, 25, or 50 minutes.',
@@ -647,7 +648,7 @@ return [
         'exceptions' => [
             'heading' => 'Occurrence exceptions',
             'occurrences_heading' => 'Generated occurrences',
-            'occurrences_description' => 'Move, skip, or mark one generated occurrence without changing the whole series.',
+            'occurrences_description' => 'Edit, move, or skip one generated occurrence, or update the source series for future unedited occurrences.',
             'badge' => '{0} No exceptions|{1} :count exception|[2,*] :count exceptions',
             'summary' => 'Original :original, adjusted :adjusted',
             'occurrence_dates' => 'Original :original, current due :current',
@@ -684,6 +685,44 @@ return [
                 'adjusted_occurs_on_unique' => 'That series already has an occurrence on this date.',
                 'move_date_changed' => 'Choose a different date for this occurrence.',
                 'move_date_available' => 'Choose a date that does not already have a generated occurrence in this series.',
+            ],
+        ],
+        'edit_scope' => [
+            'heading' => 'Edit recurring task',
+            'description' => 'Choose whether this change applies only to the selected generated task or to the source series and future unedited generated tasks.',
+            'default_exception_note' => 'Edited from the recurrence edit dialog.',
+            'scopes' => [
+                'occurrence' => [
+                    'label' => 'This occurrence',
+                    'description' => 'Update only this generated task and record it as an exception.',
+                ],
+                'series' => [
+                    'label' => 'Series from here',
+                    'description' => 'Update the source task and future generated tasks that have not been individually changed.',
+                ],
+            ],
+            'fields' => [
+                'scope' => 'Edit scope',
+                'occurrence_title' => 'Occurrence title',
+                'occurrence_priority' => 'Occurrence priority',
+                'occurrence_due_date' => 'Occurrence due date',
+                'series_title' => 'Series title',
+                'series_priority' => 'Series priority',
+            ],
+            'actions' => [
+                'edit' => 'Edit',
+                'save' => 'Save edit',
+            ],
+            'series_note' => [
+                'heading' => 'Dates stay on the recurrence schedule',
+                'description' => 'Series edits update the source task title and priority. Occurrence dates stay controlled by the repeat rule, while moved or edited exceptions keep their individual changes.',
+            ],
+            'messages' => [
+                'occurrence_updated' => 'Recurring occurrence updated.',
+                'series_updated' => '{0} Series source updated. No generated occurrences needed changes.|{1} Series source and :count generated occurrence updated.|[2,*] Series source and :count generated occurrences updated.',
+            ],
+            'validation' => [
+                'locked' => 'This recurring task is locked by its current lifecycle state.',
             ],
         ],
         'confirmations' => [

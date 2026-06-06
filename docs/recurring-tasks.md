@@ -64,6 +64,29 @@ occurrence's original series date and its adjusted due date so a later retry or
 expanded generation window does not create a duplicate task on the adjusted
 date.
 
+## Step 060 Recurring Edit Occurrence Versus Series
+
+Step 060 adds an explicit edit-scope decision for generated occurrences. The
+`/todos/recurring` generated occurrence row now opens an edit modal where the
+user chooses one of two scopes:
+
+- this occurrence, which updates only the selected generated task and records
+  it as an occurrence exception,
+- series from here, which updates the source task template plus future
+  generated tasks that have not already been edited, moved, skipped, archived,
+  completed, or trashed.
+
+Occurrence edits can change the generated task title, priority, and due date.
+Changing the due date uses the same move behavior as Step 059, so pending
+reminders shift with the occurrence and the original `recurrence_occurs_on`
+date remains preserved.
+
+Series edits intentionally update title and priority only. Occurrence dates
+stay governed by the recurrence rule, and moved or edited exceptions keep their
+individual changes. Generated task titles are rebuilt from the source series
+title and each occurrence's original date, matching the same translated title
+format used by generation.
+
 ## UI
 
 The protected `todos.recurring` page at `/todos/recurring` lists the current
@@ -72,10 +95,10 @@ deleting, and processing rules. Task detail pages also show a compact
 recurrence card so a single task can be configured without leaving
 `/todos/{todo}`.
 
-Rule cards now show exception counts, generated occurrence rows, skip controls,
-edit markers, move controls, and a move modal. Exception history stays visible
-on the same card so skipped, moved, and edited dates can be audited from the
-browser UI.
+Rule cards now show exception counts, generated occurrence rows, edit controls,
+skip controls, move controls, a move modal, and an edit-scope modal. Exception
+history stays visible on the same card so skipped, moved, and edited dates can
+be audited from the browser UI.
 
 The recurrence forms use translated Flux form controls, buttons, badges,
 callouts, cards, and checkboxes while staying on the normal class-based
@@ -106,6 +129,12 @@ current user's owner scope before mutating. Invalid, foreign, non-generated, or
 duplicate move-date submissions return translated validation errors next to the
 related Flux field.
 
+Recurring edit-scope actions re-query generated occurrence ids through the same
+owner boundary. The occurrence-only action validates translated title, priority,
+and due-date input before updating that task. The series action validates a
+translated source title and priority, then updates only the source task and
+future unedited generated rows in the current user's workspace.
+
 ## Restricted Hosting
 
 Recurring task generation uses `App\Actions\Processing\RunManualWebProcess`
@@ -123,6 +152,12 @@ do not require background jobs, cron, queue workers, shell access, Artisan
 commands, email, paid services, or hosted calendar APIs. Retry means reopening
 the same page and submitting the same browser action after correcting any
 validation error.
+
+Step 060 edit-scope changes are also synchronous authenticated Livewire actions.
+No cron, queue worker, supervisor, shell access, Artisan command, email,
+external calendar service, or paid API is required for normal occurrence or
+series editing. Retry means reopening the same modal and submitting the
+translated browser form again after any validation error is fixed.
 
 ## Demo Data
 

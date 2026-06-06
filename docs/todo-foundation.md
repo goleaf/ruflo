@@ -296,6 +296,12 @@ edited occurrence markers, generated-occurrence owner privacy, Livewire
 exception controls, recurrence exception factory states, and idempotent demo
 exception seeding.
 
+Step 060 adds `RecurringEditScopeTest`, which locks occurrence-only edits,
+series-from-here edits, generated occurrence due-date move behavior, reminder
+shifting, source-series title/priority updates, future unedited occurrence
+updates, exception preservation, and multi-user privacy for recurrence edit
+scope actions.
+
 Step 052 adds `AutomationRulesTest` and `AutomationRuleNameValidationTest`,
 which lock the protected Automations route, owner-scoped rule listing, rule
 creation validation, translated rule-name messages, dry-run reports, disabled

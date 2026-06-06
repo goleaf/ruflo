@@ -142,3 +142,16 @@ supervisor, shell access, Artisan command, hosted automation service, paid
 calendar API, email provider, or external notification provider. Users retry by
 submitting the same page action again after any translated validation error is
 fixed.
+
+## 2026-06-06 Step 060 Update
+
+Recurring occurrence-versus-series edits run from `/todos/recurring` through an
+authenticated Livewire modal. The occurrence path updates one generated task and
+records an exception; the series path updates the source task and future
+unedited generated rows in a bounded synchronous browser request.
+
+The flow requires no recurrence scheduler, cron, queue worker, supervisor,
+shell access, Artisan command, hosted automation service, paid calendar API,
+email provider, or external notification provider during normal usage. Users
+retry by reopening the edit modal and submitting the same translated browser
+form again.

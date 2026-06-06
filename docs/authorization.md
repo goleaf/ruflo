@@ -138,7 +138,9 @@ The Livewire component authorizes **before** delegating to an action:
   per-row `view`, `update`, and `delete` are owner-only and hide foreign ids as
   not found. Skip, edit-marker, and move actions never trust a submitted
   occurrence id until it has been re-queried as the current user's generated
-  occurrence.
+  occurrence. Occurrence-versus-series edit actions use the same owner-scoped
+  generated occurrence lookup before mutating one occurrence or the source
+  series plus future unedited generated rows.
 
 Backend authorization is the real security. Frontend hiding of buttons is UX
 only and is never sufficient.

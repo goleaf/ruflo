@@ -1,5 +1,35 @@
 # Changelog
 
+## 2026-06-06 - Step 060 Recurring edit occurrence versus series
+
+### Added
+
+- Added a recurrence edit-scope modal on `/todos/recurring` for generated
+  occurrences.
+- Added occurrence-only editing for generated task title, priority, and due
+  date with exception recording.
+- Added series-from-here editing for the source task title/priority and future
+  generated occurrences that have not already been individually changed.
+
+### Changed
+
+- Generated occurrence rows now use a real Edit action instead of only marking
+  an occurrence as edited.
+- Series edits preserve recurrence dates, moved exceptions, edited exceptions,
+  archived tasks, completed tasks, and trashed tasks.
+
+### Tests
+
+- Added `RecurringEditScopeTest` for occurrence edits, series edits,
+  Livewire edit-scope behavior, reminder shifting, exception preservation, and
+  multi-user privacy.
+
+### Restricted Hosting
+
+- Occurrence and series edits run through authenticated Livewire browser
+  actions and require no cron, workers, supervisor, terminal access, Artisan
+  command, paid service, hosted calendar API, or email provider.
+
 ## 2026-06-06 - Step 059 Recurring exceptions
 
 ### Added

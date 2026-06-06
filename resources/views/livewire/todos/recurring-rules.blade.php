@@ -226,8 +226,8 @@
                                     </div>
 
                                     <div class="flex flex-wrap gap-2">
-                                        <flux:button type="button" size="sm" variant="ghost" icon="pencil-square" wire:click="recordOccurrenceEdit({{ $occurrence->id }})">
-                                            {{ __('todos.recurrence.exceptions.actions.mark_edited') }}
+                                        <flux:button type="button" size="sm" variant="ghost" icon="pencil-square" wire:click="startEditOccurrence({{ $occurrence->id }})">
+                                            {{ __('todos.recurrence.edit_scope.actions.edit') }}
                                         </flux:button>
                                         <flux:button type="button" size="sm" variant="ghost" icon="arrow-right-circle" wire:click="startMoveOccurrence({{ $occurrence->id }})">
                                             {{ __('todos.recurrence.exceptions.actions.move') }}
@@ -308,6 +308,89 @@
 
                 <flux:button type="submit" variant="primary" icon="arrow-right-circle" wire:loading.attr="disabled" wire:target="moveOccurrence">
                     {{ __('todos.recurrence.exceptions.actions.save_move') }}
+                </flux:button>
+            </div>
+        </form>
+    </flux:modal>
+
+    <flux:modal name="edit-recurring-occurrence" class="md:w-2xl">
+        <form wire:submit="saveRecurringEdit" class="space-y-5">
+            <div>
+                <flux:heading size="lg">{{ __('todos.recurrence.edit_scope.heading') }}</flux:heading>
+                <flux:text class="mt-2">{{ __('todos.recurrence.edit_scope.description') }}</flux:text>
+            </div>
+
+            <flux:error name="recurrenceOccurrence" />
+
+            <flux:radio.group wire:model.live="editScope" :label="__('todos.recurrence.edit_scope.fields.scope')" variant="cards" class="grid gap-3 sm:grid-cols-2">
+                @foreach ($this->editScopeOptions() as $scopeOption)
+                    <flux:radio
+                        wire:key="recurrence-edit-scope-{{ $scopeOption->value }}"
+                        value="{{ $scopeOption->value }}"
+                        :label="$scopeOption->label()"
+                        :description="$scopeOption->description()"
+                        :icon="$scopeOption->icon()"
+                    />
+                @endforeach
+            </flux:radio.group>
+            <flux:error name="editScope" />
+
+            @if ($editScope === 'occurrence')
+                <div class="grid gap-4 md:grid-cols-2">
+                    <div class="md:col-span-2">
+                        <flux:input wire:model="occurrenceEditTitle" :label="__('todos.recurrence.edit_scope.fields.occurrence_title')" maxlength="120" autocomplete="off" />
+                        <flux:error name="occurrenceEditTitle" />
+                    </div>
+
+                    <div>
+                        <flux:select variant="combobox" wire:model="occurrenceEditPriority" :label="__('todos.recurrence.edit_scope.fields.occurrence_priority')">
+                            @foreach ($this->priorityOptions() as $priorityOption)
+                                <flux:select.option value="{{ $priorityOption->value }}">{{ $priorityOption->label() }}</flux:select.option>
+                            @endforeach
+                        </flux:select>
+                        <flux:error name="occurrenceEditPriority" />
+                    </div>
+
+                    <div>
+                        <flux:date-picker
+                            type="input"
+                            wire:model="occurrenceEditDueDate"
+                            :label="__('todos.recurrence.edit_scope.fields.occurrence_due_date')"
+                            with-today
+                        />
+                        <flux:error name="occurrenceEditDueDate" />
+                    </div>
+                </div>
+            @else
+                <flux:callout icon="rectangle-stack" variant="secondary" data-test="recurrence-series-edit-note">
+                    <flux:callout.heading>{{ __('todos.recurrence.edit_scope.series_note.heading') }}</flux:callout.heading>
+                    <flux:callout.text>{{ __('todos.recurrence.edit_scope.series_note.description') }}</flux:callout.text>
+                </flux:callout>
+
+                <div class="grid gap-4 md:grid-cols-2">
+                    <div>
+                        <flux:input wire:model="seriesEditTitle" :label="__('todos.recurrence.edit_scope.fields.series_title')" maxlength="120" autocomplete="off" />
+                        <flux:error name="seriesEditTitle" />
+                    </div>
+
+                    <div>
+                        <flux:select variant="combobox" wire:model="seriesEditPriority" :label="__('todos.recurrence.edit_scope.fields.series_priority')">
+                            @foreach ($this->priorityOptions() as $priorityOption)
+                                <flux:select.option value="{{ $priorityOption->value }}">{{ $priorityOption->label() }}</flux:select.option>
+                            @endforeach
+                        </flux:select>
+                        <flux:error name="seriesEditPriority" />
+                    </div>
+                </div>
+            @endif
+
+            <div class="flex justify-end gap-2">
+                <flux:modal.close>
+                    <flux:button type="button" variant="ghost">{{ __('todos.actions.cancel') }}</flux:button>
+                </flux:modal.close>
+
+                <flux:button type="submit" variant="primary" icon="check" wire:loading.attr="disabled" wire:target="saveRecurringEdit">
+                    {{ __('todos.recurrence.edit_scope.actions.save') }}
                 </flux:button>
             </div>
         </form>

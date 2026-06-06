@@ -46,6 +46,14 @@ Completed, archived, deleted, missing, or foreign task ids do not create
 actionable reminders. Due reminders for tasks that later become completed,
 archived, or deleted are marked skipped and do not notify.
 
+## Local Browser Alerts
+
+The optional local browser notification controls are Alpine-only and backed by
+the bundled `resources/js/app.js` entry so they work on full loads and
+Livewire-navigated page visits. The Blade page only passes the authenticated
+user's pending reminder payload and translated labels into
+`window.RuFlo.localReminderNotifications(...)`.
+
 ## Preferences
 
 `users.reminders_enabled` controls whether due reminders should process for the

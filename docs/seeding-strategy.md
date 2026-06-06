@@ -158,6 +158,11 @@ Reminders are upserted per user/task. Re-running the seeder refreshes the same
 due, future, and skipped reminder examples without sending notifications or
 creating duplicate reminder rows.
 
+Step 055 adds idempotent database notification seed rows for each safe demo
+user. Each demo workspace gets one unread task reminder-style notification and
+one read daily-summary notification so `/notifications` has realistic local
+read/unread state immediately after setup seeding.
+
 ## Production Safety
 
 Known demo users are not created outside safe environments. A production deployment should use:

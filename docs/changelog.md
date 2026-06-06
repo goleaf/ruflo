@@ -7,10 +7,11 @@
 - Added the protected class-based `/notifications` Livewire/Flux page.
 - Added `NotificationInboxQuery` for owner-scoped database notification reads,
   unread/read filtering, and scoped lookup before mutations.
-- Added same-host action-link filtering while leaving target authorization on
-  the destination route.
+- Added safe action-link filtering, including protocol-relative and
+  unsupported-scheme rejection plus known task-link owner prechecks.
 - Added notification navigation, translated notification copy, and an index for
   owner/read-state notification filtering.
+- Added idempotent seeded read/unread demo notifications for both demo users.
 
 ### Testing
 
@@ -45,7 +46,9 @@
 - Added reminder factories, demo seed data, and English reminder translations.
 - Added compiler-safe local browser notification controls so the reminders page
   can watch loaded pending reminders without putting the entire Alpine payload
-  in the `x-data` attribute.
+  in the `x-data` attribute. The helper now lives in the bundled app asset so
+  Livewire navigation initializes it before the reminders card evaluates Alpine
+  state.
 - Replaced the external Flatpickr datepicker dependency with the native browser
   date picker for due-date fields.
 

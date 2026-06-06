@@ -12,9 +12,10 @@ Step 055 adds a private in-app notification center at `/notifications`.
 - Read, unread, and mark-all-read actions re-query the notification through the
   same owner scope before mutating state.
 - Action URLs are display hints only. The center renders relative links and
-  same-host links for `https://ruflo.test`; external links are hidden. Known
-  task links are pre-checked against the current user's task scope, and target
-  routes must still authorize access before showing private records.
+  same-host links for `https://ruflo.test` only after hiding external,
+  protocol-relative, and unsupported-scheme links. Known task links are
+  pre-checked against the current user's task scope, and target routes must
+  still authorize access before showing private records.
 
 ## UI
 
@@ -36,7 +37,7 @@ authenticated browser requests.
 
 - `NotificationCenterTest` covers private rendering, read/unread state changes,
   mark-all-read owner scoping, same-host link filtering, protocol-relative and
-  unsupported-scheme filtering, stale private task-link hiding, and target-route
-  authorization.
+  unsupported-scheme filtering, stale private task-link hiding, known task-link
+  prechecks, and target-route authorization.
 - Guest route, domain, localization, and architecture coverage include the
   protected `/notifications` surface.

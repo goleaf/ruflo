@@ -101,5 +101,7 @@ the notification center renders an Open action.
 
 Step 055 adds the protected `notifications.inbox` route at
 `https://ruflo.test/notifications`. The notification center only renders
-relative links or same-host `https://ruflo.test` links; external notification
-payload URLs are hidden.
+relative links or same-host `https://ruflo.test` links after rejecting external,
+protocol-relative, and unsupported-scheme notification payload URLs. Known task
+links are pre-checked against the current user's private task scope before an
+Open action is rendered.

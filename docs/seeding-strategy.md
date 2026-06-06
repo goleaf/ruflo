@@ -13,6 +13,7 @@ Step 012 covers the committed model set:
 - `SavedTodoView`
 - `Tag`
 - `TimeEntry`
+- `ActivityRecord`
 - `Todo`
 - `TodoChecklistItem`
 - `TodoDependency`
@@ -25,8 +26,8 @@ records. The tracked `TodoRecurrenceRule` model is seeded with owner-scoped
 local/testing/demo rule definitions and generated occurrences. The tracked
 `TodoRecurrenceException` model is seeded with local/testing/demo skipped,
 edited, and moved occurrence examples. Future models for comments, attachments,
-activity, invites, settings, and collaboration are not seeded yet because those
-committed models do not exist yet.
+invites, settings, and collaboration are not seeded yet because those committed
+models do not exist yet.
 
 ## Seeders
 
@@ -34,7 +35,9 @@ committed models do not exist yet.
 
 1. `DemoUserSeeder`
 2. `TodoSeeder`
-3. `TodoRecurrenceRuleSeeder`
+3. `ExecutiveWorkspaceSeeder`
+4. `TodoRecurrenceRuleSeeder`
+5. `ActivityRecordSeeder`
 
 `DemoUserSeeder` creates the configured demo users only when the app is running in a safe environment: `local`, `testing`, or `demo`, and when the demo login panel is enabled. The first configured demo user is seeded as an admin for protected local maintenance access; the second configured demo user is seeded as a normal account for denial and isolation checks.
 
@@ -91,6 +94,11 @@ real reminder rows. Step 057 adds recurrence rule rows, Step 058 generates
 short-window demo occurrences through the same web-safe generation action used
 by the browser UI, and Step 059 records occurrence exceptions through the same
 browser-safe actions used by the recurring page.
+
+`ActivityRecordSeeder` creates local/testing/demo activity history for the
+configured demo users when task rows are available. It writes records directly,
+keeps the seeder idempotent by skipping users that already have activity, and
+does not require event listeners, queues, cron, or external services.
 
 Step 045's focus mode also reuses the current catalog. `Review the current
 flow` is high priority and due today, while `Send the overdue report` is urgent

@@ -107,14 +107,19 @@ every target through `TodoListQuery::findVisibleFor()` (so a foreign or unknown
 ID is a not-found, never a leak), and delegates all writes to actions. No
 business logic lives in the Blade view.
 
-## Events (for future activity history & notifications)
+## Events and activity history
 
 Every state-changing transition dispatches a domain event so activity logging
-and reminders can be added later without touching the actions:
+and reminders can attach without rewriting the actions:
 
 `TodoCreated`, `TodoUpdated`, `TodoCompleted`, `TodoReopened`,
 `TodoArchived`, `TodoUnarchived`, `TodoDeleted`,
 `TodoRestoredFromTrash`, `CompletedTodosCleared`.
+
+Step 066 records those events through the synchronous
+`RecordTodoActivity` listener into owner-scoped `activity_records`. The
+timeline stores a safe subject snapshot for deleted tasks, allow-listed update
+metadata, and skips no-op update events.
 
 Step 024 replaces the former generic completion toggle with separate
 completion and reopening actions/events. The row checkbox still gives the same
@@ -165,8 +170,8 @@ delete checklist rows; the parent can be restored with its checklist intact.
 Only a future permanent parent force-delete would remove the rows through the
 database cascade, and force-delete remains disabled by policy.
 
-Checklist changes dispatch `TodoChecklistChanged` for the later
-activity-history step.
+Checklist changes dispatch `TodoChecklistChanged` and are recorded in the
+activity timeline without requiring a queue worker or scheduler.
 
 ## Validation
 

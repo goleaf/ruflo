@@ -31,11 +31,11 @@ Current defaults live in `config/hosting.php` and are exposed through `App\Data\
 
 ## What Is Not Promised
 
-Without cron or workers, RuFlo cannot promise exact-time automation. Reminder, recurrence, cleanup, import, export, and maintenance features must run when a user visits a relevant page or presses an authenticated processing button.
+Without cron or workers, RuFlo cannot promise exact-time automation. Reminder, recurrence, cleanup, import, export, maintenance, and automation features must run when a user visits a relevant page or presses an authenticated processing button.
 
 ## Related Steps
 
-Step 007 added the protected setup status foundation. Step 008 added the protected maintenance center. Step 053 remains responsible for the generic manual web processing engine that feature-specific processors can reuse.
+Step 007 added the protected setup status foundation. Step 008 added the protected maintenance center. Step 052 added feature-specific browser-triggered automation rule chunks. Step 053 remains responsible for the generic manual web processing engine that feature-specific processors can reuse.
 
 ## 2026-06-06 Recheck
 
@@ -51,3 +51,12 @@ Confirmed:
 - `app/Jobs` does not exist.
 - Local `composer run dev` starts Vite only; Herd serves `https://ruflo.test`.
 - Setup and maintenance status surfaces expose the restricted-hosting profile through authenticated web UI.
+
+## 2026-06-06 Step 052 Update
+
+Automation rules run from `/todos/automations` through authenticated Livewire
+actions. Each run processes a bounded owner-scoped chunk, stores matched,
+changed, and remaining counts, and can be retried by clicking the same browser
+action again. No cron, queue worker, supervisor, shell access, Artisan command,
+terminal dependency, paid service, or hosted automation provider is required
+during normal usage.

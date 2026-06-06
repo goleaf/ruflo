@@ -129,6 +129,10 @@
                     {{ __('todos.cleanup.actions.open_cleanup') }}
                 </flux:button>
 
+                <flux:button size="sm" variant="ghost" icon="bolt" :href="route('todos.automations')" wire:navigate>
+                    {{ __('automation.actions.open_automations') }}
+                </flux:button>
+
                 <flux:button size="sm" variant="ghost" icon="adjustments-horizontal" wire:click="$set('showManageModal', true)">
                     {{ __('todos.actions.manage') }}
                 </flux:button>

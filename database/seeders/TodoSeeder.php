@@ -3,11 +3,13 @@
 namespace Database\Seeders;
 
 use App\Data\Todos\SavedTodoViewData;
+use App\Enums\AutomationRuleKind;
 use App\Enums\HabitFrequency;
 use App\Enums\PomodoroSessionStatus;
 use App\Enums\Priority;
 use App\Enums\TimeEntrySource;
 use App\Enums\TimeEntryStatus;
+use App\Models\AutomationRule;
 use App\Models\Goal;
 use App\Models\GoalMilestone;
 use App\Models\Habit;
@@ -72,6 +74,12 @@ class TodoSeeder extends Seeder
             ['title' => 'Pull the latest metrics'],
             ['title' => 'Send the short summary'],
         ]);
+
+        $this->upsertTodo($user, 'Review automation candidates', [
+            'project_id' => $work->id,
+            'priority' => Priority::Normal,
+            'due_date' => today()->subDays(2)->toDateString(),
+        ], $waiting);
 
         $weekend = $this->upsertTodo($user, 'Plan the weekend', [
             'project_id' => $home->id,
@@ -259,6 +267,10 @@ class TodoSeeder extends Seeder
 
         $this->linkTodoToHabit($reviewFlow, $dailyPlanning);
         $this->linkTodoToHabit($overdueReport, $weeklyReview);
+        $this->setTodoTimestamps($smallImprovement, now()->subDays(12), now()->subDays(10));
+
+        $this->upsertAutomationRule($user, 'Promote overdue review tasks', AutomationRuleKind::PromoteOverdueTasks, enabled: true);
+        $this->upsertAutomationRule($user, 'Archive completed routine tasks', AutomationRuleKind::ArchiveCompletedTasks, enabled: false);
     }
 
     private function upsertProject(User $user, string $name, string $color, bool $archived = false): Project
@@ -399,6 +411,24 @@ class TodoSeeder extends Seeder
         ])->save();
 
         return $savedView;
+    }
+
+    private function upsertAutomationRule(User $user, string $name, AutomationRuleKind $kind, bool $enabled = true): AutomationRule
+    {
+        $automationRule = AutomationRule::query()
+            ->where('user_id', $user->id)
+            ->where('name', $name)
+            ->first() ?? new AutomationRule;
+
+        $automationRule->forceFill([
+            'user_id' => $user->id,
+            'name' => $name,
+            'kind' => $kind,
+            'is_enabled' => $enabled,
+            'settings' => $kind->defaultSettings(),
+        ])->save();
+
+        return $automationRule;
     }
 
     /**

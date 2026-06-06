@@ -1,5 +1,8 @@
 <?php
 
+use App\Actions\Automation\CreateAutomationRule;
+use App\Actions\Automation\RunAutomationRule;
+use App\Actions\Automation\ToggleAutomationRule;
 use App\Actions\Goals\CheckInGoalMilestone;
 use App\Actions\Goals\CreateGoal;
 use App\Actions\Goals\CreateGoalMilestone;
@@ -53,6 +56,8 @@ use App\Data\Todos\TimeEntryData;
 use App\Data\Todos\TodoCleanupFilters;
 use App\Data\Todos\TodoData;
 use App\Data\Todos\TodoTemplateData;
+use App\Enums\AutomationRuleKind;
+use App\Enums\AutomationRunStatus;
 use App\Enums\PomodoroSessionStatus;
 use App\Enums\TaskTemplateKind;
 use App\Enums\TimeEntrySource;
@@ -63,6 +68,7 @@ use App\Livewire\Forms\Todos\TodoForm;
 use App\Livewire\Goals\Index as GoalsIndex;
 use App\Livewire\Habits\Index as HabitsIndex;
 use App\Livewire\Projects\Show as ProjectShow;
+use App\Livewire\Todos\Automations as TodoAutomations;
 use App\Livewire\Todos\Blocked as TodoBlocked;
 use App\Livewire\Todos\Board as TodoBoard;
 use App\Livewire\Todos\Calendar as TodoCalendar;
@@ -72,6 +78,8 @@ use App\Livewire\Todos\Inbox as TodoInbox;
 use App\Livewire\Todos\Show as TodoShow;
 use App\Livewire\Todos\Templates as TodoTemplates;
 use App\Livewire\Todos\Time as TodoTime;
+use App\Policies\AutomationRulePolicy;
+use App\Policies\AutomationRuleRunPolicy;
 use App\Policies\GoalMilestonePolicy;
 use App\Policies\GoalPolicy;
 use App\Policies\HabitCheckInPolicy;
@@ -83,6 +91,7 @@ use App\Policies\TodoChecklistItemPolicy;
 use App\Policies\TodoDependencyPolicy;
 use App\Policies\TodoPolicy;
 use App\Policies\TodoTemplatePolicy;
+use App\Queries\Automation\AutomationRuleQuery;
 use App\Queries\Goals\GoalListQuery;
 use App\Queries\Habits\HabitListQuery;
 use App\Queries\Todos\PomodoroSessionQuery;
@@ -97,6 +106,7 @@ use App\Queries\Todos\TodoFocusQuery;
 use App\Queries\Todos\TodoInboxQuery;
 use App\Queries\Todos\TodoListQuery;
 use App\Queries\Todos\TodoTemplateListQuery;
+use App\Rules\Automation\AutomationRuleName;
 use App\Rules\Goals\GoalTitle;
 use App\Rules\Goals\MilestoneTitle;
 use App\Rules\Habits\HabitTargetCount;
@@ -223,7 +233,17 @@ test('todo foundation classes exist', function () {
         ->and(enum_exists(TimeEntryStatus::class))->toBeTrue()
         ->and(enum_exists(TodoTransition::class))->toBeTrue()
         ->and(enum_exists(TaskTemplateKind::class))->toBeTrue()
-        ->and(class_exists(ClearCompletedTodos::class))->toBeTrue();
+        ->and(class_exists(ClearCompletedTodos::class))->toBeTrue()
+        ->and(class_exists(CreateAutomationRule::class))->toBeTrue()
+        ->and(class_exists(ToggleAutomationRule::class))->toBeTrue()
+        ->and(class_exists(RunAutomationRule::class))->toBeTrue()
+        ->and(class_exists(AutomationRuleQuery::class))->toBeTrue()
+        ->and(class_exists(AutomationRuleName::class))->toBeTrue()
+        ->and(class_exists(AutomationRulePolicy::class))->toBeTrue()
+        ->and(class_exists(AutomationRuleRunPolicy::class))->toBeTrue()
+        ->and(class_exists(TodoAutomations::class))->toBeTrue()
+        ->and(enum_exists(AutomationRuleKind::class))->toBeTrue()
+        ->and(enum_exists(AutomationRunStatus::class))->toBeTrue();
 });
 
 test('habits page delegates habit responsibilities', function () {
@@ -342,6 +362,21 @@ test('todo cleanup page delegates smart view responsibilities', function () {
         ->not->toContain('->save()');
 });
 
+test('todo automations page delegates automation responsibilities', function () {
+    $source = file_get_contents(app_path('Livewire/Todos/Automations.php'));
+
+    expect($source)
+        ->toContain('AutomationRuleQuery')
+        ->toContain('CreateAutomationRule')
+        ->toContain('ToggleAutomationRule')
+        ->toContain('RunAutomationRule')
+        ->toContain('AutomationRuleName')
+        ->toContain('$this->authorize')
+        ->not->toContain('AutomationRule::query()')
+        ->not->toContain('Todo::query()')
+        ->not->toContain('->save()');
+});
+
 test('todo templates page delegates template responsibilities', function () {
     $source = file_get_contents(app_path('Livewire/Todos/Templates.php'));
 
@@ -429,7 +464,8 @@ test('todo documentation exists for future implementation steps', function () {
         ->and(file_exists(base_path('docs/changelog.md')))->toBeTrue()
         ->and(file_exists(base_path('docs/authorization.md')))->toBeTrue()
         ->and(file_exists(base_path('docs/task-lifecycle.md')))->toBeTrue()
-        ->and(file_exists(base_path('docs/task-organization.md')))->toBeTrue();
+        ->and(file_exists(base_path('docs/task-organization.md')))->toBeTrue()
+        ->and(file_exists(base_path('docs/automation-rules.md')))->toBeTrue();
 });
 
 test('todo model routes ownership through the shared concern and explicit policy', function () {

@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\AutomationRule;
+use App\Models\AutomationRuleRun;
 use App\Models\Goal;
 use App\Models\GoalMilestone;
 use App\Models\Habit;
@@ -31,6 +33,8 @@ test('database seeder creates safe demo users and complete private workspaces', 
         ->and($users->firstWhere('email', 'second@example.com')->is_admin)->toBeFalse()
         ->and(Hash::check('password', $users->firstWhere('email', 'test@example.com')->password))->toBeTrue()
         ->and(Project::query()->count())->toBe(6)
+        ->and(AutomationRule::query()->count())->toBe(4)
+        ->and(AutomationRuleRun::query()->count())->toBe(0)
         ->and(Goal::query()->count())->toBe(4)
         ->and(GoalMilestone::query()->count())->toBe(6)
         ->and(Habit::query()->count())->toBe(4)
@@ -43,12 +47,17 @@ test('database seeder creates safe demo users and complete private workspaces', 
         ->and(TodoChecklistItem::query()->count())->toBe(18)
         ->and(TodoDependency::query()->count())->toBe(2)
         ->and(TodoTemplate::query()->count())->toBe(6)
-        ->and(Todo::query()->count())->toBe(20)
-        ->and(Todo::withTrashed()->count())->toBe(22);
+        ->and(Todo::query()->count())->toBe(22)
+        ->and(Todo::withTrashed()->count())->toBe(24);
 
     $users->each(function (User $user): void {
         expect($user->projects()->whereNull('archived_at')->count())->toBe(2)
             ->and($user->projects()->whereNotNull('archived_at')->count())->toBe(1)
+            ->and($user->automationRules()->pluck('name')->sort()->values()->all())->toBe([
+                'Archive completed routine tasks',
+                'Promote overdue review tasks',
+            ])
+            ->and($user->automationRuleRuns()->count())->toBe(0)
             ->and($user->goals()->pluck('title')->sort()->values()->all())->toBe([
                 'Launch the personal command center',
                 'Plan a calmer weekend',
@@ -65,7 +74,7 @@ test('database seeder creates safe demo users and complete private workspaces', 
             ->and($user->timeEntries()->count())->toBe(2)
             ->and($user->timeEntries()->sum('duration_seconds'))->toBe(3600)
             ->and($user->tags()->pluck('name')->sort()->values()->all())->toBe(['urgent', 'waiting'])
-            ->and($user->todos()->active()->count())->toBe(7)
+            ->and($user->todos()->active()->count())->toBe(8)
             ->and($user->todos()->completed()->count())->toBe(1)
             ->and($user->todos()->archived()->count())->toBe(2)
             ->and($user->todos()->onlyTrashed()->count())->toBe(1)
@@ -80,7 +89,7 @@ test('database seeder creates safe demo users and complete private workspaces', 
                 'Daily planning routine',
                 'Project kickoff',
             ])
-            ->and($user->todos()->overdue()->count())->toBe(1)
+            ->and($user->todos()->overdue()->count())->toBe(2)
             ->and($user->todos()->dueToday()->count())->toBe(1)
             ->and($user->todos()->upcoming()->count())->toBe(2)
             ->and($user->savedTodoViews()->pluck('name')->sort()->values()->all())->toBe([
@@ -106,6 +115,8 @@ test('database seeder is idempotent for the current demo catalog', function () {
 
     expect(User::query()->count())->toBe(2)
         ->and(Project::query()->count())->toBe(6)
+        ->and(AutomationRule::query()->count())->toBe(4)
+        ->and(AutomationRuleRun::query()->count())->toBe(0)
         ->and(Goal::query()->count())->toBe(4)
         ->and(GoalMilestone::query()->count())->toBe(6)
         ->and(Habit::query()->count())->toBe(4)
@@ -118,8 +129,8 @@ test('database seeder is idempotent for the current demo catalog', function () {
         ->and(TodoChecklistItem::query()->count())->toBe(18)
         ->and(TodoDependency::query()->count())->toBe(2)
         ->and(TodoTemplate::query()->count())->toBe(6)
-        ->and(Todo::query()->count())->toBe(20)
-        ->and(Todo::withTrashed()->count())->toBe(22)
+        ->and(Todo::query()->count())->toBe(22)
+        ->and(Todo::withTrashed()->count())->toBe(24)
         ->and(Todo::query()->where('title', 'Review the current flow')->count())->toBe(2);
 });
 
@@ -130,6 +141,8 @@ test('database seeder does not create known demo credentials in production envir
 
     expect(User::query()->count())->toBe(0)
         ->and(Project::query()->count())->toBe(0)
+        ->and(AutomationRule::query()->count())->toBe(0)
+        ->and(AutomationRuleRun::query()->count())->toBe(0)
         ->and(Goal::query()->count())->toBe(0)
         ->and(GoalMilestone::query()->count())->toBe(0)
         ->and(Habit::query()->count())->toBe(0)

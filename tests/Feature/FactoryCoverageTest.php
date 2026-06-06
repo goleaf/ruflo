@@ -1,11 +1,15 @@
 <?php
 
+use App\Enums\AutomationRuleKind;
+use App\Enums\AutomationRunStatus;
 use App\Enums\PomodoroSessionStatus;
 use App\Enums\Priority;
 use App\Enums\TaskTemplateKind;
 use App\Enums\TimeEntrySource;
 use App\Enums\TimeEntryStatus;
 use App\Enums\TodoStatus;
+use App\Models\AutomationRule;
+use App\Models\AutomationRuleRun;
 use App\Models\Goal;
 use App\Models\GoalMilestone;
 use App\Models\Habit;
@@ -40,6 +44,8 @@ test('tracked models can be created from their default factories', function () {
     $template = TodoTemplate::factory()->for($user)->routine()->create();
     $savedView = SavedTodoView::factory()->for($user)->create();
     $reminder = Reminder::factory()->create();
+    $automationRule = AutomationRule::factory()->for($user)->promoteOverdueTasks()->create();
+    $automationRuleRun = AutomationRuleRun::factory()->forRule($automationRule)->dryRun()->create();
 
     expect($user->exists)->toBeTrue()
         ->and($project->isOwnedBy($user))->toBeTrue()
@@ -78,7 +84,37 @@ test('tracked models can be created from their default factories', function () {
         ->and($template->checklist_items)->toHaveCount(3)
         ->and($savedView->isOwnedBy($user))->toBeTrue()
         ->and($savedView->criteria['sort'])->toBe('created')
-        ->and($reminder->exists)->toBeTrue();
+        ->and($reminder->exists)->toBeTrue()
+        ->and($automationRule->isOwnedBy($user))->toBeTrue()
+        ->and($automationRule->kind)->toBe(AutomationRuleKind::PromoteOverdueTasks)
+        ->and($automationRule->settings)->toBe(AutomationRuleKind::PromoteOverdueTasks->defaultSettings())
+        ->and($automationRuleRun->isOwnedBy($user))->toBeTrue()
+        ->and($automationRuleRun->rule->is($automationRule))->toBeTrue()
+        ->and($automationRuleRun->status)->toBe(AutomationRunStatus::Completed)
+        ->and($automationRuleRun->dry_run)->toBeTrue();
+});
+
+test('automation rule factories cover enabled disabled kind and run states', function () {
+    $user = User::factory()->create();
+    $promoteRule = AutomationRule::factory()->for($user)->promoteOverdueTasks()->create();
+    $archiveRule = AutomationRule::factory()->for($user)->archiveCompletedTasks(14)->disabled()->create();
+    $completedRun = AutomationRuleRun::factory()->forRule($promoteRule)->create();
+    $disabledRun = AutomationRuleRun::factory()->forRule($archiveRule)->disabled()->dryRun()->create();
+
+    expect($promoteRule->isOwnedBy($user))->toBeTrue()
+        ->and($promoteRule->kind)->toBe(AutomationRuleKind::PromoteOverdueTasks)
+        ->and($promoteRule->is_enabled)->toBeTrue()
+        ->and($promoteRule->settings)->toBe(AutomationRuleKind::PromoteOverdueTasks->defaultSettings())
+        ->and($archiveRule->kind)->toBe(AutomationRuleKind::ArchiveCompletedTasks)
+        ->and($archiveRule->settings)->toBe(['days' => 14])
+        ->and($archiveRule->is_enabled)->toBeFalse()
+        ->and($completedRun->isOwnedBy($user))->toBeTrue()
+        ->and($completedRun->rule->is($promoteRule))->toBeTrue()
+        ->and($completedRun->status)->toBe(AutomationRunStatus::Completed)
+        ->and($disabledRun->isOwnedBy($user))->toBeTrue()
+        ->and($disabledRun->rule->is($archiveRule))->toBeTrue()
+        ->and($disabledRun->status)->toBe(AutomationRunStatus::Disabled)
+        ->and($disabledRun->dry_run)->toBeTrue();
 });
 
 test('todo dependency factory covers open and resolved blocker states', function () {

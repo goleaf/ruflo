@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\AutomationRule;
+use App\Models\AutomationRuleRun;
 use App\Models\Goal;
 use App\Models\GoalMilestone;
 use App\Models\Habit;
@@ -15,6 +17,8 @@ use App\Models\TodoChecklistItem;
 use App\Models\TodoDependency;
 use App\Models\TodoTemplate;
 use App\Models\User;
+use App\Policies\AutomationRulePolicy;
+use App\Policies\AutomationRuleRunPolicy;
 use App\Policies\GoalMilestonePolicy;
 use App\Policies\GoalPolicy;
 use App\Policies\HabitCheckInPolicy;
@@ -45,7 +49,56 @@ test('tracked private resources resolve explicit policies', function () {
         ->and(Gate::getPolicyFor(TodoDependency::class))->toBeInstanceOf(TodoDependencyPolicy::class)
         ->and(Gate::getPolicyFor(TodoTemplate::class))->toBeInstanceOf(TodoTemplatePolicy::class)
         ->and(Gate::getPolicyFor(SavedTodoView::class))->toBeInstanceOf(SavedTodoViewPolicy::class)
+        ->and(Gate::getPolicyFor(AutomationRule::class))->toBeInstanceOf(AutomationRulePolicy::class)
+        ->and(Gate::getPolicyFor(AutomationRuleRun::class))->toBeInstanceOf(AutomationRuleRunPolicy::class)
         ->and(Gate::getPolicyFor(Reminder::class))->toBeInstanceOf(ReminderPolicy::class);
+});
+
+test('automation rule policy covers owner run abilities', function () {
+    $owner = User::factory()->create();
+    $intruder = User::factory()->create();
+    $rule = AutomationRule::factory()->for($owner)->create();
+
+    $ownerGate = Gate::forUser($owner);
+    $intruderGate = Gate::forUser($intruder);
+
+    foreach (['view', 'update', 'run'] as $ability) {
+        expect($ownerGate->allows($ability, $rule))->toBeTrue();
+
+        $response = $intruderGate->inspect($ability, $rule);
+
+        expect($response->denied())->toBeTrue()
+            ->and($response->status())->toBe(404);
+    }
+
+    expect($ownerGate->allows('viewAny', AutomationRule::class))->toBeTrue()
+        ->and($ownerGate->allows('create', AutomationRule::class))->toBeTrue()
+        ->and($ownerGate->denies('delete', $rule))->toBeTrue()
+        ->and($ownerGate->denies('restore', $rule))->toBeTrue()
+        ->and($ownerGate->denies('forceDelete', $rule))->toBeTrue();
+});
+
+test('automation rule run policy keeps run history read only', function () {
+    $owner = User::factory()->create();
+    $intruder = User::factory()->create();
+    $rule = AutomationRule::factory()->for($owner)->create();
+    $run = AutomationRuleRun::factory()->forRule($rule)->create();
+
+    $ownerGate = Gate::forUser($owner);
+    $intruderGate = Gate::forUser($intruder);
+
+    expect($ownerGate->allows('view', $run))->toBeTrue();
+
+    $response = $intruderGate->inspect('view', $run);
+
+    expect($response->denied())->toBeTrue()
+        ->and($response->status())->toBe(404)
+        ->and($ownerGate->allows('viewAny', AutomationRuleRun::class))->toBeTrue()
+        ->and($ownerGate->denies('create', AutomationRuleRun::class))->toBeTrue()
+        ->and($ownerGate->denies('update', $run))->toBeTrue()
+        ->and($ownerGate->denies('delete', $run))->toBeTrue()
+        ->and($ownerGate->denies('restore', $run))->toBeTrue()
+        ->and($ownerGate->denies('forceDelete', $run))->toBeTrue();
 });
 
 test('goal policy covers owner lifecycle abilities', function () {

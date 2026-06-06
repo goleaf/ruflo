@@ -1,5 +1,46 @@
 # Changelog
 
+## 2026-06-06 - Step 052 Web-only automation rules
+
+### Implemented
+
+- Added owner-scoped `automation_rules` and `automation_rule_runs` tables,
+  models, policies, factories, and enum casts.
+- Added protected class-based Livewire/Flux page `todos.automations` for
+  creating, enabling/disabling, testing, and manually running task automation
+  rules.
+- Added `AutomationRuleQuery`, `CreateAutomationRule`, `ToggleAutomationRule`,
+  `RunAutomationRule`, and `AutomationRuleName`.
+- Added two built-in rules: promote overdue low/normal priority tasks to High,
+  and archive completed tasks older than seven days.
+- Linked Automations from the dashboard workspace card and main task toolbar.
+- Seeded two automation rules and one automation candidate task per
+  local/testing/demo user.
+
+### Testing
+
+- Added `AutomationRulesTest` for route protection, owner-scoped rendering,
+  translated validation, dry-run reporting, disabled no-op behavior, chunk
+  retry/resume, archive automation, and foreign rule-id denial.
+- Added `AutomationRuleNameValidationTest` for rule-name normalization.
+- Expanded route, domain, dashboard, architecture, localization, seeder, and
+  restricted-hosting coverage.
+
+### Documentation
+
+- Added `docs/automation-rules.md`.
+- Updated task organization, authorization, request validation, validation
+  rules, factory coverage, seeding, domain readiness, localization, restricted
+  hosting, todo foundation, changelog, and root progress ledgers.
+
+### Restricted Hosting
+
+- Automation runs are authenticated browser-triggered Livewire actions. Each
+  run processes a bounded chunk, records matched/changed/remaining counts, and
+  can be retried by clicking the rule again. No cron, queue worker, supervisor,
+  terminal access, Artisan command, paid service, or hosted automation provider
+  is required during normal usage.
+
 ## 2026-06-06 - Step 051 Smart cleanup views
 
 ### Implemented

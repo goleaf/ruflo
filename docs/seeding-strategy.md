@@ -61,6 +61,9 @@ The tracked `Reminder` model is currently a placeholder with no ownership, sched
 - one task dependency per user: `Send the overdue report` waits on `Review the
   current flow`, so `/todos/blocked` and the main `due=blocked` filter have
   immediate demo data.
+- two automation rules per user: an enabled "Promote overdue review tasks" rule
+  and a disabled "Archive completed routine tasks" rule, so
+  `/todos/automations` shows web-only rules immediately after seeding.
 
 Step 041's calendar view reuses that catalog: the seeded due-today, overdue,
 upcoming, and no-due-date tasks give the local `/todos/calendar` page immediate
@@ -100,6 +103,12 @@ timestamp reapplied on every seed run. The unplanned cleanup task has no project
 due date, tag, or inbox timestamp, so `/todos/cleanup?view=unplanned` has
 immediate demo data without confusing it with the quick-capture Inbox.
 
+Step 052's automation rules add one normal-priority overdue candidate task per
+seeded user plus two owner-scoped rules. The completed "Ship one small
+improvement" task is kept old enough for the archive rule to match, but that
+rule is disabled in the demo catalog so no task changes happen until the user
+explicitly enables or runs it through the browser.
+
 ## Idempotency
 
 Seeders are idempotent for the current demo catalog. Re-running them updates existing demo records instead of creating duplicate users, tags, projects, saved views, or seeded task titles.
@@ -135,6 +144,9 @@ duplicate time history rows.
 Task dependencies are upserted per user, waiting task, and blocker task.
 Re-running the seeder refreshes the same blocker relationship without creating
 duplicate dependency edges.
+
+Automation rules are upserted per user/name. Re-running the seeder refreshes
+the enabled state and settings without creating duplicate rules or run logs.
 
 Placeholder reminder rows are intentionally excluded from the current catalog because they would not be owned by a user or connected to a task.
 

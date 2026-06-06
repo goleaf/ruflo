@@ -1,9 +1,10 @@
 # Task Organization
 
-Through Step 051, the private task lifecycle is extended into a usable productivity system:
+Through Step 052, the private task lifecycle is extended into a usable productivity system:
 projects, tags, priorities, due dates, search, filters, sorting, and bulk
 actions, calendar/board/focus views, contained checklists, templates, a quick
-capture Inbox, time tracking, task dependencies, and cleanup smart views. Everything here is
+capture Inbox, time tracking, task dependencies, cleanup smart views, and
+browser-triggered automation rules. Everything here is
 owner-scoped on top of the model in
 [`authorization.md`](authorization.md) and the lifecycle in
 [`task-lifecycle.md`](task-lifecycle.md).
@@ -20,6 +21,7 @@ owner-scoped on top of the model in
 | **Checklist item** | `todo_checklist_items` table; `todo_id`, ordered `position`, completion fields | `todo_checklist_items.user_id`, private, contained by parent task |
 | **Inbox capture** | `todos.inbox_captured_at` nullable timestamp | `todos.user_id`, private |
 | **Task dependency** | `todo_dependencies` table; waiting task plus blocker task ids | `todo_dependencies.user_id`, private, both tasks must belong to the same owner |
+| **Automation rule** | `automation_rules` and `automation_rule_runs` tables | `automation_rules.user_id` and `automation_rule_runs.user_id`, private |
 
 ## Subtasks and checklists
 
@@ -390,6 +392,32 @@ rows.
   supervisor, shell, Artisan command, paid service, chunk processor, retry loop,
   or background cleanup job during normal hosted usage.
 
+## Automation rules
+
+Step 052 adds `/todos/automations`, a protected class-based Livewire/Flux page
+for browser-triggered task automation. Rules and run logs are private rows owned
+by the current user.
+
+- `AutomationRuleQuery` is the read boundary for listing and resolving rules.
+  It starts from `AutomationRule::ownedBy($user)` and eager-loads the latest run
+  report.
+- `CreateAutomationRule`, `ToggleAutomationRule`, and `RunAutomationRule` are
+  the write boundaries. The Livewire component validates form state, resolves
+  submitted rule ids through the owner-scoped query, authorizes the rule, and
+  delegates all mutations to the actions.
+- Built-in rules are `promote_overdue_tasks`, which raises active overdue low
+  or normal priority tasks to High, and `archive_completed_tasks`, which
+  archives completed tasks older than seven days.
+- Runs process a bounded owner-scoped chunk using
+  `hosting.web_processing.chunk_size`. Matched, changed, and remaining counts
+  are stored in `automation_rule_runs` so users can test, retry, or run again to
+  resume remaining work.
+- Disabled rules record a disabled run and change nothing. Dry runs record the
+  current match count without mutating tasks.
+- The workflow uses no cron, queue worker, supervisor, shell, Artisan command,
+  terminal dependency, paid service, or hosted automation provider during normal
+  usage.
+
 ## Inbox
 
 Step 044 adds a dedicated `todos.inbox` Livewire page for fast, unsorted task
@@ -594,7 +622,8 @@ Step 047 adds private habits and habit check-ins as real, owner-scoped records:
 - A filter toolbar (search, project, tag, priority, due, sort, direction,
   reset), a saved-views strip for saving/applying/deleting named view criteria,
   a bulk selection row, a bulk toolbar that appears on selection, a Flux bulk
-  delete confirmation modal, a Kanban board shortcut, and a "Manage" modal for
+  delete confirmation modal, Kanban, cleanup, and automation shortcuts, and a
+  "Manage" modal for
   creating/renaming/archiving/restoring/deleting projects and creating/deleting
   tags, plus a Templates shortcut for reusable task setups.
 - The templates page renders a Flux create form, radio-card template type
@@ -649,12 +678,17 @@ Step 047 adds private habits and habit check-ins as real, owner-scoped records:
   `(user_id, goal_id, position)`, `(user_id, goal_id)`, and
   `(user_id, goal_milestone_id)` indexes for owner-scoped listing, progress,
   and task linking.
+- Automation rules use `(user_id, name)` for per-user uniqueness,
+  `(user_id, is_enabled, kind)` for owner-scoped rule filtering, and run-log
+  indexes on `(user_id, status)` plus `(automation_rule_id, created_at)` for
+  recent report lookups.
 
 ## Intentionally not implemented
 
 Manual drag ordering, sub-projects, tag colors editing UI, automatic recurring
-tasks, reminders, dashboard, collaboration. Manual ordering, when added, should
-store a per-user position and only apply when no sort/filter overrides it.
+tasks, reminders, collaboration, and generic cross-feature web processing.
+Manual ordering, when added, should store a per-user position and only apply
+when no sort/filter overrides it.
 
 ## Later steps
 

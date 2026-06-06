@@ -63,6 +63,26 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
     }
 
     /**
+     * Get the user's browser-triggered automation rules.
+     *
+     * @return HasMany<AutomationRule, $this>
+     */
+    public function automationRules(): HasMany
+    {
+        return $this->hasMany(AutomationRule::class);
+    }
+
+    /**
+     * Get the user's automation rule run logs.
+     *
+     * @return HasMany<AutomationRuleRun, $this>
+     */
+    public function automationRuleRuns(): HasMany
+    {
+        return $this->hasMany(AutomationRuleRun::class);
+    }
+
+    /**
      * Get the user's goals.
      *
      * @return HasMany<Goal, $this>

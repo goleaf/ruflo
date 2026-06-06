@@ -259,6 +259,12 @@ owner-scoped stale/unplanned/blocked/risky smart views, invalid URL fail-closed
 behavior, search/sort/pagination/reset state, seeded cleanup coverage, and
 no-Volt class-based Livewire guardrails.
 
+Step 052 adds `AutomationRulesTest` and `AutomationRuleNameValidationTest`,
+which lock the protected Automations route, owner-scoped rule listing, rule
+creation validation, translated rule-name messages, dry-run reports, disabled
+rule no-op behavior, bounded chunk retry/resume behavior, owner-only task
+mutation, archive automation behavior, and foreign rule-id not-found denials.
+
 ## 2026-06-06 Recheck
 
 The Step 001 recheck confirmed the foundation still matches the current master-plan rules after Steps 002-016:

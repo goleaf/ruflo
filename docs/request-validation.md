@@ -82,6 +82,13 @@ controller endpoint and writes no data. URL-backed cleanup state is bounded by
 `TodoCleanupFilters`, invalid views fail closed to an empty result, and invalid
 sort/direction values fall back to safe query defaults.
 
+Step 052 automation rules remain Livewire-only. No HTTP Form Request is
+introduced because `/todos/automations` is a class-based Livewire page, not a
+controller endpoint. Rule creation uses `AutomationRuleName` plus owner-scoped
+unique validation, submitted rule ids are resolved through `AutomationRuleQuery`
+before toggling/testing/running, and action classes repeat owner and disabled
+rule guards before writing tasks or run logs.
+
 ## Custom Business Rules
 
 Reusable business validation rules are documented in `docs/validation-rules.md`.

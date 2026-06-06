@@ -3,6 +3,7 @@
 use App\Livewire\Goals\Index as GoalsIndex;
 use App\Livewire\Habits\Index as HabitsIndex;
 use App\Livewire\Projects\Show as ProjectsShow;
+use App\Livewire\Todos\Automations as TodosAutomations;
 use App\Livewire\Todos\Blocked as TodosBlocked;
 use App\Livewire\Todos\Board as TodosBoard;
 use App\Livewire\Todos\Calendar as TodosCalendar;
@@ -31,6 +32,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::livewire('todos/upcoming', TodosUpcoming::class)->name('todos.upcoming');
     Route::livewire('todos/blocked', TodosBlocked::class)->name('todos.blocked');
     Route::livewire('todos/cleanup', TodosCleanup::class)->name('todos.cleanup');
+    Route::livewire('todos/automations', TodosAutomations::class)->name('todos.automations');
     Route::livewire('todos/board', TodosBoard::class)->name('todos.board');
     Route::livewire('todos/calendar', TodosCalendar::class)->name('todos.calendar');
     Route::livewire('todos/templates', TodosTemplates::class)->name('todos.templates');

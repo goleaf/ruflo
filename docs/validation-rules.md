@@ -100,8 +100,9 @@ The action layer still re-scopes ids to the current user before writing. The rul
 
 ## Translation
 
-Rule failure messages live in `lang/en/todos.php` under `todos.validation` and
-`lang/en/goals.php` under `goals.validation`.
+Rule failure messages live in `lang/en/todos.php` under `todos.validation`,
+`lang/en/goals.php` under `goals.validation`, and feature-specific files such
+as `lang/en/automation.php`.
 
 ## Future Domains
 
@@ -215,3 +216,13 @@ Step 050 added `App\Rules\Todos\AcyclicTodoDependency` for the task detail
 dependency picker. The rule delegates owner, active-state, duplicate, and cycle
 checks to `TodoDependencyQuery`, and `AddTodoDependency` repeats the same guard
 before writing a dependency row.
+
+## 2026-06-06 Step 052 Recheck
+
+Step 052 added `App\Rules\Automation\AutomationRuleName` for browser-triggered
+automation rules. The rule squishes visible text, rejects non-strings, blanks,
+and names over 80 characters, and fails with
+`automation.validation.rule_name`. Livewire also applies an owner-scoped unique
+check with `automation.validation.rule_name_unique`, while
+`CreateAutomationRule` repeats normalization and duplicate checks for direct
+action calls.

@@ -1,93 +1,76 @@
 <section class="space-y-8">
-    <x-ui.page-header :title="__('dashboard.heading')" :description="__('dashboard.description')">
-        <div class="grid grid-cols-2 gap-3 text-sm sm:grid-cols-4 sm:min-w-[34rem]">
-            <x-ui.stat :label="__('dashboard.summary.active')" :value="$this->summary['active']" />
-            <x-ui.stat :label="__('dashboard.summary.overdue')" :value="$this->summary['overdue']" tone="danger" />
-            <x-ui.stat :label="__('dashboard.summary.completed')" :value="$this->summary['completed']" tone="success" />
-            <x-ui.stat :label="__('dashboard.summary.archived')" :value="$this->summary['archived']" tone="muted" />
-            <x-ui.stat :label="__('dashboard.summary.trash')" :value="$this->summary['trash']" tone="danger" />
-            <x-ui.stat :label="__('dashboard.summary.projects')" :value="$this->summary['projects']" />
-            <x-ui.stat :label="__('dashboard.summary.tags')" :value="$this->summary['tags']" />
-            <x-ui.stat :label="__('dashboard.summary.goals')" :value="$this->summary['goals']" />
-            <x-ui.stat :label="__('dashboard.summary.milestones')" :value="$this->summary['milestones']" />
-            <x-ui.stat :label="__('dashboard.summary.habits')" :value="$this->summary['habits']" />
-            <x-ui.stat :label="__('dashboard.summary.habit_check_ins')" :value="$this->summary['habit_check_ins']" tone="success" />
+    <x-ui.page-header :title="__('dashboard.heading')" :description="__('dashboard.description')" />
+
+    <div class="overflow-x-auto pb-2" data-test="dashboard-summary-widgets">
+        <div class="grid min-w-[78rem] grid-cols-11 gap-2">
+            <x-ui.stat :label="__('dashboard.summary.active')" :value="$this->summary['active']" variant="colored" />
+            <x-ui.stat :label="__('dashboard.summary.overdue')" :value="$this->summary['overdue']" tone="danger" variant="colored" />
+            <x-ui.stat :label="__('dashboard.summary.completed')" :value="$this->summary['completed']" tone="success" variant="colored" />
+            <x-ui.stat :label="__('dashboard.summary.archived')" :value="$this->summary['archived']" tone="violet" variant="colored" />
+            <x-ui.stat :label="__('dashboard.summary.trash')" :value="$this->summary['trash']" tone="rose" variant="colored" />
+            <x-ui.stat :label="__('dashboard.summary.projects')" :value="$this->summary['projects']" tone="indigo" variant="colored" />
+            <x-ui.stat :label="__('dashboard.summary.tags')" :value="$this->summary['tags']" tone="fuchsia" variant="colored" />
+            <x-ui.stat :label="__('dashboard.summary.goals')" :value="$this->summary['goals']" tone="amber" variant="colored" />
+            <x-ui.stat :label="__('dashboard.summary.milestones')" :value="$this->summary['milestones']" tone="cyan" variant="colored" />
+            <x-ui.stat :label="__('dashboard.summary.habits')" :value="$this->summary['habits']" tone="lime" variant="colored" />
+            <x-ui.stat :label="__('dashboard.summary.habit_check_ins')" :value="$this->summary['habit_check_ins']" tone="teal" variant="colored" />
         </div>
-    </x-ui.page-header>
-
-    <div class="grid gap-4 lg:grid-cols-[1.05fr_0.95fr]">
-        <flux:card class="space-y-5">
-            <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                <div class="space-y-2">
-                    <flux:subheading>{{ __('dashboard.workspace.label') }}</flux:subheading>
-                    <flux:heading size="lg">{{ __('dashboard.workspace.heading') }}</flux:heading>
-                    <flux:text>{{ __('dashboard.workspace.description') }}</flux:text>
-                </div>
-
-                <div class="flex flex-wrap gap-2">
-                    <flux:button :href="route('todos.today')" wire:navigate variant="primary" icon="calendar">
-                        {{ __('dashboard.workspace.today_action') }}
-                    </flux:button>
-
-                    <flux:button :href="route('todos.overdue')" wire:navigate variant="subtle" icon="exclamation-triangle">
-                        {{ __('dashboard.workspace.overdue_action') }}
-                    </flux:button>
-
-                    <flux:button :href="route('todos.upcoming')" wire:navigate variant="subtle" icon="calendar">
-                        {{ __('dashboard.workspace.upcoming_action') }}
-                    </flux:button>
-
-                    <flux:button :href="route('todos.focus')" wire:navigate variant="subtle" icon="bolt">
-                        {{ __('dashboard.workspace.focus_action') }}
-                    </flux:button>
-
-                    <flux:button :href="route('todos.time')" wire:navigate variant="subtle" icon="clock">
-                        {{ __('dashboard.workspace.time_action') }}
-                    </flux:button>
-
-                    <flux:button :href="route('todos.blocked')" wire:navigate variant="subtle" icon="exclamation-triangle">
-                        {{ __('dashboard.workspace.blocked_action') }}
-                    </flux:button>
-
-                    <flux:button :href="route('todos.cleanup')" wire:navigate variant="subtle" icon="sparkles">
-                        {{ __('dashboard.workspace.cleanup_action') }}
-                    </flux:button>
-
-                    <flux:button :href="route('goals.index')" wire:navigate variant="subtle" icon="flag">
-                        {{ __('dashboard.workspace.goals_action') }}
-                    </flux:button>
-
-                    <flux:button :href="route('habits.index')" wire:navigate variant="subtle" icon="arrow-path">
-                        {{ __('dashboard.workspace.habits_action') }}
-                    </flux:button>
-
-                    <flux:button :href="route('todos.index')" wire:navigate variant="ghost" icon="list-bullet">
-                        {{ __('dashboard.workspace.action') }}
-                    </flux:button>
-                </div>
-            </div>
-        </flux:card>
-
-        <flux:card class="space-y-4">
-            <div class="space-y-2">
-                <flux:subheading>{{ __('dashboard.install.label') }}</flux:subheading>
-                <flux:heading size="lg">{{ __('dashboard.install.heading') }}</flux:heading>
-                <flux:text>{{ __('dashboard.install.description') }}</flux:text>
-            </div>
-
-            <div class="grid gap-3">
-                <div class="rounded-lg border border-zinc-200 bg-zinc-50 p-3 dark:border-white/10 dark:bg-zinc-900">
-                    <div class="text-xs font-medium uppercase text-zinc-500 dark:text-zinc-400">{{ __('dashboard.cards.mcp.label') }}</div>
-                    <div class="mt-2 overflow-x-auto font-mono text-sm text-zinc-950 dark:text-zinc-100">npx ruflo@latest mcp start</div>
-                    <flux:text class="mt-2 text-sm">{{ __('dashboard.cards.mcp.description') }}</flux:text>
-                </div>
-
-                <div class="rounded-lg border border-zinc-200 bg-zinc-50 p-3 dark:border-white/10 dark:bg-zinc-900">
-                    <div class="text-xs font-medium uppercase text-zinc-500 dark:text-zinc-400">{{ __('dashboard.cards.plugin.label') }}</div>
-                    <div class="mt-2 overflow-x-auto font-mono text-sm text-zinc-950 dark:text-zinc-100">/plugin marketplace add ruvnet/ruflo</div>
-                    <flux:text class="mt-2 text-sm">{{ __('dashboard.cards.plugin.description') }}</flux:text>
-                </div>
-            </div>
-        </flux:card>
     </div>
+
+    <flux:card class="overflow-x-auto">
+        <div class="flex min-w-max items-center gap-4" data-test="dashboard-workspace-row">
+            <div class="flex shrink-0 items-center gap-3 whitespace-nowrap">
+                <flux:subheading>{{ __('dashboard.workspace.label') }}</flux:subheading>
+                <span class="h-4 w-px bg-zinc-200 dark:bg-white/10" aria-hidden="true"></span>
+                <flux:heading size="lg">{{ __('dashboard.workspace.heading') }}</flux:heading>
+                <flux:text>{{ __('dashboard.workspace.description') }}</flux:text>
+            </div>
+
+            <div class="flex shrink-0 items-center gap-2 whitespace-nowrap" data-test="dashboard-workspace-actions">
+                <flux:button :href="route('todos.today')" wire:navigate variant="primary" icon="calendar" class="shrink-0">
+                    {{ __('dashboard.workspace.today_action') }}
+                </flux:button>
+
+                <flux:button :href="route('todos.overdue')" wire:navigate variant="subtle" icon="exclamation-triangle" class="shrink-0">
+                    {{ __('dashboard.workspace.overdue_action') }}
+                </flux:button>
+
+                <flux:button :href="route('todos.upcoming')" wire:navigate variant="subtle" icon="calendar" class="shrink-0">
+                    {{ __('dashboard.workspace.upcoming_action') }}
+                </flux:button>
+
+                <flux:button :href="route('todos.focus')" wire:navigate variant="subtle" icon="bolt" class="shrink-0">
+                    {{ __('dashboard.workspace.focus_action') }}
+                </flux:button>
+
+                <flux:button :href="route('todos.time')" wire:navigate variant="subtle" icon="clock" class="shrink-0">
+                    {{ __('dashboard.workspace.time_action') }}
+                </flux:button>
+
+                <flux:button :href="route('todos.blocked')" wire:navigate variant="subtle" icon="exclamation-triangle" class="shrink-0">
+                    {{ __('dashboard.workspace.blocked_action') }}
+                </flux:button>
+
+                <flux:button :href="route('todos.cleanup')" wire:navigate variant="subtle" icon="sparkles" class="shrink-0">
+                    {{ __('dashboard.workspace.cleanup_action') }}
+                </flux:button>
+
+                <flux:button :href="route('todos.automations')" wire:navigate variant="subtle" icon="bolt" class="shrink-0">
+                    {{ __('dashboard.workspace.automations_action') }}
+                </flux:button>
+
+                <flux:button :href="route('goals.index')" wire:navigate variant="subtle" icon="flag" class="shrink-0">
+                    {{ __('dashboard.workspace.goals_action') }}
+                </flux:button>
+
+                <flux:button :href="route('habits.index')" wire:navigate variant="subtle" icon="arrow-path" class="shrink-0">
+                    {{ __('dashboard.workspace.habits_action') }}
+                </flux:button>
+
+                <flux:button :href="route('todos.index')" wire:navigate variant="ghost" icon="list-bullet" class="shrink-0">
+                    {{ __('dashboard.workspace.action') }}
+                </flux:button>
+            </div>
+        </div>
+    </flux:card>
 </section>

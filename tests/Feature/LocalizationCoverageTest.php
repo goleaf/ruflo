@@ -41,10 +41,9 @@ test('public and authenticated landing pages render localized copy', function ()
         ->get(route('dashboard'))
         ->assertOk()
         ->assertSee(__('dashboard.heading'))
-        ->assertSee(__('dashboard.install.heading'))
         ->assertSee(__('dashboard.workspace.heading'))
+        ->assertSee(__('dashboard.workspace.automations_action'))
         ->assertDontSee('dashboard.heading')
-        ->assertDontSee('dashboard.install.heading')
         ->assertDontSee('dashboard.workspace.heading');
 });
 

@@ -31,6 +31,7 @@ The current application surface covers these URL consumers:
 - Authenticated task time tracking route at `/todos/time`.
 - Authenticated blocked tasks route at `/todos/blocked`.
 - Authenticated cleanup smart views route at `/todos/cleanup`.
+- Authenticated browser-triggered automation rules route at `/todos/automations`.
 - Authenticated todo route at `/todos`.
 - Authenticated Today route at `/todos/today`.
 - Authenticated Overdue route at `/todos/overdue`.
@@ -50,7 +51,8 @@ Later invite, export, notification, and protected-download steps must reuse this
 - Generate public storage links with the configured disk URL.
 - Do not hardcode `localhost`, `http://`, or an alternate local domain in application code.
 - Keep link-only invites independent of email delivery.
-- Keep export and cleanup workflows web-triggered, chunked, retryable, and resumable when the work can exceed a normal request.
+- Keep export, cleanup, automation, and processing workflows web-triggered,
+  chunked, retryable, and resumable when the work can exceed a normal request.
 
 ## Restricted Hosting
 
@@ -70,3 +72,10 @@ Confirmed:
 - Focused domain, auth, setup, and maintenance tests pass.
 - Hardcoded-host scanning found no alternate internal localhost or HTTP `ruflo.test` URLs; remaining hits are external source/docs/demo links, schema references, AWS example config, and HTTPS guard code.
 - Browser logs only showed an old Vite reconnect message, not a current domain/runtime error.
+
+## 2026-06-06 Step 052 Update
+
+Step 052 adds the protected `todos.automations` route at
+`https://ruflo.test/todos/automations`. Boost URL generation resolves the route
+to that HTTPS Herd domain, and the route collection shows `web`, `auth`, and
+`verified` middleware.

@@ -1,6 +1,8 @@
 <?php
 
 use App\Livewire\Dashboard\Index as DashboardIndex;
+use App\Models\AutomationRule;
+use App\Models\AutomationRuleRun;
 use App\Models\Concerns\BelongsToUser;
 use App\Models\Goal;
 use App\Models\GoalMilestone;
@@ -17,6 +19,8 @@ use App\Models\TodoChecklistItem;
 use App\Models\TodoDependency;
 use App\Models\TodoTemplate;
 use App\Models\User;
+use App\Policies\AutomationRulePolicy;
+use App\Policies\AutomationRuleRunPolicy;
 use App\Policies\GoalMilestonePolicy;
 use App\Policies\GoalPolicy;
 use App\Policies\HabitCheckInPolicy;
@@ -40,7 +44,7 @@ use Illuminate\Support\Facades\Gate;
 use Livewire\Livewire;
 
 test('private workspace resources share the owning user boundary', function () {
-    $privateModels = [Todo::class, Project::class, Goal::class, GoalMilestone::class, Habit::class, HabitCheckIn::class, PomodoroSession::class, TimeEntry::class, Tag::class, SavedTodoView::class, TodoChecklistItem::class, TodoDependency::class, TodoTemplate::class];
+    $privateModels = [Todo::class, Project::class, Goal::class, GoalMilestone::class, Habit::class, HabitCheckIn::class, PomodoroSession::class, TimeEntry::class, Tag::class, SavedTodoView::class, TodoChecklistItem::class, TodoDependency::class, TodoTemplate::class, AutomationRule::class, AutomationRuleRun::class];
 
     foreach ($privateModels as $modelClass) {
         /** @var Model $model */
@@ -65,6 +69,8 @@ test('private workspace models resolve explicit policies', function () {
         ->and(Gate::getPolicyFor(TodoDependency::class))->toBeInstanceOf(TodoDependencyPolicy::class)
         ->and(Gate::getPolicyFor(TodoTemplate::class))->toBeInstanceOf(TodoTemplatePolicy::class)
         ->and(Gate::getPolicyFor(SavedTodoView::class))->toBeInstanceOf(SavedTodoViewPolicy::class)
+        ->and(Gate::getPolicyFor(AutomationRule::class))->toBeInstanceOf(AutomationRulePolicy::class)
+        ->and(Gate::getPolicyFor(AutomationRuleRun::class))->toBeInstanceOf(AutomationRuleRunPolicy::class)
         ->and(Gate::getPolicyFor(Reminder::class))->toBeInstanceOf(ReminderPolicy::class);
 });
 
@@ -91,6 +97,8 @@ test('foreign private records are denied as not found', function (string $modelC
     'todo checklist item' => TodoChecklistItem::class,
     'todo dependency' => TodoDependency::class,
     'todo template' => TodoTemplate::class,
+    'automation rule' => AutomationRule::class,
+    'automation rule run' => AutomationRuleRun::class,
 ]);
 
 test('dashboard summary counts only the authenticated users private workspace', function () {

@@ -20,36 +20,6 @@ return [
         'habit_check_ins' => 'Habit check-ins',
     ],
 
-    'cards' => [
-        'mcp' => [
-            'label' => 'MCP server',
-            'description' => 'Register this in Claude Code to expose the full loop.',
-        ],
-        'plugin' => [
-            'label' => 'Plugin path',
-            'description' => 'Use this for slash commands and agent definitions only.',
-        ],
-        'demo' => [
-            'label' => 'Hosted demo',
-            'description' => 'Open the web UI first if you want to inspect the hosted experience.',
-        ],
-    ],
-
-    'install' => [
-        'label' => 'CLI path',
-        'heading' => 'Install paths',
-        'badge' => 'Hooks + daemon + memory',
-        'description' => 'Run the wizard if you want the safest guided install. Use the direct MCP command when you already know the target client.',
-    ],
-
-    'next' => [
-        'label' => 'Quick use',
-        'heading' => 'What to do next',
-        'plugin' => 'Pick the plugin path if you only need commands and agents.',
-        'cli' => 'Pick the CLI path if you want swarms, hooks, memory, and the daemon.',
-        'normal' => 'Keep using Claude Code normally. RuFlo handles coordination in the background.',
-    ],
-
     'workspace' => [
         'label' => 'Private workspace',
         'heading' => 'Todos stay owner-scoped',
@@ -62,6 +32,7 @@ return [
         'time_action' => 'Track time',
         'blocked_action' => 'Blocked',
         'cleanup_action' => 'Cleanup',
+        'automations_action' => 'Automations',
         'goals_action' => 'Goals',
         'habits_action' => 'Habits',
     ],

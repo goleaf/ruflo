@@ -3,6 +3,8 @@
 Step 011 covers the tracked application models:
 
 - `App\Models\User`
+- `App\Models\AutomationRule`
+- `App\Models\AutomationRuleRun`
 - `App\Models\Goal`
 - `App\Models\GoalMilestone`
 - `App\Models\Habit`
@@ -32,6 +34,27 @@ Step 011 covers the tracked application models:
 - configured primary and secondary demo users.
 
 Demo user factory states read from `config/demo.php` so the login panel, seeders, and tests stay aligned. The primary demo user is an admin; the secondary demo user is a normal user.
+
+## Automation Factories
+
+`AutomationRuleFactory` covers:
+
+- default user-owned promote-overdue rules,
+- `promoteOverdueTasks()` and `archiveCompletedTasks()` kinds,
+- archive rule day settings,
+- disabled rules.
+
+`AutomationRuleRunFactory` covers:
+
+- default completed run logs,
+- `forRule()` to attach a run to an owned rule while preserving the owner
+  boundary,
+- dry-run logs,
+- disabled run logs.
+
+Automation rules and run logs are private resources. They use the same
+`BelongsToUser` concern as todos, projects, saved views, dependencies, checklist
+rows, time entries, and Pomodoro sessions.
 
 ## Project And Tag Factories
 

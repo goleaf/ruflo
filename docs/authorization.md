@@ -37,6 +37,7 @@ scope) rather than across the whole codebase.
 | Checklist read boundary | `App\Queries\Todos\TodoChecklistItemListQuery` | Owner-scoped checklist rows for one already scoped parent task. |
 | Dependency read boundary | `App\Queries\Todos\TodoDependencyQuery` | Owner-scoped dependency rows and blocker candidates for already scoped tasks. |
 | Cleanup read boundary | `App\Queries\Todos\TodoCleanupQuery` | Owner-scoped active cleanup smart views for stale, unplanned, blocked, and risky tasks. |
+| Automation read boundary | `App\Queries\Automation\AutomationRuleQuery` | Owner-scoped automation rules with latest run reports. |
 | Template read boundary | `App\Queries\Todos\TodoTemplateListQuery` | Owner-scoped reusable task/project/checklist/routine templates. |
 | Inbox read boundary | `App\Queries\Todos\TodoInboxQuery` | Owner-scoped active captured tasks waiting for triage. |
 | Focus read boundary | `App\Queries\Todos\TodoFocusQuery` | Owner-scoped active urgent/overdue/due-today/high-priority focus set. |
@@ -199,6 +200,14 @@ Cleanup smart views use the same private route and owner boundary.
 reads active tasks through `TodoCleanupQuery`, eager-loads only current-user
 project/tag/dependency labels, treats invalid view parameters as an empty result,
 and never trusts URL search/sort state to widen the owner scope.
+
+Automation rules use the same private route and owner boundary.
+`todos.automations` is a class-based Livewire page behind `auth` and `verified`.
+`AutomationRule` and `AutomationRuleRun` use `BelongsToUser` and explicit
+policies. Rule ids submitted to toggle, test, or run actions are resolved
+through `AutomationRuleQuery::findFor($user, $id)` before authorization.
+Automation runs mutate only tasks found through the current user's owned task
+relationship, and foreign rule ids resolve as not found.
 
 ## Error behavior (no leakage)
 
@@ -378,3 +387,9 @@ come from real check-in rows, habit creation accepts only owned active goals,
 today check-ins cannot be spoofed for another user, archived habits reject
 check-ins, and task links are resolved through owner-scoped habits and
 active/completed tasks.
+
+`AutomationRulesTest` locks the Step 052 contract: automation rules are listed,
+created, toggled, tested, and run only for their owner; dry runs do not mutate
+tasks; disabled runs change nothing; bounded chunks can be retried to resume
+remaining work; archive automation touches only old owned completed tasks; and
+foreign rule ids resolve as not found.

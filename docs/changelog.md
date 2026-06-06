@@ -1,5 +1,44 @@
 # Changelog
 
+## 2026-06-06 - Step 048 Pomodoro focus timer
+
+### Implemented
+
+- Added owner-scoped `pomodoro_sessions` linked to focus tasks, with persisted
+  duration, elapsed seconds, running/paused/completed/abandoned status, and
+  resume timestamps.
+- Added `PomodoroSession`, policy, factory, `PomodoroSessionQuery`,
+  `PomodoroSessionStatus`, `PomodoroDuration`, and timer action classes for
+  start, pause, resume, complete, and abandon.
+- Upgraded the existing protected class-based Focus page with a translated
+  Flux Pomodoro timer, 15/25/50 minute duration options, browser countdown,
+  linked-task display, active-session resume, complete/abandon controls, and
+  `P`/Space keyboard toggle.
+- Linked quick task actions to timer state: completing a focused task completes
+  its active session, while defer/snooze abandons the linked session.
+- Added seeded paused demo Pomodoro sessions for local/testing/demo users.
+
+### Testing
+
+- Added `PomodoroFocusTimerTest` for session transitions, invalid duration,
+  duplicate active-session rejection, owner privacy, focus-boundary checks,
+  quick-action session closure, and restricted-hosting markup.
+- Expanded architecture, validation-rule, factory, seeder, authorization,
+  private-workspace, focus-mode, localization, and restricted-hosting coverage.
+
+### Documentation
+
+- Updated task organization, authorization, request validation, validation
+  rules, factory coverage, seeding, todo foundation, and root progress ledgers
+  with the Step 048 Pomodoro contract.
+
+### Restricted Hosting
+
+- Pomodoro timing is browser-ticked and web-triggered. Livewire persists only
+  explicit user actions or countdown completion from the open page; no cron,
+  queue worker, supervisor, terminal access, Artisan command, paid service, or
+  server-side timer is required during normal usage.
+
 ## 2026-06-06 - Step 047 Habits tracker
 
 ### Implemented

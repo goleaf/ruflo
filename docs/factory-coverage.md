@@ -7,6 +7,7 @@ Step 011 covers the tracked application models:
 - `App\Models\GoalMilestone`
 - `App\Models\Habit`
 - `App\Models\HabitCheckIn`
+- `App\Models\PomodoroSession`
 - `App\Models\Project`
 - `App\Models\Reminder`
 - `App\Models\SavedTodoView`
@@ -89,6 +90,21 @@ Demo user factory states read from `config/demo.php` so the login panel, seeders
 ## Reminder Factory
 
 `ReminderFactory` covers valid placeholder record creation for the current reminder schema. It does not define active, due, sent, failed, retry, or processed states yet because the table has no columns for those concepts.
+
+## Pomodoro Session Factory
+
+`PomodoroSessionFactory` covers:
+
+- default running focus sessions,
+- `forTodo()` to attach a session to an owned task while preserving the owner
+  boundary,
+- explicit duration values through `duration()`,
+- running, paused, completed, and abandoned lifecycle states,
+- demo paused state through `demo()`.
+
+Pomodoro sessions are private resources. They are linked to a task and use the
+same `BelongsToUser` concern as todos, projects, goals, habits, and saved
+views.
 
 ## Saved Todo View Factory
 

@@ -239,6 +239,11 @@ owner-scoped daily and weekly habit rendering, honest progress and streak
 calculation from real check-ins, habit validation, today check-in toggles,
 task-to-habit linking, and foreign-id spoofing denial.
 
+Step 048 adds `PomodoroFocusTimerTest`, which locks persisted Pomodoro session
+start, pause, resume, complete, abandon, invalid duration rejection, duplicate
+active-session rejection, owner privacy, focus-boundary checks, quick-action
+session closure, and restricted-hosting timer markup.
+
 ## 2026-06-06 Recheck
 
 The Step 001 recheck confirmed the foundation still matches the current master-plan rules after Steps 002-016:

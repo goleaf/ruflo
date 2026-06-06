@@ -327,6 +327,11 @@ return [
         'focus_deferred' => 'Task deferred to tomorrow.',
         'focus_snoozed' => 'Task snoozed for three days.',
         'focus_empty' => 'No focus task is available.',
+        'pomodoro_started' => 'Focus session started for ":title".',
+        'pomodoro_paused' => 'Focus session paused.',
+        'pomodoro_resumed' => 'Focus session resumed.',
+        'pomodoro_completed' => 'Focus session completed.',
+        'pomodoro_abandoned' => 'Focus session abandoned.',
     ],
 
     'today' => [
@@ -389,6 +394,9 @@ return [
         'inbox_todo' => 'Choose a captured inbox task.',
         'priority' => 'Choose a valid priority.',
         'due_date' => 'Enter a valid due date.',
+        'pomodoro_duration' => 'Choose a focus duration of 15, 25, or 50 minutes.',
+        'pomodoro_active_session' => 'Finish or abandon the current focus session before starting another one.',
+        'pomodoro_active_session_required' => 'Start a focus session before changing timer state.',
     ],
 
     'inbox' => [
@@ -433,9 +441,23 @@ return [
         ],
         'timer' => [
             'label' => 'Session timer',
+            'heading' => 'Pomodoro',
+            'duration' => 'Duration',
+            'duration_option' => ':minutes minutes',
             'start' => 'Start',
             'pause' => 'Pause',
-            'reset' => 'Reset',
+            'resume' => 'Resume',
+            'complete' => 'Complete session',
+            'abandon' => 'Abandon',
+            'current_task' => 'Linked task',
+            'hosting_note' => 'The browser keeps time while this page is open; progress is saved only by these web actions.',
+            'progress_aria' => 'Focus session :percent percent complete',
+            'status' => [
+                'running' => 'Running',
+                'paused' => 'Paused',
+                'completed' => 'Completed',
+                'abandoned' => 'Abandoned',
+            ],
         ],
         'empty' => [
             'title' => 'No focus tasks.',

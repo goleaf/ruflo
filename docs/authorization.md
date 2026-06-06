@@ -165,6 +165,13 @@ urgent, overdue, due-today, and high-priority tasks through `TodoFocusQuery`,
 and resolves every selected task id through `findFor($user, $id)` before
 complete, defer, or snooze actions run.
 
+Pomodoro focus sessions use the same owner boundary. `PomodoroSession` uses
+`BelongsToUser`, resolves `PomodoroSessionPolicy`, and is always linked to a
+private task. Focus-page timer actions read active sessions through
+`PomodoroSessionQuery`, authorize session updates, and deny foreign sessions as
+not found. Starting a session still resolves the linked task through
+`TodoFocusQuery` so a forged task id cannot start a timer for non-focus work.
+
 ## Error behavior (no leakage)
 
 - Forbidden private records resolve as **not found** (404-style), never
@@ -209,6 +216,10 @@ it on:
   authorization. Complete delegates to `CompleteTodo`; defer and snooze
   delegate to `RescheduleFocusedTodo`, which authorizes update and applies the
   existing lifecycle state-machine guard before changing the due date.
+- **Pomodoro sessions** — timer mutations resolve active rows through
+  `PomodoroSessionQuery`, authorize `PomodoroSessionPolicy::update`, and never
+  trust a frontend session or task id. Complete/defer/snooze task actions close
+  only a linked active session owned by the current user.
 - **Bulk actions** — never trust a submitted set of IDs. Re-scope every
   selected ID to the owner and authorize each actionable record before acting;
   a foreign ID in the Livewire payload is rejected at validation, while direct

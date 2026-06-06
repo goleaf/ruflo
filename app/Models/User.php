@@ -103,6 +103,16 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
     }
 
     /**
+     * Get the user's browser-triggered Pomodoro focus sessions.
+     *
+     * @return HasMany<PomodoroSession, $this>
+     */
+    public function pomodoroSessions(): HasMany
+    {
+        return $this->hasMany(PomodoroSession::class);
+    }
+
+    /**
      * Get the user's contained task checklist rows.
      *
      * @return HasMany<TodoChecklistItem, $this>

@@ -4,11 +4,13 @@ namespace Database\Seeders;
 
 use App\Data\Todos\SavedTodoViewData;
 use App\Enums\HabitFrequency;
+use App\Enums\PomodoroSessionStatus;
 use App\Enums\Priority;
 use App\Models\Goal;
 use App\Models\GoalMilestone;
 use App\Models\Habit;
 use App\Models\HabitCheckIn;
+use App\Models\PomodoroSession;
 use App\Models\Project;
 use App\Models\SavedTodoView;
 use App\Models\Tag;
@@ -200,6 +202,7 @@ class TodoSeeder extends Seeder
         $this->linkTodoToGoal($smallImprovement, $commandCenterGoal, $foundationMilestone);
         $this->linkTodoToGoal($reviewFlow, $commandCenterGoal, $focusMilestone);
         $this->linkTodoToGoal($overdueReport, $commandCenterGoal);
+        $this->upsertPomodoroSession($reviewFlow);
 
         $weekendGoal = $this->upsertGoal($user, 'Plan a calmer weekend', [
             'project_id' => $home->id,
@@ -470,5 +473,29 @@ class TodoSeeder extends Seeder
         $todo->forceFill([
             'habit_id' => $habit->id,
         ])->save();
+    }
+
+    private function upsertPomodoroSession(Todo $todo): PomodoroSession
+    {
+        $session = PomodoroSession::query()
+            ->where('user_id', $todo->user_id)
+            ->where('todo_id', $todo->id)
+            ->whereIn('status', PomodoroSessionStatus::activeValues())
+            ->first() ?? new PomodoroSession;
+
+        $session->forceFill([
+            'user_id' => $todo->user_id,
+            'todo_id' => $todo->id,
+            'duration_minutes' => 25,
+            'elapsed_seconds' => 480,
+            'status' => PomodoroSessionStatus::Paused,
+            'started_at' => now()->subMinutes(8),
+            'last_started_at' => null,
+            'paused_at' => now(),
+            'completed_at' => null,
+            'abandoned_at' => null,
+        ])->save();
+
+        return $session;
     }
 }

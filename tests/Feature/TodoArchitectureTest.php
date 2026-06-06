@@ -7,8 +7,10 @@ use App\Actions\Goals\LinkTodoToGoal;
 use App\Actions\Habits\CreateHabit;
 use App\Actions\Habits\LinkTodoToHabit;
 use App\Actions\Habits\ToggleHabitCheckIn;
+use App\Actions\Todos\AbandonPomodoroSession;
 use App\Actions\Todos\CaptureInboxTodo;
 use App\Actions\Todos\ClearCompletedTodos;
+use App\Actions\Todos\CompletePomodoroSession;
 use App\Actions\Todos\CompleteTodo;
 use App\Actions\Todos\CreateSavedTodoView;
 use App\Actions\Todos\CreateTodo;
@@ -21,9 +23,12 @@ use App\Actions\Todos\DeleteTodoChecklistItem;
 use App\Actions\Todos\DeleteTodoTemplate;
 use App\Actions\Todos\MoveTodoChecklistItem;
 use App\Actions\Todos\MoveTodoOnBoard;
+use App\Actions\Todos\PausePomodoroSession;
 use App\Actions\Todos\ReopenTodo;
 use App\Actions\Todos\RescheduleFocusedTodo;
 use App\Actions\Todos\RestoreDeletedTodo;
+use App\Actions\Todos\ResumePomodoroSession;
+use App\Actions\Todos\StartPomodoroSession;
 use App\Actions\Todos\TodoLifecycleStateMachine;
 use App\Actions\Todos\ToggleTodoChecklistItem;
 use App\Actions\Todos\TriageInboxTodo;
@@ -38,6 +43,7 @@ use App\Data\Todos\BulkActionResult;
 use App\Data\Todos\SavedTodoViewData;
 use App\Data\Todos\TodoData;
 use App\Data\Todos\TodoTemplateData;
+use App\Enums\PomodoroSessionStatus;
 use App\Enums\TaskTemplateKind;
 use App\Enums\TodoTransition;
 use App\Events\TodoChecklistChanged;
@@ -55,12 +61,14 @@ use App\Policies\GoalMilestonePolicy;
 use App\Policies\GoalPolicy;
 use App\Policies\HabitCheckInPolicy;
 use App\Policies\HabitPolicy;
+use App\Policies\PomodoroSessionPolicy;
 use App\Policies\SavedTodoViewPolicy;
 use App\Policies\TodoChecklistItemPolicy;
 use App\Policies\TodoPolicy;
 use App\Policies\TodoTemplatePolicy;
 use App\Queries\Goals\GoalListQuery;
 use App\Queries\Habits\HabitListQuery;
+use App\Queries\Todos\PomodoroSessionQuery;
 use App\Queries\Todos\SavedTodoViewListQuery;
 use App\Queries\Todos\TodoBoardQuery;
 use App\Queries\Todos\TodoCalendarQuery;
@@ -77,6 +85,7 @@ use App\Rules\Todos\BoardStatus;
 use App\Rules\Todos\CalendarMonth;
 use App\Rules\Todos\ChecklistItemTitle;
 use App\Rules\Todos\InboxCaptureTitle;
+use App\Rules\Todos\PomodoroDuration;
 use App\Rules\Todos\SavedViewName;
 use App\Rules\Todos\TemplateChecklistItems;
 use App\Rules\Todos\TemplateName;
@@ -104,6 +113,11 @@ test('todo foundation classes exist', function () {
         ->and(class_exists(CaptureInboxTodo::class))->toBeTrue()
         ->and(class_exists(TriageInboxTodo::class))->toBeTrue()
         ->and(class_exists(RescheduleFocusedTodo::class))->toBeTrue()
+        ->and(class_exists(StartPomodoroSession::class))->toBeTrue()
+        ->and(class_exists(PausePomodoroSession::class))->toBeTrue()
+        ->and(class_exists(ResumePomodoroSession::class))->toBeTrue()
+        ->and(class_exists(CompletePomodoroSession::class))->toBeTrue()
+        ->and(class_exists(AbandonPomodoroSession::class))->toBeTrue()
         ->and(class_exists(CreateGoal::class))->toBeTrue()
         ->and(class_exists(CreateGoalMilestone::class))->toBeTrue()
         ->and(class_exists(CheckInGoalMilestone::class))->toBeTrue()
@@ -123,6 +137,7 @@ test('todo foundation classes exist', function () {
         ->and(class_exists(HabitProgress::class))->toBeTrue()
         ->and(class_exists(GoalListQuery::class))->toBeTrue()
         ->and(class_exists(HabitListQuery::class))->toBeTrue()
+        ->and(class_exists(PomodoroSessionQuery::class))->toBeTrue()
         ->and(class_exists(SavedTodoViewListQuery::class))->toBeTrue()
         ->and(class_exists(TodoBoardQuery::class))->toBeTrue()
         ->and(class_exists(TodoCalendarQuery::class))->toBeTrue()
@@ -138,6 +153,7 @@ test('todo foundation classes exist', function () {
         ->and(class_exists(MilestoneTitle::class))->toBeTrue()
         ->and(class_exists(HabitTitle::class))->toBeTrue()
         ->and(class_exists(HabitTargetCount::class))->toBeTrue()
+        ->and(class_exists(PomodoroDuration::class))->toBeTrue()
         ->and(class_exists(TemplateChecklistItems::class))->toBeTrue()
         ->and(class_exists(TemplateName::class))->toBeTrue()
         ->and(class_exists(SavedViewName::class))->toBeTrue()
@@ -149,6 +165,7 @@ test('todo foundation classes exist', function () {
         ->and(class_exists(GoalMilestonePolicy::class))->toBeTrue()
         ->and(class_exists(HabitPolicy::class))->toBeTrue()
         ->and(class_exists(HabitCheckInPolicy::class))->toBeTrue()
+        ->and(class_exists(PomodoroSessionPolicy::class))->toBeTrue()
         ->and(class_exists(TodoBoard::class))->toBeTrue()
         ->and(class_exists(TodoCalendar::class))->toBeTrue()
         ->and(class_exists(TodoShow::class))->toBeTrue()
@@ -159,6 +176,7 @@ test('todo foundation classes exist', function () {
         ->and(class_exists(TodoInbox::class))->toBeTrue()
         ->and(class_exists(ProjectShow::class))->toBeTrue()
         ->and(class_exists(TodoChecklistChanged::class))->toBeTrue()
+        ->and(enum_exists(PomodoroSessionStatus::class))->toBeTrue()
         ->and(enum_exists(TodoTransition::class))->toBeTrue()
         ->and(enum_exists(TaskTemplateKind::class))->toBeTrue()
         ->and(class_exists(ClearCompletedTodos::class))->toBeTrue();
@@ -287,10 +305,18 @@ test('todo focus page delegates focus responsibilities', function () {
 
     expect($source)
         ->toContain('TodoFocusQuery')
+        ->toContain('PomodoroSessionQuery')
         ->toContain('RescheduleFocusedTodo')
         ->toContain('CompleteTodo')
+        ->toContain('StartPomodoroSession')
+        ->toContain('PausePomodoroSession')
+        ->toContain('ResumePomodoroSession')
+        ->toContain('CompletePomodoroSession')
+        ->toContain('AbandonPomodoroSession')
+        ->toContain('PomodoroDuration')
         ->toContain('$this->authorize')
         ->not->toContain('Todo::query()')
+        ->not->toContain('PomodoroSession::query()')
         ->not->toContain('->save()');
 });
 

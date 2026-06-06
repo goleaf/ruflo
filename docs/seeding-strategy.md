@@ -7,6 +7,7 @@ Step 012 covers the committed model set:
 - `GoalMilestone`
 - `Habit`
 - `HabitCheckIn`
+- `PomodoroSession`
 - `Project`
 - `SavedTodoView`
 - `Tag`
@@ -47,6 +48,9 @@ The tracked `Reminder` model is currently a placeholder with no ownership, sched
 - two habits per user: `Plan the day` and `Run the weekly review`.
 - six real habit check-ins per user, linked to seeded habits so `/habits` shows
   current progress and streaks immediately.
+- one paused Pomodoro focus session per user, linked to `Review the current
+  flow`, so `/todos/focus` can demonstrate timer resume immediately after
+  seeding.
 
 Step 041's calendar view reuses that catalog: the seeded due-today, overdue,
 upcoming, and no-due-date tasks give the local `/todos/calendar` page immediate
@@ -66,6 +70,11 @@ from real task completion and milestone check-ins.
 Step 047's habits page links existing seeded tasks into seeded habits and
 creates real check-in rows for today and recent periods. It does not create
 fake streak counters; progress and streaks are derived from `habit_check_ins`.
+
+Step 048's Pomodoro focus timer links a paused session to the existing
+`Review the current flow` focus task for each seeded user. It does not add fake
+time tracking totals; the row exists only to demonstrate browser-triggered
+timer resume and state transitions on `/todos/focus`.
 
 ## Idempotency
 
@@ -90,6 +99,10 @@ testing without duplicating goal rows.
 Habits are upserted per user/title and check-ins are upserted per habit/date.
 Task links are refreshed on reseed so the local demo remains useful after prior
 manual testing without duplicating habit rows or check-in dates.
+
+Pomodoro sessions are upserted per user, task, and active status. Re-running
+the seeder refreshes the paused demo timer without creating duplicate active
+focus sessions.
 
 Placeholder reminder rows are intentionally excluded from the current catalog because they would not be owned by a user or connected to a task.
 

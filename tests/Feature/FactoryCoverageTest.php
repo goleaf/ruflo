@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\PomodoroSessionStatus;
 use App\Enums\Priority;
 use App\Enums\TaskTemplateKind;
 use App\Enums\TodoStatus;
@@ -7,6 +8,7 @@ use App\Models\Goal;
 use App\Models\GoalMilestone;
 use App\Models\Habit;
 use App\Models\HabitCheckIn;
+use App\Models\PomodoroSession;
 use App\Models\Project;
 use App\Models\Reminder;
 use App\Models\SavedTodoView;
@@ -27,6 +29,7 @@ test('tracked models can be created from their default factories', function () {
     $tag = Tag::factory()->for($user)->create();
     $todo = Todo::factory()->for($user)->forProject($project)->forMilestone($milestone)->forHabit($habit)->withTags($tag)->create();
     $checklistItem = TodoChecklistItem::factory()->forTodo($todo)->completed()->position(1)->create();
+    $pomodoroSession = PomodoroSession::factory()->forTodo($todo)->completed()->create();
     $template = TodoTemplate::factory()->for($user)->routine()->create();
     $savedView = SavedTodoView::factory()->for($user)->create();
     $reminder = Reminder::factory()->create();
@@ -53,6 +56,9 @@ test('tracked models can be created from their default factories', function () {
         ->and($checklistItem->todo->is($todo))->toBeTrue()
         ->and($checklistItem->is_completed)->toBeTrue()
         ->and($checklistItem->position)->toBe(1)
+        ->and($pomodoroSession->isOwnedBy($user))->toBeTrue()
+        ->and($pomodoroSession->todo->is($todo))->toBeTrue()
+        ->and($pomodoroSession->status)->toBe(PomodoroSessionStatus::Completed)
         ->and($template->isOwnedBy($user))->toBeTrue()
         ->and($template->checklist_items)->toHaveCount(3)
         ->and($savedView->isOwnedBy($user))->toBeTrue()
@@ -76,6 +82,30 @@ test('habit factories cover frequency goal check in and archive states', functio
         ->and($archived->isArchived())->toBeTrue()
         ->and($checkIn->isOwnedBy($goal->user))->toBeTrue()
         ->and($checkIn->occurred_on->isSameDay(today()->subDay()))->toBeTrue();
+});
+
+test('pomodoro session factory covers task duration and lifecycle states', function () {
+    $todo = Todo::factory()->focusCandidate()->create();
+    $running = PomodoroSession::factory()->forTodo($todo)->duration(15)->running(120)->create();
+    $paused = PomodoroSession::factory()->forTodo($todo)->paused(300)->create();
+    $completed = PomodoroSession::factory()->forTodo($todo)->completed(1500)->create();
+    $abandoned = PomodoroSession::factory()->forTodo($todo)->abandoned(180)->create();
+    $demo = PomodoroSession::factory()->forTodo($todo)->demo()->create();
+
+    expect($running->isOwnedBy($todo->user))->toBeTrue()
+        ->and($running->todo->is($todo))->toBeTrue()
+        ->and($running->duration_minutes)->toBe(15)
+        ->and($running->status)->toBe(PomodoroSessionStatus::Running)
+        ->and($running->isRunning())->toBeTrue()
+        ->and($paused->status)->toBe(PomodoroSessionStatus::Paused)
+        ->and($paused->elapsed_seconds)->toBe(300)
+        ->and($paused->isPaused())->toBeTrue()
+        ->and($completed->status)->toBe(PomodoroSessionStatus::Completed)
+        ->and($completed->completed_at)->not->toBeNull()
+        ->and($abandoned->status)->toBe(PomodoroSessionStatus::Abandoned)
+        ->and($abandoned->abandoned_at)->not->toBeNull()
+        ->and($demo->status)->toBe(PomodoroSessionStatus::Paused)
+        ->and($demo->elapsed_seconds)->toBe(480);
 });
 
 test('goal and milestone factories cover ownership project and lifecycle states', function () {

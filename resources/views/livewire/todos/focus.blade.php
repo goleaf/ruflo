@@ -1,19 +1,25 @@
 <section
+    wire:key="focus-page-{{ $this->activeSession?->id ?? 'idle' }}-{{ $this->activeSession?->status?->value ?? 'none' }}-{{ $this->activeSession?->updated_at?->timestamp ?? 0 }}-{{ $durationMinutes }}"
     class="mx-auto flex w-full max-w-5xl flex-col gap-6"
     x-data="{
-        seconds: 1500,
+        seconds: @js($this->activeSessionRemainingSeconds()),
         timer: null,
+        running: @js($this->activeSession?->isRunning() ?? false),
+        hasSession: @js($this->activeSession !== null),
+        finishing: false,
+        init() {
+            if (this.running) {
+                this.startInterval();
+            }
+        },
         format() {
             const minutes = String(Math.floor(this.seconds / 60)).padStart(2, '0');
             const seconds = String(this.seconds % 60).padStart(2, '0');
 
             return `${minutes}:${seconds}`;
         },
-        toggle() {
+        startInterval() {
             if (this.timer) {
-                clearInterval(this.timer);
-                this.timer = null;
-
                 return;
             }
 
@@ -24,17 +30,59 @@
                     return;
                 }
 
-                clearInterval(this.timer);
-                this.timer = null;
+                this.finishSession();
             }, 1000);
         },
-        reset() {
+        stopInterval() {
             if (this.timer) {
                 clearInterval(this.timer);
                 this.timer = null;
             }
+        },
+        toggleSession() {
+            if (! this.hasSession) {
+                this.$wire.startFocusSession();
 
-            this.seconds = 1500;
+                return;
+            }
+
+            if (this.running) {
+                this.pauseSession();
+
+                return;
+            }
+
+            this.resumeSession();
+        },
+        pauseSession() {
+            this.stopInterval();
+            this.running = false;
+            this.$wire.pauseFocusSession();
+        },
+        resumeSession() {
+            this.running = true;
+            this.startInterval();
+            this.$wire.resumeFocusSession();
+        },
+        finishSession() {
+            if (this.finishing || ! this.hasSession) {
+                return;
+            }
+
+            this.finishing = true;
+            this.stopInterval();
+            this.running = false;
+            this.seconds = 0;
+            this.$wire.completeFocusSession();
+        },
+        abandonSession() {
+            if (! this.hasSession) {
+                return;
+            }
+
+            this.stopInterval();
+            this.running = false;
+            this.$wire.abandonFocusSession();
         },
     }"
     x-on:keydown.window="
@@ -54,6 +102,11 @@
             $event.preventDefault();
             $wire.snoozeSelected();
         }
+
+        if ($event.key.toLowerCase() === 'p' || $event.code === 'Space') {
+            $event.preventDefault();
+            toggleSession();
+        }
     "
 >
     <x-ui.page-header :title="__('todos.pages.focus.title')" :description="__('todos.pages.focus.description')">
@@ -69,25 +122,69 @@
     </x-ui.page-header>
 
     <div class="grid gap-4 lg:grid-cols-[0.75fr_1.25fr]">
-        <flux:card class="space-y-5">
-            <div>
-                <flux:subheading>{{ __('todos.focus.timer.label') }}</flux:subheading>
-                <div class="mt-2 font-mono text-5xl font-semibold tabular-nums text-zinc-950 dark:text-white" x-text="format()"></div>
+        <flux:card class="space-y-5" data-test="pomodoro-timer">
+            <div class="space-y-3">
+                <div class="flex flex-wrap items-start justify-between gap-3">
+                    <div>
+                        <flux:subheading>{{ __('todos.focus.timer.label') }}</flux:subheading>
+                        <flux:heading size="lg">{{ __('todos.focus.timer.heading') }}</flux:heading>
+                    </div>
+
+                    @if ($this->activeSession)
+                        <flux:badge size="sm" :color="$this->sessionStatusColor($this->activeSession)" icon="clock">
+                            {{ __('todos.focus.timer.status.'.$this->activeSession->status->value) }}
+                        </flux:badge>
+                    @endif
+                </div>
+
+                <div class="font-mono text-5xl font-semibold tabular-nums text-zinc-950 dark:text-white" x-text="format()"></div>
+
+                @if ($this->activeSession)
+                    <flux:progress :value="$this->activeSessionProgress()" color="green" aria-label="{{ __('todos.focus.timer.progress_aria', ['percent' => $this->activeSessionProgress()]) }}" />
+
+                    <div class="space-y-1 rounded-lg border border-zinc-200 bg-zinc-50 p-3 dark:border-white/10 dark:bg-zinc-900">
+                        <flux:subheading>{{ __('todos.focus.timer.current_task') }}</flux:subheading>
+                        <a href="{{ route('todos.show', $this->activeSession->todo) }}" wire:navigate class="text-sm font-medium break-words text-zinc-950 dark:text-white">
+                            {{ $this->activeSession->todo->title }}
+                        </a>
+                    </div>
+                @else
+                    <div>
+                        <flux:select wire:model.live="durationMinutes" :label="__('todos.focus.timer.duration')">
+                            @foreach ($this->durationOptions() as $minutes)
+                                <flux:select.option value="{{ $minutes }}">{{ __('todos.focus.timer.duration_option', ['minutes' => $minutes]) }}</flux:select.option>
+                            @endforeach
+                        </flux:select>
+                        <flux:error name="durationMinutes" />
+                    </div>
+                @endif
             </div>
 
             <div class="flex flex-wrap gap-2">
-                <flux:button type="button" variant="primary" icon="play" x-on:click="toggle" x-show="!timer" kbd="Space">
-                    {{ __('todos.focus.timer.start') }}
-                </flux:button>
+                @if ($this->activeSession)
+                    <flux:button type="button" variant="primary" icon="pause" x-on:click="pauseSession" x-show="running" kbd="P">
+                        {{ __('todos.focus.timer.pause') }}
+                    </flux:button>
 
-                <flux:button type="button" variant="primary" icon="pause" x-on:click="toggle" x-show="timer" kbd="Space">
-                    {{ __('todos.focus.timer.pause') }}
-                </flux:button>
+                    <flux:button type="button" variant="primary" icon="play" x-on:click="resumeSession" x-show="! running" kbd="P">
+                        {{ __('todos.focus.timer.resume') }}
+                    </flux:button>
 
-                <flux:button type="button" variant="ghost" icon="arrow-path" x-on:click="reset">
-                    {{ __('todos.focus.timer.reset') }}
-                </flux:button>
+                    <flux:button type="button" variant="subtle" icon="check-circle" x-on:click="finishSession" wire:loading.attr="disabled">
+                        {{ __('todos.focus.timer.complete') }}
+                    </flux:button>
+
+                    <flux:button type="button" variant="ghost" icon="x-mark" x-on:click="abandonSession" wire:loading.attr="disabled">
+                        {{ __('todos.focus.timer.abandon') }}
+                    </flux:button>
+                @else
+                    <flux:button type="button" variant="primary" icon="play" x-on:click="toggleSession" wire:loading.attr="disabled" :disabled="$this->focusTodos->isEmpty()" kbd="P">
+                        {{ __('todos.focus.timer.start') }}
+                    </flux:button>
+                @endif
             </div>
+
+            <flux:text class="text-sm">{{ __('todos.focus.timer.hosting_note') }}</flux:text>
         </flux:card>
 
         <flux:card class="space-y-5">

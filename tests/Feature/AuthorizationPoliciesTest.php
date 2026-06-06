@@ -4,6 +4,7 @@ use App\Models\Goal;
 use App\Models\GoalMilestone;
 use App\Models\Habit;
 use App\Models\HabitCheckIn;
+use App\Models\PomodoroSession;
 use App\Models\Project;
 use App\Models\Reminder;
 use App\Models\SavedTodoView;
@@ -16,6 +17,7 @@ use App\Policies\GoalMilestonePolicy;
 use App\Policies\GoalPolicy;
 use App\Policies\HabitCheckInPolicy;
 use App\Policies\HabitPolicy;
+use App\Policies\PomodoroSessionPolicy;
 use App\Policies\ProjectPolicy;
 use App\Policies\ReminderPolicy;
 use App\Policies\SavedTodoViewPolicy;
@@ -32,6 +34,7 @@ test('tracked private resources resolve explicit policies', function () {
         ->and(Gate::getPolicyFor(GoalMilestone::class))->toBeInstanceOf(GoalMilestonePolicy::class)
         ->and(Gate::getPolicyFor(Habit::class))->toBeInstanceOf(HabitPolicy::class)
         ->and(Gate::getPolicyFor(HabitCheckIn::class))->toBeInstanceOf(HabitCheckInPolicy::class)
+        ->and(Gate::getPolicyFor(PomodoroSession::class))->toBeInstanceOf(PomodoroSessionPolicy::class)
         ->and(Gate::getPolicyFor(Tag::class))->toBeInstanceOf(TagPolicy::class)
         ->and(Gate::getPolicyFor(TodoChecklistItem::class))->toBeInstanceOf(TodoChecklistItemPolicy::class)
         ->and(Gate::getPolicyFor(TodoTemplate::class))->toBeInstanceOf(TodoTemplatePolicy::class)
@@ -131,6 +134,30 @@ test('habit check in policy covers owner check in abilities', function () {
         ->and($ownerGate->allows('create', HabitCheckIn::class))->toBeTrue()
         ->and($ownerGate->denies('restore', $checkIn))->toBeTrue()
         ->and($ownerGate->denies('forceDelete', $checkIn))->toBeTrue();
+});
+
+test('pomodoro session policy covers owner timer abilities', function () {
+    $owner = User::factory()->create();
+    $intruder = User::factory()->create();
+    $todo = Todo::factory()->for($owner)->focusCandidate()->create();
+    $session = PomodoroSession::factory()->forTodo($todo)->running()->create();
+
+    $ownerGate = Gate::forUser($owner);
+    $intruderGate = Gate::forUser($intruder);
+
+    foreach (['view', 'update', 'delete'] as $ability) {
+        expect($ownerGate->allows($ability, $session))->toBeTrue();
+
+        $response = $intruderGate->inspect($ability, $session);
+
+        expect($response->denied())->toBeTrue()
+            ->and($response->status())->toBe(404);
+    }
+
+    expect($ownerGate->allows('viewAny', PomodoroSession::class))->toBeTrue()
+        ->and($ownerGate->allows('create', PomodoroSession::class))->toBeTrue()
+        ->and($ownerGate->denies('restore', $session))->toBeTrue()
+        ->and($ownerGate->denies('forceDelete', $session))->toBeTrue();
 });
 
 test('todo template policy covers owner template abilities', function () {

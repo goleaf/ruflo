@@ -17,6 +17,7 @@ The current committed app has tag-name and todo workspace ownership rules:
 - `App\Rules\Todos\OwnedActiveProject`
 - `App\Rules\Todos\OwnedTag`
 - `App\Rules\Todos\OwnedTodo`
+- `App\Rules\Todos\PomodoroDuration`
 - `App\Rules\Todos\SavedViewName`
 - `App\Rules\Todos\TemplateChecklistItems`
 - `App\Rules\Todos\TemplateName`
@@ -60,6 +61,11 @@ titles when Livewire validation is bypassed.
 
 `OwnedTodo` validates that a selected todo id belongs to the authenticated user. It is used by bulk task actions before any mutation runs.
 
+`PomodoroDuration` validates Focus timer duration choices. It accepts only the
+free, browser-native options supported by the UI: 15, 25, or 50 minutes.
+`StartPomodoroSession` also uses the rule so direct action calls cannot create
+unexpected timer durations.
+
 `SavedViewName` validates that a saved task-view name contains visible text
 after whitespace normalization. Per-user uniqueness is enforced at the
 Livewire validation boundary and by the database unique index.
@@ -89,7 +95,8 @@ Step 015 was rechecked from `steps/step-015-reusable-custom-validation-rules.md`
 
 Confirmed and updated:
 
-- The current implemented custom rule inventory is exactly the three todo ownership rules listed above.
+- The implemented custom rule inventory is tracked explicitly in the current
+  rules list above.
 - Every current custom rule implements Laravel's `ValidationRule` contract and fails with a translated message.
 - Removed the unused `ReminderAtIsActionable` placeholder rule because it had an empty `validate()` body and no concrete caller.
 - Added architecture coverage so future custom rules cannot be silently committed as empty placeholders.
@@ -168,3 +175,10 @@ Step 047 added `App\Rules\Habits\HabitTitle` and
 guards so direct calls cannot persist blank habit titles, invalid daily/weekly
 targets, foreign goals, archived habit check-ins, or archived/trashed task
 links.
+
+## 2026-06-06 Step 048 Recheck
+
+Step 048 added `App\Rules\Todos\PomodoroDuration` for Focus timer duration
+selection. `StartPomodoroSession` reuses the same rule so direct calls cannot
+create unsupported timer lengths, and the Livewire page shows translated field
+errors beside the Flux duration select.

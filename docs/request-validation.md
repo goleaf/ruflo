@@ -53,6 +53,14 @@ The component validates habit form state, uses `HabitTitle` and
 action classes that repeat owned-goal, check-in, and task-link guards for direct
 calls.
 
+Step 048 Pomodoro focus timer remains Livewire-only. No HTTP Form Request is
+introduced because `/todos/focus` is a class-based Livewire page, not a
+controller endpoint. The only free-form timer input is `durationMinutes`, which
+is guarded by `PomodoroDuration` and revalidated inside `StartPomodoroSession`
+before a session row is created. Timer state changes resolve the active session
+through `PomodoroSessionQuery` and authorize the owner-scoped policy before
+mutation.
+
 ## Custom Business Rules
 
 Reusable business validation rules are documented in `docs/validation-rules.md`.

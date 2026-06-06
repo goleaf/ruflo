@@ -121,6 +121,16 @@ class Todo extends Model
     }
 
     /**
+     * Browser-triggered focus sessions attached to this task.
+     *
+     * @return HasMany<PomodoroSession, $this>
+     */
+    public function pomodoroSessions(): HasMany
+    {
+        return $this->hasMany(PomodoroSession::class);
+    }
+
+    /**
      * Whether the task is archived (hidden from active/completed views).
      */
     public function isArchived(): bool

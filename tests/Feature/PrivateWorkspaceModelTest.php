@@ -6,6 +6,7 @@ use App\Models\Goal;
 use App\Models\GoalMilestone;
 use App\Models\Habit;
 use App\Models\HabitCheckIn;
+use App\Models\PomodoroSession;
 use App\Models\Project;
 use App\Models\Reminder;
 use App\Models\SavedTodoView;
@@ -18,6 +19,7 @@ use App\Policies\GoalMilestonePolicy;
 use App\Policies\GoalPolicy;
 use App\Policies\HabitCheckInPolicy;
 use App\Policies\HabitPolicy;
+use App\Policies\PomodoroSessionPolicy;
 use App\Policies\ProjectPolicy;
 use App\Policies\ReminderPolicy;
 use App\Policies\SavedTodoViewPolicy;
@@ -34,7 +36,7 @@ use Illuminate\Support\Facades\Gate;
 use Livewire\Livewire;
 
 test('private workspace resources share the owning user boundary', function () {
-    $privateModels = [Todo::class, Project::class, Goal::class, GoalMilestone::class, Habit::class, HabitCheckIn::class, Tag::class, SavedTodoView::class, TodoChecklistItem::class, TodoTemplate::class];
+    $privateModels = [Todo::class, Project::class, Goal::class, GoalMilestone::class, Habit::class, HabitCheckIn::class, PomodoroSession::class, Tag::class, SavedTodoView::class, TodoChecklistItem::class, TodoTemplate::class];
 
     foreach ($privateModels as $modelClass) {
         /** @var Model $model */
@@ -52,6 +54,7 @@ test('private workspace models resolve explicit policies', function () {
         ->and(Gate::getPolicyFor(GoalMilestone::class))->toBeInstanceOf(GoalMilestonePolicy::class)
         ->and(Gate::getPolicyFor(Habit::class))->toBeInstanceOf(HabitPolicy::class)
         ->and(Gate::getPolicyFor(HabitCheckIn::class))->toBeInstanceOf(HabitCheckInPolicy::class)
+        ->and(Gate::getPolicyFor(PomodoroSession::class))->toBeInstanceOf(PomodoroSessionPolicy::class)
         ->and(Gate::getPolicyFor(Tag::class))->toBeInstanceOf(TagPolicy::class)
         ->and(Gate::getPolicyFor(TodoChecklistItem::class))->toBeInstanceOf(TodoChecklistItemPolicy::class)
         ->and(Gate::getPolicyFor(TodoTemplate::class))->toBeInstanceOf(TodoTemplatePolicy::class)
@@ -75,6 +78,7 @@ test('foreign private records are denied as not found', function (string $modelC
     'goal milestone' => GoalMilestone::class,
     'habit' => Habit::class,
     'habit check in' => HabitCheckIn::class,
+    'pomodoro session' => PomodoroSession::class,
     'tag' => Tag::class,
     'saved todo view' => SavedTodoView::class,
     'todo checklist item' => TodoChecklistItem::class,

@@ -256,7 +256,7 @@ The Upcoming page:
 The dashboard workspace card links to Upcoming beside Today, Overdue, and the
 full Todo workspace shortcuts.
 
-## Focus mode
+## Focus mode and Pomodoro sessions
 
 Step 045 adds `todos.focus`, a protected class-based Livewire page for working
 from a short set of important active tasks.
@@ -275,13 +275,28 @@ from a short set of important active tasks.
   before action authorization. Foreign tasks, archived tasks, completed tasks,
   trashed tasks, and active tasks outside the current focus set return not
   found from this page.
-- The page includes a browser-only 25-minute session timer plus keyboard-backed
-  selected-task actions (`C`, `D`, `S`). Timer state is not persisted and does
-  not run server-side.
+- Step 048 replaces the non-persisted demo timer with owner-scoped
+  `pomodoro_sessions` linked to a focus task. Sessions store duration, status,
+  elapsed seconds, start/resume timestamps, and close timestamps for complete or
+  abandoned sessions.
+- The Pomodoro controls remain on the existing Focus page. Users choose a 15,
+  25, or 50 minute duration, start a session for the selected focus task,
+  pause/resume it, complete it, or abandon it. The browser ticks the visible
+  countdown while Livewire actions persist every state transition.
+- Completing a focused task completes an active Pomodoro session linked to that
+  task. Deferring or snoozing a focused task abandons the linked active session
+  because the task has intentionally moved out of the current work slot.
+- `PomodoroDuration` validates the allowed duration options and
+  `StartPomodoroSession` also rejects starting a second active session for the
+  same user.
+- The page includes keyboard-backed selected-task actions (`C`, `D`, `S`) and
+  timer toggle (`P` or Space).
 - Focus mode is synchronous and bounded to one task action per request. It
   requires no cron, queue worker, supervisor, shell, Artisan command, paid
-  service, chunk processor, retry loop, or resume state during normal hosted
-  usage.
+  service, chunk processor, retry loop, or server-side timer during normal
+  hosted usage. Timer resume is the persisted active `pomodoro_sessions` row;
+  exact second-by-second progress is only advanced while the page is open in the
+  browser.
 
 ## Inbox
 

@@ -53,5 +53,6 @@ return [
         'action' => 'Open todos',
         'today_action' => 'Open today',
         'overdue_action' => 'Review overdue',
+        'upcoming_action' => 'Plan upcoming',
     ],
 ];

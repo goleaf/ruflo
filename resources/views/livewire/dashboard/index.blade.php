@@ -29,6 +29,10 @@
                         {{ __('dashboard.workspace.overdue_action') }}
                     </flux:button>
 
+                    <flux:button :href="route('todos.upcoming')" wire:navigate variant="subtle" icon="calendar">
+                        {{ __('dashboard.workspace.upcoming_action') }}
+                    </flux:button>
+
                     <flux:button :href="route('todos.index')" wire:navigate variant="ghost" icon="list-bullet">
                         {{ __('dashboard.workspace.action') }}
                     </flux:button>

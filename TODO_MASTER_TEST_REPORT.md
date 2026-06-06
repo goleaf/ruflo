@@ -458,3 +458,18 @@ Record test/build/check results here.
 | 2026-06-06 | `git diff --check` | Passed | No whitespace errors after Step 033 changes. |
 | 2026-06-06 | `mcp__laravel_boost.browser_logs entries=20` | Passed | Only an old Vite reconnect message from 2026-06-05 was present; no current Overdue page browser/runtime error was found. |
 | 2026-06-06 | `php artisan test --compact` | Passed | Full suite passed with 314 tests and 1390 assertions after Step 033 Overdue view changes. |
+| 2026-06-06 | `mcp__laravel_boost.application_info` | Passed | Confirmed Step 034 runtime context: Laravel 13.14.0, Livewire 4.3.1, Flux 2.14.1, Tailwind 4.3.0, Pest 4.7.2, PHP CLI 8.4, SQLite. |
+| 2026-06-06 | `mcp__laravel_boost.search_docs` | Passed | Reviewed Livewire full-page routing, pagination, action authorization/property security, Flux button/badge docs, and Pest feature testing guidance before Step 034 changes. |
+| 2026-06-06 | `mcp__laravel_boost.database_schema todos` | Passed | Reconfirmed `todos.due_date` and owner/date indexes before adding the dedicated Upcoming view. |
+| 2026-06-06 | `php artisan make:livewire Todos/Upcoming --class --no-interaction` | Passed | Created the class-based Step 034 Upcoming page. |
+| 2026-06-06 | `php artisan make:test --pest UpcomingViewTest --no-interaction` | Passed | Created the Step 034 Upcoming view regression test. |
+| 2026-06-06 | `php artisan test --compact tests/Feature/UpcomingViewTest.php` | Passed | 5 tests, 35 assertions for protected Upcoming routing, owner-only active future-due rendering, translated empty state, upcoming-only completion, route middleware, and URL contract. |
+| 2026-06-06 | `vendor/bin/pint --dirty --format agent` | Passed | PHP style passed after Step 034 Upcoming page, route, query, dashboard, translation, test, and documentation updates. |
+| 2026-06-06 | `php artisan test --compact tests/Feature/UpcomingViewTest.php tests/Feature/OverdueViewTest.php tests/Feature/TodayViewTest.php tests/Feature/TaskDueDateTest.php tests/Feature/TodoOrganizationTest.php tests/Feature/TaskPrivateViewsTest.php tests/Feature/ProjectDetailTest.php tests/Feature/DashboardTest.php tests/Feature/DomainReadinessTest.php tests/Feature/GuestRouteProtectionTest.php tests/Feature/TodoArchitectureTest.php` | Passed | 107 tests, 429 assertions across Upcoming view, Overdue view, Today view, due-date logic, organization, private task views, project detail, dashboard, domain readiness, route protection, and architecture guards. |
+| 2026-06-06 | `rg Volt scan` | Passed | No Volt usage found in app, resources, routes, config, tests, Composer, or package files after Step 034. |
+| 2026-06-06 | `rg hardcoded Upcoming copy scan` | Passed | No hardcoded visible Upcoming page copy remains outside English language files; matches were class, route, comment, and method symbol names only. |
+| 2026-06-06 | `rg compressed-progress scan` | Passed | Mutable root progress/docs files contain no compressed grouped-step placeholder lines after Step 034. |
+| 2026-06-06 | `php artisan route:list --no-interaction -vv --path=todos` | Passed | Confirmed `todos.index`, `todos.overdue`, `todos.today`, `todos.upcoming`, and `todos.show` are all registered behind auth and verified middleware. |
+| 2026-06-06 | `git diff --check` | Passed | No whitespace errors after Step 034 changes. |
+| 2026-06-06 | `mcp__laravel_boost.browser_logs entries=20` | Passed | Only an old Vite reconnect message from 2026-06-05 was present; no current Upcoming page browser/runtime error was found. |
+| 2026-06-06 | `php artisan test --compact` | Passed | Full suite passed with 319 tests and 1426 assertions after Step 034 Upcoming view changes. |

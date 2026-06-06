@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-06-06 - Step 034 Upcoming view
+
+### Implemented
+
+- Added `App\Livewire\Todos\Upcoming` as a protected class-based Livewire page at `todos.upcoming`.
+- Added owner-scoped `TodoListQuery::upcomingFor()` and `findUpcomingFor()` boundaries for future-dated task reads and page actions.
+- Rendered a translated Flux Upcoming page with due-date badges, project/tag links, pagination, empty state, and a dashboard shortcut.
+
+### Testing
+
+- Added `UpcomingViewTest` for guest/unverified redirects, owner-only future-due rendering, active-only exclusions, translated empty state, focused completion scope, and route/component guardrails.
+- Rechecked Today, Overdue, due-date, private-view, dashboard, domain, route-protection, and architecture coverage.
+
+### Documentation
+
+- Updated `docs/task-organization.md`, `docs/domain-readiness.md`, and `docs/todo-foundation.md` with the Step 034 upcoming-view contract.
+
 ## 2026-06-06 - Step 029 Tags and labels
 
 ### Implemented

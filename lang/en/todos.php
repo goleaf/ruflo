@@ -22,6 +22,10 @@ return [
             'title' => 'Overdue',
             'description' => 'Review active tasks that are past their due date without exposing another workspace.',
         ],
+        'upcoming' => [
+            'title' => 'Upcoming',
+            'description' => 'Plan active tasks with future due dates in your private workspace.',
+        ],
     ],
 
     'fields' => [
@@ -241,6 +245,14 @@ return [
         'count' => 'Overdue',
         'open_filtered' => 'Filtered list',
         'empty_description' => 'Active tasks appear here after their due date passes.',
+    ],
+
+    'upcoming' => [
+        'label' => 'Future due dates',
+        'date' => 'After :date',
+        'count' => 'Upcoming',
+        'open_filtered' => 'Filtered list',
+        'empty_description' => 'Active tasks with future due dates will appear here.',
     ],
 
     'exceptions' => [

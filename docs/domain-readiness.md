@@ -24,6 +24,7 @@ The current application surface covers these URL consumers:
 - Authenticated todo route at `/todos`.
 - Authenticated Today route at `/todos/today`.
 - Authenticated Overdue route at `/todos/overdue`.
+- Authenticated Upcoming route at `/todos/upcoming`.
 - Authenticated task detail routes at `/todos/{todo}`.
 - Protected setup route at `/settings/setup`.
 - Protected maintenance route at `/settings/maintenance`.

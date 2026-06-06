@@ -2,19 +2,19 @@
 
 ## Current status
 
-Steps 001-033 are complete. The requested recheck from Step 001 has been completed through Step 033. The tracker is expanded to one ledger line per step from 001 through 100 so later work cannot be hidden behind a range.
+Steps 001-034 are complete. The requested recheck from Step 001 has been completed through Step 034. The tracker is expanded to one ledger line per step from 001 through 100 so later work cannot be hidden behind a range.
 
 ## Current step
 
-Step 034 — Upcoming view
+Step 035 — Search
 
 ## Last completed action
 
-Completed Step 033 by adding a protected Overdue Livewire page, owner-scoped overdue query/action boundaries, a dashboard shortcut, translated Overdue copy, and overdue route/privacy tests.
+Completed Step 034 by adding a protected Upcoming Livewire page, owner-scoped future-due query/action boundaries, a dashboard shortcut, translated Upcoming copy, and upcoming route/privacy tests.
 
 ## Next action
 
-Begin `steps/step-034-upcoming-view.md`, then implement the next not-yet-completed plan step without grouping it with later work.
+Begin `steps/step-035-search.md`, then implement the next not-yet-completed plan step without grouping it with later work.
 
 ## Step ledger
 
@@ -53,7 +53,7 @@ Begin `steps/step-034-upcoming-view.md`, then implement the next not-yet-complet
 | 031 — Due dates and date logic | Complete | Added `DueDate` canonical `Y-m-d` validation, wired it into create/edit Livewire forms, reused it in direct DTO parsing, added `Todo::isUpcoming()`, and rechecked current date badges, filters, factories, seeders, and dashboard summary. | Boost app info/docs/schema checks, app timezone check, due-date inventory scan, focused `TaskDueDateTest`, and adjacent due-date/organization/creation/editing/dashboard/factory/seeder/rule/private-view/project-detail/architecture suite passed; final scans and full-suite checks recorded in test report. | `docs/task-organization.md`, `docs/validation-rules.md`, `docs/todo-foundation.md`, `docs/changelog.md`, root changelog, decisions, risks, and test report updated. | Direct invalid due-date risk mitigated; per-user timezone support remains a documented future settings risk. | 285f27d |
 | 032 — Today view | Complete | Added protected class-based `App\Livewire\Todos\Today` at `todos.today`, added `TodoListQuery::todayFor()` and `findTodayFor()`, rendered a focused Flux Today list with owner-scoped project/tag badges and complete action, and linked the dashboard to Today. | Boost app info/docs/schema checks, today inventory scan, focused `TodayViewTest`, and adjacent date/list/private-view/project-detail/dashboard/domain/route-protection/architecture suite passed; final scans and full-suite checks recorded in test report. | `docs/task-organization.md`, `docs/domain-readiness.md`, `docs/todo-foundation.md`, `docs/changelog.md`, root changelog, decisions, risks, and test report updated. | Today action scope risk logged and mitigated with `findTodayFor()`. | 3cdb7d3 |
 | 033 — Overdue view | Complete | Added protected class-based `App\Livewire\Todos\Overdue` at `todos.overdue`, added `TodoListQuery::overdueFor()` and `findOverdueFor()`, rendered a focused Flux Overdue list with owner-scoped project/tag badges and complete action, and linked the dashboard to Overdue. | Boost app info/docs/schema checks, overdue inventory scan, focused `OverdueViewTest`, and adjacent overdue/today/date/list/private-view/project-detail/dashboard/domain/route-protection/architecture suite passed; final scans and full-suite checks recorded in test report. | `docs/task-organization.md`, `docs/domain-readiness.md`, `docs/todo-foundation.md`, `docs/changelog.md`, root changelog, decisions, risks, and test report updated. | Overdue action scope risk logged and mitigated with `findOverdueFor()`. | 4a62851 |
-| 034 — Upcoming view | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 034 — Upcoming view | Complete | Added protected class-based `App\Livewire\Todos\Upcoming` at `todos.upcoming`, added `TodoListQuery::upcomingFor()` and `findUpcomingFor()`, rendered a focused Flux Upcoming list with owner-scoped project/tag badges and complete action, and linked the dashboard to Upcoming. | Boost app info/docs/schema checks, focused `UpcomingViewTest`, adjacent upcoming/overdue/today/date/list/private-view/project-detail/dashboard/domain/route-protection/architecture suite, static scans, browser logs, and full-suite checks passed; final evidence recorded in test report. | `docs/task-organization.md`, `docs/domain-readiness.md`, `docs/todo-foundation.md`, `docs/changelog.md`, root changelog, decisions, risks, checklist, and test report updated. | Upcoming action scope risk logged and mitigated with `findUpcomingFor()`. | Pending |
 | 035 — Search | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
 | 036 — Filters | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
 | 037 — Sorting | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |

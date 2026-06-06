@@ -175,6 +175,11 @@ owner-only past-due rendering, active-only exclusions, empty state,
 dashboard/domain link contract, and the Overdue page's overdue-only complete
 action boundary.
 
+Step 034 adds `UpcomingViewTest`, which locks the protected Upcoming route,
+owner-only future-due rendering, active-only exclusions, empty state,
+dashboard/domain link contract, and the Upcoming page's upcoming-only complete
+action boundary.
+
 ## 2026-06-06 Recheck
 
 The Step 001 recheck confirmed the foundation still matches the current master-plan rules after Steps 002-016:

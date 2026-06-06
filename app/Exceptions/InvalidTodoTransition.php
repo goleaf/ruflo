@@ -12,9 +12,14 @@ use RuntimeException;
  */
 final class InvalidTodoTransition extends RuntimeException
 {
-    public static function cannotToggleArchived(): self
+    public static function cannotCompleteArchived(): self
     {
-        return new self('Archived tasks must be restored before they can be completed or reopened.');
+        return new self('Archived tasks must be restored before they can be completed.');
+    }
+
+    public static function cannotReopenArchived(): self
+    {
+        return new self('Archived tasks must be restored before they can be reopened.');
     }
 
     public static function cannotEditArchived(): self

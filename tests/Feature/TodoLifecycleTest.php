@@ -2,6 +2,8 @@
 
 use App\Enums\TodoStatus;
 use App\Events\TodoArchived;
+use App\Events\TodoCompleted;
+use App\Events\TodoReopened;
 use App\Events\TodoUnarchived;
 use App\Events\TodoUpdated;
 use App\Livewire\Todos\Index;
@@ -100,15 +102,39 @@ it('restores an archived task back to its prior completion state', function () {
     Event::assertDispatchedTimes(TodoUnarchived::class, 2);
 });
 
-it('refuses to complete an archived task', function () {
+it('refuses to complete or reopen an archived task', function () {
     $user = User::factory()->create();
-    $todo = Todo::factory()->for($user)->archived()->create();
+    $activeBeforeArchive = Todo::factory()->for($user)->archived()->create();
+    $completedBeforeArchive = Todo::factory()->for($user)->completed()->archived()->create();
 
     Livewire::actingAs($user)->test(Index::class)
-        ->call('toggleTodo', $todo->id);
+        ->call('completeTodo', $activeBeforeArchive->id)
+        ->call('reopenTodo', $completedBeforeArchive->id);
 
-    expect($todo->refresh()->is_completed)->toBeFalse()
-        ->and($todo->isArchived())->toBeTrue();
+    expect($activeBeforeArchive->refresh()->is_completed)->toBeFalse()
+        ->and($activeBeforeArchive->isArchived())->toBeTrue()
+        ->and($completedBeforeArchive->refresh()->is_completed)->toBeTrue()
+        ->and($completedBeforeArchive->isArchived())->toBeTrue();
+});
+
+it('completes and reopens tasks as separate transitions', function () {
+    $user = User::factory()->create();
+    $todo = Todo::factory()->for($user)->create(['title' => 'Lifecycle task']);
+
+    Event::fake([TodoCompleted::class, TodoReopened::class]);
+
+    Livewire::actingAs($user)->test(Index::class)
+        ->call('completeTodo', $todo->id)
+        ->assertSet('summary.active', 0)
+        ->assertSet('summary.completed', 1)
+        ->call('reopenTodo', $todo->id)
+        ->assertSet('summary.active', 1)
+        ->assertSet('summary.completed', 0);
+
+    expect($todo->refresh()->is_completed)->toBeFalse();
+
+    Event::assertDispatched(TodoCompleted::class, fn (TodoCompleted $event): bool => $event->todo->is($todo));
+    Event::assertDispatched(TodoReopened::class, fn (TodoReopened $event): bool => $event->todo->is($todo));
 });
 
 it('edits an own active task title', function () {
@@ -202,7 +228,8 @@ it('forbids acting on another users task for every lifecycle action', function (
         ->call($method, $todo->id))
         ->toThrow(ModelNotFoundException::class);
 })->with([
-    'toggleTodo',
+    'completeTodo',
+    'reopenTodo',
     'startEdit',
     'archiveTodo',
     'restoreTodo',

@@ -6,13 +6,14 @@ use App\Models\Todo;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-final class TodoCompletionToggled
+/**
+ * A completed task moved back to Active.
+ */
+final class TodoReopened
 {
     use Dispatchable, SerializesModels;
 
     public function __construct(
         public Todo $todo,
-    ) {
-        //
-    }
+    ) {}
 }

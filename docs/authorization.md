@@ -83,9 +83,9 @@ The Livewire component authorizes **before** delegating to an action:
 - `view` / `update` / `complete` / `reopen` / `archive` / `delete` / `restore`
   — per-record abilities, owner-only, returning `denyAsNotFound()` so forbidden
   access is indistinguishable from a missing record.
-- `complete` and `reopen` are separate policy abilities even though the UI uses
-  one toggle action. The component chooses the ability from the task state
-  before calling the mutation action.
+- `complete` and `reopen` are separate policy abilities. Step 024 also gives
+  each transition its own Livewire method and action class, while the row
+  checkbox remains a compact UI affordance.
 - `forceDelete` — disabled for everyone. Permanent deletion is not a feature
   yet; when designed it must be protected more strictly than soft delete.
 
@@ -190,3 +190,8 @@ login panel never renders stored password hashes.
 guests and unverified users, render only the owner's task data, return not
 found for foreign ids, expose only current-user detail links in the task list,
 and keep the detail component on locked IDs plus owner-scoped queries.
+
+`TaskCompletionReopeningTest` locks the Step 024 contract: complete and reopen
+use separate action classes, events, policy checks, translated labels, and
+owner-scoped Livewire methods; archived tasks are rejected; idempotent calls do
+not duplicate activity; bulk completion reuses the same complete transition.

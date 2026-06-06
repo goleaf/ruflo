@@ -92,7 +92,8 @@ return [
 
     'actions' => [
         'add' => 'Add',
-        'toggle' => 'Toggle completion',
+        'complete' => 'Complete task',
+        'reopen' => 'Reopen task',
         'edit' => 'Edit task',
         'save' => 'Save changes',
         'cancel' => 'Cancel',
@@ -187,12 +188,14 @@ return [
     'messages' => [
         'created' => 'Task added.',
         'updated' => 'Task updated.',
+        'completed' => 'Task completed.',
+        'reopened' => 'Task reopened.',
         'archived' => 'Task archived.',
         'restored' => 'Task restored.',
         'deleted' => 'Task deleted.',
         'completed_cleared' => 'Completed tasks cleared.',
         'bulk_done' => 'Updated :count task(s).',
-        'cannot_toggle_archived' => 'Restore this task before completing or reopening it.',
+        'cannot_change_completion_archived' => 'Restore this task before completing or reopening it.',
         'cannot_edit_archived' => 'Restore this task before editing it.',
         'project_created' => 'Project created.',
         'project_updated' => 'Project updated.',

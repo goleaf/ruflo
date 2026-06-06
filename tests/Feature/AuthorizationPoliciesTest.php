@@ -106,7 +106,8 @@ test('todo Livewire actions use policy abilities before mutation', function () {
 
     expect($source)
         ->toContain("\$this->authorize('create', Todo::class);")
-        ->toContain("\$this->authorize(\$todo->is_completed ? 'reopen' : 'complete', \$todo);")
+        ->toContain("\$this->authorize('complete', \$todo);")
+        ->toContain("\$this->authorize('reopen', \$todo);")
         ->toContain("\$this->authorize('archive', \$todo);")
         ->toContain("\$this->authorize('restore', \$todo);")
         ->toContain("\$this->authorize('delete', \$todo);")

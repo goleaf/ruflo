@@ -41,7 +41,7 @@ final class TodoPolicy
     }
 
     /**
-     * Determine whether the user can complete or reopen the model.
+     * Determine whether the user can complete the model.
      */
     public function complete(User $user, Todo $todo): Response
     {

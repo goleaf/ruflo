@@ -1,7 +1,7 @@
 <?php
 
+use App\Actions\Todos\CompleteTodo;
 use App\Actions\Todos\CreateTodo;
-use App\Actions\Todos\ToggleTodoCompletion;
 use App\Data\Todos\TodoData;
 use App\Enums\Priority;
 use App\Events\TodoCreated;
@@ -82,11 +82,11 @@ test('task lifecycle and ownership fields cannot be mass assigned during creatio
         ->and($todo->due_date->toDateString())->toBe(today()->toDateString());
 });
 
-test('completion action still updates the explicit lifecycle field', function () {
+test('complete action still updates the explicit lifecycle field', function () {
     $user = User::factory()->create();
     $todo = Todo::factory()->for($user)->create(['is_completed' => false]);
 
-    app(ToggleTodoCompletion::class)->handle($todo);
+    app(CompleteTodo::class)->handle($todo);
 
     expect($todo->refresh()->is_completed)->toBeTrue();
 });

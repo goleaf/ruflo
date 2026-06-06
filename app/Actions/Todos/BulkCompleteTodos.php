@@ -18,6 +18,10 @@ use Illuminate\Support\Facades\Gate;
  */
 final class BulkCompleteTodos
 {
+    public function __construct(
+        private readonly CompleteTodo $completeTodo,
+    ) {}
+
     /**
      * @param  list<int>  $ids
      */
@@ -30,13 +34,12 @@ final class BulkCompleteTodos
         $todos = $user->todos()
             ->active()
             ->whereKey($ids)
-            ->get(['id', 'user_id']);
+            ->get(['id', 'user_id', 'is_completed', 'archived_at']);
 
         $todos->each(fn (Todo $todo) => Gate::forUser($user)->authorize('complete', $todo));
 
-        return $user->todos()
-            ->active()
-            ->whereKey($todos->modelKeys())
-            ->update(['is_completed' => true]);
+        $todos->each(fn (Todo $todo) => $this->completeTodo->handle($todo));
+
+        return $todos->count();
     }
 }

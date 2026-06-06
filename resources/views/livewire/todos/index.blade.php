@@ -213,8 +213,8 @@
                     @unless ($todo->isArchived())
                         <flux:checkbox
                             :checked="$todo->is_completed"
-                            wire:click="toggleTodo({{ $todo->id }})"
-                            :aria-label="__('todos.actions.toggle')"
+                            wire:click="{{ $todo->is_completed ? 'reopenTodo' : 'completeTodo' }}({{ $todo->id }})"
+                            :aria-label="$todo->is_completed ? __('todos.actions.reopen') : __('todos.actions.complete')"
                             class="mt-0.5"
                         />
                     @else

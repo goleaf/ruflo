@@ -58,13 +58,13 @@ test('users must provide a valid title', function () {
         ->assertHasErrors(['form.title' => 'required']);
 });
 
-test('users can toggle todos', function () {
+test('users can complete todos', function () {
     $user = User::factory()->create();
     $todo = Todo::factory()->for($user)->create();
 
     Livewire::actingAs($user)
         ->test(Index::class)
-        ->call('toggleTodo', $todo->id);
+        ->call('completeTodo', $todo->id);
 
     expect($todo->fresh()->is_completed)->toBeTrue();
 });
@@ -105,7 +105,7 @@ test('users cannot mutate another users private todos', function () {
 
     expect(fn () => Livewire::actingAs($intruder)
         ->test(Index::class)
-        ->call('toggleTodo', $todo->id))
+        ->call('completeTodo', $todo->id))
         ->toThrow(ModelNotFoundException::class);
 
     expect($todo->fresh()->is_completed)->toBeFalse();

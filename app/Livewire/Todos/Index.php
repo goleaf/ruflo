@@ -16,9 +16,10 @@ use App\Actions\Todos\BulkDeleteTodos;
 use App\Actions\Todos\BulkMoveTodos;
 use App\Actions\Todos\BulkRestoreTodos;
 use App\Actions\Todos\ClearCompletedTodos;
+use App\Actions\Todos\CompleteTodo;
 use App\Actions\Todos\CreateTodo;
 use App\Actions\Todos\DeleteTodo;
-use App\Actions\Todos\ToggleTodoCompletion;
+use App\Actions\Todos\ReopenTodo;
 use App\Actions\Todos\UnarchiveTodo;
 use App\Actions\Todos\UpdateTodo;
 use App\Data\Projects\ProjectData;
@@ -216,18 +217,40 @@ class Index extends Component
 
     // --- Lifecycle ---
 
-    public function toggleTodo(int $todoId, TodoListQuery $query, ToggleTodoCompletion $toggle): void
+    public function completeTodo(int $todoId, TodoListQuery $query, CompleteTodo $complete): void
     {
         $todo = $query->findVisibleFor($this->currentUser(), $todoId);
-        $this->authorize($todo->is_completed ? 'reopen' : 'complete', $todo);
+        $this->authorize('complete', $todo);
 
         try {
-            $toggle->handle($todo);
+            $complete->handle($todo);
         } catch (InvalidTodoTransition) {
-            Flux::toast(variant: 'warning', text: __('todos.messages.cannot_toggle_archived'));
+            Flux::toast(variant: 'warning', text: __('todos.messages.cannot_change_completion_archived'));
+
+            return;
         }
 
         $this->refreshLists();
+
+        Flux::toast(variant: 'success', text: __('todos.messages.completed'));
+    }
+
+    public function reopenTodo(int $todoId, TodoListQuery $query, ReopenTodo $reopen): void
+    {
+        $todo = $query->findVisibleFor($this->currentUser(), $todoId);
+        $this->authorize('reopen', $todo);
+
+        try {
+            $reopen->handle($todo);
+        } catch (InvalidTodoTransition) {
+            Flux::toast(variant: 'warning', text: __('todos.messages.cannot_change_completion_archived'));
+
+            return;
+        }
+
+        $this->refreshLists();
+
+        Flux::toast(variant: 'success', text: __('todos.messages.reopened'));
     }
 
     public function archiveTodo(int $todoId, TodoListQuery $query, ArchiveTodo $archive): void

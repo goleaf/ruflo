@@ -40,8 +40,12 @@ to the right bucket on restore.
 
 Explicit rules:
 
-- **Active ⇄ Completed** — `ToggleTodoCompletion`. Reversible; completion is
-  never deletion.
+- **Active → Completed** — `CompleteTodo`. Completion is never deletion.
+  Completing an already-completed task is a harmless no-op and does not emit a
+  duplicate completion event.
+- **Completed → Active** — `ReopenTodo`. Reopening preserves title, project,
+  tags, priority, and due date. Reopening an already-active task is a harmless
+  no-op and does not emit a duplicate reopen event.
 - **Active/Completed → Archived** — `ArchiveTodo`. Sets `archived_at`; does not
   change completion; idempotent.
 - **Archived → prior bucket** — `UnarchiveTodo` ("restore"). Clears
@@ -77,7 +81,7 @@ return silently rather than erroring.
 | Mutations | `App\Actions\Todos\*` (one action per transition) |
 | Invalid-transition guard | `App\Exceptions\InvalidTodoTransition` |
 | Owner-scoped reads & buckets | `App\Queries\Todos\TodoListQuery` (`forStatus`, `summaryFor`) |
-| Authorization | `App\Policies\TodoPolicy` (`complete`, `archive`, `restore`, `delete`, `update`, …) |
+| Authorization | `App\Policies\TodoPolicy` (`complete`, `reopen`, `archive`, `restore`, `delete`, `update`, …) |
 | UI state & feedback | `App\Livewire\Todos\Index` + `resources/views/livewire/todos/index.blade.php` |
 | Status badge | `resources/views/components/ui/status-badge.blade.php` |
 
@@ -88,11 +92,16 @@ business logic lives in the Blade view.
 
 ## Events (for future activity history & notifications)
 
-Every transition dispatches a domain event so activity logging and reminders
-can be added later without touching the actions:
+Every state-changing transition dispatches a domain event so activity logging
+and reminders can be added later without touching the actions:
 
-`TodoCreated`, `TodoUpdated`, `TodoCompletionToggled`, `TodoArchived`,
-`TodoUnarchived`, `TodoDeleted`, `CompletedTodosCleared`.
+`TodoCreated`, `TodoUpdated`, `TodoCompleted`, `TodoReopened`,
+`TodoArchived`, `TodoUnarchived`, `TodoDeleted`, `CompletedTodosCleared`.
+
+Step 024 replaces the former generic completion toggle with separate
+completion and reopening actions/events. The row checkbox still gives the same
+fast UX, but it calls the explicit transition for the task's current state and
+uses state-specific translated accessibility labels.
 
 Notification/reminder rules to honor when those features arrive: completed and
 archived tasks should not emit active reminders; deleted tasks emit none;
@@ -113,9 +122,10 @@ reminders step.
 
 Empty state per tab (active / completed / archived), inline validation errors,
 success/warning toasts for every action, `wire:confirm` on destructive actions
-(delete, clear completed), state-aware row actions (no complete/edit on archived
-rows; restore only on archived rows), and a status badge per row. All
-user-facing text is translatable via `lang/en/todos.php`.
+(delete, clear completed), state-aware row actions (complete only on active
+rows, reopen only on completed rows, no complete/edit on archived rows, restore
+only on archived rows), and a status badge per row. All user-facing text is
+translatable via `lang/en/todos.php`.
 
 ## Intentionally not built yet
 

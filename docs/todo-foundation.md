@@ -124,7 +124,7 @@ Every Todo feature must include tests for:
 
 The core invariant is: one user must never view, change, delete, restore, or infer another user's private Todo data.
 
-Step 1 adds tests for owner-scoped viewing, creation, validation, toggling, soft deletion, clearing completed todos, and cross-user mutation attempts. It also adds architecture tests to keep Livewire thin and translation-based.
+Step 1 adds tests for owner-scoped viewing, creation, validation, completion, soft deletion, clearing completed todos, and cross-user mutation attempts. It also adds architecture tests to keep Livewire thin and translation-based.
 
 Step 021 adds `CoreTaskCreationTest`, which locks direct action creation,
 event dispatch, bypassed-validation organization scoping, mass-assignment

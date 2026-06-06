@@ -1,5 +1,24 @@
 # Changelog
 
+## 2026-06-06 - Step 024 Task completion and reopening
+
+### Implemented
+
+- Replaced the generic completion boundary with explicit `CompleteTodo` and `ReopenTodo` actions.
+- Added `TodoCompleted` and `TodoReopened` domain events for future activity history and reminder integrations.
+- Kept the row checkbox UX, but made it call state-specific Livewire methods with translated complete/reopen accessibility labels.
+- Changed bulk completion to reuse the `CompleteTodo` transition so completion events are not skipped by a mass update.
+- Made duplicate complete/reopen calls idempotent no-ops and kept archived completion changes rejected.
+
+### Testing
+
+- Added `TaskCompletionReopeningTest` for direct actions, Livewire transitions, event dispatch, idempotency, archived rejection, foreign-id denial, bulk completion, detail lookup status, and UI label wiring.
+- Updated existing lifecycle, ownership, architecture, and core creation tests from the old generic completion boundary to explicit complete/reopen transitions.
+
+### Documentation
+
+- Updated `docs/task-lifecycle.md`, `docs/authorization.md`, and `docs/todo-foundation.md` with the Step 024 completion/reopening contract.
+
 ## 2026-06-06 - Step 023 Task editing
 
 ### Implemented
@@ -43,13 +62,13 @@
 ### Implemented
 
 - Removed completion state from todo mass assignment so task creation cannot set lifecycle state accidentally.
-- Changed the completion toggle action to set `is_completed` explicitly through the lifecycle action.
+- Changed the completion action to set `is_completed` explicitly through the lifecycle action.
 - Trimmed task titles at the `CreateTodo` write boundary, even when a backend caller constructs `TodoData` manually.
 - Added create-form validation error placement beside priority, due date, project, and tampered tag fields while keeping the class-based Livewire/Flux UI.
 
 ### Testing
 
-- Added `CoreTaskCreationTest` for direct action creation, event dispatch, bypassed-validation organization scoping, mass-assignment guards, lifecycle toggling, long-title validation, and create-form error placement.
+- Added `CoreTaskCreationTest` for direct action creation, event dispatch, bypassed-validation organization scoping, mass-assignment guards, lifecycle completion, long-title validation, and create-form error placement.
 - Rechecked adjacent todo, lifecycle, ownership, organization, architecture, dashboard, and route-protection suites.
 
 ### Documentation
@@ -77,7 +96,7 @@
 
 ### Implemented
 
-- Added an explicit todo `reopen` policy ability and made the Livewire completion toggle authorize `complete` or `reopen` based on task state.
+- Added an explicit todo `reopen` policy ability and made the Livewire completion flow authorize `complete` or `reopen` based on task state.
 - Bound the placeholder `Reminder` model to its deny-all policy with an explicit `UsePolicy` attribute.
 - Standardized owner-only policy checks for todos, projects, and tags through the shared `isOwnedBy()` helper.
 - Added explicit tag `restore` and `forceDelete` denials for unsupported destructive actions.
@@ -392,10 +411,10 @@
 - Defined an explicit task state machine: active ⇄ completed, active/completed → archived → (restore to prior bucket), and any non-deleted → trashed (soft delete). States are derived from `is_completed`, `archived_at`, and `deleted_at`; archived takes precedence over completion.
 - Added `archived_at` to `todos` with a `(user_id, archived_at)` index; archive is distinct from both completion and deletion.
 - Added `App\Enums\TodoStatus` (Active/Completed/Archived) with translatable labels and badge colors, and model helpers/scopes (`status()`, `isActive()`, `isArchived()`, `scopeActive/Completed/Archived`).
-- Added one action per transition: `UpdateTodo`, `ArchiveTodo`, `UnarchiveTodo`; hardened `ToggleTodoCompletion` and `ClearCompletedTodos` to respect archive state. `archived_at` is set directly (system-controlled, never mass-assignable).
+- Added one action per transition: `UpdateTodo`, `ArchiveTodo`, `UnarchiveTodo`, later refined to explicit `CompleteTodo` and `ReopenTodo`; hardened completed cleanup to respect archive state. `archived_at` is set directly (system-controlled, never mass-assignable).
 - Added `InvalidTodoTransition` so completing or editing an archived task fails safely as a translatable warning, never a 500 or a leak.
 - Extended `TodoListQuery` with `forStatus()` buckets and a three-way `summaryFor()` (active/completed/archived counts) in a single scoped query.
-- Added domain events `TodoUpdated`, `TodoArchived`, `TodoUnarchived` (alongside the existing create/toggle/delete/clear events) for future activity history and reminders.
+- Added domain events `TodoUpdated`, `TodoArchived`, `TodoUnarchived` (alongside the existing create/complete/reopen/delete/clear events) for future activity history and reminders.
 
 ### UI
 
@@ -404,7 +423,7 @@
 
 ### Testing
 
-- Added `TodoLifecycleTest` (18 tests): status derivation, per-bucket listing and summary, archive/restore (completion preserved), archived-completion rejection, edit + edit validation, archived-edit refusal, soft delete, clear-completed isolation from archive, invalid-tab fallback, and cross-user denial across every lifecycle action (data-driven over toggle/edit/archive/restore/delete).
+- Added `TodoLifecycleTest` (18 tests): status derivation, per-bucket listing and summary, archive/restore (completion preserved), archived-completion rejection, edit + edit validation, archived-edit refusal, soft delete, clear-completed isolation from archive, invalid-tab fallback, and cross-user denial across every lifecycle action (data-driven over complete/reopen/edit/archive/restore/delete).
 - Full suite: 82 passed (was 64).
 
 ### Documentation
@@ -460,14 +479,14 @@
 - Added `TodoPolicy` with owner-only lifecycle checks and permanent deletion disabled by default.
 - Added soft deletes to `todos` so delete behavior does not permanently remove user work.
 - Added `TodoListQuery` for owner-scoped lists and aggregate counts.
-- Added domain events for Todo creation, completion toggling, deletion, and clearing completed todos.
+- Added domain events for Todo creation, completion/reopening, deletion, and clearing completed todos.
 - Added reusable `x-ui.page-header` and `x-ui.empty-state` components for future Todo screens.
 - Added `lang/en/todos.php` so Todo UI text and messages are translation-ready.
 
 ### Testing
 
 - Enabled `RefreshDatabase` for Feature tests in the Pest bootstrap.
-- Added Todo behavior tests for authentication, owner-scoped viewing, creation, validation, toggling, soft deletion, completed cleanup, and cross-user mutation attempts.
+- Added Todo behavior tests for authentication, owner-scoped viewing, creation, validation, completion/reopening, soft deletion, completed cleanup, and cross-user mutation attempts.
 - Added Todo architecture tests to guard thin Livewire components, shared UI components, translation keys, and required documentation.
 
 ### Documentation

@@ -79,3 +79,10 @@ Step 052 adds the protected `todos.automations` route at
 `https://ruflo.test/todos/automations`. Boost URL generation resolves the route
 to that HTTPS Herd domain, and the route collection shows `web`, `auth`, and
 `verified` middleware.
+
+## 2026-06-06 Step 053 Update
+
+Step 053 adds no new public route. The reusable manual web-processing engine is
+triggered by feature-owned Livewire actions such as `/todos/automations`, and
+its runtime profile is visible on the existing protected maintenance route at
+`https://ruflo.test/settings/maintenance`.

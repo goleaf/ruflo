@@ -393,3 +393,10 @@ created, toggled, tested, and run only for their owner; dry runs do not mutate
 tasks; disabled runs change nothing; bounded chunks can be retried to resume
 remaining work; archive automation touches only old owned completed tasks; and
 foreign rule ids resolve as not found.
+
+`ManualWebProcessTest` locks the Step 053 processing contract: reusable
+processors must build owner-scoped queries, dry runs must not mutate records,
+bounded chunks must report remaining work, and retry/resume must happen by
+re-running the same authenticated browser action. The engine does not create a
+global data scope; each feature-owned `ManualWebProcess` implementation is
+responsible for starting from an authorized owner boundary.

@@ -29,6 +29,7 @@ final class PromoteOverdueTasksProcess implements ManualWebProcess
     {
         /** @var Builder<Model> $query */
         $query = $user->todos()
+            ->getQuery()
             ->with('tags:id')
             ->active()
             ->whereNotNull('due_date')

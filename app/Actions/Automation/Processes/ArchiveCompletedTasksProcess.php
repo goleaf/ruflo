@@ -33,6 +33,7 @@ final class ArchiveCompletedTasksProcess implements ManualWebProcess
     {
         /** @var Builder<Model> $query */
         $query = $user->todos()
+            ->getQuery()
             ->completed()
             ->where('updated_at', '<=', now()->subDays($this->days))
             ->orderBy('updated_at')

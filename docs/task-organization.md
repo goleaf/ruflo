@@ -1,10 +1,11 @@
 # Task Organization
 
-Through Step 052, the private task lifecycle is extended into a usable productivity system:
+Through Step 053, the private task lifecycle is extended into a usable productivity system:
 projects, tags, priorities, due dates, search, filters, sorting, and bulk
 actions, calendar/board/focus views, contained checklists, templates, a quick
 capture Inbox, time tracking, task dependencies, cleanup smart views, and
-browser-triggered automation rules. Everything here is
+browser-triggered automation rules backed by the reusable manual web-processing
+engine. Everything here is
 owner-scoped on top of the model in
 [`authorization.md`](authorization.md) and the lifecycle in
 [`task-lifecycle.md`](task-lifecycle.md).
@@ -408,10 +409,10 @@ by the current user.
 - Built-in rules are `promote_overdue_tasks`, which raises active overdue low
   or normal priority tasks to High, and `archive_completed_tasks`, which
   archives completed tasks older than seven days.
-- Runs process a bounded owner-scoped chunk using
-  `hosting.web_processing.chunk_size`. Matched, changed, and remaining counts
-  are stored in `automation_rule_runs` so users can test, retry, or run again to
-  resume remaining work.
+- Runs process a bounded owner-scoped chunk through
+  `App\Actions\Processing\RunManualWebProcess`. Matched, changed, and remaining
+  counts are stored in `automation_rule_runs` so users can test, retry, or run
+  again to resume remaining work.
 - Disabled rules record a disabled run and change nothing. Dry runs record the
   current match count without mutating tasks.
 - The workflow uses no cron, queue worker, supervisor, shell, Artisan command,

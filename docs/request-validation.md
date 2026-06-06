@@ -89,6 +89,13 @@ unique validation, submitted rule ids are resolved through `AutomationRuleQuery`
 before toggling/testing/running, and action classes repeat owner and disabled
 rule guards before writing tasks or run logs.
 
+Step 053 manual web processing introduces no HTTP controller endpoint and no
+new user-submitted form fields. The reusable engine receives already-authorized
+feature-owned process objects. Feature Livewire components remain responsible
+for validating user input before they trigger a process, while
+`ManualWebProcess::query()` implementations must reapply owner scope before
+records can be processed.
+
 ## Custom Business Rules
 
 Reusable business validation rules are documented in `docs/validation-rules.md`.

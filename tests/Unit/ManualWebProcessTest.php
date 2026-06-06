@@ -38,6 +38,7 @@ test('manual web processor supports dry run bounded chunks details and resume', 
         {
             /** @var Builder<Model> $query */
             $query = $user->todos()
+                ->getQuery()
                 ->active()
                 ->where('title', 'like', 'Process%')
                 ->orderBy('id');
@@ -53,7 +54,6 @@ test('manual web processor supports dry run bounded chunks details and resume', 
 
             $record->forceFill([
                 'is_completed' => true,
-                'completed_at' => now(),
             ])->save();
 
             return true;

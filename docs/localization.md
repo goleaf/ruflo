@@ -11,7 +11,10 @@ Step 016 keeps visible application copy in English language files instead of har
 - `lang/en/welcome.php` contains public landing page copy.
 - `lang/en/automation.php` contains browser-triggered automation rule copy,
   validation messages, run statuses, and action messages.
-- Existing domain files such as `lang/en/todos.php`, `lang/en/setup.php`, and `lang/en/maintenance.php` remain the source for their feature surfaces.
+- `lang/en/maintenance.php` contains the protected maintenance-center copy,
+  including Step 053 manual web-processing engine labels.
+- Existing domain files such as `lang/en/todos.php` and `lang/en/setup.php`
+  remain the source for their feature surfaces.
 
 ## Guardrails
 

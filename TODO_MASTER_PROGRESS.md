@@ -2,19 +2,19 @@
 
 ## Current status
 
-Individual ledger rows for Steps 001 through 065 are complete. The requested recheck from Step 001 has been completed through Step 065. The tracker is expanded to one ledger line per step from 001 through 100 so later work cannot be hidden behind a range.
+Individual ledger rows for Steps 001 through 066 are complete. The requested recheck from Step 001 has been completed through Step 066. The tracker is expanded to one ledger line per step from 001 through 100 so later work cannot be hidden behind a range.
 
 ## Current step
 
-Step 066 — Activity history
+Step 067 — Task timeline UI
 
 ## Last completed action
 
-Completed Step 065 by adding a reusable local browser chart helper/component, wiring dashboard foundation and reports charts to it, documenting the no-paid/no-CDN chart contract, and adding focused local chart rendering tests.
+Completed Step 066 by adding owner-scoped activity records, synchronous todo/checklist/completed-clear recording, safe activity metadata snapshots, a protected Flux activity timeline, demo factory/seeder coverage, docs, and focused regression tests.
 
 ## Next action
 
-Begin `steps/step-066-activity-history.md`, then implement the next not-yet-completed plan step without grouping it with later work.
+Begin `steps/step-067-task-timeline-ui.md`, then implement the next not-yet-completed plan step without grouping it with later work.
 
 ## Step ledger
 
@@ -85,7 +85,7 @@ Begin `steps/step-066-activity-history.md`, then implement the next not-yet-comp
 | 063 — Project progress dashboard | Complete | Added `ProjectProgressDashboardQuery`, translated dashboard project/list health cards, completion progress, cleanup signals, no-project review, and protected project/task links. | Boost app/docs/schema/URL/browser-log checks, PHP syntax checks, no-Volt/no-dashboard-`@php` scans, focused `DashboardTest` pass with 16 tests/361 assertions, localization pass, project/detail pass, adjacent dashboard/privacy/localization/restricted-hosting/project suite pass with 91 tests/1085 assertions, Pint, Vite build, route check, and diff checks recorded. Full suite remains blocked by unrelated dirty executive-seeder and Flux Pro chart-test drift after 672 passing tests. | Updated `docs/dashboard.md`, `docs/authorization.md`, `docs/changelog.md`, root checklist, changelog, decisions, risks, progress, and test report. | No new project-progress data risk; owner-scoped query excludes foreign/deleted/archived-project data. Full-suite blocker from unrelated dirty worktree state remains tracked. | c97481e |
 | 064 — Reports overview | Complete | Added protected `/reports`, `ReportsOverviewQuery`, a class-based reports Livewire page, translated Flux overview widgets, project cards, privacy notes, and browser-native chart sections for productivity, overdue, habits, and time. | Boost app/docs/schema/URL/browser-log checks, syntax checks, route checks, no-Volt/no-report-`@php`/paid-service scan, focused report/localization/dashboard/project/habit/time suites, Pint, Vite build, and diff checks passed. Full suite remains blocked by unrelated dirty executive-seeder and Flux Pro chart-test drift after 681 passing tests. | Added `docs/reports.md` and updated domain readiness, authorization, app changelog, root checklist, changelog, decisions, risks, progress, and test report. | No new reports privacy risk; reports are owner-scoped request-time reads. Full-suite blocker from unrelated dirty worktree state remains tracked. | 4a53c9b |
 | 065 — Charts without paid services | Complete | Added `BrowserBarChart` normalization, reusable `x-ui.local-bar-chart`, local chart driver markers, dashboard foundation chart reuse, and reports trend chart reuse without Flux chart/CDN/hosted chart dependencies. | Syntax checks, focused chart/report/dashboard/architecture/localization suites, Pint, no-external-chart scan, and Vite build passed. Full suite remains blocked by unrelated dirty executive-seeder and Flux Pro chart-test drift after 685 passing tests. | Updated `docs/changelog.md`, `docs/dashboard.md`, `docs/reports.md`, root checklist, changelog, decisions, risks, progress, and test report. | No new Step 065 product risk; local chart rendering is request-time and self-hosted. Full-suite blocker from unrelated dirty worktree state remains tracked. | f19dfe4 |
-| 066 — Activity history | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 066 — Activity history | Complete | Added owner-scoped `activity_records`, synchronous todo/checklist/completed-clear event recording, safe allow-listed metadata snapshots, a protected `/activity` class-based Livewire/Flux timeline, navigation, translations, and demo factory/seeder support. | Boost app/docs/schema/URL/browser-log checks, PHP syntax, focused ActivityHistory tests, adjacent todo/localization/privacy suites, bulk/trash regression suite, route/localization checks, no-Volt source scan, Pint, Vite build, diff checks, and full-suite run recorded. Full suite remains blocked by unrelated dirty worktree drift after 691 passing tests. | Added `docs/activity-history.md`; updated authorization, factory coverage, restricted hosting, app changelog, checklist, progress, decisions, risks, and test report. | Partially loaded bulk-event todo snapshots lacked titles during verification; mitigated with a with-trashed snapshot fallback and bulk regression coverage. Unrelated full-suite blocker remains tracked. | 68948d5 |
 | 067 — Task timeline UI | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
 | 068 — Collaboration foundation | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
 | 069 — Link-only invite system | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |

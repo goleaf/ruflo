@@ -102,6 +102,25 @@ final class TodoListQuery
     }
 
     /**
+     * Owner-scoped tasks assigned to one visible project detail page.
+     *
+     * Archived projects can still show their existing tasks here; the active
+     * project restriction only applies to picker/filter assignment surfaces.
+     *
+     * @return Builder<Todo>
+     */
+    public function forProjectDetail(User $user, Project $project): Builder
+    {
+        return $this->withWorkspaceRelations(
+            Todo::query()
+                ->select(['id', 'user_id', 'project_id', 'title', 'priority', 'due_date', 'is_completed', 'archived_at', 'deleted_at', 'created_at', 'updated_at'])
+                ->ownedBy($user)
+                ->where('project_id', $project->id),
+            $user,
+        )->latest();
+    }
+
+    /**
      * Resolve a single todo the user is allowed to see.
      *
      * Foreign or unknown ids yield not-found rather than leaking existence.
@@ -150,6 +169,31 @@ final class TodoListQuery
             'archived' => (int) $summary->archived_count,
             'trash' => (int) $summary->trash_count,
             'overdue' => (int) $summary->overdue_count,
+        ];
+    }
+
+    /**
+     * Aggregate lifecycle counts for tasks assigned to a private project.
+     *
+     * @return array{active: int, completed: int, archived: int, trash: int}
+     */
+    public function projectSummaryFor(User $user, Project $project): array
+    {
+        $summary = Todo::query()
+            ->withTrashed()
+            ->ownedBy($user)
+            ->where('project_id', $project->id)
+            ->selectRaw('sum(case when deleted_at is null and archived_at is null and is_completed = 0 then 1 else 0 end) as active_count')
+            ->selectRaw('sum(case when deleted_at is null and archived_at is null and is_completed = 1 then 1 else 0 end) as completed_count')
+            ->selectRaw('sum(case when deleted_at is null and archived_at is not null then 1 else 0 end) as archived_count')
+            ->selectRaw('sum(case when deleted_at is not null then 1 else 0 end) as trash_count')
+            ->first();
+
+        return [
+            'active' => (int) $summary->active_count,
+            'completed' => (int) $summary->completed_count,
+            'archived' => (int) $summary->archived_count,
+            'trash' => (int) $summary->trash_count,
         ];
     }
 

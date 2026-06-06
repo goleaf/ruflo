@@ -42,7 +42,13 @@
             <div class="rounded-lg border border-zinc-200 p-4 dark:border-white/10">
                 <dt class="text-xs font-medium uppercase text-zinc-500 dark:text-zinc-400">{{ __('todos.fields.project') }}</dt>
                 <dd class="mt-1 text-sm font-medium text-zinc-950 dark:text-white">
-                    {{ $this->todo->project?->name ?? __('todos.fields.no_project') }}
+                    @if ($this->todo->project)
+                        <a href="{{ route('projects.show', $this->todo->project) }}" wire:navigate class="hover:underline">
+                            {{ $this->todo->project->name }}
+                        </a>
+                    @else
+                        {{ __('todos.fields.no_project') }}
+                    @endif
                 </dd>
             </div>
 

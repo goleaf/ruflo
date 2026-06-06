@@ -259,7 +259,9 @@
                             @endif
 
                             @if ($todo->project)
-                                <flux:badge size="sm" :color="$todo->project->color" icon="folder">{{ $todo->project->name }}</flux:badge>
+                                <a href="{{ route('projects.show', $todo->project) }}" wire:navigate>
+                                    <flux:badge size="sm" :color="$todo->project->color" icon="folder">{{ $todo->project->name }}</flux:badge>
+                                </a>
                             @endif
 
                             @foreach ($todo->tags as $tagBadge)

@@ -148,6 +148,10 @@ states, target buckets, idempotent no-ops, and direct-action invalid transition
 guards for the centralized todo state machine, including language-backed
 exception messages.
 
+Step 028 adds `ProjectDetailTest`, which locks private project detail routing,
+owner-scoped project/task rendering, archived project readability, translated
+empty states, and project badge links from task list/detail surfaces.
+
 ## 2026-06-06 Recheck
 
 The Step 001 recheck confirmed the foundation still matches the current master-plan rules after Steps 002-016:

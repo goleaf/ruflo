@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026-06-06 - Step 028 Projects and lists
+
+### Implemented
+
+- Added `App\Livewire\Projects\Show` as an owner-scoped, class-based Livewire project detail page.
+- Added the protected `projects.show` route and linked project badges from task lists and task detail pages.
+- Added `TodoListQuery::forProjectDetail()` and `projectSummaryFor()` so project detail task lists and counts stay owner-scoped and paginated.
+- Kept archived projects readable on their detail page while keeping them out of active task assignment/filter surfaces.
+
+### Testing
+
+- Added `ProjectDetailTest` for guest redirects, unverified redirects, owner-only rendering, foreign not-found behavior, archived project detail behavior, translated empty states, project badge links, direct Livewire foreign-id denial, and route/component guardrails.
+- Rechecked project management, task organization, task private views, ownership query scoping, authorization policies, architecture, factory, and seeder coverage.
+
+### Documentation
+
+- Updated `docs/task-organization.md` and `docs/authorization.md` with the Step 028 project detail contract.
+
 ## 2026-06-06 - Step 027 Task lifecycle state machine
 
 ### Implemented

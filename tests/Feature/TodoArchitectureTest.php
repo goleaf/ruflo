@@ -10,6 +10,7 @@ use App\Actions\Todos\TodoLifecycleStateMachine;
 use App\Data\Todos\TodoData;
 use App\Enums\TodoTransition;
 use App\Livewire\Forms\Todos\TodoForm;
+use App\Livewire\Projects\Show as ProjectShow;
 use App\Policies\TodoPolicy;
 use App\Queries\Todos\TodoListQuery;
 
@@ -24,6 +25,7 @@ test('todo foundation classes exist', function () {
         ->and(class_exists(DeleteTodo::class))->toBeTrue()
         ->and(class_exists(RestoreDeletedTodo::class))->toBeTrue()
         ->and(class_exists(TodoLifecycleStateMachine::class))->toBeTrue()
+        ->and(class_exists(ProjectShow::class))->toBeTrue()
         ->and(enum_exists(TodoTransition::class))->toBeTrue()
         ->and(class_exists(ClearCompletedTodos::class))->toBeTrue();
 });

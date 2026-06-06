@@ -122,6 +122,12 @@ task id, resolves the record through `TodoListQuery::findVisibleFor()`, and
 locks the public `todoId` property. A guessed or foreign id returns not found
 without rendering the foreign title, project, tag, priority, or due date.
 
+Project detail pages use the same pattern. `projects.show` is a class-based
+Livewire page behind `auth` and `verified`, accepts only a numeric project id,
+resolves the record through `ProjectListQuery::findVisibleFor()`, and locks the
+public `projectId` property. A guessed or foreign id returns not found without
+rendering the foreign project name or task list.
+
 ## Error behavior (no leakage)
 
 - Forbidden private records resolve as **not found** (404-style), never
@@ -213,3 +219,9 @@ Trash use explicit action classes, events, policy checks, translated labels,
 owner-scoped visible/trash query methods, and custom selected-id validation;
 bulk delete/restore reuse single-task transitions; foreign trash ids are hidden
 as not found; permanent delete remains denied and absent from the UI.
+
+`ProjectDetailTest` locks the Step 028 contract: project detail routes are
+guest/verification protected, project ids are owner-scoped before rendering,
+foreign project names and tasks are hidden as not found, archived projects
+remain readable, project badge links are scoped to current-user data, and empty
+project states are translated.

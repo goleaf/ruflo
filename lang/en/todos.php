@@ -187,6 +187,10 @@ return [
         'tag' => [
             'title' => 'No tasks with this tag.',
         ],
+        'project_detail' => [
+            'title' => 'No tasks in this project.',
+            'description' => 'Tasks assigned to this project will appear here.',
+        ],
         'projects' => [
             'title' => 'No projects yet.',
         ],
@@ -244,6 +248,18 @@ return [
             'description' => 'Organize your private workspace. Archiving or deleting these never deletes your tasks.',
             'projects' => 'Projects',
             'tags' => 'Tags',
+        ],
+    ],
+
+    'projects' => [
+        'show' => [
+            'title' => 'Project details',
+            'description' => 'Review this private project and the tasks assigned to it.',
+            'tasks_heading' => 'Project tasks',
+            'task_count' => ':count task(s)',
+        ],
+        'actions' => [
+            'filter_tasks' => 'Filter tasks',
         ],
     ],
 ];

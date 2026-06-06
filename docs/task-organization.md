@@ -1,6 +1,6 @@
 # Task Organization
 
-Step 4 turns the private task lifecycle into a usable productivity system:
+Step 028 rechecks and extends the private task lifecycle into a usable productivity system:
 projects, tags, priorities, due dates, search, filters, sorting, and bulk
 actions. Everything here is owner-scoped on top of the model in
 [`authorization.md`](authorization.md) and the lifecycle in
@@ -22,6 +22,10 @@ actions. Everything here is owner-scoped on top of the model in
 - Projects can be **renamed**, **archived** (hidden from active pickers/filters,
   reversible), **restored**, or **deleted**. Deleting a project **never deletes its tasks** — the
   `project_id` FK is `nullOnDelete`, so the tasks fall back to "No project".
+- Each project has an owner-scoped detail page at `projects.show`, implemented
+  by `App\Livewire\Projects\Show`. Archived projects remain readable there so
+  existing tasks can be reviewed, but archived projects are still excluded from
+  assignment and filter pickers.
 - `project_id` is **not** mass-assignable. `CreateTodo`/`UpdateTodo` set it
   directly only after re-scoping it to the user (`ResolvesTodoOrganization`),
   so a forged request can never attach a task to another user's project.
@@ -129,6 +133,9 @@ page and clears the bulk selection.
   reset), a bulk toolbar that appears on selection, and a "Manage" modal for
   creating/renaming/archiving/restoring/deleting projects and creating/deleting
   tags.
+- Project badges in task lists and task detail pages link to the private
+  project detail page. The detail page renders the project status, scoped
+  lifecycle counts, a paginated task list, and a translated empty state.
 - All text is translatable via `lang/en/todos.php`. Project/tag pickers only
   ever list the current user's own resources.
 
@@ -136,6 +143,8 @@ page and clears the bulk selection.
 
 - `TodoListQuery::filtered()` eager-loads `project` and `tags` to avoid N+1
   when rendering badges.
+- `TodoListQuery::forProjectDetail()` and `projectSummaryFor()` keep project
+  detail reads and counts owner-scoped and paginated.
 - The summary (active/completed/archived/trash/overdue) is one aggregate query.
 - Composite indexes back the common filters: `(user_id, project_id)`,
   `(user_id, due_date)`, `(user_id, priority)`, `(user_id, archived_at)`,
@@ -143,12 +152,12 @@ page and clears the bulk selection.
 
 ## Intentionally not implemented
 
-Manual drag ordering, saved/named filter views, sub-projects, project-level
-detail pages, tag colors editing UI, recurring tasks, reminders, dashboard,
-collaboration. Manual ordering, when added, should store a per-user position
-and only apply when no sort/filter overrides it.
+Manual drag ordering, saved/named filter views, sub-projects, tag colors
+editing UI, recurring tasks, reminders, dashboard, collaboration. Manual
+ordering, when added, should store a per-user position and only apply when no
+sort/filter overrides it.
 
-## What Step 5 builds next
+## Later steps
 
 Reminders and notifications: separating "when it's due" (due_date) from "when
 to be reminded", overdue alerts, today/upcoming notifications, a daily summary,

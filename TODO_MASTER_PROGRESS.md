@@ -2,19 +2,19 @@
 
 ## Current status
 
-Individual ledger rows for Steps 001 through 049 are complete. The requested recheck from Step 001 has been completed through Step 049. The tracker is expanded to one ledger line per step from 001 through 100 so later work cannot be hidden behind a range.
+Individual ledger rows for Steps 001 through 050 are complete. The requested recheck from Step 001 has been completed through Step 050. The tracker is expanded to one ledger line per step from 001 through 100 so later work cannot be hidden behind a range.
 
 ## Current step
 
-Step 050 — Waiting blocker dependency system
+Step 051 — Smart views and cleanup views
 
 ## Last completed action
 
-Completed Step 049 by adding owner-scoped manual, timer, and Pomodoro-derived time entries; a protected class-based Livewire/Flux time page; translated validation and UI copy; factories, seeders, policies, docs, and privacy tests.
+Completed Step 050 by adding owner-scoped task dependencies, a protected class-based Livewire/Flux blocked view, translated dependency validation and UI copy, factories, seeders, policies, docs, and privacy tests.
 
 ## Next action
 
-Begin `steps/step-050-waiting-blocker-dependency-system.md`, then implement the next not-yet-completed plan step without grouping it with later work.
+Begin `steps/step-051-smart-views-and-cleanup-views.md`, then implement the next not-yet-completed plan step without grouping it with later work.
 
 ## Step ledger
 
@@ -69,7 +69,7 @@ Begin `steps/step-050-waiting-blocker-dependency-system.md`, then implement the 
 | 047 — Habits tracker | Complete | Added owner-scoped habits and habit check-ins with optional goal links, nullable task links, today-only check-in toggles, honest daily/weekly progress, current/best streak math from real check-in rows, dashboard counts, navigation, and factory/seeder support. | Boost app/docs/schema checks, migration, syntax checks, focused `HabitTrackerTest`, adjacent 126-test suite, Pint, local seed/database verification, route/URL/browser-log checks, static scans, diff check, and full suite recorded in test report. | `docs/task-organization.md`, `docs/authorization.md`, `docs/request-validation.md`, `docs/validation-rules.md`, `docs/factory-coverage.md`, `docs/seeding-strategy.md`, `docs/domain-readiness.md`, `docs/todo-foundation.md`, `docs/changelog.md`, root progress, checklist, changelog, decisions, risks, and test report updated. | Habit history editing/backfill remains intentionally unavailable; Step 046 habit-deferral risk is mitigated by Step 047. | 3b45480 |
 | 048 — Pomodoro focus timer | Complete | Added owner-scoped `pomodoro_sessions` linked to focus tasks, a translated browser-ticked Flux Pomodoro timer on the existing Focus page, start/pause/resume/complete/abandon actions, task quick-action session closure, `PomodoroDuration`, policies, factories, seed data, and owner privacy checks. | Boost app/schema/docs checks, migration, syntax checks, focused `PomodoroFocusTimerTest` plus `FocusModeTest`, adjacent 69-test suite, Pint, local seed/database verification, URL/browser-log checks, static scans, diff check, and full-suite check recorded in test report. | `docs/task-organization.md`, `docs/authorization.md`, `docs/request-validation.md`, `docs/validation-rules.md`, `docs/factory-coverage.md`, `docs/seeding-strategy.md`, `docs/todo-foundation.md`, `docs/changelog.md`, root checklist, root changelog, decisions, risks, and test report updated. | Server-side countdown/background timing limitation logged; Step 049 remains responsible for broader time-tracking semantics. | a449511 |
 | 049 — Time tracking | Complete | Added owner-scoped `time_entries` for manual logs, one resumable web timer, and idempotent Pomodoro conversion; linked `/todos/time` from dashboard and task list. | Boost app/schema/URL/browser checks, local migrate/seed verification, focused `TimeTrackingTest`, 140-test adjacent suite, Pint, route scan, no-Volt/no-`@php` source scan, compressed-progress scan, diff check, and full suite passed with 463 tests and 2735 assertions. | `docs/task-organization.md`, `docs/authorization.md`, `docs/request-validation.md`, `docs/validation-rules.md`, `docs/factory-coverage.md`, `docs/seeding-strategy.md`, `docs/domain-readiness.md`, `docs/todo-foundation.md`, `docs/changelog.md`, and root ledgers updated. | Active time timers persist and resume, but exact accounting changes only on explicit web stop/discard actions; application-level single-active-timer enforcement still has a small concurrent double-start race. | 120aa27 |
-| 050 — Waiting blocker dependency system | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
+| 050 — Waiting blocker dependency system | Complete | Added owner-scoped `todo_dependencies`, blocker add/remove actions, cycle-safe validation, blocked badges, a protected `/todos/blocked` smart view, blocked list filter, dashboard shortcut, and seeded demo blockers. | Boost schema/URL/log checks, local migrate/seed verification, focused `TodoDependencyTest`, 155-test adjacent suite, Pint, restricted-hosting/source scans, and full suite passed with 476 tests and 2866 assertions. | `docs/task-organization.md`, `docs/authorization.md`, `docs/request-validation.md`, `docs/validation-rules.md`, `docs/factory-coverage.md`, `docs/seeding-strategy.md`, `docs/domain-readiness.md`, `docs/todo-foundation.md`, `docs/changelog.md`, and root ledgers updated. | Archived blockers intentionally remain unresolved until completed or removed; no background unblock job is required because blocked state is derived at read time. | 005f458 |
 | 051 — Smart views and cleanup views | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
 | 052 — Automation rules web-only | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |
 | 053 — Manual web processing engine | Pending | Not started. | Not run. | Pending. | None logged yet. | Pending |

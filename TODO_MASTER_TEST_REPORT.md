@@ -770,3 +770,19 @@ Record test/build/check results here.
 | 2026-06-06 | `rg grouped-progress scan` | Passed | Mutable root progress files contain no forbidden grouped future-step placeholder lines after Step 049. |
 | 2026-06-06 | `git diff --check` | Passed | No whitespace errors after Step 049 changes. |
 | 2026-06-06 | `php artisan test --compact` | Passed | Full suite passed with 463 tests and 2735 assertions after Step 049 Time tracking. |
+| 2026-06-06 | `mcp__laravel_boost.search_docs` | Passed | Reviewed Laravel self-referencing relationship/pivot guidance, Livewire validation/testing guidance, Flux select/badge/card/button docs, and Pest Livewire testing docs before Step 050 changes. |
+| 2026-06-06 | `php artisan migrate --no-interaction` | Passed | Applied `2026_06_06_075314_create_todo_dependencies_table` locally. |
+| 2026-06-06 | `mcp__laravel_boost.database_schema filter=todo_dependencies include_column_details=true` | Passed | Confirmed owner/waiting-task/blocker foreign keys, unique dependency edge index, and supporting owner/task/blocker indexes. |
+| 2026-06-06 | `php -l Step 050 changed PHP files` | Passed | No syntax errors found in the new TodoDependency model, policy, rule, query, actions, factory, migration, Livewire component, seeder changes, and tests. |
+| 2026-06-06 | `php artisan test tests/Feature/TodoDependencyTest.php --compact` | Passed | 6 tests, 64 assertions for route protection, add/remove flows, duplicate/self/cycle validation, foreign denial, blocked smart view, main blocked filter, and no-Volt guardrails. |
+| 2026-06-06 | `php artisan test Step 050 adjacent suite --compact` | Passed | 155 tests, 1235 assertions across dependency, task private views, filters, guest/domain/dashboard, architecture, validation rules, factories, seeders, policies, private workspace, restricted-hosting, and localization coverage. |
+| 2026-06-06 | `vendor/bin/pint --dirty --format agent` | Passed | Pint fixed import ordering and spacing after Step 050 PHP edits. |
+| 2026-06-06 | `php artisan db:seed --class=TodoSeeder --no-interaction` | Passed | Refreshed local Herd demo data with one dependency edge per seeded user. |
+| 2026-06-06 | `mcp__laravel_boost.database_query` | Passed | Confirmed local seeded dependency rows where `Send the overdue report` waits on `Review the current flow` for seeded users. |
+| 2026-06-06 | `mcp__laravel_boost.get_absolute_url route=todos.blocked` | Passed | Boost resolved the Blocked route as `https://ruflo.test/todos/blocked`. |
+| 2026-06-06 | `mcp__laravel_boost.browser_logs entries=10` | Passed | Only an old Vite reconnect message from 2026-06-05 was present; no current Step 050 browser error was found. |
+| 2026-06-06 | `mcp__laravel_boost.last_error` | Informational | Latest backend log entry came from the unsupported `route:list --compact` verification attempt; route inspection was rerun without that option and the app test suite passed. |
+| 2026-06-06 | `php artisan route:list --name=todos.blocked` | Passed | Confirmed the protected `todos.blocked` route is registered at `GET|HEAD todos/blocked` before numeric task detail routing. |
+| 2026-06-06 | `rg restricted-hosting and Volt scans` | Passed | Runtime sources add no `app/Jobs`, queue worker, cron/scheduler, Volt, or Blade `@php` dependency for Step 050. |
+| 2026-06-06 | `php artisan test tests/Feature/TodoDependencyTest.php tests/Feature/SeederCoverageTest.php tests/Feature/LocalizationCoverageTest.php --compact` | Passed | 12 tests, 187 assertions after Step 050 docs updates. |
+| 2026-06-06 | `php artisan test --compact` | Passed | Full suite passed with 476 tests and 2866 assertions after Step 050 Waiting blocker dependency system. |
